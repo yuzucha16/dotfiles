@@ -5,6 +5,7 @@ Set-ExecutionPolicy RemoteSigned # Unrestricted
 
 $dots_dir = $(Split-Path $MyInvocation.MyCommand.Path -Parent) + "\..\"
 $files = @(
+            @("settings.json",                      "$Home\scoop\apps\windows-terminal\current\settings\settings.json"),
             @("config.nu",                          "$HOME\.config\nushell\config.nu"),
             @("env.nu",                             "$HOME\.config\nushell\env.nu"),
             @(".gitconfig",                         "$HOME\.config\git\config")
@@ -21,7 +22,7 @@ for( $i=0; $i -lt $files.Count; $i++ ){
 	Write-Host `t- -ForegroundColor Blue Skip: $dst
     continue   # skip if already exists
   }
-  New-Item -Itemtype SymbolicLink -path $dst -target $src
+  New-Item -Itemtype SymbolicLink -path $dst -target $src -force
   if( !(Test-Path $dst) ){
 	Write-Host `t- -ForegroundColor Red Error: $dst
   }else{
