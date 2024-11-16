@@ -6,6 +6,7 @@ Set-ExecutionPolicy RemoteSigned # Unrestricted
 $dots_dir = $(Split-Path $MyInvocation.MyCommand.Path -Parent) + "\..\"
 $files = @(
             @("Microsoft.PowerShell_profile.ps1",   "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"),
+            @("profile.ps1",                        "$HOME\Documents\PowerShell\profile.ps1"),
             @("settings.json",                      "$Home\scoop\apps\windows-terminal\current\settings\settings.json"),
             @("config.nu",                          "$HOME\.config\nushell\config.nu"),
             @("env.nu",                             "$HOME\.config\nushell\env.nu"),
