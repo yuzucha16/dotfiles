@@ -6,7 +6,8 @@ Set-ExecutionPolicy RemoteSigned # Unrestricted
 $dots_dir = $(Split-Path $MyInvocation.MyCommand.Path -Parent) + "\..\"
 $files = @(
             @("config.nu",                          "$HOME\.config\nushell\config.nu"),
-            @("env.nu",                             "$HOME\.config\nushell\env.nu")
+            @("env.nu",                             "$HOME\.config\nushell\env.nu"),
+            @(".gitconfig",                         "$HOME\.config\git\config")
             )
             # [0]: src file, [1]: dst file
 
