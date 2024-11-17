@@ -33,6 +33,34 @@ set nocompatible
 filetype plugin indent off
 
 "==========================================
+" Vim-plug
+"==========================================
+" Download & Install if needed
+if has('win32') || has('win64')
+  if empty(glob('vimfiles\autoload\plug.vim'))
+    silent !curl -fLo vimfiles\autoload\plug.vim --create-dirs
+      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
+else " linux
+  if empty(glob('$HOME/.vim/autoload/plug.vim'))
+    silent !curl -fLo $HOME/.vim/autoload/plug.vim --create-dirs
+      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
+endif
+
+" PlugInstall if needed
+autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+  \| PlugInstall --sync | source $MYVIMRC
+\| endif
+
+" Plugin List
+call plug#begin()
+
+call plug#end()
+
+"==========================================
 "Color
 "==========================================
 "set t_Co=256
