@@ -17,3 +17,38 @@ end
 
 require "lazy_setup"
 require "polish"
+
+-- Theme: see lua/plugins/colorscheme.lua
+vim.cmd[[colorscheme tender]]
+
+-- Option:
+vim.opt.title = true
+vim.opt.list = true
+vim.opt.fileformats = 'dos', 'unix', 'mac'
+vim.opt.number = true
+vim.opt.relativenumber = false
+vim.opt.ruler = true
+vim.opt.autoindent = true
+vim.opt.smartindent = true
+vim.opt.expandtab = true
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.backspace = indent, eol, start
+vim.opt.display = lastline
+vim.opt.showmatch = true
+vim.opt.swapfile = false
+vim.opt.writebackup = false
+vim.opt.backup = false
+vim.opt.clipboard:append({unnamed, autoselect})
+vim.opt.mouse = 'a'
+vim.opt.ignorecase = false
+vim.opt.wrapscan = true
+vim.opt.incsearch = true
+vim.opt.hlsearch = true
+vim.opt.wildmenu = true
+vim.opt.history=1000
+vim.opt.wildmode=list,full
+vim.opt.wildmode:append({list, full})
+vim.opt.compatible = false
+vim.opt.helplang = 'ja', 'en'
+vim.opt.updatetime = 250

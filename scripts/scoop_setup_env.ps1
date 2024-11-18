@@ -6,7 +6,7 @@ Set-ExecutionPolicy RemoteSigned # Unrestricted
 ### scoop installation
 $apps   =@(
             "teraterm", "winmerge", "rufus", "irfanview", "googlechrome", "brave", "fork", "p4v",
-            "windows-terminal", "pwsh", "nu", "starship", "vim", "notepadplusplus",
+            "windows-terminal", "pwsh", "nu", "starship", "vim", "neovim", "notepadplusplus",
             "PSReadLine", "posh-git", "Terminal-Icons", "scoop-completion",
             "ghq", "cmake", "gcc", "rustup", "go", "sudo", "which", "less", "openssh", "fzf"
             )
