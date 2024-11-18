@@ -5,6 +5,10 @@ Set-ExecutionPolicy RemoteSigned # Unrestricted
 
 $dots_dir = $(Split-Path $MyInvocation.MyCommand.Path -Parent) + "\..\"
 $files = @(
+            @("notepadpp\config.xml",               "$Home\scoop\apps\notepadplusplus\current\config.xml"),
+            @("notepadpp\contextMenu.xml",          "$Home\scoop\apps\notepadplusplus\current\contextMenu.xml"),
+            @("notepadpp\shortcuts.xml",            "$Home\scoop\apps\notepadplusplus\current\shortcuts.xml"),
+            @("notepadpp\stylers.xml",              "$Home\scoop\apps\notepadplusplus\current\stylers.xml"),
             @("nvim",                               "$Home\.config\nvim"),
             @("zed_settings.json",                  "$Home\AppData\Roaming\Zed\settings.json"),
             @("zed_keymap.json",                    "$Home\AppData\Roaming\Zed\keymap.json"),
