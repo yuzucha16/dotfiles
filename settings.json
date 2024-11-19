@@ -42,7 +42,7 @@
     {
         "defaults": 
         {
-            "colorScheme": "One Half Dark",
+            "colorScheme": "SoftServer",
             "font": 
             {
                 "face": "Hack Nerd Font"
@@ -191,6 +191,29 @@
             "selectionBackground": "#4F525D",
             "white": "#FAFAFA",
             "yellow": "#C18301"
+        },
+        {
+            "background": "#242626",
+            "black": "#000000",
+            "blue": "#6B8FA3",
+            "brightBlack": "#666C6C",
+            "brightBlue": "#62B1DF",
+            "brightCyan": "#64E39C",
+            "brightGreen": "#BFDF55",
+            "brightPurple": "#606EDF",
+            "brightRed": "#DD5C60",
+            "brightWhite": "#D2E0DE",
+            "brightYellow": "#DEB360",
+            "cursorColor": "#D2E0DE",
+            "cyan": "#6BA58F",
+            "foreground": "#99A3A2",
+            "green": "#9AA56A",
+            "name": "SoftServer",
+            "purple": "#6A71A3",
+            "red": "#A2686A",
+            "selectionBackground": "#7F8786",
+            "white": "#99A3A2",
+            "yellow": "#A3906A"
         },
         {
             "background": "#002B36",

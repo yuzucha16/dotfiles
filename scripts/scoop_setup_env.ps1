@@ -8,7 +8,8 @@ $apps   =@(
             "teraterm", "winmerge", "rufus", "irfanview", "googlechrome", "brave", "fork", "p4v",
             "windows-terminal", "pwsh", "nu", "starship", "vim", "neovim", "notepadplusplus",
             "PSReadLine", "posh-git", "Terminal-Icons", "scoop-completion",
-            "ghq", "cmake", "gcc", "rustup", "go", "sudo", "which", "less", "openssh", "fzf"
+            "ghq", "cmake", "gcc", "rustup", "go", "sudo", "which", "openssh",
+			"fzf", "lsd", "bat", "zoxide"
             )
 
 ### XDG Base Directory setting
@@ -29,6 +30,11 @@ echo $env:XDG_CONFIG_HOME
 echo $env:XDG_CACHE_HOME
 echo $env:XDG_DATA_HOME
 echo $env:XDG_STATE_HOME
+
+### work or config Directory setting
+$bat_dir	= $env:USERPROFILE + "\.config\bat"
+[Environment]::SetEnvironmentVariable('BAT_CONFIG_PATH', $bat_dir, 'User')
+echo $env:BAT_CONFIG_PATH
 
 ### Package Manager & git installaion
 if( !(Test-Path ~/scoop) ){
