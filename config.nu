@@ -2,6 +2,13 @@
 #
 # version = "0.100.0"
 
+source ~/.cache/starship/init.nu
+
+# Alias
+alias l		= ls
+alias ll	= ls -l
+alias dots	= cd ~/ghq/github.com/yuzucha16/dotfiles/
+
 # For more information on defining custom themes, see
 # https://www.nushell.sh/book/coloring_and_theming.html
 # And here is the theme collection
@@ -897,3 +904,4 @@ $env.config = {
         }
     ]
 }
+

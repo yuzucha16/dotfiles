@@ -8,7 +8,7 @@ $apps   =@(
             "teraterm", "winmerge", "rufus", "irfanview", "googlechrome", "brave", "fork", "p4v",
             "windows-terminal", "pwsh", "nu", "starship", "vim", "neovim", "notepadplusplus",
             "PSReadLine", "posh-git", "Terminal-Icons", "scoop-completion",
-            "ghq", "cmake", "gcc", "rustup", "go", "sudo", "which", "openssh",
+            "ghq", "cmake", "gcc", "rustup", "go", "uutils-coreutils", "sudo", "which", "openssh",
 			"fzf", "lsd", "bat", "zoxide"
             )
 
@@ -52,5 +52,9 @@ foreach( $item in $apps ){
 	scoop install $item
   }
 }
+
+### Visual Studio Installer
+# path: C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.42.34433\bin\Hostx64\x64
+winget install Microsoft.VisualStudio.2022.BuildTools
 
 pause
