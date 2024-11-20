@@ -6,7 +6,6 @@ Set-ExecutionPolicy RemoteSigned # Unrestricted
 $dots_dir = $(Split-Path $MyInvocation.MyCommand.Path -Parent) + "\..\"
 $files = @(
             @("config",		               			"$Home\.config\bat\config"),
-            @("config.xml",               			"$Home\scoop\apps\explorerplusplus\current\config.xml"),
             @("notepadpp\config.xml",               "$Home\scoop\apps\notepadplusplus\current\config.xml"),
             @("notepadpp\contextMenu.xml",          "$Home\scoop\apps\notepadplusplus\current\contextMenu.xml"),
             @("notepadpp\shortcuts.xml",            "$Home\scoop\apps\notepadplusplus\current\shortcuts.xml"),
