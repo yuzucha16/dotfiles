@@ -8,6 +8,7 @@ source ~/.cache/starship/init.nu
 alias l		= ls
 alias ll	= ls -l
 alias dots	= cd ~/ghq/github.com/yuzucha16/dotfiles/
+alias br    = broot
 
 # For more information on defining custom themes, see
 # https://www.nushell.sh/book/coloring_and_theming.html

@@ -9,7 +9,7 @@ $apps   =@(
             "windows-terminal", "pwsh", "nu", "starship", "vim", "neovim", "notepadplusplus",
             "PSReadLine", "posh-git", "Terminal-Icons", "scoop-completion",
             "ghq", "cmake", "gcc", "rustup", "go", "uutils-coreutils", "sudo", "which", "openssh",
-			"fzf", "lsd", "bat", "zoxide"
+			"fzf", "lsd", "bat", "zoxide", "broot"
             )
 
 ### XDG Base Directory setting
