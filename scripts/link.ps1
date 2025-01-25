@@ -11,8 +11,6 @@ $files = @(
             @("notepadpp\shortcuts.xml",            "$Home\scoop\apps\notepadplusplus\current\shortcuts.xml"),
             @("notepadpp\stylers.xml",              "$Home\scoop\apps\notepadplusplus\current\stylers.xml"),
             @("nvim",                               "$Home\.config\nvim"),
-            @("zed_settings.json",                  "$Home\AppData\Roaming\Zed\settings.json"),
-            @("zed_keymap.json",                    "$Home\AppData\Roaming\Zed\keymap.json"),
             @(".vimrc",                             "$Home\.config\_vimrc"),
             @("Microsoft.PowerShell_profile.ps1",   "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"),
             @("profile.ps1",                        "$HOME\Documents\PowerShell\profile.ps1"),
