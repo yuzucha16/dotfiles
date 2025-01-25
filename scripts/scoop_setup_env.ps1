@@ -13,7 +13,7 @@ $apps   =@(
             )
 
 ### XDG Base Directory setting
-$home_dir   = $env:USERPROFILE + "\.config"
+$home_dir   = $env:USERPROFILE
 $config_dir = $env:USERPROFILE + "\.config"
 $cache_dir  = $env:USERPROFILE + "\.cache"
 $data_dir   = $env:USERPROFILE + "\.local\share"
