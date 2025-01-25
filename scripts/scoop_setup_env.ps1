@@ -1,15 +1,19 @@
-if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole("Administrators")) { Start-Process powershell.exe "-File `"$PSCommandPath`"" -Verb RunAs; exit }
+#if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole("Administrators")) { Start-Process powershell.exe "-File `"$PSCommandPath`"" -Verb RunAs; exit }
+
+#Get-ExecutionPolicy
+#Set-ExecutionPolicy RemoteSigned # Unrestricted
 
 Get-ExecutionPolicy
-Set-ExecutionPolicy RemoteSigned # Unrestricted
+{ Start-Process powershell.exe "-File `"$PSCommandPath`"" -Verb RunAs; exit }
 
 ### scoop installation
+$buckets=@( "extras", "versions", "nonportable", "sysinternals" )
 $apps   =@(
             "teraterm", "winmerge", "rufus", "irfanview", "googlechrome", "fork", "p4v",
             "windows-terminal", "pwsh", "nu", "starship", "vim", "neovim", "notepadplusplus",
             "PSReadLine", "posh-git", "Terminal-Icons", "scoop-completion",
             "ghq", "cmake", "gcc", "rustup", "go", "uutils-coreutils", "sudo", "which", "openssh",
-			"fzf", "lsd", "bat", "zoxide", "broot"
+            "fzf", "lsd", "bat", "zoxide", "broot"
             )
 
 ### XDG Base Directory setting
@@ -32,7 +36,7 @@ echo $env:XDG_DATA_HOME
 echo $env:XDG_STATE_HOME
 
 ### work or config Directory setting
-$bat_dir	= $env:USERPROFILE + "\.config\bat"
+$bat_dir = $env:USERPROFILE + "\.config\bat"
 [Environment]::SetEnvironmentVariable('BAT_CONFIG_PATH', $bat_dir, 'User')
 echo $env:BAT_CONFIG_PATH
 
@@ -43,6 +47,17 @@ if( !(Test-Path ~/scoop) ){
 scoop install git
 
 ### Install app
+foreach( $item in $buckets ){
+  if( Test-Path ~/scoop/buckets/$item ){
+    # Already exists
+	Write-Host -ForegroundColor Green [Added]  $item
+  }else{
+    # starts
+	scoop bucket add $item
+  }
+}
+
+
 foreach( $item in $apps ){
   if( Test-Path ~/scoop/apps/$item ){
     # Already exists
@@ -53,8 +68,12 @@ foreach( $item in $apps ){
   }
 }
 
-### Visual Studio Installer
+### Visual Studio Installer for 2022
 # path: C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.42.34433\bin\Hostx64\x64
 winget install Microsoft.VisualStudio.2022.BuildTools
+
+### Clone my setting
+ghq get yuzucha16/dotfiles
+ghq get yuzucha16/tips
 
 pause

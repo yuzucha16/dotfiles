@@ -3,9 +3,8 @@ if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 Get-ExecutionPolicy
 Set-ExecutionPolicy RemoteSigned # Unrestricted
 
-$files = @( "yuzucha16\dotfiles",
-            "coreutils\coreutils",
-			"ryanoasis\nerd-fonts"
+$files = @( "coreutils\coreutils",
+            "ryanoasis\nerd-fonts"
 		  )
 
 ### Cloning repos
