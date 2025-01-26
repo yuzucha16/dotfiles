@@ -11,7 +11,7 @@ $buckets=@( "extras", "versions", "nonportable", "sysinternals" )
 $apps   =@(
             "teraterm", "winmerge", "rufus", "irfanview", "googlechrome", "fork", "p4v",
             "windows-terminal", "pwsh", "nu", "starship", "vim", "neovim", "notepadplusplus",
-            "PSReadLine", "posh-git", "Terminal-Icons", "scoop-completion",
+            "PSReadLine", "posh-git", "Terminal-Icons", "scoop-completion", "autohotkey",
             "ghq", "cmake", "gcc", "rustup", "go", "uutils-coreutils", "sudo", "which", "openssh",
             "fzf", "lsd", "bat", "zoxide", "broot"
             )
