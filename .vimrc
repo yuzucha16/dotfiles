@@ -37,8 +37,8 @@ filetype plugin indent off
 "==========================================
 " Download & Install if needed
 if has('win32') || has('win64')
-  if empty(glob('.config\vimfiles\autoload\plug.vim'))
-    silent !curl -fLo .config\vimfiles\autoload\plug.vim --create-dirs
+  if empty(glob('vimfiles\autoload\plug.vim'))
+    silent !curl -fLo vimfiles\autoload\plug.vim --create-dirs
       \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
   endif

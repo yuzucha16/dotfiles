@@ -18,6 +18,8 @@ $files = @(
             @("settings.json",                      "$Home\scoop\apps\windows-terminal\current\settings\settings.json"),
             @("config.nu",                          "$HOME\.config\nushell\config.nu"),
             @("env.nu",                             "$HOME\.config\nushell\env.nu"),
+			@("Autohotkey64.ahk",                   "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Autohotkey64.ahk"),
+			@("Autohotkey64.ahk",                   "$HOME\scoop\apps\autohotkey\current\v2\Autohotkey64.ahk"),
             @(".gitconfig",                         "$HOME\.config\git\config")
             )
             # [0]: src file, [1]: dst file
