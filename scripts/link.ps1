@@ -10,6 +10,7 @@ $files = @(
             @("notepadpp\contextMenu.xml",          "$Home\scoop\apps\notepadplusplus\current\contextMenu.xml"),
             @("notepadpp\shortcuts.xml",            "$Home\scoop\apps\notepadplusplus\current\shortcuts.xml"),
             @("notepadpp\stylers.xml",              "$Home\scoop\apps\notepadplusplus\current\stylers.xml"),
+            @("notepadpp\Zenburn_Darker-v2.xml",    "$Home\scoop\apps\notepadplusplus\current\themes\Zenburn_Darker-v2.xml"),
             @("nvim",                               "$Home\.config\nvim"),
 #            @(".vimrc",                             "$Home\.config\_vimrc"),
             @(".vimrc",                             "$Home\.vimrc"),

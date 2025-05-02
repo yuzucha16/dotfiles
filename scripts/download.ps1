@@ -3,7 +3,8 @@ if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 Get-ExecutionPolicy
 Set-ExecutionPolicy RemoteSigned # Unrestricted
 
-$files = @( "coreutils\coreutils",
+$files = @( "martysama0134\npp-zenburn-darker",
+			"coreutils\coreutils",
             "ryanoasis\nerd-fonts"
 		  )
 
