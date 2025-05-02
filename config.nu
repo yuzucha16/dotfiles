@@ -2,6 +2,7 @@
 #
 # version = "0.100.0"
 
+# Starshipプロンプトの読み込み
 source ~/.cache/starship/init.nu
 
 # Alias

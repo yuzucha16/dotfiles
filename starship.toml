@@ -1,20 +1,54 @@
+# 改行ありの見やすいプロンプト
+add_newline = true
+
 # エディターの補完を設定スキーマに合わせて取得
 "$schema" = 'https://starship.rs/config-schema.json'
 scan_timeout = 10
-add_newline = true
 
 # 記号"❯"を記号"➜"に置き換える
 [character]
 success_symbol	= '[➜](bold green)'
 error_symbol	= "[✗](bold red)"
+vicmd_symbol = "[❮](bold yellow)"
 
 [directory]
-truncation_length = 100
+truncation_length = 3
 truncate_to_repo = false
-truncation_symbol = "…/"
+style = "cyan"
+#truncation_symbol = "…/"
 
 [git_branch]
 symbol = " "
+format = "[$symbol$branch]($style) "
+style = "purple"
+
+[git_status]
+format = '([$all_status$ahead_behind]($style))'
+style = "yellow"
+
+[rust]
+symbol = "🦀 "
+format = '[$symbol$version]($style) '
+style = "red"
+detect_files = ["Cargo.toml"]
+
+[python]
+symbol = "🐍 "
+format = '[$symbol$version (\($virtualenv\))]($style) '
+style = "blue"
+detect_files = ["pyproject.toml", "requirements.txt", "setup.py"]
+
+[custom.build]
+command = "echo 🛠️"
+detect_files = ["Makefile", "CMakeLists.txt"]
+format = "[$symbol]($style) "
+symbol = "🛠️"
+style = "bold green"
+
+[cmd_duration]
+min_time = 500  # 0.5秒以上かかった場合のみ表示
+format = "took [$duration]($style) "
+style = "italic dimmed white"
 
 [time]
 disabled = true

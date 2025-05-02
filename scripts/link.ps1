@@ -15,6 +15,7 @@ $files = @(
 #            @(".vimrc",                             "$Home\.config\_vimrc"),
             @(".vimrc",                             "$Home\.vimrc"),
             @("starship.toml",                      "$HOME\.config\starship.toml"),
+			@("init.nu",                            "$HOME\.cache\starship\init.nu"),
             @("Microsoft.PowerShell_profile.ps1",   "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"),
             @("profile.ps1",                        "$HOME\Documents\PowerShell\profile.ps1"),
             @("settings.json",                      "$Home\scoop\apps\windows-terminal\current\settings\settings.json"),
