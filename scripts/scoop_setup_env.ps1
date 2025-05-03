@@ -9,11 +9,12 @@ Get-ExecutionPolicy
 ### scoop installation
 $buckets=@( "extras", "versions", "nonportable", "sysinternals" )
 $apps   =@(
-            "teraterm", "winmerge", "rufus", "irfanview", "googlechrome", "fork", "p4v",
-            "windows-terminal", "pwsh", "nu", "starship", "vim", "neovim", "notepadplusplus",
-            "PSReadLine", "posh-git", "Terminal-Icons", "scoop-completion", "autohotkey",
-            "ghq", "cmake", "gcc", "rustup", "go", "uutils-coreutils", "sudo", "which", "openssh",
-            "fzf", "lsd", "bat", "zoxide", "broot"
+            "autohotkey", "winmerge", "rufus", "irfanview", "googlechrome",
+            "windows-terminal", "pwsh", "nu", "starship", "PSReadLine", "posh-git", "Terminal-Icons", "scoop-completion",
+			"vim", "neovim", "notepadplusplus",
+            "ghq", "fork", "p4v", "fzf",
+			"cmake", "gcc", "rustup", "go", "openssh", "teraterm",
+            "uutils-coreutils", "fd", "ripgrep", "lsd", "bat", "zoxide", "broot", "du", "sudo", "which"
             )
 
 ### XDG Base Directory setting

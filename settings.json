@@ -53,7 +53,7 @@
             {
                 "font": 
                 {
-                    "face": "HackGen Console NF"
+                    "face": "MyricaMMonospace Nerd Font"
                 },
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
@@ -65,7 +65,7 @@
                 "commandline": "\"C:\\Users\\kaz\\scoop\\shims\\nu.exe\"",
                 "font": 
                 {
-                    "face": "HackGen Console NF"
+                    "face": "MyricaMMonospace Nerd Font"
                 },
                 "guid": "{67cd4f2c-f427-444d-90b1-fee78d1afcdd}",
                 "hidden": false,
