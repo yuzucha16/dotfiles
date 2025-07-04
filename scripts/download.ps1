@@ -3,9 +3,10 @@ if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 Get-ExecutionPolicy
 Set-ExecutionPolicy RemoteSigned # Unrestricted
 
-$files = @( "coreutils\coreutils"
+$files = @( "astronvim\template",
+			"coreutils\coreutils",
+            "ryanoasis\nerd-fonts"
 		  )
-#             "ryanoasis\nerd-fonts"
 
 ### Cloning repos
 foreach( $item in $files ){
