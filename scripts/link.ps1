@@ -1,7 +1,8 @@
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole("Administrators")) { Start-Process powershell.exe "-File `"$PSCommandPath`"" -Verb RunAs; exit }
 
 Get-ExecutionPolicy
-Set-ExecutionPolicy RemoteSigned # Unrestricted
+#Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+#Set-ExecutionPolicy -ExecutionPolicy Restricted -Scope Process
 
 $dots_dir = $(Split-Path $MyInvocation.MyCommand.Path -Parent) + "\..\"
 $files = @(

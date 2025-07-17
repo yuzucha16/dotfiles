@@ -1,8 +1,9 @@
 #if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole("Administrators")) { Start-Process powershell.exe "-File `"$PSCommandPath`"" -Verb RunAs; exit }
-
 #Get-ExecutionPolicy
 #Set-ExecutionPolicy RemoteSigned # Unrestricted
 
+#Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+#Set-ExecutionPolicy -ExecutionPolicy Restricted -Scope Process
 Get-ExecutionPolicy
 { Start-Process powershell.exe "-File `"$PSCommandPath`"" -Verb RunAs; exit }
 
@@ -11,7 +12,7 @@ $buckets=@( "extras", "versions", "nonportable", "sysinternals" )
 $apps   =@(
             "autohotkey", "winmerge", "rufus", "irfanview", "googlechrome",
             "windows-terminal", "pwsh", "nu", "starship", "PSReadLine", "posh-git", "Terminal-Icons", "scoop-completion",
-			"vim", "neovim", "llvm", "neovide", "notepadplusplus", "obsidian",
+			"vim", "neovim", "llvm", "neovide", "notepadplusplus", "obsidian", "winget",
             "ghq", "fork", "p4v", "fzf",
 			"cmake", "gcc", "rustup", "go", "openssh", "teraterm",
             "uutils-coreutils", "fd", "ripgrep", "lsd", "bat", "zoxide", "broot", "du", "sudo", "which"
@@ -29,6 +30,23 @@ $state_dir  = $env:USERPROFILE + "\.local\state"
 [Environment]::SetEnvironmentVariable('XDG_DATA_HOME',   $data_dir,   'User')
 [Environment]::SetEnvironmentVariable('XDG_STATE_HOME',  $state_dir,  'User')
 [Environment]::GetEnvironmentVariables('User')
+
+if( !(Test-Path $config_dir) ){
+  mkdir $config_dir
+  Write-Host -ForegroundColor Green [Created]  $config_dir
+}
+if( !(Test-Path $cache_dir) ){
+  mkdir $cache_dir
+  Write-Host -ForegroundColor Green [Created]  $cache_dir
+}
+if( !(Test-Path $data_dir) ){
+  mkdir $data_dir
+  Write-Host -ForegroundColor Green [Created]  $data_dir
+}
+if( !(Test-Path $state_dir) ){
+  mkdir $state_dir
+  Write-Host -ForegroundColor Green [Created]  $state_dir
+}
 
 echo $env:HOME
 echo $env:XDG_CONFIG_HOME
@@ -68,13 +86,3 @@ foreach( $item in $apps ){
 	scoop install $item
   }
 }
-
-### Visual Studio Installer for 2022
-# path: C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.42.34433\bin\Hostx64\x64
-winget install Microsoft.VisualStudio.2022.BuildTools
-
-### Clone my setting
-ghq get yuzucha16/dotfiles
-ghq get yuzucha16/tips
-
-pause
