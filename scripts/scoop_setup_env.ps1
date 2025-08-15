@@ -10,13 +10,15 @@ Get-ExecutionPolicy
 ### scoop installation
 $buckets=@( "extras", "versions", "nonportable", "sysinternals" )
 $apps   =@(
-            "autohotkey", "winmerge", "rufus", "irfanview", "googlechrome",
-            "windows-terminal", "pwsh", "nu", "starship", "PSReadLine", "posh-git", "Terminal-Icons", "scoop-completion",
-			"vim", "neovim", "llvm", "neovide", "notepadplusplus", "obsidian", "winget",
-            "ghq", "fork", "p4v", "fzf",
-			"cmake", "gcc", "rustup", "go", "openssh", "teraterm",
-            "uutils-coreutils", "fd", "ripgrep", "lsd", "bat", "zoxide", "broot", "du", "sudo", "which"
+            "autohotkey", "winmerge", "rufus", "irfanview", "teraterm",
+            "windows-terminal", "pwsh", "starship", "PSReadLine", "scoop-completion",
+			"neovim", "llvm", "neovide", "notepadplusplus", "obsidian",
+            "ghq", "fork", "p4v",
+			"ripgrep", "which"
             )
+
+# "googlechrome", "nu", "posh-git", "Terminal-Icons", "vim", "winget", "cmake", "gcc", "rustup", "go", "openssh", 
+# "uutils-coreutils", "fd",  "lsd", "bat", "zoxide", "broot", "du", "sudo", "fzf",
 
 ### XDG Base Directory setting
 $home_dir   = $env:USERPROFILE
@@ -55,9 +57,9 @@ echo $env:XDG_DATA_HOME
 echo $env:XDG_STATE_HOME
 
 ### work or config Directory setting
-$bat_dir = $env:USERPROFILE + "\.config\bat"
-[Environment]::SetEnvironmentVariable('BAT_CONFIG_PATH', $bat_dir, 'User')
-echo $env:BAT_CONFIG_PATH
+#$bat_dir = $env:USERPROFILE + "\.config\bat"
+#[Environment]::SetEnvironmentVariable('BAT_CONFIG_PATH', $bat_dir, 'User')
+#echo $env:BAT_CONFIG_PATH
 
 ### Package Manager & git installaion
 if( !(Test-Path ~/scoop) ){
@@ -86,3 +88,5 @@ foreach( $item in $apps ){
 	scoop install $item
   }
 }
+
+pause
