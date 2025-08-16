@@ -10,7 +10,6 @@ $files = @(
             @("notepadpp\contextMenu.xml",          "$Home\scoop\apps\notepadplusplus\current\contextMenu.xml"),
             @("notepadpp\shortcuts.xml",            "$Home\scoop\apps\notepadplusplus\current\shortcuts.xml"),
             @("notepadpp\stylers.xml",              "$Home\scoop\apps\notepadplusplus\current\stylers.xml"),
-            @("notepadpp\Zenburn_Darker-v2.xml",    "$Home\scoop\apps\notepadplusplus\current\themes\Zenburn_Darker-v2.xml"),
             @("nvim",                               "$Home\.config\nvim"),
             @("starship.toml",                      "$HOME\.config\starship.toml"),
             @("Microsoft.PowerShell_profile.ps1",   "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"),

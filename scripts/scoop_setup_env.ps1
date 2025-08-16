@@ -12,7 +12,7 @@ $buckets=@( "extras", "versions", "nonportable", "sysinternals" )
 $apps   =@(
             "autohotkey", "winmerge", "rufus", "irfanview", "teraterm",
             "windows-terminal", "pwsh", "starship", "PSReadLine", "scoop-completion",
-			"neovim", "llvm", "neovide", "notepadplusplus", "obsidian",
+			"neovim", "llvm", "goneovim", "notepadplusplus", "obsidian",
             "ghq", "fork", "p4v",
 			"ripgrep", "which"
             )
