@@ -11,14 +11,14 @@ Get-ExecutionPolicy
 $buckets=@( "extras", "versions", "nonportable", "sysinternals" )
 $apps   =@(
             "autohotkey", "winmerge", "rufus", "irfanview", "teraterm",
-            "windows-terminal", "pwsh", "starship", "PSReadLine", "scoop-completion",
+            "windows-terminal", "pwsh", "PSReadLine", "scoop-completion",
 			"neovim", "llvm", "goneovim", "notepadplusplus", "obsidian",
             "ghq", "fork", "p4v",
 			"ripgrep", "which"
             )
 
 # "googlechrome", "nu", "posh-git", "Terminal-Icons", "vim", "winget", "cmake", "gcc", "rustup", "go", "openssh", 
-# "uutils-coreutils", "fd",  "lsd", "bat", "zoxide", "broot", "du", "sudo", "fzf",
+# "uutils-coreutils", "fd",  "lsd", "bat", "zoxide", "broot", "du", "sudo", "fzf", "starship",
 
 ### XDG Base Directory setting
 $home_dir   = $env:USERPROFILE
