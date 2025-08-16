@@ -1,0 +1,13 @@
+# src (relative to DOTS_DIR) | dst (absolute)
+
+notepadpp\config.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\config.xml
+notepadpp\contextMenu.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\contextMenu.xml
+notepadpp\shortcuts.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\shortcuts.xml
+notepadpp\stylers.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\stylers.xml
+nvim|%USERPROFILE%\.config\nvim
+Microsoft.PowerShell_profile.ps1|%USERPROFILE%\Documents\PowerShell\Microsoft\PowerShell_profile.ps1
+profile.ps1|%USERPROFILE%\Documents\PowerShell\profile.ps1
+settings.json|%USERPROFILE%\scoop\apps\windows-terminal\current\settings\settings.json
+Autohotkey64.ahk|%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Autohotkey64.ahk
+Autohotkey64.ahk|%USERPROFILE%\scoop\apps\autohotkey\current\v2\Autohotkey64.ahk
+.gitconfig|%USERPROFILE%\.config\git\config
