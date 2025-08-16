@@ -12,9 +12,9 @@ $buckets=@( "extras", "versions", "nonportable", "sysinternals" )
 $apps   =@(
             "autohotkey", "winmerge", "rufus", "irfanview", "teraterm",
             "windows-terminal", "pwsh", "PSReadLine", "scoop-completion",
-			"neovim", "llvm", "goneovim", "notepadplusplus", "obsidian",
-            "ghq", "fork", "p4v",
-			"ripgrep", "which"
+	    "neovim", "llvm", "goneovim", "notepadplusplus", "obsidian",
+            "ghq", "sourcegit",
+            "ripgrep", "fd", "which"
             )
 
 # "googlechrome", "nu", "posh-git", "Terminal-Icons", "vim", "winget", "cmake", "gcc", "rustup", "go", "openssh", 

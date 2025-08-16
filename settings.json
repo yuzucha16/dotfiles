@@ -60,19 +60,6 @@
                 "name": "PowerShell",
                 "opacity": 92,
                 "source": "Windows.Terminal.PowershellCore"
-            },
-            {
-                "commandline": "\"C:\\Users\\kaz\\scoop\\shims\\nu.exe\"",
-                "font": 
-                {
-                    "face": "MyricaMMonospace Nerd Font"
-                },
-                "guid": "{67cd4f2c-f427-444d-90b1-fee78d1afcdd}",
-                "hidden": false,
-                "icon": "ms-appx:///ProfileIcons/pwsh.png",
-                "name": "nushell",
-                "opacity": 92,
-                "startingDirectory": "%USERPROFILE%"
             }
         ]
     },
