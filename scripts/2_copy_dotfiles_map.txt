@@ -14,8 +14,7 @@ profile.ps1|%USERPROFILE%\Documents\PowerShell\profile.ps1
 settings.json|%USERPROFILE%\scoop\apps\windows-terminal\current\settings\settings.json
 
 ### ユーティリティ
-Autohotkey64.ahk|%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Autohotkey64.ahk
-Autohotkey64.ahk|%USERPROFILE%\scoop\apps\autohotkey\current\v2\Autohotkey64.ahk
+#Autohotkey64.ahk|%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Autohotkey64.ahk
 
 ### 開発
 .gitconfig|%USERPROFILE%\.config\git\config

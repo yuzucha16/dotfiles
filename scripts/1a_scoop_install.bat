@@ -1,5 +1,6 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
+set "APPS=windows-terminal pwsh psreadline scoop-completion neovim llvm goneovim notepadplusplus ghq sourcegit ripgrep fd which lsd broot zoxide"
 
 REM ======================================================
 REM  Scoop apps/buckets installer (User mode only)
@@ -35,7 +36,6 @@ REM ---------------------------------------------
 REM  バケツとアプリ
 REM ---------------------------------------------
 set "BUCKETS=extras versions nonportable sysinternals"
-set "APPS=autohotkey winmerge rufus irfanview teraterm windows-terminal pwsh psreadline scoop-completion neovim llvm goneovim notepadplusplus obsidian ghq sourcegit ripgrep fd which"
 
 REM ▼git は必須なので先に確保
 if not exist "%SCOOP_ROOT%\apps\git\" (
