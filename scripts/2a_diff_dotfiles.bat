@@ -5,7 +5,7 @@ chcp 65001 >nul 2>&1
 rem === 設定 ===
 rem 第1引数：マップファイル（省略時は scripts\2_copy_dotfiles_map.txt）
 set "SCRIPT_DIR=%~dp0"
-set "DEFAULT_MAP=%SCRIPT_DIR%2_copy_dotfiles_map.txt"
+set "DEFAULT_MAP=%SCRIPT_DIR%20_copy_dotfiles_map.txt"
 if "%~1"=="" (
   set "MAPFILE=%DEFAULT_MAP%"
 ) else (

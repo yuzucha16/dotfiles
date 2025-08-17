@@ -4,7 +4,7 @@ setlocal EnableExtensions EnableDelayedExpansion
 rem === このbatの親 (= dotfiles 直下) を安全に取得 ===
 for %%I in ("%~dp0..") do set "DOTS_DIR=%%~fI"
 
-set "MAPFILE=%DOTS_DIR%\scripts\2_copy_dotfiles_map.txt"
+set "MAPFILE=%DOTS_DIR%\scripts\20_copy_dotfiles_map.txt"
 
 rem ---- モード選択 ----
 echo Select mode:

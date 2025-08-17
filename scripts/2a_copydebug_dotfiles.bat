@@ -4,7 +4,7 @@ chcp 65001 >nul
 
 REM ===== 設定 =====
 for %%I in ("%~dp0..") do set "DOTS_DIR=%%~fI"
-set "MAPFILE=%~dp02_copy_dotfiles_map.txt"
+set "MAPFILE=%~dp020_copy_dotfiles_map.txt"
 
 if not exist "%MAPFILE%" (
   echo Mapping file not found: "%MAPFILE%"
