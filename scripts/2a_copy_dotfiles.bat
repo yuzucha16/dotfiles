@@ -1,62 +1,69 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
-chcp 65001 >nul
 
-REM ===== 設定 =====
+rem === このbatの親 (= dotfiles 直下) を安全に取得 ===
 for %%I in ("%~dp0..") do set "DOTS_DIR=%%~fI"
-set "MAPFILE=%~dp02_copy_dotfiles_map.txt"
 
-if not exist "%MAPFILE%" (
-  echo Mapping file not found: "%MAPFILE%"
-  goto :END
-)
+set "MAPFILE=%DOTS_DIR%\scripts\2_copy_dotfiles_map.txt"
 
-REM ===== メインループ =====
+rem ---- モード選択 ----
+echo Select mode:
+echo   A) COPY , B) COPYBACK , C) LINK
+choice /C ABC /N /M "Mode? "
+set "ANS=%ERRORLEVEL%"
+if "%ANS%"=="1" set "MODE=COPY"
+if "%ANS%"=="2" set "MODE=COPYBACK"
+if "%ANS%"=="3" set "MODE=LINK"
+
+rem ---- MAPFILE 読み込み ----
 for /F "usebackq eol=# tokens=1,2 delims=|" %%A in ("%MAPFILE%") do call :PROCESS "%%~A" "%%~B"
 goto :END
 
 
 :PROCESS
 set "REL=%~1"
-set "DST_RAW=%~2"
-if "%REL%"=="" exit /b
-if "%DST_RAW%"=="" exit /b
+set "DST=%~2"
+if not defined REL goto :EOF
+if not defined DST goto :EOF
+call set "DST=%DST%"
 
-set "DST=%DST_RAW%"
-call set "DST=%%DST%%"
+set "SRC=%DOTS_DIR%\%REL%"
 
-set "SRC=%REL%"
-if not "%SRC:~1,1%"==":" if not "%SRC:~0,1%"=="\" if not "%SRC:~0,2%"=="\\" (
-  set "SRC=%DOTS_DIR%\%SRC%"
-)
+if "%MODE%"=="COPY"     call :COPY "%SRC%" "%DST%"
+if "%MODE%"=="COPYBACK" call :COPY "%DST%" "%SRC%"
+if "%MODE%"=="LINK"     call :LINK "%SRC%" "%DST%"
+goto :EOF
 
-if not exist "%SRC%" exit /b
 
-if exist "%SRC%\" (
-  call :COPY_DIR "%SRC%" "%DST%"
+:COPY
+rem 汎用コピー（ファイル/ディレクトリ両対応）
+set "SRC=%~1"
+set "DST=%~2"
+if exist "%SRC%\NUL" (
+  robocopy "%SRC%" "%DST%" /E /COPY:DAT /R:1 /W:1 /NFL /NDL /NP /NJH /NJS >nul
 ) else (
-  call :COPY_FILE "%SRC%" "%DST%"
+  for %%P in ("%DST%") do set "DSTDIR=%%~dpP"
+  if not exist "!DSTDIR!" mkdir "!DSTDIR!"
+  copy /Y "%SRC%" "%DST%" >nul
 )
-exit /b
+goto :EOF
 
 
-:COPY_DIR
-rmdir /S /Q "%~2" 2>nul
-mkdir "%~2" 2>nul
-xcopy "%~1" "%~2" /E /I /Q /Y >nul
-if errorlevel 1 echo Failed: %~1
-exit /b
-
-
-:COPY_FILE
-for %%P in ("%~2") do set "DST_PARENT=%%~dpP"
-if not exist "!DST_PARENT!" mkdir "!DST_PARENT!" >nul 2>&1
-copy /Y "%~1" "%~2" >nul
-if errorlevel 1 echo Failed: %~1
-exit /b
+:LINK
+set "SRC=%~1"
+set "DST=%~2"
+if not exist "%SRC%" (
+  echo Skip: no source "%SRC%"
+  goto :EOF
+)
+if exist "%DST%" (
+  echo Skip: already exists "%DST%"
+  goto :EOF
+)
+mklink /D "%DST%" "%SRC%"
+goto :EOF
 
 
 :END
-endlocal
 pause
-
+endlocal
