@@ -15,6 +15,7 @@ setx XDG_CACHE_HOME  "$XDG_CACHE_HOME"  | Out-Null
 setx XDG_DATA_HOME   "$XDG_DATA_HOME"   | Out-Null
 setx XDG_STATE_HOME  "$XDG_STATE_HOME"  | Out-Null
 setx VAULT_HOME      "$VAULT_HOME"      | Out-Null
+setx GHQ_ROOT        "$GHQ_ROOT"        | Out-Null
 
 # ディレクトリ作成
 foreach ($dir in @($XDG_CONFIG_HOME, $XDG_CACHE_HOME, $XDG_DATA_HOME, $XDG_STATE_HOME, 
@@ -33,5 +34,6 @@ Write-Output "XDG_CACHE_HOME=$XDG_CACHE_HOME"
 Write-Output "XDG_DATA_HOME=$XDG_DATA_HOME"
 Write-Output "XDG_STATE_HOME=$XDG_STATE_HOME"
 Write-Output "VAULT_HOME=$VAULT_HOME"
+Write-Output "GHQ_ROOT=$GHQ_ROOT"
 
 Pause
