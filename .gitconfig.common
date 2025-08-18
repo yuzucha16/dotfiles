@@ -15,9 +15,9 @@
     clean = git-lfs clean -- %f
     smudge = git-lfs smudge -- %f
     process = git-lfs filter-process
-[user]
-    name = yuzucha16
-    email = yuzucha.endou7@gmail.com
 [http]
 	sslbackend = schannel
 	sslVerify = true
+#git config --global include.path "V:\dotfiles\.gitconfig.common"
+#git config --global user.name user
+#git config --global user.email user@example.com
