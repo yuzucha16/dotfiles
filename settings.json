@@ -54,7 +54,7 @@
         "list": 
         [
             {
-                "commandline": "pwsh.exe -NoLogo -NoProfile -NoExit -ExecutionPolicy Bypass -Command \"& { try { if (-not (Get-Module PSReadLine)) { Import-Module PSReadLine -ErrorAction Stop } } catch {}; if (Get-Module -ListAvailable PSReadLine) { Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward; Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward }; $s = Get-Command scoop.ps1 -ErrorAction SilentlyContinue; if ($s) { $m = Join-Path (Split-Path (Split-Path $s.Path -Parent) -Parent) 'modules\\scoop-completion'; if (Test-Path $m) { try { Import-Module $m -ErrorAction Stop } catch { Write-Verbose $_ } } }; try { Invoke-Expression (& starship init powershell) } catch {} }\"",
+                "commandline": "pwsh.exe -NoLogo -NoProfile -NoExit -ExecutionPolicy Bypass -Command \"& { try { if (-not (Get-Module PSReadLine)) { Import-Module PSReadLine -ErrorAction Stop } } catch {}; if (Get-Module -ListAvailable PSReadLine) { Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward; Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward }; $s = Get-Command scoop.ps1 -ErrorAction SilentlyContinue; if ($s) { $m = Join-Path (Split-Path (Split-Path $s.Path -Parent) -Parent) 'modules\\scoop-completion'; if (Test-Path $m) { try { Import-Module $m -ErrorAction Stop } catch {} } }; try { Invoke-Expression (& starship init powershell) } catch {}; try { Set-ExecutionPolicy -Scope Process Restricted -Force } catch {} }\"",
                 "font": 
                 {
                     "face": "MyricaMMonospace Nerd Font"
