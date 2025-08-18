@@ -18,6 +18,7 @@ bucket versions
 windows-terminal
 pwsh
 psreadline
+starship
 scoop-completion
 neovim
 llvm

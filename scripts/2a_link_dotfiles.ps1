@@ -11,17 +11,17 @@ $files = @(
             @("notepadpp\shortcuts.xml",            "$Home\scoop\apps\notepadplusplus\current\shortcuts.xml"),
             @("notepadpp\stylers.xml",              "$Home\scoop\apps\notepadplusplus\current\stylers.xml"),
             @("nvim",                               "$Home\.config\nvim"),
-            @("Microsoft.PowerShell_profile.ps1",   "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"),
-            @("profile.ps1",                        "$HOME\Documents\PowerShell\profile.ps1"),
             @("settings.json",                      "$Home\scoop\apps\windows-terminal\current\settings\settings.json"),
+            @("starship.toml",                      "$HOME\.config\starship.toml"),
 			@("startup.bat",                        "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\startup.bat"),
             @(".gitconfig",                         "$HOME\.config\git\config")
             )
             # [0]: src file, [1]: dst file
 
-#			@("Autohotkey64.ahk",                   "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Autohotkey64.ahk"),
-# 			@("Autohotkey64.ahk",                   "$HOME\scoop\apps\autohotkey\current\v2\Autohotkey64.ahk"),
-#            @("starship.toml",                      "$HOME\.config\starship.toml"),
+#            @("Microsoft.PowerShell_profile.ps1",   "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"),
+#            @("profile.ps1",                        "$HOME\Documents\PowerShell\profile.ps1"),
+#			 @("Autohotkey64.ahk",                   "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Autohotkey64.ahk"),
+# 			 @("Autohotkey64.ahk",                   "$HOME\scoop\apps\autohotkey\current\v2\Autohotkey64.ahk"),
 #            @("config",		               	        "$Home\.config\bat\config"),
 #            @(".vimrc",                             "$Home\.config\_vimrc"),
 #            @(".vimrc",                             "$Home\.vimrc"),
