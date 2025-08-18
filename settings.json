@@ -48,12 +48,13 @@
             "font": 
             {
                 "face": "MyricaMMonospace Nerd Font"
-            }
+            },
+            "startingDirectory": "%VAULT_HOME%"
         },
         "list": 
         [
             {
-                "commandline": "pwsh.exe",
+                "commandline": "pwsh.exe -NoLogo -NoProfile -NoExit -ExecutionPolicy Bypass -Command \"& { try { if (-not (Get-Module PSReadLine)) { Import-Module PSReadLine -ErrorAction Stop } } catch {}; if (Get-Module -ListAvailable PSReadLine) { Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward; Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward }; $s = Get-Command scoop.ps1 -ErrorAction SilentlyContinue; if ($s) { $m = Join-Path (Split-Path (Split-Path $s.Path -Parent) -Parent) 'modules\\scoop-completion'; if (Test-Path $m) { try { Import-Module $m -ErrorAction Stop } catch { Write-Verbose $_ } } } }\"",
                 "font": 
                 {
                     "face": "MyricaMMonospace Nerd Font"
@@ -107,75 +108,6 @@
             "selectionBackground": "#665C54",
             "white": "#A89984",
             "yellow": "#D79921"
-        },
-        {
-            "background": "#FDF6E3",
-            "black": "#002B36",
-            "blue": "#268BD2",
-            "brightBlack": "#073642",
-            "brightBlue": "#839496",
-            "brightCyan": "#93A1A1",
-            "brightGreen": "#586E75",
-            "brightPurple": "#6C71C4",
-            "brightRed": "#CB4B16",
-            "brightWhite": "#FDF6E3",
-            "brightYellow": "#657B83",
-            "cursorColor": "#002B36",
-            "cyan": "#2AA198",
-            "foreground": "#657B83",
-            "green": "#859900",
-            "name": "Solarized Light",
-            "purple": "#D33682",
-            "red": "#DC322F",
-            "selectionBackground": "#073642",
-            "white": "#EEE8D5",
-            "yellow": "#B58900"
-        },
-        {
-            "background": "#FFFFFF",
-            "black": "#000000",
-            "blue": "#3465A4",
-            "brightBlack": "#555753",
-            "brightBlue": "#729FCF",
-            "brightCyan": "#34E2E2",
-            "brightGreen": "#8AE234",
-            "brightPurple": "#AD7FA8",
-            "brightRed": "#EF2929",
-            "brightWhite": "#EEEEEC",
-            "brightYellow": "#FCE94F",
-            "cursorColor": "#000000",
-            "cyan": "#06989A",
-            "foreground": "#555753",
-            "green": "#4E9A06",
-            "name": "Tango Light",
-            "purple": "#75507B",
-            "red": "#CC0000",
-            "selectionBackground": "#555753",
-            "white": "#D3D7CF",
-            "yellow": "#C4A000"
-        },
-        {
-            "background": "#000000",
-            "black": "#000000",
-            "blue": "#000080",
-            "brightBlack": "#808080",
-            "brightBlue": "#0000FF",
-            "brightCyan": "#00FFFF",
-            "brightGreen": "#00FF00",
-            "brightPurple": "#FF00FF",
-            "brightRed": "#FF0000",
-            "brightWhite": "#FFFFFF",
-            "brightYellow": "#FFFF00",
-            "cursorColor": "#FFFFFF",
-            "cyan": "#008080",
-            "foreground": "#C0C0C0",
-            "green": "#008000",
-            "name": "Vintage",
-            "purple": "#800080",
-            "red": "#800000",
-            "selectionBackground": "#FFFFFF",
-            "white": "#C0C0C0",
-            "yellow": "#808000"
         }
     ],
     "themes": []
