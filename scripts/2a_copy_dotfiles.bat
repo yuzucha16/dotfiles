@@ -78,7 +78,9 @@ rem 正規化（末尾\除去）
 if "%SRC:~-1%"=="\" set "SRC=%SRC:~0,-1%"
 if "%DST:~-1%"=="\" set "DST=%DST:~0,-1%"
 
-echo [LINK try] SRC="%SRC%"  DST="%DST%"
+echo SRC="%SRC%"
+echo DST="%DST%"
+echo .
 
 if not exist "%SRC%" (
   echo [SKIP] no source
@@ -133,8 +135,6 @@ if exist "%SRC%\*" (
   )
 )
 
-
-echo [LINK rc=%ERRORLEVEL%]
 if exist "%DST%" (
   echo [OK] "%DST%" -> "%SRC%"
 ) else (
