@@ -80,7 +80,6 @@ if "%DST:~-1%"=="\" set "DST=%DST:~0,-1%"
 
 echo SRC="%SRC%"
 echo DST="%DST%"
-echo .
 
 if not exist "%SRC%" (
   echo [SKIP] no source
@@ -127,13 +126,14 @@ if exist "%SRC%\*" (
   rem ディレクトリは /J 優先 → ダメなら /D
   mklink /J "%DST%" "%SRC%" >nul || mklink /D "%DST%" "%SRC%" >nul
 ) else (
-  rem ファイルは：symlink が失敗したら COPY（ハードリンクは使わない）
-  mklink "%DST%" "%SRC%" >nul || (
-    echo [INFO] symlink failed; fallback COPY
-    for %%P in ("%DST%") do if not exist "%%~dpP" mkdir "%%~dpP" >nul 2>&1
-    copy /Y "%SRC%" "%DST%" >nul
+REM   rem ファイルは：symlink が失敗したら COPY（ハードリンクは使わない）
+REM   mklink "%DST%" "%SRC%" >nul || (
+REM     echo [INFO] symlink failed; fallback COPY
+REM     for %%P in ("%DST%") do if not exist "%%~dpP" mkdir "%%~dpP" >nul 2>&1
+REM     copy /Y "%SRC%" "%DST%" >nul
   )
 )
+echo .
 
 if exist "%DST%" (
   echo [OK] "%DST%" -> "%SRC%"
