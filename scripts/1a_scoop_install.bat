@@ -1,6 +1,24 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
-set "APPS=chatgpt obsidian rufus etcher teraterm winmerge irfanview"
+set APPS=^
+windows-terminal ^
+pwsh ^
+psreadline ^
+scoop-completion ^
+neovim ^
+llvm ^
+goneovim ^
+notepadplusplus ^
+winmerge ^
+glow ^
+ghq ^
+sourcegit ^
+ripgrep ^
+fd ^
+which ^
+lsd ^
+broot ^
+zoxide
 
 REM ======================================================
 REM  Scoop apps/buckets installer (User mode only)
@@ -14,7 +32,7 @@ if exist "%SCOOP_SHIMS%\scoop.cmd" (
   set "PATH=%SCOOP_SHIMS%;%PATH%"
 )
 
-REM ▼Scoop が無ければ導入
+REM Scoop が無ければ導入 (Bypass)
 if not exist "%SCOOP_SHIMS%\scoop.cmd" (
   echo Scoop not found. Installing...
   powershell -NoProfile -ExecutionPolicy Bypass -Command "iwr -useb get.scoop.sh | iex"

@@ -1,6 +1,12 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
-set "APPS=windows-terminal pwsh psreadline scoop-completion neovim llvm goneovim notepadplusplus ghq sourcegit ripgrep fd which lsd broot zoxide"
+set APPS=^
+chatgpt ^
+obsidian ^
+rufus ^
+etcher ^
+teraterm ^
+irfanview
 
 REM ======================================================
 REM  Scoop apps/buckets installer (User mode only)
