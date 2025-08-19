@@ -39,7 +39,6 @@ for /L %%i in (0,1,%MAX_IDX%) do (
   )
 )
 
-echo.
 echo Finished. MODE=%MODE%
 goto :END
 
@@ -126,11 +125,11 @@ if exist "%SRC%\*" (
   rem ディレクトリは /J 優先 → ダメなら /D
   mklink /J "%DST%" "%SRC%" >nul || mklink /D "%DST%" "%SRC%" >nul
 ) else (
-REM   rem ファイルは：symlink が失敗したら COPY（ハードリンクは使わない）
-REM   mklink "%DST%" "%SRC%" >nul || (
-REM     echo [INFO] symlink failed; fallback COPY
-REM     for %%P in ("%DST%") do if not exist "%%~dpP" mkdir "%%~dpP" >nul 2>&1
-REM     copy /Y "%SRC%" "%DST%" >nul
+  rem ファイルは：symlink が失敗したら COPY（ハードリンクは使わない）
+  mklink "%DST%" "%SRC%" >nul || (
+    echo [INFO] symlink failed; fallback COPY
+    for %%P in ("%DST%") do if not exist "%%~dpP" mkdir "%%~dpP" >nul 2>&1
+    copy /Y "%SRC%" "%DST%" >nul
   )
 )
 echo .
