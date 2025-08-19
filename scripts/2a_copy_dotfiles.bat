@@ -77,8 +77,8 @@ rem 正規化（末尾\除去）
 if "%SRC:~-1%"=="\" set "SRC=%SRC:~0,-1%"
 if "%DST:~-1%"=="\" set "DST=%DST:~0,-1%"
 
-echo SRC="%SRC%"
-echo DST="%DST%"
+echo SRC = %SRC%
+echo DST = %DST%
 
 if not exist "%SRC%" (
   echo [SKIP] no source
@@ -132,10 +132,10 @@ if exist "%SRC%\*" (
     copy /Y "%SRC%" "%DST%" >nul
   )
 )
-echo .
+echo.
 
 if exist "%DST%" (
-  echo [OK] "%DST%" -> "%SRC%"
+  echo [OK] "%DST%" -> "%SRC%"  >nul 2>&1
 ) else (
   echo [ERR] failed create (policy/permission?)
 )
