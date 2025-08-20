@@ -2,11 +2,12 @@
 setlocal EnableExtensions EnableDelayedExpansion
 set APPS=^
 chatgpt ^
-obsidian ^
 rufus ^
-etcher ^
 teraterm ^
 irfanview
+
+REM obsidian ^
+REM etcher ^
 
 REM ======================================================
 REM  Scoop apps/buckets installer (User mode only)

@@ -24,9 +24,10 @@ set "FILES[4]=nvim|%USERPROFILE%\.config\nvim"
 set "FILES[5]=starship.toml|%USERPROFILE%\.config\starship.toml"
 set "FILES[6]=startup.bat|%USERPROFILE%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\startup.bat"
 set "FILES[7]=settings.json|%USERPROFILE%\scoop\apps\windows-terminal\current\settings\settings.json"
-set "MAX_IDX=7"
+set "FILES[8]=.gitconfig|%USERPROFILE%\.config\git\config"
+set "MAX_IDX=8"
 
-REM set "FILES[8]=.gitconfig|%USERPROFILE%\.config\git\config"
+
 REM            @("Microsoft.PowerShell_profile.ps1",   "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"),
 REM            @("profile.ps1",                        "$HOME\Documents\PowerShell\profile.ps1"),
 REM            @("config",		               	        "$Home\.config\bat\config"),
