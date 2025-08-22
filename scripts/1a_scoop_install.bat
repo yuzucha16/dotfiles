@@ -3,24 +3,25 @@ setlocal EnableExtensions EnableDelayedExpansion
 set APPS=^
 windows-terminal ^
 pwsh ^
-neovim ^
-llvm ^
-goneovim ^
+PSReadLine ^
+starship ^
+scoop-completion ^
 notepadplusplus ^
 winmerge ^
 marktext ^
+pdf-xchange-editor ^
 ghq ^
 sourcegit ^
 ripgrep ^
 fd ^
 which ^
-lsd ^
-broot ^
-zoxide
 
-REM psreadline ^
-REM scoop-completion ^
-REM starship ^
+REM llvm ^
+REM goneovim ^
+REM neovim ^
+REM lsd ^
+REM broot ^
+REM zoxide
 
 REM ======================================================
 REM  Scoop apps/buckets installer (User mode only)

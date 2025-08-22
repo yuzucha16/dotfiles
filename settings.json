@@ -55,7 +55,7 @@
         "list": 
         [
             {
-                "commandline": "pwsh -NoProfile",
+                "commandline": "pwsh.exe -NoLogo -NoProfile -NoExit -ExecutionPolicy Bypass -Command \"& { try { if (-not (Get-Module PSReadLine)) { Import-Module PSReadLine -ErrorAction Stop } } catch {}; if (Get-Module -ListAvailable PSReadLine) { Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward; Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward }; $s = Get-Command scoop.ps1 -ErrorAction SilentlyContinue; if ($s) { $m = Join-Path (Split-Path (Split-Path $s.Path -Parent) -Parent) 'modules\\scoop-completion'; if (Test-Path $m) { try { Import-Module $m -ErrorAction Stop } catch {} } }; try { Invoke-Expression (& starship init powershell) } catch {}; try { Set-ExecutionPolicy -Scope Process Restricted -Force } catch {} }\"",
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
                 "name": "PowerShell"
@@ -71,6 +71,7 @@
                 "name": "Windows PowerShell"
             },
             {
+                "commandline": "ubuntu2404",
                 "guid": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
                 "hidden": false,
                 "name": "Ubuntu 24.04.1 LTS"
