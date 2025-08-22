@@ -16,7 +16,7 @@ sudo apt upgrade -y
 
 # 開発に必要なパッケージ一覧
 PACKAGES=(
-    zsh
+    #zsh
     #build-essential
     #ninja-build
     #cmake
@@ -33,8 +33,8 @@ PACKAGES=(
     #ccache
     #valgrind 
     #gdb 
-    #bear
-    #gawk # これ以降はYocto用途
+    bear
+    gawk # これ以降はYocto用途
     ##git-core -- already installed?
     #wget
     #diffstat 
@@ -74,6 +74,13 @@ echo "[*] Cleaning up..."
 sudo apt autoremove -y
 sudo apt clean
 
+# Go https://go.dev/doc/install
+sudo curl -fsSLo /tmp/go1.25.0.linux-amd64.tar.gz https://go.dev/dl/go1.25.0.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.25.0.linux-amd64.tar.gz
+sudo /usr/local/go/bin/go install github.com/x-motemen/ghq@latest
+export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:~/go/bin/ghq
+    
 # 既定値（すでに環境に値があればそれを優先）
 : "${XDG_CONFIG_HOME:=$HOME/.config}"
 : "${XDG_CACHE_HOME:=$HOME/.cache}"
@@ -101,13 +108,8 @@ mkdir -p \
   "$XDG_DATA_HOME" \
   "$XDG_STATE_HOME" \
 
-# dotfileを展開
-chmod +x ./install.sh
-chmod +x ./install.zsh
-./install.sh
-
 # zshインストール
 sudo chsh -s /usr/bin/zsh
-/usr/bin/zsh
+#/usr/bin/zsh
 
 echo "[*] Setup complete!"
