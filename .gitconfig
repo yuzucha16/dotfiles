@@ -23,3 +23,5 @@
 	sslVerify = true
 [credential "helperselector"]
 	selected = manager
+[include]
+    path = ./.gitconfig.local
