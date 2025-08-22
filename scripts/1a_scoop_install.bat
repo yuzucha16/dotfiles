@@ -7,6 +7,9 @@ PSReadLine ^
 starship ^
 scoop-completion ^
 notepadplusplus ^
+neovim ^
+goneovim ^
+llvm ^
 winmerge ^
 marktext ^
 pdf-xchange-editor ^
@@ -15,13 +18,9 @@ sourcegit ^
 ripgrep ^
 fd ^
 which ^
-
-REM llvm ^
-REM goneovim ^
-REM neovim ^
-REM lsd ^
-REM broot ^
-REM zoxide
+lsd ^
+broot ^
+zoxide
 
 REM ======================================================
 REM  Scoop apps/buckets installer (User mode only)
