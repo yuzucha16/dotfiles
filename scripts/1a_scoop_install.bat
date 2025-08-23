@@ -14,7 +14,9 @@ winmerge ^
 marktext ^
 pdf-xchange-editor ^
 ghq ^
+fork ^
 sourcegit ^
+fzf ^
 ripgrep ^
 fd ^
 which ^

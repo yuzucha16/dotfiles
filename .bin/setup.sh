@@ -6,8 +6,8 @@ set -euo pipefail
 #======================================
 
 # ミラーサーバを山形大学に変更
-echo "[*] Switching apt mirror to Yamagata University..."
-sudo sed -i.bak -E 's|http://[a-zA-Z0-9.-]+.ubuntu.com/ubuntu/|http://ftp.yz.yamagata-u.ac.jp/pub/linux/ubuntu/|g' /etc/apt/sources.list
+#echo "[*] Switching apt mirror to Yamagata University..."
+#sudo sed -i.bak -E 's|http://[a-zA-Z0-9.-]+.ubuntu.com/ubuntu/|http://ftp.yz.yamagata-u.ac.jp/pub/linux/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
 
 # 更新
 echo "[*] Updating package lists..."
@@ -23,7 +23,8 @@ PACKAGES=(
     #git
     #pkg-config
     #unzip
-    #stow
+    stow
+    #fzf
     #curl
     #clang
     #clangd
@@ -114,7 +115,9 @@ mkdir -p \
 #/usr/bin/zsh
 
 # Windows vault
-ln -s /mnt/c/Users/kaz/vault ~/vault
-ln -s /mnt/c/Users/kaz/vault/dev/src/github.com/yuzucha16/dotfiles ~/.dotfiles
+#ln -s /mnt/c/Users/kaz/vault ~/vault
+#ln -s /mnt/c/Users/kaz/vault/dev/src/github.com/yuzucha16/dotfiles ~/.dotfiles
+
+# workspace
 
 echo "[*] Setup complete!"
