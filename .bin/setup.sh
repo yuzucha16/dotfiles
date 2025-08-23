@@ -23,6 +23,7 @@ PACKAGES=(
     #git
     #pkg-config
     #unzip
+    #stow
     #curl
     #clang
     #clangd
@@ -109,7 +110,11 @@ mkdir -p \
   "$XDG_STATE_HOME" \
 
 # zshインストール
-sudo chsh -s /usr/bin/zsh
+#sudo chsh -s /usr/bin/zsh
 #/usr/bin/zsh
+
+# Windows vault
+ln -s /mnt/c/Users/kaz/vault ~/vault
+ln -s /mnt/c/Users/kaz/vault/dev/src/github.com/yuzucha16/dotfiles ~/.dotfiles
 
 echo "[*] Setup complete!"

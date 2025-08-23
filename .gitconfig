@@ -1,27 +1,5 @@
-[user]
-	name = user
-	email = user@example.com
-[core]
-    editor = vim
-    autocrlf = false
-    symlinks = true
-	longpaths = true
-[pull]
-    ff = only
-    rebase = false
-[color]
-    ui = true
-[mergetool]
-    keepBackup = false
-[filter "lfs"]
-    required = true
-    clean = git-lfs clean -- %f
-    smudge = git-lfs smudge -- %f
-    process = git-lfs filter-process
-[http]
-	sslbackend = schannel
-	sslVerify = true
-[credential "helperselector"]
-	selected = manager
 [include]
-    path = ./.gitconfig.local
+    path = $HOME/.config/git/config
+    
+[include]
+    path = $HOME/.gitconfig.local
