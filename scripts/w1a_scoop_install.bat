@@ -4,6 +4,7 @@ set APPS=^
 windows-terminal ^
 pwsh ^
 PSReadLine ^
+universal-ctags ^
 starship ^
 scoop-completion ^
 notepadplusplus ^

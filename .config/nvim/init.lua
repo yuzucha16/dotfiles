@@ -48,6 +48,7 @@ vim.opt.showtabline = 2
 -- 3) プラグイン
 require("lazy").setup({
   { "nvim-lua/plenary.nvim" },
+  { "preservim/tagbar" },
 
   -- ファジー検索
   { "nvim-telescope/telescope.nvim", version = false, dependencies = {"nvim-lua/plenary.nvim"},
@@ -296,6 +297,8 @@ require("lazy").setup({
   },
 })
 
+vim.o.tags = "tags;,"   -- ctags: ルートから親方向に "tags" を探索
+
 -- 4) 快適ショートカット（ノーマル）
 vim.keymap.set("n","<leader>qq", ":q<CR>")
 vim.keymap.set("n","<leader>ww", ":w<CR>")
@@ -306,6 +309,15 @@ vim.keymap.set("n","<leader>fg", require("telescope.builtin").live_grep)
 vim.keymap.set("n","gd", vim.lsp.buf.definition)
 vim.keymap.set("n","gr", vim.lsp.buf.references)
 vim.keymap.set("n","K",  vim.lsp.buf.hover)
+
+-- ==== ctags / Tagbar（軽量閲覧系）====
+-- Tagbar（関数/クラス一覧パネル）
+vim.keymap.set("n","<F8>", ":TagbarToggle<CR>", { silent = true, desc="Tagbar Toggle" })
+-- ctags：現在単語のタグ候補一覧（LSPが使えない時の簡易ジャンプ）
+vim.keymap.set("n","gD", ":tselect <C-r><C-w><CR>", { silent = true, desc="Tag select (ctags)" })
+-- 既定の ctags ジャンプは Ctrl-] / 戻るは Ctrl-T が使えます
+-- ※ LSP の gd を上書きして ctags にしたい場合は↓を有効化
+-- vim.keymap.set("n","gd", "<C-]>", { silent = true, desc="Go to tag (ctags)" })
 
 -- GUI（Goneovim/Neovide）でのみ適用
 if vim.fn.has("gui_running") == 1 or vim.g.goneovim then

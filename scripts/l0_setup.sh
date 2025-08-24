@@ -26,6 +26,7 @@ PACKAGES=(
     #build-essential
     #ninja-build
     #cmake
+    #universal-ctags
     #git
     #pkg-config
     #unzip
