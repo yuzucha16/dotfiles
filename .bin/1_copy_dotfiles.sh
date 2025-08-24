@@ -3,7 +3,7 @@ set -ue
 
 # ディレクトリ設定
 SRC_DIR="/mnt/c/Users/kz/vault/dev/src/github.com/yuzucha16/dotfiles"
-DST_DIR="$HOME/.config"  # XDG_CONFIG_HOME
+DST_DIR="$HOME"  
 
 echo "[INFO] Using SRC_DIR=$SRC_DIR"
 echo "[INFO] Using DST_DIR=$DST_DIR"
@@ -14,17 +14,16 @@ mkdir -p "$DST_DIR/nvim"
 
 # stow 実行
 cd "$SRC_DIR"
-pwd
+stow -v -t "$DST_DIR"   bash
 
-# ~/.config/git 配下に .gitconfig を展開
-stow -v -t "$DST_DIR"   .config
+cd "$SRC_DIR/.config"   # XDG_CONFIG_HOME
+stow -v -t "$DST_DIR/.config/git"   git
+stow -v -t "$DST_DIR/.config/nvim"  nvim
+stow -v -t "$DST_DIR/.config"       starship
 
 # ---
 # refs
-
-#stow -v -t "$DST_DIR/git"   git
-#stow -v -t "$DST_DIR/nvim"  nvim
-#stow -v -t "$DST_DIR/"      starship.toml
+#stow -v -t "$DST_DIR"   .config
 
 # Windows vault
 #unlink ~/.dotfiles

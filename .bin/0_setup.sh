@@ -9,6 +9,12 @@ set -euo pipefail
 #echo "[*] Switching apt mirror to Yamagata University..."
 #sudo sed -i.bak -E 's|http://[a-zA-Z0-9.-]+.ubuntu.com/ubuntu/|http://ftp.yz.yamagata-u.ac.jp/pub/linux/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
 
+# windowsのパスを継承しない
+# appendWindowsPath だけ false にする（存在すれば置換）
+sudo sed -i '/^\[interop\]/,/^\[/{s/^[[:space:]]*appendWindowsPath[[:space:]]*=.*$/appendWindowsPath = false/}' /etc/wsl.conf
+# [interop] セクションが無ければ追記
+grep -q '^\[interop\]' /etc/wsl.conf || echo -e '\n[interop]\nappendWindowsPath = false' | sudo tee -a /etc/wsl.conf >/dev/null
+
 # 更新
 echo "[*] Updating package lists..."
 sudo apt update -y
@@ -16,14 +22,13 @@ sudo apt upgrade -y
 
 # 開発に必要なパッケージ一覧
 PACKAGES=(
-    #zsh
+    stow
     #build-essential
     #ninja-build
     #cmake
     #git
     #pkg-config
     #unzip
-    stow
     #fzf
     #curl
     #clang
@@ -35,29 +40,7 @@ PACKAGES=(
     #ccache
     #valgrind 
     #gdb 
-    bear
-    gawk # これ以降はYocto用途
-    ##git-core -- already installed?
-    #wget
-    #diffstat 
-    #unzip
-    #texinfo
-    #gcc-multilib
-    #chrpath
-    #socat
-    #cpio
-    #python3
-    #python3-pip
-    #python3-pexpect
-    #xz-utils
-    #debianutils
-    #iputils-ping
-    #python3-git
-    #python3-jinja2
-    ##libegl1-mesa  -- nothing
-    #libsdl1.2-dev 
-    ##pylint3 -- nothing
-    #xterm
+    #bear
     # ここに追加したいツールを書いていく
 )
 
@@ -113,11 +96,5 @@ mkdir -p \
 # zshインストール
 #sudo chsh -s /usr/bin/zsh
 #/usr/bin/zsh
-
-# Windows vault
-#ln -s /mnt/c/Users/kaz/vault ~/vault
-#ln -s /mnt/c/Users/kaz/vault/dev/src/github.com/yuzucha16/dotfiles ~/.dotfiles
-
-# workspace
 
 echo "[*] Setup complete!"
