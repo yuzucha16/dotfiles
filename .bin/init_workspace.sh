@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 set -eu
 
 # ===== 設定 =====
@@ -11,7 +11,7 @@ SCRIPTS_DIR="${DEV_HOME}/scripts"
 CACHE_DIR="${DEV_HOME}/cache"
 TEMPLATES_DIR="${DEV_HOME}/templates"
 
-ZSHRC="${HOME}/.zshrc"
+BASHRC="${HOME}/.bashrc"
 MARK_BEGIN="# >>> DEV_WORKSPACE >>>"
 MARK_END="# <<< DEV_WORKSPACE <<<"
 
@@ -56,7 +56,7 @@ EOF
 
 git config --global core.excludesfile "${GIG}"
 
-# ===== ~/.zshrc へ環境変数＆関数を追記（マーカーで全体置換） =====
+# ===== ~/.bashrc へ環境変数＆関数を追記（マーカーで全体置換） =====
 BLOCK=$(cat <<EOF
 ${MARK_BEGIN}
 # 共通ワークスペース
@@ -75,7 +75,7 @@ export VAULT_HOME="/mnt/v"       # Windows 側との連携用（V: の中身）
 
 # ショートカット関数
 # r org repo -> ソースへジャンプ
-function r() {
+r() {
   if [[ \$# -ne 2 ]]; then
     echo "Usage: r <org> <repo>" >&2; return 2
   fi
@@ -88,7 +88,7 @@ function r() {
 }
 
 # b repo -> ビルド出力ディレクトリへ（なければ作る）
-function b() {
+b() {
   if [[ \$# -ne 1 ]]; then
     echo "Usage: b <repo>" >&2; return 2
   fi
@@ -97,7 +97,7 @@ function b() {
 }
 
 # rb org repo -> ビルド生成（CMake想定の雛形）
-function rb() {
+rb() {
   if [[ \$# -ne 2 ]]; then
     echo "Usage: rb <org> <repo>" >&2; return 2
   fi
@@ -116,13 +116,13 @@ EOF
 )
 
 # 既存ブロックを置換 or 追記
-if grep -Fq "${MARK_BEGIN}" "${ZSHRC}" 2>/dev/null; then
+if grep -Fq "${MARK_BEGIN}" "${BASHRC}" 2>/dev/null; then
   # begin〜endの間を削除
-  sed -i "/${MARK_BEGIN}/,/${MARK_END}/d" "${ZSHRC}"
+  sed -i "/${MARK_BEGIN}/,/${MARK_END}/d" "${BASHRC}"
 fi
 
 # 新しいブロックを末尾に追記
-printf "\n%s\n" "${BLOCK}" >> "${ZSHRC}"
+printf "\n%s\n" "${BLOCK}" >> "${BASHRC}"
 
 echo
 echo "✅ スケルトン作成完了"
@@ -130,7 +130,7 @@ echo "  DEV_HOME  : ${DEV_HOME}"
 echo "  SRC_DIR   : ${SRC_DIR}"
 echo "  BUILD_DIR : ${BUILD_DIR}"
 echo "  RUN_DIR   : ${RUN_DIR}"
-echo "  ghq.root  : $(git config --global ghq.root || echo '(未設定)')"
+echo "  ghq.root  : \$(git config --global ghq.root || echo '(未設定)')"
 echo
 echo "▶ 反映するには新しいシェルを開くか、次を実行:"
-echo "   source ${ZSHRC}"
+echo "   source ${BASHRC}"
