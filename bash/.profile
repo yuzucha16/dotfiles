@@ -12,7 +12,8 @@
 : "${XDG_CACHE_HOME:=$HOME/.cache}"
 : "${XDG_DATA_HOME:=$HOME/.local/share}"
 : "${XDG_STATE_HOME:=$HOME/.local/state}"
-export XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME
+: "${GHQ_ROOT:=$HOME/dev/src}"
+export XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME GHQ_ROOT
 
 # 初回用ディレクトリ作成（存在チェック付き）
 [ -d "$XDG_CONFIG_HOME" ] || mkdir -p "$XDG_CONFIG_HOME"
@@ -27,6 +28,8 @@ path_add() { case ":$PATH:" in *":$1:"*) ;; *) PATH="$1${PATH:+:$PATH}";; esac; 
 [ -d "$HOME/.local/bin" ] && path_add "$HOME/.local/bin"
 [ -d "$HOME/bin" ]        && path_add "$HOME/bin"
 [ -d "$HOME/.cargo/bin" ] && path_add "$HOME/.cargo/bin"
+[ -d "/usr/local/go/bin" ] && path_add "/usr/local/go/bin"
+[ -d "$HOME/.local/bin" ] && path_add "$HOME/.local/bin"
 export PATH
 
 ##########

@@ -59,13 +59,6 @@ sudo snap install nvim --classic
 echo "[*] Cleaning up..."
 sudo apt autoremove -y
 sudo apt clean
-
-# Go https://go.dev/doc/install
-sudo curl -fsSLo /tmp/go1.25.0.linux-amd64.tar.gz https://go.dev/dl/go1.25.0.linux-amd64.tar.gz
-sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.25.0.linux-amd64.tar.gz
-sudo /usr/local/go/bin/go install github.com/x-motemen/ghq@latest
-export PATH=$PATH:/usr/local/go/bin
-export PATH=$PATH:~/go/bin/ghq
     
 # 既定値（すでに環境に値があればそれを優先）
 : "${XDG_CONFIG_HOME:=$HOME/.config}"
@@ -93,9 +86,16 @@ mkdir -p \
   "$XDG_CACHE_HOME" \
   "$XDG_DATA_HOME" \
   "$XDG_STATE_HOME" \
+  "$HOME/.local/bin" \
 
 # zshインストール
 #sudo chsh -s /usr/bin/zsh
 #/usr/bin/zsh
+
+# Go https://go.dev/doc/install
+sudo curl -fsSLo /tmp/go1.25.0.linux-amd64.tar.gz https://go.dev/dl/go1.25.0.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.25.0.linux-amd64.tar.gz
+/usr/local/go/bin/go env -w GOBIN=$HOME/.local/bin
+/usr/local/go/bin/go install github.com/x-motemen/ghq@latest
 
 echo "[*] Setup complete!"
