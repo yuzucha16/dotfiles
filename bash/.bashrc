@@ -125,3 +125,5 @@ fi
 #### =========[ ローカル上書き（任意） ]=========
 # XDG 配下でのローカル拡張（マシン固有・社内PC等）
 [ -f "$XDG_CONFIG_HOME/bashrc.local" ] && . "$XDG_CONFIG_HOME/bashrc.local"
+
+command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"

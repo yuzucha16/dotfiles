@@ -23,8 +23,9 @@ vicmd_symbol   = "[❮](bold yellow) "
 truncation_length = 3
 truncate_to_repo = false
 style = "cyan"
-format = "📂 [$path]($style) "
+format = "[$path]($style) "
 read_only = " "
+#📂 
 
 # Nerd Fontのフォルダアイコンに変えたい場合（上のformatをコメントアウトし、こちらを有効化）
 # format = "󰉋 [$path]($style) "     # <- Nerd Font
@@ -107,9 +108,9 @@ style = "bold red"
 pipestatus = false
 
 # ---- 環境ヒント ----
-[env_var.WSL]
-variable = "WSL_DISTRO_NAME"
-format = "[WSL:$env_value ](dimmed green)"
+#[env_var.WSL]
+#variable = "WSL_DISTRO_NAME"
+#format = "[WSL:$env_value ](dimmed green)"
 
 [os]
 disabled = false
