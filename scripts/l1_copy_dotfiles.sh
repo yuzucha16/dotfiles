@@ -9,8 +9,8 @@ echo "[INFO] Using SRC_DIR=$SRC_DIR"
 echo "[INFO] Using DST_DIR=$DST_DIR"
 
 # 必要なディレクトリを作成
-mkdir -p "$DST_DIR/git"
-mkdir -p "$DST_DIR/nvim"
+mkdir -p "$DST_DIR/.config/git"
+mkdir -p "$DST_DIR/.config/nvim"
 
 # stow 実行
 cd "$SRC_DIR"

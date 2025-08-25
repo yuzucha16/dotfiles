@@ -6,6 +6,7 @@
     autocrlf = false
     symlinks = true
 	longpaths = true
+	excludesfile = ~/.gitigonore_global
 [pull]
     ff = only
     rebase = false

@@ -2,4 +2,4 @@
     path = $HOME/.config/git/config
     
 [include]
-    path = $HOME/.gitconfig.local
+    path = $HOME/.gitconfig_local

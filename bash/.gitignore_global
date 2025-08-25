@@ -1,0 +1,24 @@
+# build outputs (common)
+build/
+out/
+dist/
+*.o
+*.obj
+*.a
+*.so
+*.dll
+*.exe
+
+# language caches
+.node_modules/
+target/
+.gradle/
+.mvn/
+__pycache__/
+*.pyc
+
+# editor/OS junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
