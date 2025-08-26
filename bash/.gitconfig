@@ -1,5 +1,5 @@
 [include]
-    path = $HOME/.config/git/config
+    path = ~/.config/git/config
     
 [include]
-    path = $HOME/.gitconfig_local
+    path = ~/.gitconfig_local

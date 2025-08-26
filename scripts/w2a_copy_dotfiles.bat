@@ -26,7 +26,8 @@ set "FILES[6]=.config\git\config|%USERPROFILE%\.config\git\config"
 set "FILES[7]=.config\nvim|%USERPROFILE%\.config\nvim"
 set "FILES[8]=.config\starship\starship.toml|%USERPROFILE%\.config\starship.toml"
 set "FILES[9]=bash\.gitconfig|%USERPROFILE%\.gitconfig"
-set "MAX_IDX=9"
+set "FILES[10]=bash\.gitignore_global|%USERPROFILE%\.gitignore_global"
+set "MAX_IDX=10"
 
 REM            @("Microsoft.PowerShell_profile.ps1",   "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"),
 REM            @("profile.ps1",                        "$HOME\Documents\PowerShell\profile.ps1"),
