@@ -42,6 +42,8 @@ PACKAGES=(
     valgrind 
     gdb 
     bear
+    zoxide
+    fd-find
     # ここに追加したいツールを書いていく
 )
 

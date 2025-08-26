@@ -122,6 +122,91 @@ if command -v fzf >/dev/null 2>&1; then
   # [ -f /usr/share/doc/fzf/examples/completion.bash ] && . /usr/share/doc/fzf/examples/completion.bash
 fi
 
+##########
+# zoxide 初期化
+##########
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init bash 2>/dev/null || zoxide init zsh 2>/dev/null)"
+fi
+
+##########
+# fd の別名（Ubuntu は fdfind）
+##########
+if command -v fdfind >/dev/null 2>&1 && ! command -v fd >/dev/null 2>&1; then
+  alias fd='fdfind'
+fi
+
+##########
+# 1) 直前ディレクトリに即戻る（リカバリ最短）
+##########
+alias b='cd -'   # “back” の意味で覚えやすく
+
+##########
+# 2) zoxide DB を fzf で選んでジャンプ（どこからでも候補に出る）
+#    → 「上位や別プロジェクトも探したい」問題の本命対策
+##########
+zfz() {
+  local dir
+  dir="$(zoxide query -l 2>/dev/null | fzf --prompt='zoxide> ' --height=80% --reverse)"
+  [ -n "$dir" ] && cd "$dir"
+}
+
+# 迷ったらまず候補を見る：zoxide の候補表示だけ
+zlist() {
+  zoxide query -l | nl -ba
+}
+
+##########
+# 3) プロジェクト起点の fzf cd（Git ルート優先、なければカレント）
+#    → 「配下だけで良いけど、プロジェクトのトップから探したい」ケース
+##########
+cdf() {
+  local root dir
+  if command -v git >/dev/null 2>&1; then
+    root="$(git rev-parse --show-toplevel 2>/dev/null)"
+  fi
+  root="${root:-.}"
+  dir="$(
+    fd -t d -H -I --strip-cwd-prefix . "$root" 2>/dev/null \
+    | fzf --prompt="cdf ($root)> " --height=80% --reverse
+  )"
+  [ -n "$dir" ] && cd "${root%/}/$dir"
+}
+
+##########
+# 4) 親ディレクトリだけを選んで上に移動（“上位も対象にしたい”の軽量解）
+##########
+cdu() {
+  # 現在位置から / までの親一覧を作って fzf
+  local IFS=/ parts=() p path
+  read -ra parts <<<"$(pwd)"
+  path="/"
+  local list=("/")
+  for p in "${parts[@]:1}"; do
+    path="${path%/}/$p"
+    list+=("$path")
+  done
+  local pick
+  pick="$(printf '%s\n' "${list[@]}" | fzf --prompt='parent> ' --height=60% --reverse)"
+  [ -n "$pick" ] && cd "$pick"
+}
+
+##########
+# 5) 上に n 階層上がる関数（例: up 3）
+##########
+up() {
+  local n="${1:-1}" path="."
+  while [ "$n" -gt 0 ]; do path="$path/.."; n=$((n-1)); done
+  cd "$path"
+}
+
+##########
+# 6) pushd/popd を少し使いやすく
+##########
+alias pd='pushd'
+alias po='popd'
+alias dl='dirs -v'  # スタック可視化
+
 #### =========[ ローカル上書き（任意） ]=========
 # XDG 配下でのローカル拡張（マシン固有・社内PC等）
 [ -f "$XDG_CONFIG_HOME/bashrc.local" ] && . "$XDG_CONFIG_HOME/bashrc.local"
