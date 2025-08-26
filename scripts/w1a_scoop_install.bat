@@ -8,6 +8,7 @@ universal-ctags ^
 starship ^
 scoop-completion ^
 notepadplusplus ^
+vscode ^
 neovim ^
 goneovim ^
 llvm ^
