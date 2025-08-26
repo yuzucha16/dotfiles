@@ -3,10 +3,14 @@
 	email = user@example.com
 [core]
     editor = vim
+	eol = lf
     autocrlf = false
     symlinks = true
 	longpaths = true
 	excludesfile = ~/.gitigonore_global
+	whitespace = cr-at-eol,tab-in-indent,trail,space-before-tab
+[apply]
+	whitespace = fix
 [pull]
     ff = only
     rebase = false

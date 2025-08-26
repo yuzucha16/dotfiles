@@ -44,6 +44,8 @@ vim.opt.scrolloff = 5
 vim.opt.sidescrolloff = 8
 vim.opt.cursorline = true
 vim.opt.showtabline = 2
+vim.opt.fileformat = "unix"    -- 保存は LF、読むときは LF/CRLF どちらも受け入れる
+vim.opt.fileformats = { "unix", "dos" }
 
 -- 3) プラグイン
 require("lazy").setup({
