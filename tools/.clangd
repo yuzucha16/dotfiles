@@ -1,0 +1,34 @@
+# .clangd  (プロジェクトのルートに置く)
+CompileFlags:
+  # 見つからないときのフォールバック。必要なだけ追加/調整してください。
+  Add: [
+    -std=c++17,
+    -Iinclude,              # 自前ヘッダ
+    -Isrc,                  # 必要なら
+    -Ithird_party/somepkg/include,
+    -DPROJECT_NAME=1,
+    # ▼ 組込み/クロス時の例（要調整）
+    --target=arm-none-eabi,
+    -mcpu=cortex-m4, -mthumb,
+    -DSTM32F4xx
+  ]
+  # もし邪魔な警告やフラグが混ざる場合に除去
+  Remove: [
+    -fno-exceptions,        # 例：診断時だけ外したい等
+  ]
+
+Diagnostics:
+  ClangTidy:
+    Add: [modernize-*,performance-*,readability-*]
+    Remove: [modernize-use-trailing-return-type]
+    CheckOptions:
+      readability-identifier-naming.VariableCase: lower_case
+
+Index:
+  Background: Build        # バックグラウンドで索引化（デフォルトON相当）
+
+# 必要ならパス単位で上書きも可能
+If:
+  PathMatch: .*\.c$
+CompileFlags:
+  Add: [-std=c11]

@@ -51,6 +51,16 @@ vim.opt.fileformats = { "unix", "dos" }
 require("lazy").setup({
   { "nvim-lua/plenary.nvim" },
   { "preservim/tagbar" },
+  { "hrsh7th/nvim-cmp" },           -- 本体
+  { "hrsh7th/cmp-nvim-lsp" },       -- LSP補完
+  -- FZF高速化
+  {
+    "nvim-telescope/telescope-fzf-native.nvim",
+    build = "make",
+    config = function()
+      require("telescope").load_extension("fzf")
+    end,
+  },
 
   -- ファジー検索
   { "nvim-telescope/telescope.nvim", version = false, dependencies = {"nvim-lua/plenary.nvim"},
@@ -111,6 +121,12 @@ require("lazy").setup({
         layout_config = { height = 0.5, preview_width = 0.65, },
         preview = { hide_on_startup = true },
         sorting_strategy = "ascending",
+      },
+      pickers = {
+        lsp_workspace_symbols = {
+          fname_width = 60,
+          symbol_width = 60,
+        },
       },
       extensions = {
         file_browser = {
@@ -201,7 +217,9 @@ require("lazy").setup({
       local lsp = require("lspconfig")
       -- C/C++: clangd
       lsp.clangd.setup {
-        cmd = { "clangd", "--background-index", "--clang-tidy", "--header-insertion=never" },
+        cmd = { "clangd", "--background-index", "--clang-tidy", "--header-insertion=never",
+                "--completion-style=detailed", "--query-driver=/usr/bin/arm-none-eabi-*,/opt/gcc-arm*/bin/arm-none-eabi-*" },
+        capabilities = require('cmp_nvim_lsp').default_capabilities(),
       }
       -- 汎用LSPキーバインド
       local on_attach = function(_, bufnr)
@@ -311,6 +329,31 @@ vim.keymap.set("n","<leader>fg", require("telescope.builtin").live_grep)
 vim.keymap.set("n","gd", vim.lsp.buf.definition)
 vim.keymap.set("n","gr", vim.lsp.buf.references)
 vim.keymap.set("n","K",  vim.lsp.buf.hover)
+
+-- Telescope::シンボル
+-- クエリプリセット（Namespace / Class / Function など）
+local ts = require('telescope.builtin')
+vim.keymap.set('n', '<leader>sn', function()
+  ts.lsp_workspace_symbols({ query = '@namespace' })
+end, { desc = 'Search symbols: Namespace' })
+
+vim.keymap.set('n', '<leader>sc', function()
+  ts.lsp_workspace_symbols({ query = '@class' })
+end, { desc = 'Search symbols: Class' })
+
+vim.keymap.set('n', '<leader>sf', function()
+  ts.lsp_workspace_symbols({ query = '@function' })
+end, { desc = 'Search symbols: Function' })
+
+-- 任意クエリ（例: foo::bar と打つ）
+vim.keymap.set('n', '<leader>ss', function()
+  ts.lsp_workspace_symbols()
+end, { desc = 'Search symbols: Any' })
+
+-- ドキュメント内シンボル
+vim.keymap.set('n', '<leader>sd', function()
+  ts.lsp_document_symbols()
+end, { desc = 'Search symbols: Document' })
 
 -- ==== ctags / Tagbar（軽量閲覧系）====
 -- Tagbar（関数/クラス一覧パネル）

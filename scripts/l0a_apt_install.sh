@@ -8,6 +8,7 @@ set -euo pipefail
 # 開発に必要なパッケージ一覧
 PACKAGES=(
     stow
+    gawk
     build-essential
     ninja-build
     cmake
