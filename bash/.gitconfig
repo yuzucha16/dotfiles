@@ -3,8 +3,3 @@
     
 [include]
     path = ~/.gitconfig_local
-[core]
-	eol = lf
-	whitespace = cr-at-eol,tab-in-indent,trail,space-before-tab
-[apply]
-	whitespace = fix

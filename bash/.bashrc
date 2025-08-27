@@ -212,3 +212,8 @@ alias dl='dirs -v'  # スタック可視化
 [ -f "$XDG_CONFIG_HOME/bashrc.local" ] && . "$XDG_CONFIG_HOME/bashrc.local"
 
 command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
+
+cd ~/dev/src
+#. "$HOME/.cargo/env"
+
+source /home/ycy/.config/broot/launcher/bash/br

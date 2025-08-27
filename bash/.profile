@@ -30,6 +30,7 @@ path_add() { case ":$PATH:" in *":$1:"*) ;; *) PATH="$1${PATH:+:$PATH}";; esac; 
 [ -d "$HOME/.cargo/bin" ] && path_add "$HOME/.cargo/bin"
 [ -d "/usr/local/go/bin" ] && path_add "/usr/local/go/bin"
 [ -d "$HOME/.local/bin" ] && path_add "$HOME/.local/bin"
+[ -d "$HOME/.cargo/bin" ] && path_add "$HOME/.cargo/bin"
 export PATH
 
 ##########
@@ -100,3 +101,5 @@ if [ -n "$BASH_VERSION" ]; then
     . "$HOME/.bashrc"
   fi
 fi
+
+#. "$HOME/.cargo/env"

@@ -8,6 +8,9 @@ universal-ctags ^
 starship ^
 scoop-completion ^
 notepadplusplus ^
+doxygen ^
+plantuml ^
+graphviz ^
 vscode ^
 neovim ^
 goneovim ^
