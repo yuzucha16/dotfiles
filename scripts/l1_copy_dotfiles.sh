@@ -17,6 +17,7 @@ cd "$SRC_DIR"
 stow -v -t "$DST_DIR"   bash
 
 cd "$SRC_DIR/.config"   # XDG_CONFIG_HOME
+stow -v -t "$DST_DIR/.config/broot" broot
 stow -v -t "$DST_DIR/.config/git"   git
 stow -v -t "$DST_DIR/.config/nvim"  nvim
 stow -v -t "$DST_DIR/.config"       starship

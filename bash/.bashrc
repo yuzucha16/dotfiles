@@ -97,14 +97,18 @@ if command -v lsd >/dev/null 2>&1; then
   alias ls='lsd --group-dirs=first --color=auto'
 
   # よく使うバリエーション
-  alias ll='ls -l'                # 標準的な詳細表示
+  alias l='ls -l'                # 標準的な詳細表示
   alias la='ls -a'                # 隠しファイル込み
-  alias lla='ls -la'              # 隠し含めた詳細表示
+  alias ll='ls -la'              # 隠し含めた詳細表示
   alias lt='ls --tree'            # ツリー表示（デフォ深さ無制限）
-  alias l1='ls -1'                # 1カラムで一覧
-
+  #alias ll='ls -l'                # 標準的な詳細表示
+  #alias lla='ls -la'              # 隠し含めた詳細表示
+  #alias l1='ls -1'                # 1カラムで一覧
+  
   # ツリーを深さ制限付きで（例: 2階層）
+  alias l1='ls -1'                # 1カラムで一覧
   alias l2='ls --tree --depth 2'
+  alias l3='ls --tree --depth 3'
 fi
 
 # ディレクトリ移動
@@ -225,104 +229,21 @@ alias pd='pushd'
 alias po='popd'
 alias dl='dirs -v'  # スタック可視化
 
-# ===== cd後に自動一覧表示（lsd 優先） =====
-# 表示モード: grid / long / tree を選べる（未設定なら grid）
-#   export CD_LS_MODE=long
-#   export CD_LS_MODE=tree; export CD_LS_DEPTH=2
-# 深さは tree モード時のみ有効（既定: 2）
-: "${CD_LS_MODE:=grid}"
-: "${CD_LS_DEPTH:=2}"
-
-# 一覧表示の実体
-_cd_ls() {
-  if command -v lsd >/dev/null 2>&1; then
-    case "$CD_LS_MODE" in
-      long) lsd -l --group-dirs=first --color=always ;;
-      tree) lsd --tree --depth "$CD_LS_DEPTH" --group-dirs=first --color=always | head -200 ;;
-      grid|*) lsd --group-dirs=first --color=always ;;
-    esac
-  elif command -v eza >/dev/null 2>&1; then
-    case "$CD_LS_MODE" in
-      long) eza -l --group-directories-first --color=always ;;
-      tree) eza --tree --level="$CD_LS_DEPTH" --group-directories-first --color=always | head -200 ;;
-      grid|*) eza --group-directories-first --color=always ;;
-    esac
-  else
-    # 最後の砦: GNU ls
-    case "$CD_LS_MODE" in
-      long) ls -l --color=auto -F ;;
-      tree) ls -la --color=auto -F ;;  # treeモードの代替
-      grid|*) ls --color=auto -F ;;
-    esac
-  fi
-}
-
-# ===== ディレクトリ変更検知フック（重複防止版） =====
-__CD_LIST_LAST_PWD="$PWD"
-
-__cd_list_on_chpwd() {
-  if [[ "$PWD" != "$__CD_LIST_LAST_PWD" ]]; then
-    __CD_LIST_LAST_PWD="$PWD"
-    _cd_ls
-  fi
-}
-
-__append_prompt_command() {
-  local hook="$1"
-  # すでに入っていたら追加しない
-  if [[ "$PROMPT_COMMAND" != *"__cd_list_on_chpwd"* ]]; then
-    if [[ -z "$PROMPT_COMMAND" ]]; then
-      PROMPT_COMMAND="$hook"
+# cdしたら自動でlsする関数
+cd() {
+    # 引数があればそのディレクトリへ、なければホームへ
+    if [ $# -eq 0 ]; then
+        builtin cd ~ || return
     else
-      PROMPT_COMMAND="$hook; $PROMPT_COMMAND"
+        builtin cd "$@" || return
     fi
-  fi
+    # cd成功時にls実行
+    ls --color=auto -F
 }
-__append_prompt_command "__cd_list_on_chpwd"
-# =====================================================
-
-# モード切替の小さなヘルパ（例: cdls tree 3）
-cdls() {
-  case "$1" in
-    grid|long|tree) CD_LS_MODE="$1" ;;
-    *) echo "Usage: cdls {grid|long|tree} [depth]" >&2; return 2 ;;
-  esac
-  [ "$2" ] && CD_LS_DEPTH="$2"
-  echo "cd listing: mode=$CD_LS_MODE depth=$CD_LS_DEPTH"
-}
-# ===========================================
-
-# ===== fzf Alt-C with lsd preview =====
 
 # fzfの標準キーバインド/補完（apt版の例）
 [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
 [ -f /usr/share/doc/fzf/examples/completion.bash ]   && source /usr/share/doc/fzf/examples/completion.bash
-
-# ディレクトリ候補列挙コマンド
-if command -v fdfind >/dev/null 2>&1; then
-  export FZF_ALT_C_COMMAND='fdfind -H -t d --strip-cwd-prefix 2>/dev/null'
-elif command -v fd >/dev/null 2>&1; then
-  export FZF_ALT_C_COMMAND='fd -H -t d --strip-cwd-prefix 2>/dev/null'
-else
-  export FZF_ALT_C_COMMAND='find . -type d -print 2>/dev/null'
-fi
-
-# ===== lsd プレビュー =====
-if command -v lsd >/dev/null 2>&1; then
-  # lsd を tree の代わりに使う
-  _PREVIEW_CMD='lsd --tree --depth 2 --color=always --group-dirs=first {} | head -200'
-else
-  _PREVIEW_CMD='tree -C -F -L 2 -a --dirsfirst {} | head -200'
-fi
-
-# fzf Alt-C のプレビューオプション
-export FZF_ALT_C_OPTS="--preview='$_PREVIEW_CMD' \
-  --preview-window=right:60%:wrap \
-  --height=80% --layout=reverse --border \
-  --bind=alt-p:toggle-preview,alt-j:preview-down,alt-k:preview-up"
-
-# デフォルトのfzf全般に効くオプション
-export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --cycle --marker='*' --border --layout=reverse"
 
 #### =========[ ローカル上書き（任意） ]=========
 # XDG 配下でのローカル拡張（マシン固有・社内PC等）
@@ -331,6 +252,7 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --cycle --marker='*' --border --layou
 command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
 
 cd ~/dev/src
-#. "$HOME/.cargo/env"
 
 source /home/ycy/.config/broot/launcher/bash/br
+export EDITOR=nvim
+export VISUAL=nvim

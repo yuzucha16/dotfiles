@@ -45,6 +45,7 @@ PACKAGES=(
     zoxide
     fd-find
     tree
+    ripgrep
     # ここに追加したいツールを書いていく
 )
 
