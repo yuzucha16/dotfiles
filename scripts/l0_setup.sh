@@ -20,33 +20,9 @@ echo "[*] Updating package lists..."
 sudo apt update -y
 sudo apt upgrade -y
 
-# 開発に必要なパッケージ一覧
+# セットアップに必要な最低限のパッケージ一覧
 PACKAGES=(
-    stow
-    build-essential
-    ninja-build
-    cmake
-    universal-ctags
-    git
-    pkg-config
-    unzip
-    fzf
     curl
-    clang
-    clangd
-    clang-tidy
-    clang-format
-    lldb
-    lld
-    ccache
-    valgrind 
-    gdb 
-    bear
-    zoxide
-    fd-find
-    tree
-    ripgrep
-    # ここに追加したいツールを書いていく
 )
 
 echo "[*] Installing packages: ${PACKAGES[*]}"
