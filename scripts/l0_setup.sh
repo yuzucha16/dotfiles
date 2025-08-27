@@ -44,6 +44,7 @@ PACKAGES=(
     bear
     zoxide
     fd-find
+    tree
     # ここに追加したいツールを書いていく
 )
 
