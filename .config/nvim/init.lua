@@ -378,6 +378,6 @@ if vim.fn.has("gui_running") == 1 or vim.g.goneovim then
   -- Goneovim 側のスケール設定でもOK。足りなければフォントサイズを上げる
 end
 
-vim.cmd[[colorscheme tender]]
+--vim.cmd[[colorscheme tender]]
 --vim.cmd[[colorscheme everforest]]
---vim.cmd[[colorscheme gruvbox-material]]
+vim.cmd[[colorscheme gruvbox-material]]
