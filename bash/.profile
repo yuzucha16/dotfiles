@@ -13,7 +13,8 @@
 : "${XDG_DATA_HOME:=$HOME/.local/share}"
 : "${XDG_STATE_HOME:=$HOME/.local/state}"
 : "${GHQ_ROOT:=$HOME/dev/src}"
-export XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME GHQ_ROOT
+: "${NVIM_APPNAME:=nvim-wsl}"
+export XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME GHQ_ROOT NVIM_APPNAME
 
 # 初回用ディレクトリ作成（存在チェック付き）
 [ -d "$XDG_CONFIG_HOME" ] || mkdir -p "$XDG_CONFIG_HOME"
