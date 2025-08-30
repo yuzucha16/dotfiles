@@ -16,7 +16,8 @@ neovim ^
 goneovim ^
 llvm ^
 winmerge ^
-marktext ^
+qownnotes ^
+marp ^
 pdf-xchange-editor ^
 ghq ^
 fork ^
