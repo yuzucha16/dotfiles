@@ -5,6 +5,5 @@
     <GUIConfig name="NewDocDefaultSettings" format="0" encoding="4" lang="0" codepage="-1" openAnsiAsUTF8="yes" addNewDocumentOnStartup="no" useContentAsTabName="no" />
     <GUIConfig name="ScintillaPrimaryView" lineNumberMargin="show" lineNumberDynamicWidth="yes" isEdgeBgMode="no" edgeMultiColumnPos="80" />
     <GUIConfig name="MRU">yes</GUIConfig>
-    <GUIConfig name="DarkMode" enable="no" colorTone="0" customColorTop="2105376" customColorMenuHotTrack="4539717" customColorActive="3684408" customColorMain="2105376" customColorError="176" customColorText="14737632" customColorDarkText="12632256" customColorDisabledText="8421504" customColorLinkText="65535" customColorEdge="6579300" customColorHotEdge="10197915" customColorDisabledEdge="4737096" enableWindowsMode="no" darkThemeName="DarkModeDefault.xml" darkToolBarIconSet="0" darkTbFluentColor="0" darkTbFluentCustomColor="0" darkTbFluentMono="no" darkTabIconSet="2" darkTabUseTheme="no" lightThemeName="Zenburn.xml" lightToolBarIconSet="4" lightTbFluentColor="0" lightTbFluentCustomColor="13070080" lightTbFluentMono="no" lightTabIconSet="0" lightTabUseTheme="yes" />
   </GUIConfigs>
 </NotepadPlus>
