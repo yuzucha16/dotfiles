@@ -24,10 +24,11 @@ set "FILES[4]=startup.bat|%USERPROFILE%\AppData\Roaming\Microsoft\Windows\Start 
 set "FILES[5]=settings.json|%USERPROFILE%\scoop\apps\windows-terminal\current\settings\settings.json"
 set "FILES[6]=.config\git\config|%USERPROFILE%\.config\git\config"
 set "FILES[7]=.config\nvim-win|%USERPROFILE%\.config\nvim-win"
-set "FILES[8]=.config\starship\starship.toml|%USERPROFILE%\.config\starship.toml"
-set "FILES[9]=bash\.gitconfig|%USERPROFILE%\.gitconfig"
-set "FILES[10]=bash\.gitignore_global|%USERPROFILE%\.gitignore_global"
-set "MAX_IDX=10"
+set "FILES[8]=.config\shared|%USERPROFILE%\.config\nvim-win\lua\shared"
+set "FILES[9]=.config\starship\starship.toml|%USERPROFILE%\.config\starship.toml"
+set "FILES[10]=bash\.gitconfig|%USERPROFILE%\.gitconfig"
+set "FILES[11]=bash\.gitignore_global|%USERPROFILE%\.gitignore_global"
+set "MAX_IDX=11"
 
 REM            @("Microsoft.PowerShell_profile.ps1",   "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"),
 REM            @("profile.ps1",                        "$HOME\Documents\PowerShell\profile.ps1"),

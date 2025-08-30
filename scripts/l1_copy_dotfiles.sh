@@ -11,6 +11,7 @@ echo "[INFO] Using DST_DIR=$DST_DIR"
 # 必要なディレクトリを作成
 mkdir -p "$DST_DIR/.config/git"
 mkdir -p "$DST_DIR/.config/nvim-wsl"
+mkdir -p "$DST_DIR/.config/nvim-wsl/lua/shared"
 
 # stow 実行
 cd "$SRC_DIR"
@@ -21,6 +22,8 @@ stow -v -t "$DST_DIR/.config/broot"     broot
 stow -v -t "$DST_DIR/.config/git"       git
 stow -v -t "$DST_DIR/.config/nvim-wsl"  nvim-wsl
 stow -v -t "$DST_DIR/.config"           starship
+stow -v -t "$DST_DIR/.config/nvim-wsl/lua/shared"    shared
+
 
 # ---
 # refs
