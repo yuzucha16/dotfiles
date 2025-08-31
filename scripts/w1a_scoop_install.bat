@@ -14,7 +14,6 @@ graphviz ^
 vscode ^
 neovim ^
 goneovim ^
-llvm ^
 winmerge ^
 qownnotes ^
 marp ^
