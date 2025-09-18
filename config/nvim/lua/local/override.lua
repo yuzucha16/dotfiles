@@ -1,0 +1,6 @@
+-- =====================================================================
+--  Local overrides (git-ignored). Use this to keep secrets / per-box tweaks.
+--  Example:
+--  vim.opt.colorcolumn = "100"
+--  vim.api.nvim_create_autocmd("BufEnter", { callback = function() ... end })
+-- =====================================================================

@@ -1,0 +1,6 @@
+
+[[Snippets]]
+  Description = "exec bashrc"
+  Output = ""
+  Tag = []
+  command = "source ~/.bashrc"

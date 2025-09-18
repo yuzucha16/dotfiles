@@ -1,0 +1,64 @@
+{
+  "editor.lineNumbers": "on",
+  "editor.renderLineHighlight": "line",
+  "editor.minimap.enabled": false,
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.smoothScrolling": true,
+  "editor.scrollBeyondLastLine": false,
+  "editor.scrollbar.verticalHasArrows": true,
+  "editor.cursorBlinking": "smooth",
+  "editor.linkedEditing": true,
+  "editor.fontFamily": "HackGen Console NF",
+  "workbench.tree.indent": 12,
+  "workbench.editor.showTabs": "multiple",
+  "workbench.editor.wrapTabs": true,
+  "workbench.startupEditor": "none",
+  "workbench.list.smoothScrolling": true,
+  "workbench.colorTheme": "Gruvbox Dark Medium",
+  "workbench.iconTheme": "material-icon-theme",
+  "terminal.integrated.smoothScrolling": true,
+
+  "files.encoding": "utf8",
+  "files.eol": "\n",
+  "files.autoGuessEncoding": true,
+
+  "search.useIgnoreFiles": true,
+  "search.followSymlinks": true,
+  "search.useGlobalIgnoreFiles": true,
+
+  "vim.leader": "<space>",
+  "vim.handleKeys": {
+    "<C-c>": false
+  },
+  "vim.statusBarColorControl": false,
+  "vim.useCtrlKeys": true,
+  "vim.hlsearch": true,
+  "vim.incsearch": true,
+  "vim.cursorStylePerMode.insert": "line",
+  "vim.autoSwitchInputMethod.enable": false,
+
+  "cmake.buildDirectory": "${workspaceFolder}/build",
+  "cmake.configureOnOpen": false,
+  "cmake.generator": "Ninja",
+  "cmake.exportCompileCommandsFile": true,
+  "cmake.copyCompileCommands": "${workspaceFolder}/compile_commands.json",
+
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.autoReveal": false,
+
+  "editor.codeLens": false,
+
+  "extensions.autoUpdate": false,
+  "extensions.autoCheckUpdates": false
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1
+  },
+  "vscode-neovim.neovimExecutablePaths.linux": "/usr/local/bin/nvim",
+  "vscode-neovim.neovimInitPath": "/home/yy/.config/nvim/init.lua",
+
+  "workbench.sideBar.location": "right"
+
+}
