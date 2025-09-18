@@ -2,9 +2,8 @@
 setlocal EnableExtensions EnableDelayedExpansion
 
 rem dev settings
-ghq get yuzucha16/env
+ghq get yuzucha16/dotfiles
 rem ghq get yuzucha16/adv360-pro-zmk
-rem ghq get yuzucha16/dotfiles
 
 :END
 pause

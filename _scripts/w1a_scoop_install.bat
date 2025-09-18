@@ -7,6 +7,7 @@ PSReadLine ^
 scoop-completion ^
 autohotkey ^
 starship ^
+obsidian ^
 notepadplusplus ^
 vscode ^
 neovim ^
