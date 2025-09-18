@@ -12,7 +12,7 @@
 : "${XDG_CACHE_HOME:=$HOME/.cache}"
 : "${XDG_DATA_HOME:=$HOME/.local/share}"
 : "${XDG_STATE_HOME:=$HOME/.local/state}"
-: "${GHQ_ROOT:=$HOME/vault/repos}"
+: "${GHQ_ROOT:=$HOME/dev/repos}"
 export XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME GHQ_ROOT
 
 # 初回用ディレクトリ作成（存在チェック付き）

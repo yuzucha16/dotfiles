@@ -3,7 +3,7 @@ set -eu
 
 # ===== 設定 =====
 DEV_HOME="${HOME}/dev"             # 共通ワークスペースのルート
-SRC_DIR="${DEV_HOME}/src"          # ghq.root にする場所
+SRC_DIR="${DEV_HOME}/repos"          # ghq.root にする場所
 BUILD_DIR="${DEV_HOME}/build"
 RUN_DIR="${DEV_HOME}/run"
 TOOLS_DIR="${DEV_HOME}/tools"
