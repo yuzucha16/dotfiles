@@ -12,7 +12,7 @@
 : "${XDG_CACHE_HOME:=$HOME/.cache}"
 : "${XDG_DATA_HOME:=$HOME/.local/share}"
 : "${XDG_STATE_HOME:=$HOME/.local/state}"
-: "${GHQ_ROOT:=$HOME/dev/src}"
+: "${GHQ_ROOT:=$HOME/vault/repos}"
 export XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME GHQ_ROOT
 
 # 初回用ディレクトリ作成（存在チェック付き）
@@ -20,6 +20,7 @@ export XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME GHQ_ROOT
 [ -d "$XDG_CACHE_HOME"  ] || mkdir -p "$XDG_CACHE_HOME"
 [ -d "$XDG_DATA_HOME"   ] || mkdir -p "$XDG_DATA_HOME"
 [ -d "$XDG_STATE_HOME"  ] || mkdir -p "$XDG_STATE_HOME"
+[ -d "$GHQ_ROOT"        ] || mkdir -p "$GHQ_ROOT"
 
 ##########
 # 2) PATH の整備（重複防止で冪等）

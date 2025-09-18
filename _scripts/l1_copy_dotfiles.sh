@@ -5,7 +5,7 @@ IFS=$'\n\t'
 
 # ===== Settings (edit if needed) =====
 # 既定の場所（スクリプトの配置に依存しないように手動指定も可）
-SRC_DIR_DEFAULT="/mnt/c/Users/ck/vault/github.com/yuzucha16/env/dotfiles"
+SRC_DIR_DEFAULT="/mnt/c/Users/ck/vault/repos/github.com/yuzucha16/dotfiles"
 DST_DIR_DEFAULT="$HOME"
 
 # ===== CLI Options =====
