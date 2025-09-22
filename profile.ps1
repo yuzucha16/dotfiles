@@ -13,7 +13,7 @@ Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
 
 # 社内プロキシ用 CA 証明書 (存在する環境のみ設定)
-$caPath = "$env:CERTS_DIR\company-ca.pem"
+$caPath = "$env:CERTS_DIR\company-ca.crt"
 if (Test-Path $caPath) {
   $env:NODE_EXTRA_CA_CERTS = $caPath
 }

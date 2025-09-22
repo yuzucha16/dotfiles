@@ -303,7 +303,7 @@ function prev() {
 [ -f "$XDG_CONFIG_HOME/bashrc.local" ] && . "$XDG_CONFIG_HOME/bashrc.local"
 
 # 社内プロキシ用 CA 証明書 (存在する環境のみ設定)
-CA_PATH=/mnt/c/Users/ck/vault/certs/company-ca.pem
+CA_PATH=/mnt/c/Users/ck/vault/certs/company-ca.crt
 if [ -f "$CA_PATH" ]; then
   export NODE_EXTRA_CA_CERTS="$CA_PATH"
 fi
