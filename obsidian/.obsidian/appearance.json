@@ -1,7 +1,7 @@
 {
-  "theme": "system",
-  "accentColor": "#5cf58a",
-  "cssTheme": "Obsidian gruvbox",
+  "theme": "moonstone",
+  "accentColor": "#5c82f5",
+  "cssTheme": "Obsidian Nord",
   "interfaceFontFamily": "Meiryo UI",
   "textFontFamily": "Meiryo UI"
 }
