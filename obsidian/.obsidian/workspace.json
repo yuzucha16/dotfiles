@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "templates/活動方針_例.md",
+                "file": "templates/WBSとガント_template.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "活動方針_例"
+              "title": "WBSとガント_template"
             }
           }
         ]
@@ -177,36 +177,36 @@
       "templates:テンプレートを挿入": false,
       "command-palette:コマンドパレットを開く": false,
       "bases:Create new base": false,
-      "obsidian-kanban:カンバンボードを新規作成": false
+      "obsidian-kanban:カンバンボードを新規作成": false,
+      "obsidian-memos:Thino": false,
+      "omnisearch:Omnisearch": false
     }
   },
   "active": "73eff2dfd3651907",
   "lastOpenFiles": [
-    "templates/活動方針_簡易.md",
-    "templates/活動方針.md",
-    "templates/WBSとガント.md",
-    "templates/WBSとガント_template.md",
     "templates/活動方針_例.md",
-    "templates/meeting_note_template.md",
-    "templates/project_hub_template.md",
-    "1_projects/sample_pj/deliverables/requirements_spec.md",
-    "1_projects/sample_pj/deliverables/design_doc.md",
-    "templates/phase_note_template.md",
     "dashboard.md",
     "無題のカンバン.md",
     "1_projects/sample_pj/project_hub.md",
     "README.md",
     "Welcome.md",
+    "templates/WBSとガント_template.md",
+    "templates/WBSとガント.md",
     "1_projects/sample_pj/phases/03_implementation.md",
     "templates/粒度別管理表テンプレート.md",
     "templates/New.txt",
     "1_projects/sample_pj/deliverables/test_plan.md",
+    "1_projects/sample_pj/deliverables/design_doc.md",
+    "1_projects/sample_pj/deliverables/requirements_spec.md",
     "1_projects/sample_pj/phases/01_requirements.md",
     "1_projects/sample_pj/phases/02_design.md",
     "1_projects/_template/deliverables/requirements_spec.md",
     "1_projects/_template/deliverables/design_doc.md",
     "1_projects/_template/deliverables/test_plan.md",
     "1_projects/sample_pj/phases/04_test.md",
+    "templates/project_hub_template.md",
+    "templates/phase_note_template.md",
+    "templates/meeting_note_template.md",
     "templates/deliverable_note_template.md"
   ]
 }
