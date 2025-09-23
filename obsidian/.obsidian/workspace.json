@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "templates/WBSとガント_template.md",
+                "file": "templates/WBSとガント.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "WBSとガント_template"
+              "title": "WBSとガント"
             }
           }
         ]
@@ -177,20 +177,18 @@
       "templates:テンプレートを挿入": false,
       "command-palette:コマンドパレットを開く": false,
       "bases:Create new base": false,
-      "obsidian-kanban:カンバンボードを新規作成": false,
-      "obsidian-memos:Thino": false,
-      "omnisearch:Omnisearch": false
+      "obsidian-kanban:カンバンボードを新規作成": false
     }
   },
   "active": "73eff2dfd3651907",
   "lastOpenFiles": [
+    "templates/WBSとガント_template.md",
     "templates/活動方針_例.md",
     "dashboard.md",
     "無題のカンバン.md",
     "1_projects/sample_pj/project_hub.md",
     "README.md",
     "Welcome.md",
-    "templates/WBSとガント_template.md",
     "templates/WBSとガント.md",
     "1_projects/sample_pj/phases/03_implementation.md",
     "templates/粒度別管理表テンプレート.md",
