@@ -37,8 +37,9 @@ set "FILES[17]=profile.ps1|%USERPROFILE%\Documents\PowerShell\profile.ps1"
 set "FILES[18]=xyplorer|%XDG_BIN_HOME%\xyplorer_full_noinstall\Data"
 set "FILES[19]=typora\conf.user.json|%APPDATA%\Typora\conf\conf.user.json"
 set "FILES[20]=typora\themes|%APPDATA%\Typora\themes"
-set "FILES[21]=obsidian\.obsidian|%MY_ROOT%\notes\.obsidian"
-set "MAX_IDX=21
+set "FILES[21]=drawio\config.json|%APPDATA%\draw.io\config.json"
+set "FILES[22]=obsidian\.obsidian|%MY_ROOT%\notes\.obsidian"
+set "MAX_IDX=22
 
 rem set "FILES[14]=config\nushell\config.nu|%USERPROFILE%\.config\nushell\config.nu"
 rem set "FILES[15]=config\nushell\config.nu|%USERPROFILE%\.config\nushell\env.nu"
