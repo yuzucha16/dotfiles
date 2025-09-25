@@ -38,7 +38,7 @@ set "FILES[18]=xyplorer|%XDG_BIN_HOME%\xyplorer_full_noinstall\Data"
 set "FILES[19]=typora\conf.user.json|%APPDATA%\Typora\conf\conf.user.json"
 set "FILES[20]=typora\themes|%APPDATA%\Typora\themes"
 set "FILES[21]=drawio\config.json|%APPDATA%\draw.io\config.json"
-set "FILES[22]=obsidian\.obsidian|%MY_ROOT%\notes\.obsidian"
+set "FILES[22]=obsidian\.obsidian|%MY_ROOT%\templates\2_obsidian\.obsidian"
 set "MAX_IDX=22
 
 rem set "FILES[14]=config\nushell\config.nu|%USERPROFILE%\.config\nushell\config.nu"
