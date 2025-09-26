@@ -39,7 +39,9 @@ set "FILES[19]=typora\conf.user.json|%APPDATA%\Typora\conf\conf.user.json"
 set "FILES[20]=typora\themes|%APPDATA%\Typora\themes"
 set "FILES[21]=drawio\config.json|%APPDATA%\draw.io\config.json"
 set "FILES[22]=obsidian\.obsidian|%MY_ROOT%\templates\2_obsidian\.obsidian"
-set "MAX_IDX=22
+set "FILES[23]=office\Blank.potx|%APPDATA%\Microsoft\Templates\Blank.potx"
+set "FILES[24]=office\PowerPoint.exportedUI|%LOCALAPPDATA%\Microsoft\Office\PowerPoint.officeUI"
+set "MAX_IDX=24
 
 rem set "FILES[14]=config\nushell\config.nu|%USERPROFILE%\.config\nushell\config.nu"
 rem set "FILES[15]=config\nushell\config.nu|%USERPROFILE%\.config\nushell\env.nu"
