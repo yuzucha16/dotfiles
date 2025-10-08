@@ -18,6 +18,7 @@ if (Test-Path $caPath) {
   $env:NODE_EXTRA_CA_CERTS = $caPath
 }
 
+<#
 # Alias
 
 # Functions
@@ -202,3 +203,4 @@ if (Get-Module -ListAvailable PSFzf) {
     # 代表的なバインド例（お好みで）
     # Set-PsFzfOption -PsReadlineChordProvider 'Ctrl+t' -PsReadlineChordReverseHistory 'Ctrl+r'
 }
+#>

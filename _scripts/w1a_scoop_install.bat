@@ -11,29 +11,29 @@ draw.io ^
 obsidian ^
 notepadplusplus ^
 vscode ^
-neovim ^
-clangd ^
-llvm ^
 winmerge ^
 winscp ^
 teraterm ^
 irfanview ^
-typora ^
 marp ^
 pdf-xchange-editor ^
 ghq ^
 fork ^
 p4v ^
 which ^
-lsd ^
-zoxide ^
-fzf ^
-psfzf ^
-ripgrep ^
-fd ^
-bat ^
 sudo
 
+rem neovim ^
+rem clangd ^
+rem llvm ^
+rem typora ^
+rem lsd ^
+rem zoxide ^
+rem fzf ^
+rem psfzf ^
+rem ripgrep ^
+rem fd ^
+rem bat ^
 rem nu ^
 rem goneovim ^
 rem cmake ^
