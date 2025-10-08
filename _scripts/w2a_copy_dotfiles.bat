@@ -33,11 +33,11 @@ set "FILES[13]=autohotkey\Autohotkey64.ahk|%APPDATA%\Microsoft\Windows\Start Men
 set "FILES[14]=Microsoft.PowerShell_profile.ps1|%USERPROFILE%\Documents\PowerShell\Microsoft\PowerShell_profile.ps1"
 set "FILES[15]=profile.ps1|%USERPROFILE%\Documents\PowerShell\profile.ps1"
 set "FILES[16]=drawio\config.json|%APPDATA%\draw.io\config.json"
-set "FILES[17]=obsidian\.obsidian|%MY_ROOT%\templates\notes\.obsidian"
-set "FILES[18]=office\Blank.potx|%APPDATA%\Microsoft\Templates\Blank.potx"
-set "FILES[19]=office\PowerPoint.exportedUI|%LOCALAPPDATA%\Microsoft\Office\PowerPoint.officeUI"
-set "MAX_IDX=19
+set "FILES[17]=office\Blank.potx|%APPDATA%\Microsoft\Templates\Blank.potx"
+set "FILES[18]=office\PowerPoint.exportedUI|%LOCALAPPDATA%\Microsoft\Office\PowerPoint.officeUI"
+set "MAX_IDX=18
 
+rem set "FILES[17]=obsidian\.obsidian|%MY_ROOT%\templates\notes\.obsidian"
 rem set "FILES[10]=config\bat\config|%USERPROFILE%\.config\bat\config"
 rem set "FILES[11]=config\nvim|%USERPROFILE%\.config\nvim"
 rem set "FILES[18]=xyplorer|%XDG_BIN_HOME%\xyplorer_full_noinstall\Data"
