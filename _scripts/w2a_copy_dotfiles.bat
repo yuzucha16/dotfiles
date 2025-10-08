@@ -35,7 +35,12 @@ set "FILES[15]=profile.ps1|%USERPROFILE%\Documents\PowerShell\profile.ps1"
 set "FILES[16]=drawio\config.json|%APPDATA%\draw.io\config.json"
 set "FILES[17]=office\Blank.potx|%APPDATA%\Microsoft\Templates\Blank.potx"
 set "FILES[18]=office\PowerPoint.exportedUI|%LOCALAPPDATA%\Microsoft\Office\PowerPoint.officeUI"
-set "MAX_IDX=18
+set "FILES[19]=office\Book.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Book.xltx"
+set "FILES[20]=office\Sheet.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Sheet.xltx"
+set "FILES[21]=office\Excel.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Excel.officeUI"
+set "FILES[22]=office\Normal.dotm|%APPDATA%\Microsoft\Templates\Normal.dotm"
+set "FILES[23]=office\Word.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Word.officeUI"
+set "MAX_IDX=23
 
 rem set "FILES[17]=obsidian\.obsidian|%MY_ROOT%\templates\notes\.obsidian"
 rem set "FILES[10]=config\bat\config|%USERPROFILE%\.config\bat\config"
