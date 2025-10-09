@@ -4,11 +4,6 @@
     <MainToolbar>
       <Row>
         <Command>
-          <ID>{E5DB5337-F1B5-466F-94BB-87155C4470DD}</ID>
-          <Icon>cm_refresh</Icon>
-          <Command>cm_Refresh</Command>
-        </Command>
-        <Command>
           <ID>{6A546507-BD7A-44C1-BF33-18EAE65B7C41}</ID>
           <Icon>cm_runterm</Icon>
           <Command>cm_RunTerm</Command>
@@ -116,6 +111,14 @@
           <Icon>cm_copyfullnamestoclip</Icon>
           <Command>cm_CopyFullNamesToClip</Command>
         </Command>
+        <Separator>
+          <Style>False</Style>
+        </Separator>
+        <Command>
+          <ID>{E5DB5337-F1B5-466F-94BB-87155C4470DD}</ID>
+          <Icon>cm_newtab</Icon>
+          <Command>cm_NewTab</Command>
+        </Command>
       </Row>
     </MainToolbar>
     <MiddleToolbar>
@@ -178,7 +181,7 @@
     <RunInTerminalStayOpenParams>/K {command}</RunInTerminalStayOpenParams>
     <RunInTerminalCloseCmd>cmd.exe</RunInTerminalCloseCmd>
     <RunInTerminalCloseParams>/C {command}</RunInTerminalCloseParams>
-    <JustRunTerminal>cmd.exe</JustRunTerminal>
+    <JustRunTerminal>windowsterminal</JustRunTerminal>
     <JustRunTermParams/>
     <OnlyOneAppInstance>True</OnlyOneAppInstance>
     <LynxLike>True</LynxLike>
@@ -349,10 +352,10 @@
       <ShowCaptions>False</ShowCaptions>
       <ReportErrorWithCommands>False</ReportErrorWithCommands>
     </MiddleBar>
-    <DriveBar1>True</DriveBar1>
+    <DriveBar1>False</DriveBar1>
     <DriveBar2>True</DriveBar2>
     <DriveBarFlat>True</DriveBarFlat>
-    <DrivesListButton Enabled="True">
+    <DrivesListButton Enabled="False">
       <ShowLabel>True</ShowLabel>
       <ShowFileSystem>True</ShowFileSystem>
       <ShowFreeSpace>True</ShowFreeSpace>
@@ -424,7 +427,7 @@
     <WipePassNumber>1</WipePassNumber>
     <DropReadOnlyFlag>False</DropReadOnlyFlag>
     <ProcessComments>False</ProcessComments>
-    <RenameSelOnlyName>False</RenameSelOnlyName>
+    <RenameSelOnlyName>True</RenameSelOnlyName>
     <ShowCopyTabSelectPanel>False</ShowCopyTabSelectPanel>
     <UseTrash>True</UseTrash>
     <SkipFileOpError>False</SkipFileOpError>
@@ -511,7 +514,7 @@
     <GridHorzLine>False</GridHorzLine>
     <ShowWarningMessages>True</ShowWarningMessages>
     <SpaceMovesDown>False</SpaceMovesDown>
-    <DirBrackets>True</DirBrackets>
+    <DirBrackets>False</DirBrackets>
     <InplaceRename>False</InplaceRename>
     <InplaceRenameButton>True</InplaceRenameButton>
     <DblClickToParent>False</DblClickToParent>
@@ -641,7 +644,7 @@
     <UseTVMDirectoryHotlistFMC>False</UseTVMDirectoryHotlistFMC>
     <UseTVMDirectoryHotlistFDC>False</UseTVMDirectoryHotlistFDC>
     <UseTVMFavoriteTabsFMC>False</UseTVMFavoriteTabsFMC>
-    <UseTVMFavoriteTabsFDC>False</UseTVMFavoriteTabsFDC>
+    <UseTVMFavoriteTabsFDC>True</UseTVMFavoriteTabsFDC>
     <UseTVMDirHistory>False</UseTVMDirHistory>
     <UseTVMViewHistory>False</UseTVMViewHistory>
     <UseTVMCommandLineHistory>False</UseTVMCommandLineHistory>
