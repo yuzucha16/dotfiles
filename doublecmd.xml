@@ -158,17 +158,17 @@
   </Toolbars>
   <MainWindow>
     <Position Save="True">
-      <Left>80</Left>
-      <Top>48</Top>
-      <Width>1000</Width>
-      <Height>600</Height>
+      <Left>0</Left>
+      <Top>0</Top>
+      <Width>1139</Width>
+      <Height>1076</Height>
       <PixelsPerInch>120</PixelsPerInch>
-      <Maximized>True</Maximized>
+      <Maximized>False</Maximized>
       <Splitter>50</Splitter>
     </Position>
   </MainWindow>
   <Language>
-    <POFileName>doublecmd.pot</POFileName>
+    <POFileName>doublecmd.ja.po</POFileName>
   </Language>
   <Behaviours>
     <GoToRoot>False</GoToRoot>
@@ -180,7 +180,7 @@
     <RunInTerminalCloseParams>/C {command}</RunInTerminalCloseParams>
     <JustRunTerminal>cmd.exe</JustRunTerminal>
     <JustRunTermParams/>
-    <OnlyOneAppInstance>False</OnlyOneAppInstance>
+    <OnlyOneAppInstance>True</OnlyOneAppInstance>
     <LynxLike>True</LynxLike>
     <FileSizeFormat>0</FileSizeFormat>
     <OperationSizeFormat>0</OperationSizeFormat>
@@ -215,7 +215,7 @@
     <ColumnsTitleLikeValues>False</ColumnsTitleLikeValues>
     <CutTextToColumnWidth>True</CutTextToColumnWidth>
     <ExtendCellWidth>False</ExtendCellWidth>
-    <ShowSystemFiles>False</ShowSystemFiles>
+    <ShowSystemFiles>True</ShowSystemFiles>
     <ListFilesInThread>True</ListFilesInThread>
     <LoadIconsSeparately>True</LoadIconsSeparately>
     <DelayLoadingTabs>True</DelayLoadingTabs>
@@ -246,10 +246,10 @@
   </Tools>
   <Fonts>
     <Main>
-      <Name>default</Name>
+      <Name>HackGen Console NF</Name>
       <Size>10</Size>
-      <Style>1</Style>
-      <Quality>0</Quality>
+      <Style>0</Style>
+      <Quality>1</Quality>
     </Main>
     <Editor>
       <Name>Courier New</Name>
@@ -357,7 +357,7 @@
       <ShowFileSystem>True</ShowFileSystem>
       <ShowFreeSpace>True</ShowFreeSpace>
     </DrivesListButton>
-    <SeparateTree>False</SeparateTree>
+    <SeparateTree>True</SeparateTree>
     <DirectoryTabs>True</DirectoryTabs>
     <CurrentDirectory>True</CurrentDirectory>
     <TabHeader>True</TabHeader>
@@ -371,7 +371,7 @@
     <DriveIndicator>False</DriveIndicator>
     <ProgressInMenuBar>False</ProgressInMenuBar>
     <PanelOfOperationsInBackground>True</PanelOfOperationsInBackground>
-    <HorizontalFilePanels>False</HorizontalFilePanels>
+    <HorizontalFilePanels>True</HorizontalFilePanels>
     <ShortFormatDriveInfo>True</ShortFormatDriveInfo>
     <UppercaseDriveLetter>False</UppercaseDriveLetter>
     <ShowColonAfterDrive>False</ShowColonAfterDrive>
@@ -472,11 +472,11 @@
       <MulRenLogFilename>%DC_CONFIG_PATH%\multirename.log</MulRenLogFilename>
       <MultRenDailyIndividualDirLog>True</MultRenDailyIndividualDirLog>
       <MulRenFilenameWithFullPathInLog>False</MulRenFilenameWithFullPathInLog>
-      <MulRenPathRangeSeparator> - </MulRenPathRangeSeparator>
+      <MulRenPathRangeSeparator>- </MulRenPathRangeSeparator>
     </MultiRename>
   </FileOperations>
   <Tabs>
-    <Options>54033</Options>
+    <Options>49937</Options>
     <CharacterLimit>32</CharacterLimit>
     <Position>0</Position>
     <ActionOnDoubleClick>2</ActionOnDoubleClick>
@@ -546,7 +546,7 @@
     <ShowHiddenDimmed>False</ShowHiddenDimmed>
     <ShowMode>3</ShowMode>
     <ShowOverlays>False</ShowOverlays>
-    <Size>40</Size>
+    <Size>20</Size>
     <DiskSize>20</DiskSize>
     <DiskAlpha>50</DiskAlpha>
     <ToolSize>24</ToolSize>
@@ -712,7 +712,7 @@
   <MarkDefaultWantedAttribute/>
   <MarkLastWantedAttribute/>
   <SearchTemplates/>
-  <ColumnsSets DefaultTitleHash="540805403">
+  <ColumnsSets DefaultTitleHash="1436586812">
     <ColumnsSet UseFrameCursor="False">
       <Name>Default</Name>
       <Unique>5A71A781-52F9-4FB0-9CF0-B4583022CF65</Unique>
@@ -722,15 +722,15 @@
       <CursorBorder Enabled="False"/>
       <Columns>
         <Column>
-          <Title>Name</Title>
+          <Title>名前</Title>
           <Unique>0AA08EF2-26DA-4177-A48E-B30F6BEEAEE4</Unique>
           <FuncString>[DC().GETFILENAMENOEXT{}]</FuncString>
-          <Width>250</Width>
+          <Width>360</Width>
           <Align>0</Align>
           <Font>
-            <Name>default</Name>
+            <Name>HackGen Console NF</Name>
             <Size>10</Size>
-            <Style>1</Style>
+            <Style>0</Style>
             <Quality>0</Quality>
           </Font>
           <UseInvertedSelection>False</UseInvertedSelection>
@@ -738,15 +738,15 @@
           <Overcolor>True</Overcolor>
         </Column>
         <Column>
-          <Title>Ext</Title>
+          <Title>拡張子</Title>
           <Unique>CB54B5DB-3D62-45E4-91FB-06DC2DC6107A</Unique>
           <FuncString>[DC().GETFILEEXT{}]</FuncString>
           <Width>50</Width>
           <Align>0</Align>
           <Font>
-            <Name>default</Name>
+            <Name>HackGen Console NF</Name>
             <Size>10</Size>
-            <Style>1</Style>
+            <Style>0</Style>
             <Quality>0</Quality>
           </Font>
           <UseInvertedSelection>False</UseInvertedSelection>
@@ -754,15 +754,15 @@
           <Overcolor>True</Overcolor>
         </Column>
         <Column>
-          <Title>Size</Title>
+          <Title>サイズ</Title>
           <Unique>8CC99F5B-D50D-47AE-BBD4-727AB23EF934</Unique>
           <FuncString>[DC().GETFILESIZE{}]</FuncString>
           <Width>70</Width>
           <Align>1</Align>
           <Font>
-            <Name>default</Name>
+            <Name>HackGen Console NF</Name>
             <Size>10</Size>
-            <Style>1</Style>
+            <Style>0</Style>
             <Quality>0</Quality>
           </Font>
           <UseInvertedSelection>False</UseInvertedSelection>
@@ -770,15 +770,15 @@
           <Overcolor>True</Overcolor>
         </Column>
         <Column>
-          <Title>Date</Title>
+          <Title>日付</Title>
           <Unique>8FCDF4E7-9104-427D-86FD-FE3021FC9B72</Unique>
           <FuncString>[DC().GETFILETIME{}]</FuncString>
-          <Width>140</Width>
+          <Width>206</Width>
           <Align>1</Align>
           <Font>
-            <Name>default</Name>
+            <Name>HackGen Console NF</Name>
             <Size>10</Size>
-            <Style>1</Style>
+            <Style>0</Style>
             <Quality>0</Quality>
           </Font>
           <UseInvertedSelection>False</UseInvertedSelection>
@@ -786,15 +786,15 @@
           <Overcolor>True</Overcolor>
         </Column>
         <Column>
-          <Title>Attr</Title>
+          <Title>属性</Title>
           <Unique>41C4AE99-03B4-4306-A47E-8C8D611B802A</Unique>
           <FuncString>[DC().GETFILEATTR{}]</FuncString>
           <Width>100</Width>
           <Align>0</Align>
           <Font>
-            <Name>default</Name>
+            <Name>HackGen Console NF</Name>
             <Size>10</Size>
-            <Style>1</Style>
+            <Style>0</Style>
             <Quality>0</Quality>
           </Font>
           <UseInvertedSelection>False</UseInvertedSelection>
