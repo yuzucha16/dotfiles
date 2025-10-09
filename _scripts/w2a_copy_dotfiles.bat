@@ -40,7 +40,8 @@ set "FILES[20]=office\Sheet.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Sheet.xltx"
 set "FILES[21]=office\Excel.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Excel.officeUI"
 set "FILES[22]=office\Normal.dotm|%APPDATA%\Microsoft\Templates\Normal.dotm"
 set "FILES[23]=office\Word.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Word.officeUI"
-set "MAX_IDX=23
+set "FILES[24]=doublecmd.xml|%USERPROFILE%\scoop\apps\doublecmd\current\settings\doublecmd.xml"
+set "MAX_IDX=24
 
 rem set "FILES[17]=obsidian\.obsidian|%MY_ROOT%\templates\notes\.obsidian"
 rem set "FILES[10]=config\bat\config|%USERPROFILE%\.config\bat\config"
