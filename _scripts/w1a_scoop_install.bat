@@ -5,6 +5,7 @@ windows-terminal ^
 pwsh ^
 PSReadLine ^
 scoop-completion ^
+doublecmd ^
 autohotkey ^
 starship ^
 draw.io ^
