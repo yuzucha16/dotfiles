@@ -40,8 +40,9 @@ set "FILES[20]=office\Sheet.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Sheet.xltx"
 set "FILES[21]=office\Excel.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Excel.officeUI"
 set "FILES[22]=office\Normal.dotm|%APPDATA%\Microsoft\Templates\Normal.dotm"
 set "FILES[23]=office\Word.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Word.officeUI"
-set "FILES[24]=remember.xml|%XDG_BIN_HOME%\te250907\config\remember.xml"
-set "MAX_IDX=24
+set "FILES[24]=obsidian\.obsidian|%MY_ROOT%\templates\notes\.obsidian"
+set "FILES[25]=remember.xml|%XDG_BIN_HOME%\te250907\config\remember.xml"
+set "MAX_IDX=25
 
 rem set "FILES[17]=obsidian\.obsidian|%MY_ROOT%\templates\notes\.obsidian"
 rem set "FILES[10]=config\bat\config|%USERPROFILE%\.config\bat\config"
