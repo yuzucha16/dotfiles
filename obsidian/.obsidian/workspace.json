@@ -14,12 +14,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "3_resources/basis/活動方針_例.md",
-                "mode": "preview",
+                "file": "2_areas/report/monthly/2025/2025-11(月報).md.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "活動方針_例"
+              "title": "2025-11(月報).md"
             }
           }
         ]
@@ -112,7 +112,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "3_resources/basis/活動方針_例.md",
+                "file": "3_resources/templates/議事メモ.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -122,7 +122,7 @@
                 "unlinkedCollapsed": false
               },
               "icon": "links-coming-in",
-              "title": "活動方針_例へのバックリンク"
+              "title": "議事メモへのバックリンク"
             }
           },
           {
@@ -131,12 +131,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "3_resources/basis/活動方針_例.md",
+                "file": "3_resources/templates/議事メモ.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "活動方針_例からのアウトゴーイングリンク"
+              "title": "議事メモからのアウトゴーイングリンク"
             }
           },
           {
@@ -160,13 +160,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "3_resources/basis/活動方針_例.md",
+                "file": "2_areas/report/monthly/2025/2025-11(月報).md.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "活動方針_例のアウトライン"
+              "title": "2025-11(月報).mdのアウトライン"
             }
           }
         ],
@@ -191,35 +191,40 @@
   },
   "active": "4615d9baec7bd27b",
   "lastOpenFiles": [
-    "2025-11-04.md",
-    "3_resources/basis/活動方針_例.md",
-    "3_resources/basis/活動方針.md",
-    "Markdown Cheatsheet.md",
-    "3_resources/basis/活動方針_簡易.md",
-    "3_resources/basis/WBSとガント_template.md",
-    "3_resources/basis/WBSとガント.md",
-    "1_projects/sample_pj/phases/04_test.md",
-    "1_projects/sample_pj/phases/03_implementation.md",
-    "1_projects/sample_pj/phases/02_design.md",
-    "1_projects/sample_pj/phases/01_requirements.md",
-    "1_projects/sample_pj/deliverables/test_plan.md",
-    "1_projects/sample_pj/deliverables/requirements_spec.md",
-    "1_projects/sample_pj/deliverables/design_doc.md",
-    "1_projects/_template/project_hub.md",
-    "1_projects/_template/phases/04_test.md",
-    "1_projects/_template/phases/03_implementation.md",
-    "1_projects/_template/phases/02_design.md",
-    "1_projects/_template/phases/01_requirements.md",
-    "1_projects/_template/deliverables/test_plan.md",
-    "1_projects/_template/deliverables/requirements_spec.md",
-    "1_projects/_template/deliverables/design_doc.md",
-    "2025-11-01.md",
-    "無題のファイル.canvas",
+    "2_areas/report/daily/2025/2025-11-10.md.md",
+    "2_areas/report/weekly/2025/2025-W44.md.md",
+    "2_areas/report/monthly/2025/2025-11(月報).md.md",
+    "2_areas/report/_dashboard.md",
+    "2_areas/report/_dashboard_with_charts.md",
+    "3_resources/templates/reporting/monthly.md",
+    "3_resources/templates/reporting/daily.md",
+    "2_areas/ops_reporting/daily",
+    "2_areas/ops_reporting",
+    "3_resources/templates/reporting/weekly.md",
+    "2_areas/report/monthly/2025",
+    "2_Areas/ops_reporting/monthly/2025",
+    "2_Areas/ops_reporting/monthly/2025/2025-11(月報).md.md",
+    "2_areas/report/daily/2025/2025-11-09.md.md",
+    "2_areas/report/weekly/2025",
+    "2_Areas/ops_reporting/weekly/2025",
+    "2_Areas/ops_reporting/weekly/2025/2025-W44.md.md",
+    "2025-11-11.md",
+    "2_areas/report/daily/2025",
+    "2_areas/ops_reporting/daily/2025/2025-11-10.md.md",
+    "2_areas/ops_reporting/daily/2025-11-02.md",
+    "2_Areas/ops_reporting/daily/2025/2025-11-10.md.md",
+    "2_Areas/ops_reporting/daily/2025-11-10.md",
+    "2_Areas/ops_reporting/daily/2025",
+    "2_Areas/ops_reporting/monthly",
+    "2_Areas/ops_reporting/_dashboard_with_charts.md",
+    "2_Areas/ops_reporting/_dashboard.md",
+    "2_Areas/ops_reporting/weekly",
+    "2_areas/ops_reporting/daily/2025-11-12.md",
     "3_resources/samples/議事メモ.md",
-    "4_archive/obsolete/project_hub_template.md",
-    "4_archive/obsolete/meeting_note_template.md",
-    "3_resources/basis",
-    "4_archive/obsolete",
-    "templates/New.txt"
+    "3_resources/templates/議事メモ.md",
+    "3_resources/basis/活動方針_例.md",
+    "2025-11-04.md",
+    "3_resources/basis/活動方針.md",
+    "無題のファイル.canvas"
   ]
 }
