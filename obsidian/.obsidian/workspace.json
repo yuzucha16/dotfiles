@@ -6,6 +6,7 @@
       {
         "id": "62a090ef39da0cc6",
         "type": "tabs",
+        "dimension": 81.656346749226,
         "children": [
           {
             "id": "4615d9baec7bd27b",
@@ -19,6 +20,23 @@
               },
               "icon": "lucide-file",
               "title": "活動方針_例"
+            }
+          }
+        ]
+      },
+      {
+        "id": "7209acbf67d9fde2",
+        "type": "tabs",
+        "dimension": 18.343653250773993,
+        "children": [
+          {
+            "id": "897607482fedcc64",
+            "type": "leaf",
+            "state": {
+              "type": "calendar",
+              "state": {},
+              "icon": "calendar-with-checkmark",
+              "title": "Calendar"
             }
           }
         ]
@@ -94,17 +112,17 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "3_resources/basis/活動方針_簡易.md",
+                "file": "3_resources/basis/活動方針_例.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
                 "showSearch": false,
                 "searchQuery": "",
                 "backlinkCollapsed": false,
-                "unlinkedCollapsed": true
+                "unlinkedCollapsed": false
               },
               "icon": "links-coming-in",
-              "title": "活動方針_簡易へのバックリンク"
+              "title": "活動方針_例へのバックリンク"
             }
           },
           {
@@ -113,12 +131,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Welcome.md",
+                "file": "3_resources/basis/活動方針_例.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Welcome"
+              "title": "活動方針_例からのアウトゴーイングリンク"
             }
           },
           {
@@ -133,7 +151,7 @@
                 "searchQuery": ""
               },
               "icon": "lucide-tags",
-              "title": "Tags"
+              "title": "タグ"
             }
           },
           {
@@ -142,26 +160,17 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Welcome.md",
+                "file": "3_resources/basis/活動方針_例.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Welcome"
-            }
-          },
-          {
-            "id": "897607482fedcc64",
-            "type": "leaf",
-            "state": {
-              "type": "calendar",
-              "state": {},
-              "icon": "calendar-with-checkmark",
-              "title": "Calendar"
+              "title": "活動方針_例のアウトライン"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
@@ -182,6 +191,8 @@
   },
   "active": "4615d9baec7bd27b",
   "lastOpenFiles": [
+    "2025-11-04.md",
+    "3_resources/basis/活動方針_例.md",
     "3_resources/basis/活動方針.md",
     "Markdown Cheatsheet.md",
     "3_resources/basis/活動方針_簡易.md",
@@ -207,8 +218,6 @@
     "3_resources/samples/議事メモ.md",
     "4_archive/obsolete/project_hub_template.md",
     "4_archive/obsolete/meeting_note_template.md",
-    "4_archive/obsolete/deliverable_note_template.md",
-    "3_resources/basis/粒度別管理表テンプレート.md",
     "3_resources/basis",
     "4_archive/obsolete",
     "templates/New.txt"

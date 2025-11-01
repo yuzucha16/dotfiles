@@ -28,5 +28,9 @@
   "obsidian-prism-theme@@h3-text-color-dt": "var(--color-cyan-text)",
   "obsidian-prism-theme@@h4-text-color-dt": "var(--color-cyan-text)",
   "obsidian-prism-theme@@h5-text-color-dt": "var(--color-cyan-text)",
-  "obsidian-prism-theme@@h6-text-color-dt": "var(--color-cyan-text)"
+  "obsidian-prism-theme@@h6-text-color-dt": "var(--color-cyan-text)",
+  "obsidian-prism-theme@@pt-icons-accent": false,
+  "obsidian-prism-theme@@color-scheme-style-lt": "pt-color-scheme-style-border-lt",
+  "obsidian-prism-theme@@accent-style-lt": "pt-accent-style-border-lt",
+  "obsidian-prism-theme@@light-accent-color-preset": "pt-accent-color-orange-lt"
 }

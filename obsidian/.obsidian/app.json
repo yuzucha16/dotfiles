@@ -1,5 +1,9 @@
 {
   "showLineNumber": false,
   "autoPairMarkdown": false,
-  "tabSize": 2
+  "tabSize": 2,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "0_inbox",
+  "attachmentFolderPath": "0_inbox",
+  "showIndentGuide": false
 }
