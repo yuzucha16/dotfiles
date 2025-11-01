@@ -1,7 +1,8 @@
 {
   "theme": "obsidian",
   "accentColor": "#5cf58a",
-  "cssTheme": "Obsidian Nord",
-  "interfaceFontFamily": "Meiryo UI",
-  "textFontFamily": "Meiryo UI"
+  "cssTheme": "Obsidian gruvbox",
+  "interfaceFontFamily": "Noto Sans JP,BIZ UDPゴシック,Meiryo UI,HackGen Console NF",
+  "textFontFamily": "Noto Sans JP,BIZ UDPゴシック,Meiryo UI,HackGen Console NF",
+  "monospaceFontFamily": "HackGen Console NF,MyricaM Nerd Font,Meiryo UI"
 }
