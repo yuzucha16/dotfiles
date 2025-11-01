@@ -1,8 +1,9 @@
 {
-  "theme": "obsidian",
-  "accentColor": "#5cf58a",
-  "cssTheme": "Obsidian gruvbox",
+  "theme": "moonstone",
+  "accentColor": "",
+  "cssTheme": "Prism",
   "interfaceFontFamily": "Noto Sans JP,BIZ UDPゴシック,Meiryo UI,HackGen Console NF",
   "textFontFamily": "Noto Sans JP,BIZ UDPゴシック,Meiryo UI,HackGen Console NF",
-  "monospaceFontFamily": "HackGen Console NF,MyricaM Nerd Font,Meiryo UI"
+  "monospaceFontFamily": "HackGen Console NF,MyricaM Nerd Font,Meiryo UI",
+  "enabledCssSnippets": []
 }
