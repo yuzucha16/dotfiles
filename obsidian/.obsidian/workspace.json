@@ -14,12 +14,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "2_areas/report/monthly/2025/2025-11(月報).md.md",
+                "file": "2_areas/report/_dashboard.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2025-11(月報).md"
+              "title": "_dashboard"
             }
           }
         ]
@@ -191,11 +191,11 @@
   },
   "active": "4615d9baec7bd27b",
   "lastOpenFiles": [
-    "2_areas/report/daily/2025/2025-11-10.md.md",
+    "2_areas/report/_dashboard_with_charts.md",
     "2_areas/report/weekly/2025/2025-W44.md.md",
     "2_areas/report/monthly/2025/2025-11(月報).md.md",
+    "2_areas/report/daily/2025/2025-11-10.md.md",
     "2_areas/report/_dashboard.md",
-    "2_areas/report/_dashboard_with_charts.md",
     "3_resources/templates/reporting/monthly.md",
     "3_resources/templates/reporting/daily.md",
     "2_areas/ops_reporting/daily",

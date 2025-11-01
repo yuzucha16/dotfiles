@@ -5,5 +5,6 @@
   "newFileLocation": "folder",
   "newFileFolderPath": "0_inbox",
   "attachmentFolderPath": "0_inbox",
-  "showIndentGuide": false
+  "showIndentGuide": false,
+  "promptDelete": false
 }
