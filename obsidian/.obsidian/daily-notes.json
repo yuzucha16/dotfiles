@@ -1,4 +1,4 @@
 {
-  "folder": "2_areas/ops_reporting/daily",
-  "template": "3_resources/templates/reporting/daily"
+  "folder": "2_areas/report/daily",
+  "template": "3_resources/templates/report/daily"
 }

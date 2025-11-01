@@ -6,20 +6,16 @@
       {
         "id": "62a090ef39da0cc6",
         "type": "tabs",
-        "dimension": 81.656346749226,
+        "dimension": 84.01278976818544,
         "children": [
           {
             "id": "4615d9baec7bd27b",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "2_areas/report/_dashboard.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "_dashboard"
+              "title": "新規タブ"
             }
           }
         ]
@@ -27,7 +23,7 @@
       {
         "id": "7209acbf67d9fde2",
         "type": "tabs",
-        "dimension": 18.343653250773993,
+        "dimension": 15.987210231814547,
         "children": [
           {
             "id": "897607482fedcc64",
@@ -96,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 241.5
   },
   "right": {
     "id": "5b5172d223344622",
@@ -189,42 +185,43 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "4615d9baec7bd27b",
+  "active": "c7b157aa3d92207c",
   "lastOpenFiles": [
-    "2_areas/report/_dashboard_with_charts.md",
-    "2_areas/report/weekly/2025/2025-W44.md.md",
-    "2_areas/report/monthly/2025/2025-11(月報).md.md",
-    "2_areas/report/daily/2025/2025-11-10.md.md",
+    "2025-11(月報).md",
+    "2_areas/report/weekly/2025-W45-plan.md.md",
+    "2_areas/report/daily/2025-11-04.md.md",
+    "2_areas/report/daily/2025-11-03.md.md",
+    "2_areas/report/daily/2025-10-31.md.md",
+    "2_areas/report/weekly/2025-W44-actual.md.md",
+    "2_areas/report/monthly/2025-12-plan.md.md",
+    "2_areas/report/monthly/2025-11-actual.md.md",
+    "3_resources/templates/report/weekly_actual.md",
+    "3_resources/templates/report/monthly_actual.md",
+    "3_resources/templates/report/weekly_plan.md",
+    "3_resources/templates/report/daily.md",
     "2_areas/report/_dashboard.md",
-    "3_resources/templates/reporting/monthly.md",
-    "3_resources/templates/reporting/daily.md",
+    "3_resources/templates/report/monthly_plan.md",
+    "2_areas/report/_dashboard_with_charts.md",
+    "3_resources/templates/old_reporting/monthly.md",
+    "2025-W44-actual.md",
+    "3_resources/templates/old_reporting/weekly.md",
+    "3_resources/templates/old_reporting/daily.md",
+    "2_areas/report/weekly/2025-W44-plan.md.md",
+    "2_areas/report/monthly/2025-11-plan.md.md",
+    "2_areas/report/daily/2025-W44-plan.md.md",
+    "2_areas/report/daily/2025-W44-actual.md.md",
+    "2_areas/ops_reporting/daily/2025-11-03.md",
+    "2_areas/report/daily/2025/2025-11-03.md.md",
+    "3_resources/templates/report",
+    "2_areas/report/monthly/2025",
+    "2_areas/report/weekly/2025",
+    "2_areas/report/daily/2025",
     "2_areas/ops_reporting/daily",
     "2_areas/ops_reporting",
-    "3_resources/templates/reporting/weekly.md",
-    "2_areas/report/monthly/2025",
     "2_Areas/ops_reporting/monthly/2025",
-    "2_Areas/ops_reporting/monthly/2025/2025-11(月報).md.md",
-    "2_areas/report/daily/2025/2025-11-09.md.md",
-    "2_areas/report/weekly/2025",
     "2_Areas/ops_reporting/weekly/2025",
-    "2_Areas/ops_reporting/weekly/2025/2025-W44.md.md",
-    "2025-11-11.md",
-    "2_areas/report/daily/2025",
-    "2_areas/ops_reporting/daily/2025/2025-11-10.md.md",
-    "2_areas/ops_reporting/daily/2025-11-02.md",
-    "2_Areas/ops_reporting/daily/2025/2025-11-10.md.md",
-    "2_Areas/ops_reporting/daily/2025-11-10.md",
     "2_Areas/ops_reporting/daily/2025",
     "2_Areas/ops_reporting/monthly",
-    "2_Areas/ops_reporting/_dashboard_with_charts.md",
-    "2_Areas/ops_reporting/_dashboard.md",
-    "2_Areas/ops_reporting/weekly",
-    "2_areas/ops_reporting/daily/2025-11-12.md",
-    "3_resources/samples/議事メモ.md",
-    "3_resources/templates/議事メモ.md",
-    "3_resources/basis/活動方針_例.md",
-    "2025-11-04.md",
-    "3_resources/basis/活動方針.md",
     "無題のファイル.canvas"
   ]
 }
