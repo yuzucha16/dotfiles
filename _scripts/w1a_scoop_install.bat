@@ -1,6 +1,7 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 set APPS=^
+brave ^
 windows-terminal ^
 pwsh ^
 PSReadLine ^
