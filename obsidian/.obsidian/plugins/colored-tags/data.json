@@ -1,0 +1,20 @@
+{
+  "palette": {
+    "seed": 0,
+    "selected": "adaptive-soft",
+    "custom": "e12729-f37324-f8cc1b-72b043-007f4e"
+  },
+  "mixColors": true,
+  "transition": true,
+  "accessibility": {
+    "highTextContrast": false
+  },
+  "knownTags": {
+    "dashboard": 1,
+    "report": 2,
+    "daily": 3,
+    "monthly": 4,
+    "actual": 5
+  },
+  "_version": 3
+}
