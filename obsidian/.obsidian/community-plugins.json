@@ -1,15 +1,10 @@
 [
   "calendar",
-  "templater-obsidian",
   "obsidian-icon-folder",
-  "obsidian-tasks-plugin",
-  "image-converter",
   "obsidian-style-settings",
   "dataview",
   "quickadd",
   "obsidian-memos",
-  "auto-card-link",
-  "obsidian-auto-link-title",
   "obsidian-read-it-later",
   "colored-tags"
 ]

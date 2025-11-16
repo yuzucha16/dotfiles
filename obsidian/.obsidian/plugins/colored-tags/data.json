@@ -14,7 +14,10 @@
     "report": 2,
     "daily": 3,
     "monthly": 4,
-    "actual": 5
+    "actual": 5,
+    "weekly": 6,
+    "meeting": 7,
+    "task": 8
   },
   "_version": 3
 }

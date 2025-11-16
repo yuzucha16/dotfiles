@@ -1,24 +1,26 @@
 {
   "choices": [
     {
-      "id": "bdc65def-40f1-4d94-ad9b-5c6d39fd45bf",
-      "name": "📅 新しい週報を作成 (計画)",
+      "id": "a9e06b07-37c8-404e-8b15-0c238e828d6d",
+      "name": "📝議事メモを作成",
       "type": "Template",
       "command": false,
-      "templatePath": "3_resources/templates/report/weekly_plan.md",
+      "templatePath": "3_resources/templates/report/meeting.md",
       "fileNameFormat": {
         "enabled": true,
-        "format": "{{DATE:YYYY-MM}}(計画)"
+        "format": "{{DATE:GGGG-MM-DD}}-{{value}}"
       },
       "folder": {
         "enabled": true,
-        "folders": [],
+        "folders": [
+          "0_inbox/meeting"
+        ],
         "chooseWhenCreatingNote": false,
         "createInSameFolderAsActiveFile": false,
         "chooseFromSubfolders": false
       },
       "appendLink": false,
-      "openFile": false,
+      "openFile": true,
       "fileOpening": {
         "location": "tab",
         "direction": "vertical",
@@ -26,45 +28,47 @@
         "focus": true
       },
       "fileExistsMode": "Increment the file name",
-      "setFileExistsBehavior": false
+      "setFileExistsBehavior": true
+    },
+    {
+      "id": "26f5382f-a224-4bf9-9cf8-006874315c4c",
+      "name": "📝タスクを作成",
+      "type": "Template",
+      "command": false,
+      "templatePath": "3_resources/templates/report/task.md",
+      "fileNameFormat": {
+        "enabled": true,
+        "format": "{{DATE:GGGG-MM-DD}}-{{value}}"
+      },
+      "folder": {
+        "enabled": true,
+        "folders": [
+          "0_inbox/memo"
+        ],
+        "chooseWhenCreatingNote": false,
+        "createInSameFolderAsActiveFile": false,
+        "chooseFromSubfolders": false
+      },
+      "appendLink": false,
+      "openFile": true,
+      "fileOpening": {
+        "location": "tab",
+        "direction": "vertical",
+        "mode": "default",
+        "focus": true
+      },
+      "fileExistsMode": "Increment the file name",
+      "setFileExistsBehavior": true
     },
     {
       "id": "67e21733-8e70-479f-8527-7fb207b4d6cc",
-      "name": "📅 新しい週報を作成 (実績)",
+      "name": "📅週報を作成",
       "type": "Template",
       "command": false,
-      "templatePath": "3_resources/templates/report/weekly_actual.md",
+      "templatePath": "3_resources/templates/report/weekly.md",
       "fileNameFormat": {
         "enabled": true,
-        "format": "{{DATE:GGGG}}-W{{DATE:WW}}-actual"
-      },
-      "folder": {
-        "enabled": true,
-        "folders": [],
-        "chooseWhenCreatingNote": false,
-        "createInSameFolderAsActiveFile": false,
-        "chooseFromSubfolders": false
-      },
-      "appendLink": false,
-      "openFile": false,
-      "fileOpening": {
-        "location": "tab",
-        "direction": "vertical",
-        "mode": "default",
-        "focus": true
-      },
-      "fileExistsMode": "Increment the file name",
-      "setFileExistsBehavior": false
-    },
-    {
-      "id": "37310a54-a322-4729-887b-d12b9e1ec02e",
-      "name": "📅 新しい月報を作成 (計画)",
-      "type": "Template",
-      "command": false,
-      "templatePath": "3_resources/templates/report/monthly_plan.md",
-      "fileNameFormat": {
-        "enabled": true,
-        "format": "{{DATE:YYYY-MM}}(計画)"
+        "format": "{{DATE:GGGG}}-W{{DATE:WW}}"
       },
       "folder": {
         "enabled": true,
@@ -86,13 +90,13 @@
     },
     {
       "id": "49da03b2-4d98-4178-baa7-17089246ae51",
-      "name": "📅 新しい月報を作成 (実績)",
+      "name": "📅月報を作成",
       "type": "Template",
       "command": false,
-      "templatePath": "3_resources/templates/report/monthly_actual.md",
+      "templatePath": "3_resources/templates/report/monthly.md",
       "fileNameFormat": {
         "enabled": true,
-        "format": "{{DATE:YYYY-MM}}(実績)"
+        "format": "{{DATE:YYYY-MM}}"
       },
       "folder": {
         "enabled": true,
