@@ -6,11 +6,9 @@ windows-terminal ^
 pwsh ^
 PSReadLine ^
 scoop-completion ^
-doublecmd ^
 autohotkey ^
 starship ^
 draw.io ^
-obsidian ^
 notepadplusplus ^
 vscode ^
 winmerge ^
@@ -18,13 +16,15 @@ winscp ^
 teraterm ^
 irfanview ^
 marp ^
-pdf-xchange-editor ^
 ghq ^
 fork ^
 p4v ^
 which ^
 sudo
 
+rem obsidian ^
+rem pdf-xchange-editor ^
+rem doublecmd ^
 rem neovim ^
 rem clangd ^
 rem llvm ^
