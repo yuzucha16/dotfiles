@@ -18,7 +18,6 @@ if (Test-Path $caPath) {
   $env:NODE_EXTRA_CA_CERTS = $caPath
 }
 
-<#
 # Alias
 
 # Functions
@@ -29,10 +28,10 @@ Set-PsFzfOption -PsReadlineChordProvider 'Ctrl+t' -PsReadlineChordReverseHistory
 # ls を lsd に置き換え
 if (Get-Command lsd -ErrorAction SilentlyContinue) {
     # ls → lsd に置き換え
-    function ls { lsd --group-dirs=first --color=auto @args }
+    function ls { lsd --group-dirs=first --color=auto -1 @args }
 
     # よく使うバリエーション
-    function l  { lsd --group-dirs=first --color=auto -l @args }
+    function l  { lsd --group-dirs=first --color=auto --tree --depth 1 @args }
     function la { lsd --group-dirs=first --color=auto -a @args }
     function ll { lsd --group-dirs=first --color=auto -la @args }
     function lt { lsd --group-dirs=first --color=auto --tree @args }
@@ -160,7 +159,7 @@ function up {
 
 ##########
 # cd したら自動で ls する（Set-Location をラップ）
-# ※ cd は Set-Location のエイリアスなので、これで cd も自動 ls になります
+# ※ cd は Set-Location のエイリアスなので、これで cd も自動 ls にする
 ##########
 function Set-Location {
     [CmdletBinding(DefaultParameterSetName='Path', SupportsShouldProcess=$true)]
@@ -203,4 +202,3 @@ if (Get-Module -ListAvailable PSFzf) {
     # 代表的なバインド例（お好みで）
     # Set-PsFzfOption -PsReadlineChordProvider 'Ctrl+t' -PsReadlineChordReverseHistory 'Ctrl+r'
 }
-#>

@@ -20,6 +20,14 @@ ghq ^
 fork ^
 p4v ^
 which ^
+lsd ^
+zoxide ^
+fzf ^
+psfzf ^
+ripgrep ^
+fd ^
+bat ^
+broot ^
 sudo
 
 rem obsidian ^
@@ -29,13 +37,7 @@ rem neovim ^
 rem clangd ^
 rem llvm ^
 rem typora ^
-rem lsd ^
-rem zoxide ^
-rem fzf ^
-rem psfzf ^
-rem ripgrep ^
-rem fd ^
-rem bat ^
+
 rem nu ^
 rem goneovim ^
 rem cmake ^
@@ -44,7 +46,6 @@ rem nodejs ^
 rem doxygen ^
 rem plantuml ^
 rem graphviz ^
-rem broot ^
 
 REM ======================================================
 REM  Scoop apps/buckets installer (User mode only)
