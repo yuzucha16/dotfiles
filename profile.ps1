@@ -20,11 +20,6 @@ if (Test-Path $caPath) {
 
 # Alias
 
-# Functions
-
-# FZF search
-Set-PsFzfOption -PsReadlineChordProvider 'Ctrl+t' -PsReadlineChordReverseHistory 'Ctrl+r'
-
 # ls を lsd に置き換え
 if (Get-Command lsd -ErrorAction SilentlyContinue) {
     # ls → lsd に置き換え
@@ -41,6 +36,13 @@ if (Get-Command lsd -ErrorAction SilentlyContinue) {
     function l2 { lsd --group-dirs=first --color=auto --tree --depth 2 @args }
     function l3 { lsd --group-dirs=first --color=auto --tree --depth 3 @args }
 }
+
+<#
+
+# Functions
+
+# FZF search
+Set-PsFzfOption -PsReadlineChordProvider 'Ctrl+t' -PsReadlineChordReverseHistory 'Ctrl+r'
 
 # ディレクトリ移動（Set-Alias でシンプルに定義）
 Set-Alias ..  Set-Location
@@ -202,3 +204,5 @@ if (Get-Module -ListAvailable PSFzf) {
     # 代表的なバインド例（お好みで）
     # Set-PsFzfOption -PsReadlineChordProvider 'Ctrl+t' -PsReadlineChordReverseHistory 'Ctrl+r'
 }
+
+#>
