@@ -1,0 +1,1 @@
+cmd /c pandoc "$(FULL_CURRENT_PATH)"  -o "%MY_ROOT%\dotfiles\pandoc\output.html"  -s -c "github-markdown.css"

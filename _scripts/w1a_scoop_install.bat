@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 set APPS=^
-brave ^
+
 windows-terminal ^
 pwsh ^
 PSReadLine ^
@@ -15,14 +15,16 @@ winmerge ^
 winscp ^
 teraterm ^
 irfanview ^
-marp ^
 ghq ^
 fork ^
 p4v ^
 which ^
 lsd ^
+pandoc ^
 sudo
 
+rem marp ^
+rem brave ^
 rem obsidian ^
 rem pdf-xchange-editor ^
 rem doublecmd ^
