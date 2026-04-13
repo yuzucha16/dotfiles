@@ -16,9 +16,9 @@ sc07B & m:: Send "{PgDn}"
 sc07B & i:: Send "{Home}"
 sc07B & ,:: Send "{End}"
 
-sc07B & f:: Send "{Enter}"
-sc07B & a:: Send "{Backspace}"
-sc07B & s:: Send "{Delete}"
+sc07B & a:: Send "{Enter}"
+sc07B & f:: Send "{Backspace}"
+sc07B & d:: Send "{Delete}"
 sc07B & Space:: Send "{vkF3}" ;無変換 + space -> 半角全角
 
 ; obs
