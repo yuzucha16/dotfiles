@@ -31,6 +31,8 @@ PACKAGES=(
     ripgrep
     fd-find
     unzip
+	universal-ctags
+	global
     # ここに追加したいツールを書いていく
 )
 

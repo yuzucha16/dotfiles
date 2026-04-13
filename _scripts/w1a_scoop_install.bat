@@ -9,6 +9,8 @@ scoop-completion ^
 autohotkey ^
 starship ^
 vim ^
+universal-ctags ^
+global ^
 draw.io ^
 notepadplusplus ^
 vscode ^
