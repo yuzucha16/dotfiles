@@ -1,36 +1,53 @@
-"==========================================
-"General
-"==========================================
+" ==========================================
+" General
+" ==========================================
 set title
 set number
 set ruler
+set showmatch
+set display=lastline
+
 set autoindent
-set smartindent
 set expandtab
 set tabstop=4
 set shiftwidth=4
 set backspace=indent,eol,start
-set guioptions+=a
-set display=lastline
-set showmatch
-set noswapfile
 
-set nowritebackup
-set nobackup
-set clipboard+=unnamed,autoselect
-set mouse=a
-set ttymouse=xterm2
-
-set noignorecase
-set wrapscan
 set incsearch
 set hlsearch
-set wildmenu "
-set history=1000
-set wildmode=list,full
+set wrapscan
+set ignorecase
+set smartcase
 
-set nocompatible
-filetype plugin indent off
+set wildmenu
+set wildmode=list,full
+set history=1000
+
+set mouse=a
+set noswapfile
+set nobackup
+set nowritebackup
+set hidden
+set undofile
+
+" clipboard
+if has('unnamedplus')
+  set clipboard=unnamedplus
+elseif has('clipboard')
+  set clipboard=unnamed
+endif
+
+" ==========================================
+" UI / Color
+" ==========================================
+set background=dark
+
+if has('termguicolors')
+  set termguicolors
+endif
+
+syntax enable
+filetype plugin indent on
 
 "==========================================
 " Vim-plug
@@ -138,6 +155,26 @@ function! s:plug_bootstrap() abort
   endif
 endfunction
 
+""" gtags
+nnoremap <silent> <Space>f :cexpr system('global -f ' . expand('%'))<CR>:copen<CR>
+" 定義ジャンプ（即移動）
+nnoremap <silent> <Space>j :cexpr system('global ' . expand('<cword>'))<CR>:cfirst<CR>
+
+" 一覧（俯瞰）
+nnoremap <silent> <Space>d :cexpr system('global ' . expand('<cword>'))<CR>:copen<CR>
+
+" 参照一覧
+nnoremap <silent> <Space>r :cexpr system('global -r ' . expand('<cword>'))<CR>:copen<CR>
+
+"nnoremap <silent> <Space>j :cexpr system('global ' . expand('<cword>'))<CR>:cfirst<CR>
+"nnoremap <silent> <Space>d :cexpr system('global ' . expand('<cword>'))<CR>:copen<CR>
+"nnoremap <silent> <Space>r :cexpr system('global -r ' . expand('<cword>'))<CR>:copen<CR>
+"
+nnoremap <silent> <Space>f :Gtags -f %<CR>
+"nnoremap <silent> <Space>j :GtagsCursor<CR>
+"nnoremap <silent> <Space>d :<C-u>exe('Gtags '.expand('<cword>'))<CR>
+"nnoremap <silent> <Space>r :<C-u>exe('Gtags -r '.expand('<cword>'))<CR>
+
 """ Filer (Filer)
 nmap <C-n> :Fern . -reveal=% -drawer -toggle -width=25<CR> " Ctrl+nでファイルツリーを表示/非表示する
 let g:fern#default_hidden = 1
@@ -185,18 +222,6 @@ let g:airline#extensions#tabline#show_tab_type = 1
 let g:airline#extensions#tabline#show_close_button = 0
 
 """ Theme
-"set t_Co=256
-set termguicolors
-syntax enable
-set background=dark
-"colorscheme iceberg
-"colorscheme lucius
 colorscheme tender
-"colorscheme everforest
-"colorscheme zenborn
-"colorscheme leaf
-"syntax on
-
-filetype plugin indent on
 
 """ keybind
