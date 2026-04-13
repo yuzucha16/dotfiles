@@ -3,3 +3,5 @@
     
 [include]
     path = ~/.gitconfig_local
+[credential "helperselector"]
+	selected = manager

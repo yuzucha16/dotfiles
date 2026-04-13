@@ -8,6 +8,7 @@ PSReadLine ^
 scoop-completion ^
 autohotkey ^
 starship ^
+vim ^
 draw.io ^
 notepadplusplus ^
 vscode ^
@@ -27,7 +28,6 @@ rem marp ^
 rem brave ^
 rem obsidian ^
 rem pdf-xchange-editor ^
-rem doublecmd ^
 rem neovim ^
 rem clangd ^
 rem llvm ^
@@ -40,7 +40,6 @@ rem fd ^
 rem bat ^
 rem broot ^
 rem nu ^
-rem goneovim ^
 rem cmake ^
 rem ninja ^
 rem nodejs ^
