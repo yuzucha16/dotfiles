@@ -1853,7 +1853,7 @@ Description:
     </LexerStyles>
     <GlobalStyles>
         <!-- Attention : Don't modify the name of styleID="0" -->
-        <WidgetStyle name="Global override" styleID="0" fgColor="EBDBB2" bgColor="282828" fontName="PlemolJP Console NF" fontStyle="0" fontSize="10"></WidgetStyle>
+        <WidgetStyle name="Global override" styleID="0" fgColor="EBDBB2" bgColor="282828" fontName="PlemolJP Console NF" fontStyle="0" fontSize="11"></WidgetStyle>
         <WidgetStyle name="Default Style" styleID="32" fgColor="EBDBB2" bgColor="282828" fontName="Consolas" fontStyle="0" fontSize="10"></WidgetStyle>
         <WidgetStyle name="Indent guideline style" styleID="37" fgColor="665C54" bgColor="282828" fontName="" fontStyle="0" fontSize=""></WidgetStyle>
         <WidgetStyle name="Brace highlight style" styleID="34" fgColor="EBDBB2" bgColor="3C3836" fontName="" fontStyle="1" fontSize="10"></WidgetStyle>
