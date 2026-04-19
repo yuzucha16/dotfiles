@@ -24,6 +24,7 @@ p4v ^
 which ^
 lsd ^
 pandoc ^
+freecommander ^
 sudo
 
 rem marp ^
