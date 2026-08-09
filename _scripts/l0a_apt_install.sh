@@ -7,35 +7,46 @@ set -euo pipefail
 
 # 開発に必要なパッケージ一覧
 PACKAGES=(
+    # utils
+    vim
     git
+    wget
+    unzip
     stow
-    cmake
-    pkg-config
-    ninja-build
-    build-essential
-    universal-ctags
-    gdb
-    bear
-    clang
-    clangd
-    clang-tidy
-    clang-format
-    lld
-    lldb
-    ccache
-    valgrind  
+    
+    # console
     fzf
+    lsd
     bat
     tree
     zoxide
     ripgrep
     fd-find
-    unzip
-	universal-ctags
-	global
+    
+    # devel
+
     # ここに追加したいツールを書いていく
 )
 
+# Obsolete
+#    cmake
+#    pkg-config
+#    ninja-build
+#    build-essential
+#    universal-ctags
+#    gdb
+#    bear
+#    clang
+#    clangd
+#    clang-tidy
+#    clang-format
+#    lld
+#    lldb
+#    ccache
+#    valgrind  
+#	   universal-ctags
+#	   global
+  
 echo "[*] Installing packages: ${PACKAGES[*]}"
 sudo apt install -y "${PACKAGES[@]}"
 
@@ -43,6 +54,18 @@ sudo apt install -y "${PACKAGES[@]}"
 echo "[*] Cleaning up..."
 sudo apt autoremove -y
 sudo apt clean
+
+# Starship
+curl -sS https://starship.rs/install.sh | sh
+
+### Nvim 0.11.4 from appImage
+#cd /tmp
+#curl -LO https://github.com/neovim/neovim/releases/download/v0.11.4/nvim-linux-x86_64.appimage
+#sudo chmod +x nvim-linux-x86_64.appimage
+#sudo mv nvim-linux-x86_64.appimage /usr/local/bin/nvim
+#/usr/local/bin/nvim --version
+#sudo apt install -y snapd
+#sudo snap install nvim --classic
 
 # Go application
 /usr/local/go/bin/go install github.com/x-motemen/ghq@latest
@@ -55,5 +78,9 @@ $HOME/.cargo/bin/broot
 
 # symbolic link
 sudo ln -s /usr/bin/batcat /usr/local/bin/bat
+
+# zshインストール
+#sudo chsh -s /usr/bin/zsh
+#/usr/bin/zsh
 
 echo "[*] Install complete!"

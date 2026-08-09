@@ -256,38 +256,6 @@ ns() {
   fi
 }
 
-# namespace 定義/再オープンを検索する関数
-nstree() {
-  if [ $# -eq 0 ]; then
-    # 引数なし → 全部の namespace を階層表示
-    rg -n --type=cpp '^\s*namespace\s+[a-zA-Z0-9_:]+' \
-      --hidden --glob '!*build*' --glob '!*.generated.*' \
-    | awk -F: '{
-        file=$1; line=$2;
-        match($0, /namespace[ \t]+([a-zA-Z0-9_:]+)/, m);
-        ns=m[1];
-        # "::" の数だけインデント
-        n=gsub(/::/,"",ns);
-        indent=sprintf("%" (2*n) "s","");
-        printf "%s- %s (%s:%s)\n", indent, ns, file, line;
-      }'
-  else
-    # 引数あり → 特定 namespace のみ
-    local ns="$1"
-    shift
-    rg -n --type=cpp "^\s*namespace\s+${ns}(::[a-zA-Z0-9_]+)*\s*" \
-      --hidden --glob '!*build*' --glob '!*.generated.*' "$@" \
-    | awk -F: '{
-        file=$1; line=$2;
-        match($0, /namespace[ \t]+([a-zA-Z0-9_:]+)/, m);
-        ns=m[1];
-        n=gsub(/::/,"",ns);
-        indent=sprintf("%" (2*n) "s","");
-        printf "%s- %s (%s:%s)\n", indent, ns, file, line;
-      }'
-  fi
-}
-
 # fzfの標準キーバインド/補完（apt版の例）
 [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
 [ -f /usr/share/doc/fzf/examples/completion.bash ]   && source /usr/share/doc/fzf/examples/completion.bash
@@ -310,7 +278,7 @@ fi
 
 command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
 
-export EDITOR=nvim
-export VISUAL=nvim
+export EDITOR=vim #nvim
+export VISUAL=vim #nvim
 source ~/.config/broot/launcher/bash/br
 cd ~/dev/repos

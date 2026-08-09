@@ -44,8 +44,7 @@ set "FILES[24]=office\Sheet.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Sheet.xltx"
 set "FILES[25]=office\Excel.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Excel.officeUI"
 set "FILES[26]=office\Normal.dotm|%APPDATA%\Microsoft\Templates\Normal.dotm"
 set "FILES[27]=office\Word.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Word.officeUI"
-set "FILES[28]=freecommander.ini|%USERPROFILE%\scoop\apps\freecommander\current\Settings\freecommander.ini"
-set "MAX_IDX=28
+set "MAX_IDX=27
 
 rem set "FILES[24]=obsidian\.obsidian|%MY_ROOT%\templates\notes\.obsidian"
 rem set "FILES[25]=doublecmd.xml|%USERPROFILE%\scoop\apps\doublecmd\current\settings\doublecmd.xml"

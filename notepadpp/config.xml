@@ -1,7 +1,28 @@
 <?xml version="1.0"?>
 <NotepadPlus>
-    <FindHistory nbMaxFindHistoryPath="10" nbMaxFindHistoryFilter="10" nbMaxFindHistoryFind="10" nbMaxFindHistoryReplace="10" matchWord="no" matchCase="no" wrap="yes" directionDown="yes" fifRecuisive="yes" fifInHiddenFolder="no" fifProjectPanel1="no" fifProjectPanel2="no" fifProjectPanel3="no" fifFilterFollowsDoc="no" searchMode="0" transparencyMode="1" transparency="150" dotMatchesNewline="no" isSearch2ButtonsMode="no" regexBackward4PowerUser="no" bookmarkLine="no" purge="no" />
-    <History nbMaxFile="10" inSubMenu="no" customLength="-1" />
+    <FindHistory nbMaxFindHistoryPath="10" nbMaxFindHistoryFilter="10" nbMaxFindHistoryFind="10" nbMaxFindHistoryReplace="10" matchWord="no" matchCase="no" wrap="yes" directionDown="yes" fifRecuisive="yes" fifInHiddenFolder="no" fifProjectPanel1="no" fifProjectPanel2="no" fifProjectPanel3="no" fifFilterFollowsDoc="no" searchMode="0" transparencyMode="1" transparency="150" dotMatchesNewline="no" isSearch2ButtonsMode="no" regexBackward4PowerUser="no" bookmarkLine="no" purge="no">
+        <Filter name="" />
+        <Find name="Button_Switch_Keyboard" />
+        <Find name="sofleRGB" />
+        <Find name="SCRL" />
+        <Find name="behaviors " />
+        <Find name="SQT" />
+        <Find name="JP_AMPERSAND" />
+        <Find name="free" />
+        <Replace name="" />
+    </FindHistory>
+    <History nbMaxFile="10" inSubMenu="no" customLength="-1">
+        <File filename="C:\Users\ck\OneDrive\repos\github.com\yuzucha16\adv360-pro-zmk\config\keymap.json" />
+        <File filename="C:\Users\ck\OneDrive\ドキュメント\新規1.txt" />
+        <File filename="C:\Users\ck\OneDrive\repos\github.com\yuzucha16\adv360-pro-zmk\config\boards\arm\adv360\Kconfig.defconfig" />
+        <File filename="C:\Users\ck\OneDrive\repos\github.com\yuzucha16\dotfiles\config\vim\.vimrc" />
+        <File filename="C:\Users\ck\OneDrive\repos\github.com\yuzucha16\dotfiles\_scripts\w1a_scoop_install.bat" />
+        <File filename="C:\Users\ck\OneDrive\repos\github.com\yuzucha16\dotfiles\config\nvim-wsl\init.lua" />
+        <File filename="C:\Users\ck\OneDrive\repos\github.com\yuzucha16\dotfiles\_scripts\w2a_copy_dotfiles.bat" />
+        <File filename="C:\Users\ck\OneDrive\repos\github.com\yuzucha16\SofleKeyboard\.gitmodules" />
+        <File filename="C:\Users\ck\OneDrive\repos\github.com\yuzucha16\SofleKeyboard\Sofle_RGB\PCB\SofleKeyboard.kicad_pcb" />
+        <File filename="C:\Users\ck\OneDrive\repos\github.com\yuzucha16\SofleKeyboard\Sofle_RGB\PCB\SofleKeyboard.pro" />
+    </History>
     <ProjectPanels>
         <ProjectPanel id="0" workSpaceFile="" />
         <ProjectPanel id="1" workSpaceFile="" />
@@ -18,8 +39,8 @@
         <GUIConfig name="ScintillaViewsSplitter">vertical</GUIConfig>
         <GUIConfig name="UserDefineDlg" position="undocked">hide</GUIConfig>
         <GUIConfig name="TabSetting" replaceBySpace="yes" size="2" backspaceUnindent="no" />
-        <GUIConfig name="AppPosition" x="960" y="50" width="940" height="1100" isMaximized="no" />
-        <GUIConfig name="FindWindowPosition" left="900" top="700" right="1700" bottom="1260" isLessModeOn="no" />
+        <GUIConfig name="AppPosition" x="594" y="0" width="949" height="919" isMaximized="yes" />
+        <GUIConfig name="FindWindowPosition" left="0" top="325" right="739" bottom="767" isLessModeOn="no" />
         <GUIConfig name="FinderConfig" wrappedLines="no" purgeBeforeEverySearch="no" showOnlyOneEntryPerFoundLine="yes" FiF_ignoreunsavedChangesInOpenedFiles="no" />
         <GUIConfig name="noUpdate" intervalDays="15" nextUpdateDate="20251113" autoUpdateMode="1">no</GUIConfig>
         <GUIConfig name="Auto-detection">yes</GUIConfig>
@@ -61,6 +82,7 @@
         <GUIConfig name="DarkMode" enable="yes" colorTone="0" customColorTop="2105376" customColorMenuHotTrack="4539717" customColorActive="3684408" customColorMain="2105376" customColorError="176" customColorText="14737632" customColorDarkText="12632256" customColorDisabledText="8421504" customColorLinkText="65535" customColorEdge="6579300" customColorHotEdge="10197915" customColorDisabledEdge="4737096" enableWindowsMode="no" darkThemeName="Gruvbox dark medium.xml" darkToolBarIconSet="0" darkTbFluentColor="0" darkTbFluentCustomColor="16229180" darkTbFluentMono="no" darkTabIconSet="2" darkTabUseTheme="no" lightThemeName="Zenburn.xml" lightToolBarIconSet="4" lightTbFluentColor="0" lightTbFluentCustomColor="13070080" lightTbFluentMono="no" lightTabIconSet="0" lightTabUseTheme="yes" />
         <GUIConfig name="ScintillaPrimaryView" lineNumberMargin="show" lineNumberDynamicWidth="yes" bookMarkMargin="show" indentGuideLine="show" folderMarkStyle="box" isChangeHistoryEnabled="1" lineWrapMethod="aligned" currentLineIndicator="1" currentLineFrameWidth="1" virtualSpace="no" scrollBeyondLastLine="yes" rightClickKeepsSelection="no" selectedTextForegroundSingleColor="no" disableAdvancedScrolling="no" wrapSymbolShow="hide" Wrap="no" borderEdge="yes" isEdgeBgMode="no" edgeMultiColumnPos="" zoom="0" zoom2="0" whiteSpaceShow="hide" eolShow="hide" eolMode="1" npcShow="hide" npcMode="1" npcCustomColor="no" npcIncludeCcUniEOL="no" npcNoInputC0="yes" ccShow="yes" borderWidth="2" smoothFont="no" paddingLeft="0" paddingRight="0" distractionFreeDivPart="4" lineCopyCutWithoutSelection="yes" disableSelectedTextDragDrop="no" multiSelection="yes" columnSel2MultiEdit="yes" />
         <GUIConfig name="DockingManager" leftWidth="200" rightWidth="200" topHeight="200" bottomHeight="200">
+            <PluginDlg pluginName="NppExec.dll" id="5" curr="3" prev="-1" isVisible="no" />
             <PluginDlg pluginName="Notepad++::InternalFunction" id="0" curr="3" prev="-1" isVisible="yes" />
             <ActiveTabs cont="0" activeTab="-1" />
             <ActiveTabs cont="1" activeTab="-1" />

@@ -70,12 +70,12 @@ echo "[INFO] Mode=$MODE  DryRun=$DRY_RUN"
 # ===== Prepare dirs =====
 mkdir -p "$DST_DIR/.config"
 mkdir -p "$DST_DIR/.config/git"
-mkdir -p "$DST_DIR/.config/nvim"
+#mkdir -p "$DST_DIR/.config/nvim"
 mkdir -p "$DST_DIR/.config/broot"
 mkdir -p "$DST_DIR/.config/bat"
 mkdir -p "$DST_DIR/.config/pet"
 mkdir -p "$DST_DIR/.vscode-server/extensions"
-mkdir -p "$DST_DIR/.local/share/navi/cheats/denisidoro__cheats"
+#mkdir -p "$DST_DIR/.local/share/navi/cheats/denisidoro__cheats"
 
 # ===== Helper =====
 STOW_COMMON_FLAGS=(-v)
@@ -123,7 +123,7 @@ CONFIG_DIR="$SRC_DIR/config"
 do_stow "$CONFIG_DIR" "$DST_DIR/.config/broot"               "broot"
 do_stow "$CONFIG_DIR" "$DST_DIR/.config/bat"                 "bat"
 do_stow "$CONFIG_DIR" "$DST_DIR/.config/git"                 "git"
-do_stow "$CONFIG_DIR" "$DST_DIR/.config/nvim"                "nvim"
+#do_stow "$CONFIG_DIR" "$DST_DIR/.config/nvim"                "nvim"
 do_stow "$CONFIG_DIR" "$DST_DIR/.config/pet"                 "pet"
 do_stow "$CONFIG_DIR" "$DST_DIR/.config"                     "starship"
 
@@ -133,6 +133,6 @@ do_stow "$CONFIG_DIR" "$DST_DIR/.vscode-server/extensions"   "wsl"
 
 # XDG_LOCAL_HOME
 CONFIG_DIR="$SRC_DIR/share"
-do_stow "$CONFIG_DIR" "$DST_DIR/.local/share/navi/cheats/denisidoro__cheats" "denisidoro__cheats"
+#do_stow "$CONFIG_DIR" "$DST_DIR/.local/share/navi/cheats/denisidoro__cheats" "denisidoro__cheats"
 
 echo "[DONE] stow ${MODE} completed."

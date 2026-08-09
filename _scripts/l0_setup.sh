@@ -28,18 +28,6 @@ PACKAGES=(
 echo "[*] Installing packages: ${PACKAGES[*]}"
 sudo apt install -y "${PACKAGES[@]}"
 
-# Starhip
-curl -sS https://starship.rs/install.sh | sh
-
-# Nvim 0.11.4 from appImage
-cd /tmp
-curl -LO https://github.com/neovim/neovim/releases/download/v0.11.4/nvim-linux-x86_64.appimage
-sudo chmod +x nvim-linux-x86_64.appimage
-sudo mv nvim-linux-x86_64.appimage /usr/local/bin/nvim
-/usr/local/bin/nvim --version
-#sudo apt install -y snapd
-#sudo snap install nvim --classic
-
 # 不要なパッケージ削除
 echo "[*] Cleaning up..."
 sudo apt autoremove -y
@@ -74,13 +62,9 @@ mkdir -p \
   "$HOME/.local/bin" \
   "$HOME/.ssh" \
 
-# zshインストール
-#sudo chsh -s /usr/bin/zsh
-#/usr/bin/zsh
-
 # Go https://go.dev/doc/install
-sudo curl -fsSLo /tmp/go1.25.0.linux-amd64.tar.gz https://go.dev/dl/go1.25.0.linux-amd64.tar.gz
-sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.25.0.linux-amd64.tar.gz
+sudo curl -fsSLo /tmp/go1.25.12.linux-amd64.tar.gz https://go.dev/dl/go1.25.12.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.25.12.linux-amd64.tar.gz
 /usr/local/go/bin/go env -w GOBIN=$HOME/.local/bin
 
 # Rust
