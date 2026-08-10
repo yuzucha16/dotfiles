@@ -14,14 +14,17 @@ $env_var$os$username$hostname$directory$git_branch$git_status$c$python$rust$gola
 $character"""
 
 [character]
-success_symbol = "[➜](bold green) "
-error_symbol   = "[✗](bold red) "
-vicmd_symbol   = "[❮](bold yellow) "
+success_symbol = '[❯](bold green)'
+error_symbol = '[❯](bold red)'
+vimcmd_symbol = '[❮](bold yellow)'
+#success_symbol = "[➜](bold green) "
+#error_symbol   = "[✗](bold red) "
+#vicmd_symbol   = "[❮](bold yellow) "
 
 # ---- ディレクトリ（Nerd Font不要な絵文字を既定に） ----
 [directory]
-truncation_length = 3
-truncate_to_repo = false
+truncation_length = 2
+truncate_to_repo = true
 style = "cyan"
 format = "[$path]($style) "
 read_only = " "
@@ -46,6 +49,7 @@ format = '([$all_status$ahead_behind]($style)) '
 conflicted = " "
 staged     = "+"
 modified   = "!"
+deleted    = "✘${count} "
 untracked  = "?"
 stashed    = " "
 ahead      = "⇡${count}"
@@ -94,7 +98,7 @@ style = "dimmed"
 
 # ---- 遅い時だけ実行時間を表示 ----
 [cmd_duration]
-min_time = 800
+min_time = 2000
 format = "took [$duration]($style) "
 style = "dimmed italic white"
 
@@ -117,9 +121,9 @@ disabled = false
 format = "[$symbol]($style) "
 style = "dimmed"
 [os.symbols]
-Ubuntu = "󰕈 "
-Linux  = " "
-Windows = " "
+Ubuntu = "󰕈"
+Linux  = ""
+Windows = ""
 
 [hostname]
 ssh_only = true
@@ -127,6 +131,7 @@ format = "[@$hostname](dimmed purple) "
 
 [username]
 show_always = false
+ssh_only   = true
 style_user = "bold white"
 style_root = "bold red"
 format = "[$user]($style)"
