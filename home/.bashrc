@@ -90,12 +90,6 @@ alias ll='ls -alF --color=auto'
 alias la='ls -A --color=auto'
 alias l='ls -CF --color=auto'
 
-# ezaがあるときだけ有効化
-#if command -v eza >/dev/null 2>&1; then
-#  alias ll='eza -la --git'              # 隠し含めた詳細表示
-#  alias lt='eza --tree --level=2'
-#fi
-
 # lsdがあるときだけ有効化
 if command -v lsd >/dev/null 2>&1; then
   # ls → lsd
@@ -105,7 +99,7 @@ if command -v lsd >/dev/null 2>&1; then
   alias l='ls -l'                # 標準的な詳細表示
   alias la='ls -a'                # 隠しファイル込み
   alias ll='ls -la'              # 隠し含めた詳細表示
-  alias lt='ls --tree'            # ツリー表示（デフォ深さ無制限）
+  alias lt='ls --tree --depth 2'   # ツリー表示（デフォ深さ無制限）
   #alias ll='ls -l'                # 標準的な詳細表示
   #alias lla='ls -la'              # 隠し含めた詳細表示
   #alias l1='ls -1'                # 1カラムで一覧
@@ -249,8 +243,6 @@ cd() {
 # fzfの標準キーバインド/補完（apt版の例）
 [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
 [ -f /usr/share/doc/fzf/examples/completion.bash ]   && source /usr/share/doc/fzf/examples/completion.bash
-
-
 
 #### =========[ ローカル上書き（任意） ]=========
 # XDG 配下でのローカル拡張（マシン固有・社内PC等）

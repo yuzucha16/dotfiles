@@ -8,6 +8,7 @@ set -euo pipefail
 # 開発に必要なパッケージ一覧
 PACKAGES=(
     # utils
+    zsh
     vim
     unzip
     stow
@@ -69,8 +70,8 @@ curl -sS https://starship.rs/install.sh | sh
 #sudo snap install nvim --classic
 
 ### Go https://go.dev/doc/install
-sudo curl -fsSLo /tmp/go1.25.12.linux-amd64.tar.gz https://go.dev/dl/go1.25.12.linux-amd64.tar.gz
-sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.25.12.linux-amd64.tar.gz
+sudo curl -fsSLo /tmp/go1.26.0.linux-amd64.tar.gz https://go.dev/dl/go1.26.0.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.26.0.linux-amd64.tar.gz
 /usr/local/go/bin/go env -w GOBIN=$HOME/.local/bin
 
 ### Go application: path defined on .profile
@@ -86,11 +87,19 @@ sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.25.12.linux-am
 #$HOME/.cargo/bin/tldr --update
 #$HOME/.cargo/bin/broot
 
+### Docker Engine
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER
+
 # symbolic link
 sudo ln -s /usr/bin/batcat /usr/local/bin/bat
 
 # zshインストール
 #sudo chsh -s /usr/bin/zsh
 #/usr/bin/zsh
+
+# vscode server
+code .
 
 echo "[*] Install complete!"

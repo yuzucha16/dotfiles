@@ -23,8 +23,6 @@ fork ^
 p4v ^
 which ^
 lsd ^
-pandoc ^
-freecommander ^
 sudo
 
 rem marp ^
@@ -49,6 +47,8 @@ rem nodejs ^
 rem doxygen ^
 rem plantuml ^
 rem graphviz ^
+rem pandoc ^
+rem freecommander ^
 
 REM ======================================================
 REM  Scoop apps/buckets installer (User mode only)

@@ -5,7 +5,7 @@ IFS=$'\n\t'
 
 # ===== Settings (edit if needed) =====
 # 既定の場所（スクリプトの配置に依存しないように手動指定も可）
-SRC_DIR_DEFAULT="/mnt/c/Users/aa/repos/github.com/yuzucha16/dotfiles"
+SRC_DIR_DEFAULT="/mnt/c/Users/ck/repos/github.com/yuzucha16/dotfiles"
 DST_DIR_DEFAULT="$HOME"
 
 # ===== CLI Options =====
@@ -70,6 +70,7 @@ echo "[INFO] Mode=$MODE  DryRun=$DRY_RUN"
 # ===== Prepare dirs =====
 mkdir -p "$DST_DIR/.config"
 mkdir -p "$DST_DIR/.config/git"
+#mkdir -p "$DST_DIR/.config/vim"
 #mkdir -p "$DST_DIR/.config/nvim"
 #mkdir -p "$DST_DIR/.config/broot"
 mkdir -p "$DST_DIR/.config/bat"
@@ -78,9 +79,18 @@ mkdir -p "$DST_DIR/.vscode-server/extensions"
 #mkdir -p "$DST_DIR/.local/share/navi/cheats/denisidoro__cheats"
 
 # ===== Prepare dirs =====
-mv ~/.bash_logout ~/.bash_logout.bak
-mv ~/.bashrc ~/.bash_logout.bak
-mv ~/.profile ~/.bash_logout.bak
+files=(
+  ~/.bash_logout
+  ~/.bashrc
+  ~/.profile
+)
+
+mkdir -p ~/.bak
+for file in "${files[@]}"; do
+  if [[ -e "$file" ]]; then
+    mv "$file" ~/.bak/
+  fi
+done
 
 # ===== Helper =====
 STOW_COMMON_FLAGS=(-v)
@@ -128,6 +138,7 @@ CONFIG_DIR="$SRC_DIR/config"
 #do_stow "$CONFIG_DIR" "$DST_DIR/.config/broot"               "broot"
 do_stow "$CONFIG_DIR" "$DST_DIR/.config/bat"                 "bat"
 do_stow "$CONFIG_DIR" "$DST_DIR/.config/git"                 "git"
+#do_stow "$CONFIG_DIR" "$DST_DIR/.config/vim"                 "vim"
 #do_stow "$CONFIG_DIR" "$DST_DIR/.config/nvim"                "nvim"
 #do_stow "$CONFIG_DIR" "$DST_DIR/.config/pet"                 "pet"
 do_stow "$CONFIG_DIR" "$DST_DIR/.config"                     "starship"

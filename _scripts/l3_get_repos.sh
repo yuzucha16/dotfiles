@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -eu
 
+# set current setting
+source ~/.profile
+
 # c++ samples
 ghq get bareflank/static_interface_pattern
 ghq get skypjack/entt
