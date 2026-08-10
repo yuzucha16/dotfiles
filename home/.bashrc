@@ -212,6 +212,13 @@ cdu() {
   [ -n "$pick" ] && cd "$pick"
 }
 
+# ghq管理下のディレクトリをリスト化
+cdg() {
+    local dir
+    dir=$(ghq list -p | fzf)
+    [ -n "$dir" ] && cd "$dir"
+}
+
 ##########
 # 5) 上に n 階層上がる関数（例: up 3）
 ##########
@@ -237,7 +244,8 @@ cd() {
         builtin cd "$@" || return
     fi
     # cd成功時にls実行
-    ls --color=auto -F
+    ll
+    #ls --color=auto -F
 }
 
 # fzfの標準キーバインド/補完（apt版の例）
