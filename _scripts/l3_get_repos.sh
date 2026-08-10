@@ -10,4 +10,4 @@ ghq get skypjack/entt
 #ghq get cpp-best-practices/gui_starter_template
 
 # Autosar samples
-ghq get inniyah/arccore
+#ghq get inniyah/arccore

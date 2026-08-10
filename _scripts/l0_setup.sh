@@ -22,7 +22,9 @@ sudo apt upgrade -y
 
 # セットアップに必要な最低限のパッケージ一覧
 PACKAGES=(
+    git
     curl
+    wget
 )
 
 echo "[*] Installing packages: ${PACKAGES[*]}"
@@ -61,14 +63,5 @@ mkdir -p \
   "$XDG_STATE_HOME" \
   "$HOME/.local/bin" \
   "$HOME/.ssh" \
-
-# Go https://go.dev/doc/install
-sudo curl -fsSLo /tmp/go1.25.12.linux-amd64.tar.gz https://go.dev/dl/go1.25.12.linux-amd64.tar.gz
-sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.25.12.linux-amd64.tar.gz
-/usr/local/go/bin/go env -w GOBIN=$HOME/.local/bin
-
-# Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-$HOME/.cargo/bin/cargo version
 
 echo "[*] Setup complete!"

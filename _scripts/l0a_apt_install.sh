@@ -9,14 +9,15 @@ set -euo pipefail
 PACKAGES=(
     # utils
     vim
-    git
-    wget
     unzip
     stow
+    #git   # setup.sh
+    #curl  # setup.sh
+    #wget  # setup.sh
     
     # console
+    lsd #eza
     fzf
-    lsd
     bat
     tree
     zoxide
@@ -24,7 +25,10 @@ PACKAGES=(
     fd-find
     
     # devel
-
+    build-essential
+    universal-ctags
+    global
+    
     # ここに追加したいツールを書いていく
 )
 
@@ -33,7 +37,6 @@ PACKAGES=(
 #    pkg-config
 #    ninja-build
 #    build-essential
-#    universal-ctags
 #    gdb
 #    bear
 #    clang
@@ -44,8 +47,6 @@ PACKAGES=(
 #    lldb
 #    ccache
 #    valgrind  
-#	   universal-ctags
-#	   global
   
 echo "[*] Installing packages: ${PACKAGES[*]}"
 sudo apt install -y "${PACKAGES[@]}"
@@ -67,14 +68,23 @@ curl -sS https://starship.rs/install.sh | sh
 #sudo apt install -y snapd
 #sudo snap install nvim --classic
 
-# Go application
-/usr/local/go/bin/go install github.com/x-motemen/ghq@latest
-/usr/local/go/bin/go install github.com/knqyf263/pet@latest
+### Go https://go.dev/doc/install
+sudo curl -fsSLo /tmp/go1.25.12.linux-amd64.tar.gz https://go.dev/dl/go1.25.12.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.25.12.linux-amd64.tar.gz
+/usr/local/go/bin/go env -w GOBIN=$HOME/.local/bin
 
-# Rust application
-$HOME/.cargo/bin/cargo install broot lsd navi tealdeer
-$HOME/.cargo/bin/tldr --update
-$HOME/.cargo/bin/broot
+### Go application: path defined on .profile
+/usr/local/go/bin/go install github.com/x-motemen/ghq@latest
+#/usr/local/go/bin/go install github.com/knqyf263/pet@latest
+
+### Rust
+#curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+#$HOME/.cargo/bin/cargo version
+
+### Rust application: path defined on .profile
+#$HOME/.cargo/bin/cargo install broot lsd navi tealdeer
+#$HOME/.cargo/bin/tldr --update
+#$HOME/.cargo/bin/broot
 
 # symbolic link
 sudo ln -s /usr/bin/batcat /usr/local/bin/bat

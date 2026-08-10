@@ -89,7 +89,12 @@ fi
 alias ll='ls -alF --color=auto'
 alias la='ls -A --color=auto'
 alias l='ls -CF --color=auto'
-# ===== lsd alias 設定 =====
+
+# ezaがあるときだけ有効化
+#if command -v eza >/dev/null 2>&1; then
+#  alias ll='eza -la --git'              # 隠し含めた詳細表示
+#  alias lt='eza --tree --level=2'
+#fi
 
 # lsdがあるときだけ有効化
 if command -v lsd >/dev/null 2>&1; then
@@ -241,30 +246,11 @@ cd() {
     ls --color=auto -F
 }
 
-# namespace 定義/再オープンを検索する関数
-ns() {
-  if [ $# -eq 0 ]; then
-    # 引数なし → 全部の namespace を表示
-    rg -n --type=cpp '^\s*namespace\s+[a-zA-Z0-9_:]+' \
-      --hidden --glob '!*build*' --glob '!*.generated.*'
-  else
-    # 引数あり → 特定 namespace のみ
-    local ns="$1"
-    shift
-    rg -n --type=cpp "^\s*namespace\s+${ns}(::[a-zA-Z0-9_]+)*\s*" \
-      --hidden --glob '!*build*' --glob '!*.generated.*' "$@"
-  fi
-}
-
 # fzfの標準キーバインド/補完（apt版の例）
 [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
 [ -f /usr/share/doc/fzf/examples/completion.bash ]   && source /usr/share/doc/fzf/examples/completion.bash
 
-# pet script
-function prev() {
-  PREV=$(echo `history | tail -n2 | head -n1` | sed 's/[0-9]* //')
-  sh -c "pet new `printf %q "$PREV"`"
-}
+
 
 #### =========[ ローカル上書き（任意） ]=========
 # XDG 配下でのローカル拡張（マシン固有・社内PC等）
@@ -280,5 +266,5 @@ command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
 
 export EDITOR=vim #nvim
 export VISUAL=vim #nvim
-source ~/.config/broot/launcher/bash/br
-cd ~/dev/repos
+
+cd ~
