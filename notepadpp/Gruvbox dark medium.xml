@@ -211,7 +211,7 @@ Description:
             <WordsStyle name="OBJECT DEFINITIONS" styleID="23" fgColor="EBDBB2" bgColor="282828" fontName="" fontStyle="5" fontSize=""></WordsStyle>
             <WordsStyle name="PREPROC DEFINITIONS" styleID="24" fgColor="EBDBB2" bgColor="282828" fontName="" fontStyle="5" fontSize=""></WordsStyle>
         </LexerType>
-        <LexerType name="bash" desc="bash" ext="">
+        <LexerType name="bash" desc="bash" ext="zshrc zprofile zlogout vimrc">
             <WordsStyle name="DEFAULT" styleID="0" fgColor="EBDBB2" bgColor="282828" fontName="" fontStyle="0" fontSize="">nvarchar uniqueidentifier</WordsStyle>
             <WordsStyle name="ERROR" styleID="1" fgColor="EBDBB2" bgColor="282828" fontName="" fontStyle="0" fontSize=""></WordsStyle>
             <WordsStyle name="INSTRUCTION WORD" styleID="4" fgColor="FB4934" bgColor="282828" fontName="" fontStyle="1" fontSize="" keywordClass="instre1">ooooo</WordsStyle>
@@ -1121,7 +1121,7 @@ Description:
             <WordsStyle name="FUNCTION" styleID="11" fgColor="EBDBB2" bgColor="282828" fontName="" fontStyle="0" fontSize="" keywordClass="type2"></WordsStyle>
             <WordsStyle name="USER KEYWORDS" styleID="12" fgColor="EBDBB2" bgColor="282828" fontName="" fontStyle="0" fontSize="" keywordClass="type3"></WordsStyle>
         </LexerType>
-        <LexerType name="props" desc="Properties file" ext="">
+        <LexerType name="props" desc="Properties file" ext="gitconfig gitignore">
             <WordsStyle name="DEFAULT" styleID="0" fgColor="EBDBB2" bgColor="282828" fontName="" fontStyle="0" fontSize=""></WordsStyle>
             <WordsStyle name="COMMENT" styleID="1" fgColor="EBDBB2" bgColor="282828" fontName="" fontStyle="0" fontSize=""></WordsStyle>
             <WordsStyle name="SECTION" styleID="2" fgColor="EBDBB2" bgColor="282828" fontName="" fontStyle="1" fontSize=""></WordsStyle>
@@ -1853,7 +1853,7 @@ Description:
     </LexerStyles>
     <GlobalStyles>
         <!-- Attention : Don't modify the name of styleID="0" -->
-        <WidgetStyle name="Global override" styleID="0" fgColor="EBDBB2" bgColor="282828" fontName="PlemolJP Console NF" fontStyle="0" fontSize="11"></WidgetStyle>
+        <WidgetStyle name="Global override" styleID="0" fgColor="EBDBB2" bgColor="282828" fontName="HackGen Console NF" fontStyle="0" fontSize="11"></WidgetStyle>
         <WidgetStyle name="Default Style" styleID="32" fgColor="EBDBB2" bgColor="282828" fontName="Consolas" fontStyle="0" fontSize="10"></WidgetStyle>
         <WidgetStyle name="Indent guideline style" styleID="37" fgColor="665C54" bgColor="282828" fontName="" fontStyle="0" fontSize=""></WidgetStyle>
         <WidgetStyle name="Brace highlight style" styleID="34" fgColor="EBDBB2" bgColor="3C3836" fontName="" fontStyle="1" fontSize="10"></WidgetStyle>
