@@ -80,9 +80,12 @@ mkdir -p "$DST_DIR/.vscode-server/extensions"
 
 # ===== Prepare dirs =====
 files=(
-  ~/.bash_logout
   ~/.bashrc
   ~/.profile
+  ~/.bash_logout
+  ~/.zshrc
+  ~/.zprofile
+  ~/.zlogout
 )
 
 mkdir -p ~/.bak

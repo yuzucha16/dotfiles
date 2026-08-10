@@ -9,6 +9,7 @@ set -euo pipefail
 PACKAGES=(
     # utils
     zsh
+    zsh-autosuggestions
     vim
     unzip
     stow
@@ -95,11 +96,11 @@ sudo usermod -aG docker $USER
 # symbolic link
 sudo ln -s /usr/bin/batcat /usr/local/bin/bat
 
-# zshインストール
-#sudo chsh -s /usr/bin/zsh
-#/usr/bin/zsh
-
 # vscode server
 code .
+
+# zshインストール
+sudo chsh -s /usr/bin/zsh
+/usr/bin/zsh
 
 echo "[*] Install complete!"
