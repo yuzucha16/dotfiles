@@ -8,8 +8,6 @@ set -euo pipefail
 # 開発に必要なパッケージ一覧
 PACKAGES=(
     # utils
-    zsh
-    zsh-autosuggestions
     vim
     unzip
     stow
@@ -25,6 +23,7 @@ PACKAGES=(
     zoxide
     ripgrep
     fd-find
+    zsh-autosuggestions
     
     # devel
     build-essential
@@ -59,7 +58,11 @@ sudo apt autoremove -y
 sudo apt clean
 
 # Starship
-curl -sS https://starship.rs/install.sh | sh
+if command -v starship >/dev/null 2>&1; then
+  echo "[*] starship has already installed!!"
+else
+  curl -sS https://starship.rs/install.sh | sh
+fi
 
 ### Nvim 0.11.4 from appImage
 #cd /tmp
@@ -71,17 +74,25 @@ curl -sS https://starship.rs/install.sh | sh
 #sudo snap install nvim --classic
 
 ### Go https://go.dev/doc/install
-sudo curl -fsSLo /tmp/go1.26.0.linux-amd64.tar.gz https://go.dev/dl/go1.26.0.linux-amd64.tar.gz
-sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.26.0.linux-amd64.tar.gz
-/usr/local/go/bin/go env -w GOBIN=$HOME/.local/bin
+if command -v go >/dev/null 2>&1; then
+  echo "[*] golang has already installed!!"
+else
+  sudo curl -fsSLo /tmp/go1.26.0.linux-amd64.tar.gz https://go.dev/dl/go1.26.0.linux-amd64.tar.gz
+  sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.26.0.linux-amd64.tar.gz
+  /usr/local/go/bin/go env -w GOBIN=$HOME/.local/bin
+fi
 
 ### Go application: path defined on .profile
 /usr/local/go/bin/go install github.com/x-motemen/ghq@latest
 #/usr/local/go/bin/go install github.com/knqyf263/pet@latest
 
 ### Rust
-#curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-#$HOME/.cargo/bin/cargo version
+#if command -v cargo >/dev/null 2>&1; then
+#  echo "[*] rust has already installed!!"
+#else
+#  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+#  $HOME/.cargo/bin/cargo version
+#fi
 
 ### Rust application: path defined on .profile
 #$HOME/.cargo/bin/cargo install broot lsd navi tealdeer
@@ -89,18 +100,23 @@ sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.26.0.linux-amd
 #$HOME/.cargo/bin/broot
 
 ### Docker Engine
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-sudo usermod -aG docker $USER
+if command -v docker >/dev/null 2>&1; then
+  echo "[*] docker engine has already installed!!"
+else
+  curl -fsSL https://get.docker.com -o get-docker.sh
+  sudo sh get-docker.sh
+  sudo usermod -aG docker $USER
+fi
 
 # symbolic link
-sudo ln -s /usr/bin/batcat /usr/local/bin/bat
+if command -v /usr/local/bin/bat >/dev/null 2>&1; then
+  echo "[*] bat has already linked!!"
+else
+  sudo ln -s /usr/bin/batcat /usr/local/bin/bat
+fi
 
 # vscode server
 code .
-
-# zshインストール
-sudo chsh -s /usr/bin/zsh
-/usr/bin/zsh
+echo "[*] Installed vscode server!!"
 
 echo "[*] Install complete!"

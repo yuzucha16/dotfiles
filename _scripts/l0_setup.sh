@@ -25,6 +25,7 @@ PACKAGES=(
     git
     curl
     wget
+    zsh
 )
 
 echo "[*] Installing packages: ${PACKAGES[*]}"
@@ -63,5 +64,10 @@ mkdir -p \
   "$XDG_STATE_HOME" \
   "$HOME/.local/bin" \
   "$HOME/.ssh" \
+
+# zshインストール
+#sudo chsh -s /usr/bin/zsh
+#/usr/bin/zsh
+#echo "[*] switched bash to zsh!!"
 
 echo "[*] Setup complete!"

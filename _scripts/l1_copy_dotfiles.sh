@@ -155,3 +155,4 @@ CONFIG_DIR="$SRC_DIR/share"
 #do_stow "$CONFIG_DIR" "$DST_DIR/.local/share/navi/cheats/denisidoro__cheats" "denisidoro__cheats"
 
 echo "[DONE] stow ${MODE} completed."
+echo "Enter chsh -s /usr/bin/zsh"
