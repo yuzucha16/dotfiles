@@ -7,6 +7,11 @@
 # Emacs keybindings
 bindkey -e
 
+# 履歴検索: 入力中の文字列で始まる履歴を上下キーで検索
+bindkey '^[[A' history-beginning-search-backward   # up
+bindkey '^[[B' history-beginning-search-forward    # down
+bindkey '^P' history-beginning-search-backward     # p
+bindkey '^N' history-beginning-search-forward      # n
 
 ##########
 # History
