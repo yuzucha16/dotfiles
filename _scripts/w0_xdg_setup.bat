@@ -8,11 +8,10 @@ set "XDG_DATA_HOME=%USERPROFILE%\.local\share"
 set "XDG_STATE_HOME=%USERPROFILE%\.local\state"
 set "XDG_BIN_HOME=%USERPROFILE%\.local\bin"
 set "SSH_DIR=%USERPROFILE%\.ssh"
-set "VAULT_HOME=%USERPROFILE%\OneDrive"
-set "GHQ_ROOT=%USERPROFILE%\repos"
-set "CERTS_DIR=%USERPROFILE%\OneDrive\certs"
-set "MY_ROOT=%USERPROFILE%\OneDrive\repos\github.com\yuzucha16"
-set "WSL_HOME=\\wsl$\ubuntu-24.04\home\yy"
+set "VAULT_HOME=%USERPROFILE%\vault"
+set "GHQ_ROOT=%VAULT_HOME%\repos"
+set "CERTS_DIR=%VAULT_HOME%\certs"
+set "WSL_HOME=\\wsl$\ubuntu-24.04\home"
 
 REM 永続化するために setx を使う (User スコープ)
 setx HOME "%HOME%"
@@ -24,7 +23,6 @@ setx XDG_BIN_HOME "%XDG_BIN_HOME%"
 setx VAULT_HOME "%VAULT_HOME%"
 setx GHQ_ROOT "%GHQ_ROOT%"
 setx CERTS_DIR %CERTS_DIR%
-setx MY_ROOT "%MY_ROOT%"
 setx WSL_HOME "%WSL_HOME%"
 
 REM ディレクトリ作成
@@ -49,7 +47,6 @@ echo SSH_DIR            =%SSH_DIR%
 echo VAULT_HOME         =%VAULT_HOME%
 echo GHQ_ROOT           =%GHQ_ROOT%
 echo CERTS_DIR          =%CERTS_DIR%
-echo MY_ROOT            =%MY_ROOT%
 echo WSL_HOME           =%WSL_HOME%
 
 pause

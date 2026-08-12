@@ -131,7 +131,6 @@ format = "[@$hostname](dimmed purple) "
 
 [username]
 show_always = false
-ssh_only   = true
 style_user = "bold white"
 style_root = "bold red"
 format = "[$user]($style)"
