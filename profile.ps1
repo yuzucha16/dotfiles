@@ -8,9 +8,13 @@ Import-Module "$($(Get-Item $(Get-Command scoop.ps1).Path).Directory.Parent.Full
 # For starship
 Invoke-Expression (&starship init powershell)
 
+Set-PSReadLineOption -EditMode Emacs
+
 # History search
 Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+Set-PSReadLineKeyHandler -Key Ctrl+p -Function HistorySearchBackward
+Set-PSReadLineKeyHandler -Key Ctrl+n -Function HistorySearchForward
 
 # 社内プロキシ用 CA 証明書 (存在する環境のみ設定)
 $caPath = "$env:CERTS_DIR\company-ca.crt"
