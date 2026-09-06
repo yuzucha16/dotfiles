@@ -18,4 +18,12 @@
       // "j k": "vim::NormalBefore"
     },
   },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-p": ["terminal::SendKeystroke", "ctrl-p"],
+      "ctrl-n": ["terminal::SendKeystroke", "ctrl-n"],
+      "ctrl-shift-m": ["terminal::SendKeystroke", "ctrl-shift-m"]
+    }
+  },
 ]

@@ -1,9 +1,9 @@
 #Requires AutoHotkey v2.0
 
 ; Assign 変換
-sc079::RWin 				; 変換 -> Right Window
-Sleep 2
-Return
+;sc079::RWin 				; 変換 -> Right Window
+;Sleep 2
+;Return
 
 ; Assign arrow key
 sc07B & h:: Send "{Left}"   ;無変換 + h
@@ -12,14 +12,15 @@ sc07B & k:: Send "{up}"
 sc07B & l:: Send "{right}"
 
 sc07B & u:: Send "{PgUp}"   ;無変換 + u
-sc07B & m:: Send "{PgDn}"
-sc07B & i:: Send "{Home}"
-sc07B & ,:: Send "{End}"
+sc07B & i:: Send "{PgDn}"
+sc07B & o:: Send "{Home}"
+sc07B & p:: Send "{End}"
 
-sc07B & a:: Send "{Enter}"
+sc07B & d:: Send "{Enter}"
 sc07B & f:: Send "{Backspace}"
-sc07B & d:: Send "{Delete}"
-sc07B & Space:: Send "{vkF3}" ;無変換 + space -> 半角全角
+sc07B & s:: Send "{Delete}"
+sc07B & a:: Send "{Esc}"
+;sc07B & Space:: Send "{vkF3}" ;無変換 + space -> 半角全角
 
 ; obs
 ;RControl & Space:: Send "{sc029}"	; Ctrl + Space -> 半角全角
