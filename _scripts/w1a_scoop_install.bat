@@ -9,6 +9,7 @@ scoop-completion ^
 autohotkey ^
 starship ^
 vim ^
+zed ^
 universal-ctags ^
 global ^
 draw.io ^
@@ -22,23 +23,21 @@ ghq ^
 fork ^
 p4v ^
 which ^
+fzf ^
 lsd ^
+ripgrep ^
+fd ^
+bat ^
+zoxide ^
 sudo
 
 rem marp ^
 rem brave ^
-rem obsidian ^
-rem pdf-xchange-editor ^
 rem neovim ^
 rem clangd ^
 rem llvm ^
 rem typora ^
-rem zoxide ^
-rem fzf ^
 rem psfzf ^
-rem ripgrep ^
-rem fd ^
-rem bat ^
 rem broot ^
 rem nu ^
 rem cmake ^
@@ -47,8 +46,6 @@ rem nodejs ^
 rem doxygen ^
 rem plantuml ^
 rem graphviz ^
-rem pandoc ^
-rem freecommander ^
 
 REM ======================================================
 REM  Scoop apps/buckets installer (User mode only)
