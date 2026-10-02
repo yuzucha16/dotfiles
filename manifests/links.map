@@ -40,14 +40,14 @@ home\.config\zed\keymap.json|%APPDATA%\zed\keymap.json
 home\.config\zed\settings.json|%APPDATA%\zed\settings.json
 
 # Office templates / UI
-windows\office\Blank.potx|%APPDATA%\Microsoft\Templates\Blank.potx
-windows\office\PowerPoint.exportedUI|%LOCALAPPDATA%\Microsoft\Office\PowerPoint.officeUI
-windows\office\Book.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Book.xltx
-windows\office\Sheet.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Sheet.xltx
-windows\office\Excel.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Excel.officeUI
-windows\office\Normal.dotm|%APPDATA%\Microsoft\Templates\Normal.dotm
-windows\office\Word.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Word.officeUI
+# (the files live in the sibling repo "notes": resources/office. Clone notes before running w2a)
+..\notes\resources\office\Blank.potx|%APPDATA%\Microsoft\Templates\Blank.potx
+..\notes\resources\office\PowerPoint.exportedUI|%LOCALAPPDATA%\Microsoft\Office\PowerPoint.officeUI
+..\notes\resources\office\Book.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Book.xltx
+..\notes\resources\office\Sheet.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Sheet.xltx
+..\notes\resources\office\Excel.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Excel.officeUI
+..\notes\resources\office\Normal.dotm|%APPDATA%\Microsoft\Templates\Normal.dotm
+..\notes\resources\office\Word.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Word.officeUI
 
-# Obsidian / shared notes (areas_shared is a sibling repo of dotfiles)
-windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian
-..\areas_shared|%NOTES_DIR%\areas_shared
+# Vault (notes is a sibling repo of dotfiles and is itself the Obsidian vault root; it holds .obsidian too)
+..\notes|%NOTES_DIR%
