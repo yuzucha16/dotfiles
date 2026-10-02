@@ -17,8 +17,7 @@ dotfiles/
 ├── manifests/      スクリプトが読むリスト（apps / links / vscode 拡張）
 ├── home/           ~ を鏡写しにした共有ツリー（WSL は stow、Windows は links.map でリンク）
 ├── windows/        Windows 専用の設定（links.map からだけ参照される）
-├── templates/      配置しない雛形
-└── archive/        現在は使っていないもの
+└── templates/      配置しない雛形
 ```
 
 ### `home/`: `~` の鏡
@@ -48,7 +47,7 @@ dotfiles/
 1. WSL / Linux でも使う（`~` 以下に置けるもの）→ `home/` に、`~` からの相対パスで置く
 2. Windows にしかないアプリの設定 → `windows/<アプリ名>/`
 3. 配置しない雛形 → `templates/`
-4. 使わなくなったが残したいもの → `archive/`（不要なら削除。履歴に残る）
+4. 使わなくなったもの → 削除する（履歴に残るので復元できる）
 
 置いたら `manifests/links.map`（Windows）に1行足す。`home/` に置いたものは WSL では自動で展開される。
 
@@ -138,4 +137,3 @@ git gc --prune=now
 
 - Office のテンプレと UI 設定は、2026-10-03 に `notes` リポジトリの `resources/office/` へ移管した（`links.map` はそこを指す）。`.obsidian` も `notes` 側で管理している。
 - `l2_init_workspace.sh` の `~/vault` と Windows の `C:\vault` は別物（WSL からは `/mnt/c/vault` で見える）
-- nvim はレイヤ構成のまま先送り（`archive/nvim*`。共通部 `nvim`、Windows 固有 `nvim-win`、WSL 固有 `nvim-wsl`）

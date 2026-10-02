@@ -2,9 +2,3 @@
 # Same format as links.map. Uncomment the entries to adopt.
 
 #home\.config\bat\config|%USERPROFILE%\.config\bat\config
-
-# nvim (deferred: common part + win-specific part, see archive\nvim*)
-#archive\nvim|%USERPROFILE%\.config\nvim
-#archive\nvim-win\init.lua|%USERPROFILE%\.config\nvim-win\init.lua
-#archive\nvim-win\lazy-lock.json|%USERPROFILE%\.config\nvim-win\lazy-lock.json
-#archive\nvim-win\lua\util.lua|%USERPROFILE%\.config\nvim-win\lua\util.lua
