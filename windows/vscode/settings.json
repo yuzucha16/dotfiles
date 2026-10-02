@@ -51,7 +51,7 @@
 
   "editor.codeLens": false,
 
-  "extensions.autoUpdate": false,
+  "extensions.autoUpdate": "off",
   "extensions.autoCheckUpdates": false,
 
   "workbench.sideBar.location": "right"
