@@ -6,7 +6,6 @@
 # - Per-PC extras go to links.<profile>.map and are loaded with: w2a_copy_dotfiles.bat link <profile>
 
 # Notepad++
-windows\notepadpp\config.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\config.xml
 windows\notepadpp\contextMenu.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\contextMenu.xml
 windows\notepadpp\shortcuts.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\shortcuts.xml
 windows\notepadpp\stylers.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\stylers.xml
