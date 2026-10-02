@@ -1,4 +1,0 @@
-# Extra links for the home PC: w2a_copy_dotfiles.bat link home
-# Same format as links.map. Uncomment the entries to adopt.
-
-#home\.config\bat\config|%USERPROFILE%\.config\bat\config

@@ -6,13 +6,12 @@ case $- in
     *) return;;
 esac
 
-# XDG は .profile で export 済み想定（未定義ならフォールバック）
-: "${XDG_CONFIG_HOME:=$HOME/.config}"
-: "${XDG_STATE_HOME:=$HOME/.local/state}"
+# XDG は .profile で export 済み。非ログインシェルでは未定義なので、
+# 使う箇所でインライン既定値 (${XDG_xxx:-...}) を使う
 
 #### =========[ 履歴強化 (XDG 配置) ]=========
 # 履歴ファイルを XDG_STATE_HOME へ
-HISTFILE="$XDG_STATE_HOME/bash/history"
+HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/bash/history"
 mkdir -p "$(dirname "$HISTFILE")"
 
 HISTSIZE=50000
@@ -72,11 +71,11 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
   "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 #### =========[ 共通設定 (alias / 関数 / fzf / zoxide / CA / EDITOR) ]=========
-[ -f "$XDG_CONFIG_HOME/shell/common.sh" ] && . "$XDG_CONFIG_HOME/shell/common.sh"
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/common.sh" ] && . "${XDG_CONFIG_HOME:-$HOME/.config}/shell/common.sh"
 
 #### =========[ ローカル上書き（任意） ]=========
 # XDG 配下でのローカル拡張（マシン固有・社内PC等）
-[ -f "$XDG_CONFIG_HOME/bashrc.local" ] && . "$XDG_CONFIG_HOME/bashrc.local"
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/bashrc.local" ] && . "${XDG_CONFIG_HOME:-$HOME/.config}/bashrc.local"
 
 command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
 

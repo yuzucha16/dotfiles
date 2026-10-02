@@ -39,8 +39,8 @@ dotfiles/
 |---|---|
 | `terminal/settings.json` | Windows Terminal |
 | `startup/startup.bat` | スタートアップ。`subst V: C:\vault` |
-| `powershell/profile.ps1` | PowerShell プロファイル（starship / PSFzf / lsd / Emacs キーバインド）。コマンド体系は `home/.config/shell/common.sh` と揃える（`zfz` の Ctrl+g 割当のみ pwsh 固有） |
-| `autohotkey/` `notepadpp/` `drawio/` `vscode/` | 各アプリの設定 |
+| `powershell/profile.ps1` | PowerShell プロファイル（starship / lsd / zoxide / Emacs キーバインド）。起動を軽くするため、ツール不在時の代替・`cd` 後の自動 `ll`・PSFzf は持たない。コマンド体系は `home/.config/shell/common.sh` と揃える（基本エイリアスのみ。`zfz` の Ctrl+g 割当のみ pwsh 固有） |
+| `autohotkey/` `notepadpp/` `drawio/` `vscode/` | 各アプリの設定（Notepad++ は `shortcuts.xml` とテーマのみ。アプリが書き換えるファイルは追跡しない） |
 
 ### 新しい設定をどこに置くか
 
@@ -59,21 +59,21 @@ dotfiles/
 - 数字 = 実行順。`w0` → `w1` → … の順に実行する
 - 英字の枝番 = 同じ段階の別スクリプト。`w0a` は `w0` の任意の追加（CapsLock→Ctrl のレジストリ）、`w1a` はアプリ導入、`w1b` は VS Code 拡張、`w2a` はリンク作成
 - `.bat` のコメントは ASCII（英語）で書く。日本語（UTF-8）のコメントは、コードページ 932 のコンソールで行末のバイトが次の行と混ざり、意図しないコマンドやゴミファイルが生まれることがある
-- 家用の追加分は `apps.home.txt` / `links.home.map` のように `.home.` を挟んだファイルに書く（`manifests/`）
+- 家用のアプリの追加分は `apps.home.txt` のように `.home.` を挟んだファイルに書く（`manifests/`）。リンクの map は共通の `links.map` のみ
 
 ## セットアップ手順
 
 ### Windows
 
 0. **事前準備（手動）**
-   - 設定 → 開発者向け で「開発者モード」をオンにする（管理者権限なしで symlink を作るため。オフでも `w2a` はコピーにフォールバックするが、リポジトリの変更が反映されなくなる）
+   - 設定 → 開発者向け で「開発者モード」をオンにする（管理者権限なしで symlink を作るため。必須。オフだと `w2a` は `[ERR]` になる）
    - git を入れ、次の場所に clone する（このパス構成が前提）
      ```powershell
      winget install Git.Git
      git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzucha16\dotfiles
      git clone https://github.com/yuzucha16/notes C:\vault\repos\github.com\yuzucha16\notes
      ```
-     `notes` は Obsidian の Vault そのもの（共有するのは `resources/` と `.obsidian/` だけ）。`links.map` が `dotfiles` の隣にあることを前提に、`C:\vault\notes` へのリンクと、Office テンプレ（`notes\resources\office`）のリンクを張る。**`notes` を先に clone する**（`w2a` より前）。`resources/fonts` などは Git LFS なので `git lfs install` も済ませておく。
+     `notes` は Obsidian の Vault そのもの（共有するのは `resources/` と `.obsidian/` だけ）。`links.map` が `dotfiles` の隣にあることを前提に、`C:\vault\notes` へのリンクを張る。**`notes` を先に clone する**（`w2a` より前）。Office のテンプレと UI 設定は自動では張らない。初回に `notes\resources\office` から手で配置する（テンプレ: `%APPDATA%\Microsoft\Templates` と `%APPDATA%\Microsoft\Excel\XLSTART`、UI: Office の「リボンのユーザー設定 → インポート」）。`resources/fonts` などは Git LFS なので `git lfs install` も済ませておく。
      clone 後、ローカル専用の `projects/` `areas/` `archives/` は gitignore されているため、必要に応じて手で作る。
 1. `scripts\windows\w0_xdg_setup.bat`: `setx` で環境変数（`XDG_*`、`VAULT_HOME=C:\vault`、`GHQ_ROOT`、`NOTES_DIR` など）を設定し、ディレクトリを作る。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）
 2. `scripts\windows\w0a_do_caps_ctrl.reg`（任意）: CapsLock を Ctrl にする。管理者権限が必要で、再起動後に有効。元に戻すときは `w0a_redo_caps_default.reg`
@@ -81,10 +81,10 @@ dotfiles/
    - 会社: `w1a_scoop_install.bat`（`apps.txt` のみ）
    - 家: `w1a_scoop_install.bat home`（`apps.txt` + `apps.home.txt`）
    - `scripts\windows\w1b_vscode_extensions.bat`: `manifests\vscode-extensions.win.txt` の VS Code 拡張のうち未導入のものを入れる（Zed の拡張は `home/.config/zed/settings.json` の `auto_install_extensions` で起動時に自動導入される）
-4. `scripts\windows\w2a_copy_dotfiles.bat [モード] [プロファイル]`: `manifests\links.map` に従って設定を配置する
-   - 会社: `w2a_copy_dotfiles.bat`（= `link`）
-   - 家: `w2a_copy_dotfiles.bat link home`（プロファイルを指定するときはモードも書く）
-   - モード: `link`（既定。symlink / ディレクトリは junction）、`copy`（リポジトリ → 配置先へコピー）、`copyback`（配置先 → リポジトリへコピー。**リポジトリ側が上書きされる**）
+4. `scripts\windows\w2a_link_dotfiles.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る（ファイルは symlink、ディレクトリは junction。既存のリンクは張り直す）
+   - `unlink`: リンクだけ削除する。`-n`: ドライラン
+   - 配置先に実ファイル/実ディレクトリがあると `[ERR]` を出してそのエントリを飛ばし、最後に非ゼロで終了する。**自動退避はしない**。中身を確認して手で退避/削除し、再実行する
+   - `[ERR] mklink failed` は開発者モードがオフのときに出る
 5. `scripts\windows\w3_setup_wsl.bat`（WSL を使う場合）: 管理者権限で実行。WSL2 の機能を有効化する。**再起動後**、表示される `wsl --update` / `wsl --install -d Ubuntu-24.04` を手動で実行する
 6. `scripts\windows\w4_get_repos.bat`: ghq で必要なリポジトリを取得する
 7. `scripts\windows\w5_win_app.bat`: winget で uv を入れ、Python 3.13 を導入する
@@ -94,27 +94,33 @@ dotfiles/
 Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/vault/...` から参照する）。
 
 1. `scripts/wsl/l0_setup.sh`: apt の更新、git / curl / wget / zsh の導入、XDG ディレクトリの作成
-2. `scripts/wsl/l0a_apt_install.sh`: CLI ツール、starship、Go（最新版）、ghq、Docker Engine を導入する。Docker はグループ追加後に再ログインが必要
-3. `scripts/wsl/l1_copy_dotfiles.sh [--dry-run|--restow|--reset|--unlink]`: stow で `home/` を `~` に展開する。既存の実ファイルは `~/.bak/<日時>/` に退避し、リンク切れの旧 symlink は削除する。終わったら `chsh -s /usr/bin/zsh`
+2. `scripts/wsl/l0a_apt_install.sh`: CLI ツール（apt）、starship、ghq（ビルド済みバイナリを `~/.local/bin` へ。Go は不要）を導入し、`bat` / `fd` のリンクを張る。Docker や Go は入れない（下の「必要なときだけ入れるもの」）
+3. `scripts/wsl/l1_link_dotfiles.sh [link|unlink] [-n]`: stow で `home/` を `~` に展開する（Windows の `w2a` と同じ引数）。リンク切れの旧 symlink は削除する。展開先に実ファイルがあると `[ERR]` を出して止まる（自動退避はしない。手で退避/削除して再実行）。終わったら `chsh -s /usr/bin/zsh`
    - `scripts/wsl/l1a_vscode_extensions.sh`: `manifests/vscode-extensions.wsl.txt` の拡張のうち未導入のものを VS Code Server に入れる（`code` コマンドが必要。無ければ Windows の VS Code から一度この WSL を開く）
 4. `scripts/wsl/l2_init_workspace.sh`: `~/vault` を作る
 5. `scripts/wsl/l3_get_repos.sh`: ghq で参照用リポジトリを取得する
+
+### 必要なときだけ入れるもの（WSL・手動）
+
+- Docker Engine: `curl -fsSL https://get.docker.com | sudo sh` → `sudo usermod -aG docker $USER` → WSL に再ログイン
+- Go: <https://go.dev/doc/install> の手順で `/usr/local/go` へ。PATH は `~/.config/profile.local` に `export PATH="/usr/local/go/bin:$PATH"` を書く
+- npm / Python のユーザー bin などの PATH も、必要なら同じく `profile.local` に書く
 
 ## PC ごとの個別設定（リポジトリに入れないもの）
 
 - git のユーザー名・メールアドレス: `~/.gitconfig_local`（`home/.gitconfig` が include する）
 - 社内プロキシの CA 証明書: `%CERTS_DIR%\company-ca.crt`（WSL では `/mnt/c/vault/certs/company-ca.crt`）。あれば `NODE_EXTRA_CA_CERTS` に設定される
 - シェルの個別上書き: `~/.config/{profile,bashrc,zshrc}.local`
-- 家・会社の差分: `manifests/apps.<profile>.txt` / `manifests/links.<profile>.map`
+- 家・会社の差分: `manifests/apps.<profile>.txt`
 
 ## 日常の運用
 
 | やりたいこと | 方法 |
 |---|---|
 | アプリを追加 | `manifests/apps.txt`（共通）か `apps.home.txt`（家のみ）に1行追記 |
-| 設定ファイルのリンクを追加 | `manifests/links.map`（共通）か `links.home.map` に `リポジトリ相対パス\|リンク先` を1行追記 |
+| 設定ファイルのリンクを追加 | `manifests/links.map` に `リポジトリ相対パス\|リンク先` を1行追記（WSL は `home/` に置けば stow が自動で張る） |
 | VS Code 拡張を追加・削除 | 入れたら `code --list-extensions > manifests/vscode-extensions.win.txt`（WSL は `.wsl.txt`）で書き出してコミット |
-| アプリが書き換えた設定を取り込む | リンクなら自動で反映されている。コピー運用のものは `w2a ... copyback` |
+| アプリが書き換えた設定を取り込む | リンクなら自動で反映されている |
 | 構成を変えた後に他のPCへ反映 | `git pull` → Windows は `w2a`、WSL は `l1` を再実行 |
 | コミットメッセージ | `[対象] 内容`（例: `[zed] ...`, `[w1a] ...`） |
 
@@ -135,5 +141,5 @@ git gc --prune=now
 
 ## 既知の課題
 
-- Office のテンプレと UI 設定は、2026-10-03 に `notes` リポジトリの `resources/office/` へ移管した（`links.map` はそこを指す）。`.obsidian` も `notes` 側で管理している。
+- Office のテンプレと UI 設定は、2026-10-03 に `notes` リポジトリの `resources/office/` へ移管した（配置は手動。2026-10-03 以降 `links.map` は指さない）。`.obsidian` も `notes` 側で管理している。
 - `l2_init_workspace.sh` の `~/vault` と Windows の `C:\vault` は別物（WSL からは `/mnt/c/vault` で見える）

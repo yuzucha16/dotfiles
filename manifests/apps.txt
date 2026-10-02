@@ -7,8 +7,6 @@
 windows-terminal
 pwsh
 PSReadLine
-psfzf
-scoop-completion
 starship
 sudo
 
