@@ -1,0 +1,7 @@
+# Office documents / templates are binary: no text diff, no EOL conversion
+*.pptx binary
+*.potx binary
+*.xlsx binary
+*.xltx binary
+*.dotm binary
+*.thmx binary

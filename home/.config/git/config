@@ -1,0 +1,33 @@
+# ~/.config/git/config — 共通設定（git が ~/.config/git/config を自動で読む）
+# PC ごとの値 (user.name / user.email / http.* など) は ~/.gitconfig_local に書く
+[user]
+	name = user
+	email = user@example.com
+[core]
+	editor = vim
+	eol = lf
+	autocrlf = false
+	symlinks = true
+	longpaths = true
+	excludesfile = ~/.gitignore_global
+	whitespace = cr-at-eol,tab-in-indent,trail,space-before-tab
+[apply]
+	whitespace = fix
+[pull]
+	ff = only
+	rebase = false
+[color]
+	ui = true
+[merge]
+	tool = p4merge
+[mergetool]
+	keepBackup = false
+[mergetool "p4merge"]
+	path = p4merge
+	keepTemporaries = false
+	trustExitCode = false
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
