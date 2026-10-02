@@ -5,7 +5,6 @@ brave
 marp
 
 # candidates (currently unused)
-#neovim
 #clangd
 #llvm
 #nu
