@@ -63,8 +63,10 @@ zshaddhistory() {
 
 zmodload -i zsh/complist
 
+# -C: 補完定義のセキュリティ検査と再生成を省く（起動が約 0.08 秒速くなる）。
+# 補完を追加するツールを入れたら `rm ~/.zcompdump*` して zsh を開き直す（l0a は自動で消す）
 autoload -Uz compinit
-compinit
+compinit -C
 
 bindkey '^I' menu-select
 

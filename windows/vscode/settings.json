@@ -28,17 +28,6 @@
   "search.followSymlinks": true,
   "search.useGlobalIgnoreFiles": true,
 
-  "vim.leader": "<space>",
-  "vim.handleKeys": {
-    "<C-c>": false
-  },
-  "vim.statusBarColorControl": false,
-  "vim.useCtrlKeys": true,
-  "vim.hlsearch": true,
-  "vim.incsearch": true,
-  "vim.cursorStylePerMode.insert": "line",
-  "vim.autoSwitchInputMethod.enable": false,
-
   "cmake.buildDirectory": "${workspaceFolder}/build",
   "cmake.configureOnOpen": false,
   "cmake.generator": "Ninja",

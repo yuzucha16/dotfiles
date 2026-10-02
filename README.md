@@ -39,6 +39,7 @@ dotfiles/
 |---|---|
 | `terminal/settings.json` | Windows Terminal |
 | `startup/startup.bat` | スタートアップ。`subst V: C:\vault` |
+| `wsl/.wslconfig` | WSL2 の全体設定（`%USERPROFILE%\.wslconfig` へリンク）。アイドル時にキャッシュのメモリをホストへ返す。`memory` などの上限は PC ごとに RAM が違うので書かない。反映は `wsl --shutdown` 後の再起動 |
 | `powershell/profile.ps1` | PowerShell プロファイル（starship / lsd / zoxide / Emacs キーバインド）。起動を軽くするため、ツール不在時の代替・`cd` 後の自動 `ll`・PSFzf は持たない。コマンド体系は `home/.config/shell/common.sh` と揃える（基本エイリアスのみ。`zfz` の Ctrl+g 割当のみ pwsh 固有） |
 | `autohotkey/` `notepadpp/` `drawio/` `vscode/` | 各アプリの設定（Notepad++ は `shortcuts.xml` とテーマのみ。アプリが書き換えるファイルは追跡しない） |
 
@@ -121,6 +122,7 @@ Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Win
 | 設定ファイルのリンクを追加 | `manifests/links.map` に `リポジトリ相対パス\|リンク先` を1行追記（WSL は `home/` に置けば stow が自動で張る） |
 | VS Code 拡張を追加・削除 | 入れたら `code --list-extensions > manifests/vscode-extensions.win.txt`（WSL は `.wsl.txt`）で書き出してコミット |
 | アプリが書き換えた設定を取り込む | リンクなら自動で反映されている |
+| zsh の補完を追加したのに効かない | 補完キャッシュ (`compinit -C`) を作り直す: `rm ~/.zcompdump*` して zsh を開き直す（`l0a` は自動で消す） |
 | 構成を変えた後に他のPCへ反映 | `git pull` → Windows は `w2a`、WSL は `l1` を再実行 |
 | コミットメッセージ | `[対象] 内容`（例: `[zed] ...`, `[w1a] ...`） |
 
