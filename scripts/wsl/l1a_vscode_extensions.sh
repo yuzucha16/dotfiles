@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # VS Code Server extensions installer (WSL)
-# manifests/vscode-extensions.wsl.txt にある拡張のうち、未導入のものだけ入れる
+# manifests/vscode-extensions.wsl.txt にある拡張を入れる（導入済みは code 側がスキップ）
 # 使い方: ./l1a_vscode_extensions.sh [リストのパス]
 # 書き出し: code --list-extensions > manifests/vscode-extensions.wsl.txt
 set -Eeuo pipefail
@@ -14,22 +14,18 @@ if ! command -v code >/dev/null 2>&1; then
 fi
 
 if [[ ! -f "$LIST" ]]; then
-  echo "[ERROR] list not found: $LIST" >&2
+  echo "[ERR] list not found: $LIST" >&2
   exit 1
 fi
 
-installed="$(code --list-extensions)"
-
 echo "[INFO] Using list: $LIST"
+args=()
 while IFS= read -r ext || [[ -n "$ext" ]]; do
   ext="${ext%$'\r'}"
   [[ -z "$ext" || "$ext" == \#* ]] && continue
-  if grep -qixF "$ext" <<<"$installed"; then
-    echo "[Installed] $ext"
-  else
-    echo "Installing $ext ..."
-    code --install-extension "$ext"
-  fi
+  args+=(--install-extension "$ext")
 done < "$LIST"
+
+(( ${#args[@]} > 0 )) && code "${args[@]}"
 
 echo "[DONE] vscode extensions"

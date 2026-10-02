@@ -8,7 +8,7 @@
 
 ## 拡張の導入（一覧 → 環境）
 
-未導入のものだけ入れる。
+一覧の拡張をまとめて入れる（導入済みは `code` がスキップする）。
 
 - Windows: `scripts\windows\w1b_vscode_extensions.bat`
 - WSL: `scripts/wsl/l1a_vscode_extensions.sh`
