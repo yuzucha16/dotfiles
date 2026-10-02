@@ -13,6 +13,7 @@ windows\notepadpp\Gruvbox light medium.xml|%USERPROFILE%\scoop\apps\notepadplusp
 # Windows (startup / terminal)
 windows\startup\startup.bat|%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\startup.bat
 windows\autohotkey\Autohotkey64.ahk|%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Autohotkey64.ahk
+windows\wsl\.wslconfig|%USERPROFILE%\.wslconfig
 windows\terminal\settings.json|%USERPROFILE%\scoop\apps\windows-terminal\current\settings\settings.json
 
 # git / shell / vim

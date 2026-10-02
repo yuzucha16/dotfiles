@@ -1,0 +1,5 @@
+# WSL2 global settings (linked to %USERPROFILE%\.wslconfig). Apply with: wsl --shutdown
+# memory / processors are left at the defaults so the same file fits every PC
+[experimental]
+# give idle cache memory back to Windows gradually (vmmemWSL shrinks)
+autoMemoryReclaim=gradual
