@@ -121,6 +121,19 @@ Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Win
 
 アプリが自動で書き換える状態ファイル（Obsidian の `workspace.json` など）は追跡しない。`.gitignore` に追加する。
 
+## 履歴リセット (2026-10-02)
+
+大きなフォント・プラグインの blob を履歴から消すため、履歴を1コミットに作り直して強制 push した（40MB → 約1MB）。以前の履歴は `C:\vault\backup\dotfiles-before-rebuild-*.bundle`（このリポジトリを作業していたPC）に残してある。
+他のPCの clone は、未 push の変更が無いことを確認してから次を実行する。
+
+```powershell
+git fetch origin
+git reset --hard origin/202509
+git gc --prune=now
+```
+
+その後、通常どおり `w2a`（Windows）/ `l1`（WSL）を再実行する。
+
 ## 既知の課題
 
 - `windows/office/` に、リンクされていない参照用ファイル（`samples*.pptx`、`template_A3/A4.pptx`、`slide_layout.pptx`、`*.thmx`、`OneNote.exportedUI`）がある。dotfiles とは性質が違うため、`areas_shared` など別リポジトリへ移管する予定
