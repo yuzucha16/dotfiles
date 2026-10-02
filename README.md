@@ -128,7 +128,7 @@ Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Win
 
 ```powershell
 git fetch origin
-git reset --hard origin/202509
+git reset --hard origin/main
 git gc --prune=now
 ```
 
