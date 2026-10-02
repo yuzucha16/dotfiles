@@ -1,5 +1,11 @@
 # ~/.zshrc
 
+# XDG は .zprofile (.profile) で export 済み想定。非ログインで起動された場合のフォールバック
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+: "${XDG_CACHE_HOME:=$HOME/.cache}"
+: "${XDG_DATA_HOME:=$HOME/.local/share}"
+: "${XDG_STATE_HOME:=$HOME/.local/state}"
+
 ##########
 # Interactive shell
 ##########
