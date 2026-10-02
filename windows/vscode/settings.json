@@ -52,12 +52,7 @@
   "editor.codeLens": false,
 
   "extensions.autoUpdate": false,
-  "extensions.autoCheckUpdates": false
-  "extensions.experimental.affinity": {
-    "asvetliakov.vscode-neovim": 1
-  },
-  "vscode-neovim.neovimExecutablePaths.linux": "/usr/local/bin/nvim",
-  "vscode-neovim.neovimInitPath": "/home/yy/.config/nvim/init.lua",
+  "extensions.autoCheckUpdates": false,
 
   "workbench.sideBar.location": "right"
 
