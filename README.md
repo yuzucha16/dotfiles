@@ -41,8 +41,7 @@ dotfiles/
 | `terminal/settings.json` | Windows Terminal |
 | `startup/startup.bat` | スタートアップ。`subst V: C:\vault` |
 | `powershell/profile.ps1` | PowerShell プロファイル（starship / PSFzf / lsd / Emacs キーバインド）。コマンド体系は `home/.config/shell/common.sh` と揃える（`zfz` の Ctrl+g 割当のみ pwsh 固有） |
-| `autohotkey/` `notepadpp/` `drawio/` `obsidian/` `vscode/` | 各アプリの設定 |
-| `office/` | Word / Excel / PowerPoint のテンプレートと UI 設定（バイナリ。`office/.gitattributes` で binary 指定） |
+| `autohotkey/` `notepadpp/` `drawio/` `vscode/` | 各アプリの設定 |
 
 ### 新しい設定をどこに置くか
 
@@ -73,9 +72,10 @@ dotfiles/
      ```powershell
      winget install Git.Git
      git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzucha16\dotfiles
-     git clone <areas_shared のURL> C:\vault\repos\github.com\yuzucha16\areas_shared
+     git clone https://github.com/yuzucha16/notes C:\vault\repos\github.com\yuzucha16\notes
      ```
-     `areas_shared` は Obsidian のノート共有用で、`links.map` が `dotfiles` の隣にあることを前提にリンクする。
+     `notes` は Obsidian の Vault そのもの（共有するのは `resources/` と `.obsidian/` だけ）。`links.map` が `dotfiles` の隣にあることを前提に、`C:\vault\notes` へのリンクと、Office テンプレ（`notes\resources\office`）のリンクを張る。**`notes` を先に clone する**（`w2a` より前）。`resources/fonts` などは Git LFS なので `git lfs install` も済ませておく。
+     clone 後、ローカル専用の `projects/` `areas/` `archives/` は gitignore されているため、必要に応じて手で作る。
 1. `scripts\windows\w0_xdg_setup.bat`: `setx` で環境変数（`XDG_*`、`VAULT_HOME=C:\vault`、`GHQ_ROOT`、`NOTES_DIR` など）を設定し、ディレクトリを作る。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）
 2. `scripts\windows\w0a_do_caps_ctrl.reg`（任意）: CapsLock を Ctrl にする。管理者権限が必要で、再起動後に有効。元に戻すときは `w0a_redo_caps_default.reg`
 3. `scripts\windows\w1a_scoop_install.bat [home]`: scoop と bucket を導入し、アプリを入れる
@@ -136,6 +136,6 @@ git gc --prune=now
 
 ## 既知の課題
 
-- `windows/office/` に、リンクされていない参照用ファイル（`samples*.pptx`、`template_A3/A4.pptx`、`slide_layout.pptx`、`*.thmx`、`OneNote.exportedUI`）がある。dotfiles とは性質が違うため、`areas_shared` など別リポジトリへ移管する予定
+- Office のテンプレと UI 設定は、2026-10-03 に `notes` リポジトリの `resources/office/` へ移管した（`links.map` はそこを指す）。`.obsidian` も `notes` 側で管理している。
 - `l2_init_workspace.sh` の `~/vault` と Windows の `C:\vault` は別物（WSL からは `/mnt/c/vault` で見える）
 - nvim はレイヤ構成のまま先送り（`archive/nvim*`。共通部 `nvim`、Windows 固有 `nvim-win`、WSL 固有 `nvim-wsl`）
