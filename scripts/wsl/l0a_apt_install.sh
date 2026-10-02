@@ -35,6 +35,9 @@ sudo apt install -y "${PACKAGES[@]}"
 
 mkdir -p "$HOME/.local/bin"
 
+# zsh は補完キャッシュ (compinit -C) を使うので、ツールを入れたら作り直させる
+rm -f "$HOME"/.zcompdump*
+
 # Starship
 if command -v starship >/dev/null 2>&1; then
   echo "[*] starship has already installed!!"

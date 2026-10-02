@@ -5,7 +5,8 @@ if ([Console]::IsOutputRedirected -or [Console]::IsInputRedirected) { return }
 # 不在時の代替は持たない。コマンド体系は bash/zsh の common.sh と揃えること（基本エイリアスのみ）。
 
 # For starship
-Invoke-Expression (&starship init powershell)
+# `init powershell` は starship をもう一度呼ぶスタブを返すので、完全版を直接取り込む（約 70ms 速い）
+Invoke-Expression (& starship init powershell --print-full-init | Out-String)
 
 # Emacs キーバインド
 Set-PSReadLineOption -EditMode Emacs
