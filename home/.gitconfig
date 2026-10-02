@@ -1,0 +1,7 @@
+# ~/.gitconfig
+# 共通設定は ~/.config/git/config（git が自動で読む）。ここには書かない。
+# PC ごとの値 (user.name / user.email / http.sslCAInfo など) は ~/.gitconfig_local に書く
+[include]
+	path = ~/.gitconfig_local
+[credential "helperselector"]
+	selected = manager
