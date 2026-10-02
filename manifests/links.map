@@ -1,0 +1,53 @@
+# Link map for w2a_copy_dotfiles.bat (common / minimal set, used on every PC)
+# Format : <path relative to dotfiles root>|<destination>
+# - %VAR% in destination is expanded at run time (USERPROFILE, APPDATA, NOTES_DIR ...)
+# - Lines starting with # and blank lines are ignored
+# - Do not indent entries
+# - Per-PC extras go to links.<profile>.map and are loaded with: w2a_copy_dotfiles.bat link <profile>
+
+# Notepad++
+windows\notepadpp\config.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\config.xml
+windows\notepadpp\contextMenu.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\contextMenu.xml
+windows\notepadpp\shortcuts.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\shortcuts.xml
+windows\notepadpp\stylers.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\stylers.xml
+windows\notepadpp\NppExec.ini|%USERPROFILE%\scoop\apps\notepadplusplus\current\plugins\Config\NppExec.ini
+windows\notepadpp\Gruvbox dark medium.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\themes\Gruvbox dark medium.xml
+windows\notepadpp\Gruvbox light medium.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\themes\Gruvbox light medium.xml
+
+# Windows (startup / terminal)
+windows\startup\startup.bat|%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\startup.bat
+windows\autohotkey\Autohotkey64.ahk|%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Autohotkey64.ahk
+windows\terminal\settings.json|%USERPROFILE%\scoop\apps\windows-terminal\current\settings\settings.json
+
+# git / shell / vim
+home\.config\git\config|%USERPROFILE%\.config\git\config
+home\.gitconfig|%USERPROFILE%\.gitconfig
+home\.gitignore_global|%USERPROFILE%\.gitignore_global
+home\.config\starship.toml|%USERPROFILE%\.config\starship.toml
+home\.vimrc|%USERPROFILE%\.vimrc
+windows\powershell\profile.ps1|%USERPROFILE%\Documents\PowerShell\profile.ps1
+
+# VS Code (scoop persist) — 拡張一覧は manifests/vscode-extensions.*.txt
+windows\vscode\settings.json|%USERPROFILE%\scoop\persist\vscode\data\user-data\User\settings.json
+windows\vscode\keybindings.json|%USERPROFILE%\scoop\persist\vscode\data\user-data\User\keybindings.json
+
+# Claude Code (user settings: permission base)
+home\.claude\settings.json|%USERPROFILE%\.claude\settings.json
+
+# draw.io / Zed
+windows\drawio\config.json|%APPDATA%\draw.io\config.json
+home\.config\zed\keymap.json|%APPDATA%\zed\keymap.json
+home\.config\zed\settings.json|%APPDATA%\zed\settings.json
+
+# Office templates / UI
+windows\office\Blank.potx|%APPDATA%\Microsoft\Templates\Blank.potx
+windows\office\PowerPoint.exportedUI|%LOCALAPPDATA%\Microsoft\Office\PowerPoint.officeUI
+windows\office\Book.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Book.xltx
+windows\office\Sheet.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Sheet.xltx
+windows\office\Excel.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Excel.officeUI
+windows\office\Normal.dotm|%APPDATA%\Microsoft\Templates\Normal.dotm
+windows\office\Word.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Word.officeUI
+
+# Obsidian / shared notes (areas_shared is a sibling repo of dotfiles)
+windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian
+..\areas_shared|%NOTES_DIR%\areas_shared

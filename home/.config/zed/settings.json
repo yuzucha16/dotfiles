@@ -1,0 +1,64 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "agent_servers": {
+    "claude-acp": {
+      "default_config_options": {
+        "model": "sonnet"
+      },
+      "type": "registry"
+    },
+    "codex-acp": {
+      "type": "registry"
+    }
+  },
+  "auto_install_extensions": {
+    "html": true,
+    "powershell": true,
+    "windows-batch": true
+  },
+  
+  "vim_mode": true,
+
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Zed (Default)",
+    "dark": "Zed (Default)"
+  },
+
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "Gruvbox Dark"
+  },
+
+  "gutter": {
+    "line_numbers": true
+  },
+
+  "auto_indent": true,
+  "hard_tabs": false,
+  "tab_size": 4,
+
+  "use_smartcase_search": true,
+
+  "vim": {
+    "use_system_clipboard": "always"
+  },
+
+  "status_bar": {
+    "active_language_button": true,
+    "cursor_position_button": true,
+    "line_endings_button": true,
+    "active_encoding_button": "enabled"
+  }
+}
