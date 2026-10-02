@@ -1,15 +1,12 @@
-# Link map for w2a_copy_dotfiles.bat (common / minimal set, used on every PC)
+# Link map for w2a_link_dotfiles.bat (used on every PC)
 # Format : <path relative to dotfiles root>|<destination>
 # - %VAR% in destination is expanded at run time (USERPROFILE, APPDATA, NOTES_DIR ...)
 # - Lines starting with # and blank lines are ignored
 # - Do not indent entries
-# - Per-PC extras go to links.<profile>.map and are loaded with: w2a_copy_dotfiles.bat link <profile>
 
 # Notepad++
-windows\notepadpp\contextMenu.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\contextMenu.xml
+# (only shortcuts and themes; app-rewritten files such as stylers.xml / NppExec.ini are not tracked)
 windows\notepadpp\shortcuts.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\shortcuts.xml
-windows\notepadpp\stylers.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\stylers.xml
-windows\notepadpp\NppExec.ini|%USERPROFILE%\scoop\apps\notepadplusplus\current\plugins\Config\NppExec.ini
 windows\notepadpp\Gruvbox dark medium.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\themes\Gruvbox dark medium.xml
 windows\notepadpp\Gruvbox light medium.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\themes\Gruvbox light medium.xml
 
@@ -37,16 +34,6 @@ home\.claude\settings.json|%USERPROFILE%\.claude\settings.json
 windows\drawio\config.json|%APPDATA%\draw.io\config.json
 home\.config\zed\keymap.json|%APPDATA%\zed\keymap.json
 home\.config\zed\settings.json|%APPDATA%\zed\settings.json
-
-# Office templates / UI
-# (the files live in the sibling repo "notes": resources/office. Clone notes before running w2a)
-..\notes\resources\office\Blank.potx|%APPDATA%\Microsoft\Templates\Blank.potx
-..\notes\resources\office\PowerPoint.exportedUI|%LOCALAPPDATA%\Microsoft\Office\PowerPoint.officeUI
-..\notes\resources\office\Book.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Book.xltx
-..\notes\resources\office\Sheet.xltx|%APPDATA%\Microsoft\Excel\XLSTART\Sheet.xltx
-..\notes\resources\office\Excel.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Excel.officeUI
-..\notes\resources\office\Normal.dotm|%APPDATA%\Microsoft\Templates\Normal.dotm
-..\notes\resources\office\Word.exportedUI|%LOCALAPPDATA%\Microsoft\Office\Word.officeUI
 
 # Vault (notes is a sibling repo of dotfiles and is itself the Obsidian vault root; it holds .obsidian too)
 ..\notes|%NOTES_DIR%

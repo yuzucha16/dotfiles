@@ -1,10 +1,7 @@
 # ~/.zshrc
 
-# XDG は .zprofile (.profile) で export 済み想定。非ログインで起動された場合のフォールバック
-: "${XDG_CONFIG_HOME:=$HOME/.config}"
-: "${XDG_CACHE_HOME:=$HOME/.cache}"
-: "${XDG_DATA_HOME:=$HOME/.local/share}"
-: "${XDG_STATE_HOME:=$HOME/.local/state}"
+# XDG は .zprofile (.profile) で export 済み。非ログインシェルでは未定義なので、
+# 使う箇所でインライン既定値 (${XDG_xxx:-...}) を使う
 
 ##########
 # Interactive shell
@@ -23,7 +20,7 @@ bindkey '^N' history-beginning-search-forward      # n
 # History
 ##########
 
-HISTFILE="$XDG_STATE_HOME/zsh/history"
+HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/history"
 
 HISTSIZE=50000
 SAVEHIST=200000
@@ -72,7 +69,7 @@ compinit
 bindkey '^I' menu-select
 
 zstyle ':completion:*' auto-description 'specify: %d'
-zstyle ':completion:*' completer _expand _complete _correct _approximate
+zstyle ':completion:*' completer _expand _complete
 zstyle ':completion:*' group-name ''
 
 zstyle ':completion:*:default' list-colors \
@@ -136,16 +133,16 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # 共通設定 (alias / 関数 / fzf / zoxide / CA / EDITOR)
 ##########
 
-[[ -f "$XDG_CONFIG_HOME/shell/common.sh" ]] &&
-    source "$XDG_CONFIG_HOME/shell/common.sh"
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/common.sh" ]] &&
+    source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/common.sh"
 
 
 ##########
 # Local override
 ##########
 
-[[ -f "$XDG_CONFIG_HOME/zshrc.local" ]] &&
-    source "$XDG_CONFIG_HOME/zshrc.local"
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zshrc.local" ]] &&
+    source "${XDG_CONFIG_HOME:-$HOME/.config}/zshrc.local"
 
 
 ##########
