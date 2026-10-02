@@ -3,9 +3,10 @@ setlocal EnableExtensions EnableDelayedExpansion
 
 REM ======================================================
 REM  VS Code extensions installer (Windows)
-REM  Installs only the missing extensions listed in manifests\vscode-extensions.win.txt
+REM  Installs the extensions listed in manifests\vscode-extensions.win.txt
+REM  (already installed ones are skipped by code itself)
 REM  Usage:  w1b_vscode_extensions.bat [list path]
-REM  Export: code --list-extensions to manifests\vscode-extensions.win.txt
+REM  Export: code --list-extensions > manifests\vscode-extensions.win.txt
 REM ======================================================
 
 for %%I in ("%~dp0..\..") do set "DOTS_DIR=%%~fI"
@@ -22,21 +23,12 @@ if not exist "%LIST%" (
   goto :END
 )
 
-set "INSTALLED=%TEMP%\vscode_installed_extensions.txt"
-call code --list-extensions > "%INSTALLED%"
-
 echo Using list: %LIST%
-for /F "usebackq eol=# tokens=1" %%E in ("%LIST%") do (
-  findstr /X /I /C:"%%E" "%INSTALLED%" >nul
-  if errorlevel 1 (
-    echo Installing %%E ...
-    call code --install-extension %%E
-  ) else (
-    echo [Installed] %%E
-  )
-)
+set "ARGS="
+for /F "usebackq eol=# tokens=1" %%E in ("%LIST%") do set "ARGS=!ARGS! --install-extension %%E"
 
-del "%INSTALLED%" >nul 2>&1
+if defined ARGS call code%ARGS%
+
 echo.
 echo Done.
 

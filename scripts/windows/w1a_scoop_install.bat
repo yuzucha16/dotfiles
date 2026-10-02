@@ -58,29 +58,28 @@ REM Usage: w1a_scoop_install.bat [profile]   e.g. w1a_scoop_install.bat home
 for %%I in ("%~dp0..\..") do set "DOTS_DIR=%%~fI"
 set "PROFILE_NAME=%~1"
 
-call :INSTALL_LIST "%DOTS_DIR%\manifests\apps.txt"
-if defined PROFILE_NAME call :INSTALL_LIST "%DOTS_DIR%\manifests\apps.%PROFILE_NAME%.txt"
+REM Collect all names, then install in one scoop call (installed apps are skipped with a notice)
+set "APPS="
+call :COLLECT "%DOTS_DIR%\manifests\apps.txt"
+if defined PROFILE_NAME call :COLLECT "%DOTS_DIR%\manifests\apps.%PROFILE_NAME%.txt"
+
+if defined APPS (
+  echo Installing:%APPS%
+  call scoop.cmd install%APPS%
+)
 
 echo.
 echo Done. Open a NEW terminal to refresh PATH if needed.
 echo.
 goto :END
 
-:INSTALL_LIST
-set "APPLIST=%~1"
-if not exist "%APPLIST%" (
-  echo [WARN] app list not found: %APPLIST%
+:COLLECT
+if not exist "%~1" (
+  echo [WARN] app list not found: %~1
   goto :EOF
 )
-echo Using list: %APPLIST%
-for /F "usebackq eol=# tokens=1" %%A in ("%APPLIST%") do (
-  if exist "%SCOOP_ROOT%\apps\%%A\" (
-    echo [Installed] %%A
-  ) else (
-    echo Installing %%A ...
-    call scoop.cmd install %%A
-  )
-)
+echo Using list: %~1
+for /F "usebackq eol=# tokens=1" %%A in ("%~1") do set "APPS=!APPS! %%A"
 goto :EOF
 
 :END

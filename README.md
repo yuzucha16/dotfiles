@@ -17,7 +17,7 @@ dotfiles/
 ├── manifests/      スクリプトが読むリスト（apps / links / vscode 拡張）
 ├── home/           ~ を鏡写しにした共有ツリー（WSL は stow、Windows は links.map でリンク）
 ├── windows/        Windows 専用の設定（links.map からだけ参照される）
-└── templates/      配置しない雛形
+└── templates/      配置しない雛形（`claude/settings.sandbox.json` は、使い捨ての検証環境のプロジェクトで `.claude/settings.json` に手でコピーする。push / reset / clean / rm を許可する広い権限なので、通常のリポジトリには入れない）
 ```
 
 ### `home/`: `~` の鏡
@@ -27,7 +27,7 @@ dotfiles/
 | パス | 内容 |
 |---|---|
 | `.bashrc` `.zshrc` `.profile` `.zprofile` `.bash_logout` `.zlogout` | シェル設定。`.zprofile` は `.profile` を読むだけ |
-| `.vimrc` `.gitconfig` `.gitignore_global` | vim / git |
+| `.vimrc` `.gitconfig` `.gitignore_global` | vim / git（`.vimrc` は初回起動時に vim-plug とプラグインを自動導入する。保存先は Windows が `~/vimfiles`、WSL / Linux が `~/.vim`。`curl` が必要） |
 | `.claude/settings.json` | Claude Code のユーザー設定（許可設定のベース） |
 | `.config/shell/common.sh` | bash / zsh 共通の alias・関数・fzf・zoxide・CA・EDITOR。`.bashrc` / `.zshrc` が source する。コマンド体系は `windows/powershell/profile.ps1` と揃える |
 | `.config/{git/config,starship.toml,bat/config}` | git 共通設定 / starship / bat |
@@ -80,7 +80,7 @@ dotfiles/
 3. `scripts\windows\w1a_scoop_install.bat [home]`: scoop と bucket を導入し、アプリを入れる
    - 会社: `w1a_scoop_install.bat`（`apps.txt` のみ）
    - 家: `w1a_scoop_install.bat home`（`apps.txt` + `apps.home.txt`）
-   - `scripts\windows\w1b_vscode_extensions.bat`: `manifests\vscode-extensions.win.txt` の VS Code 拡張のうち未導入のものを入れる（Zed の拡張は `home/.config/zed/settings.json` の `auto_install_extensions` で起動時に自動導入される）
+   - `scripts\windows\w1b_vscode_extensions.bat`: `manifests\vscode-extensions.win.txt` の VS Code 拡張を入れる（導入済みは `code` がスキップする。Zed の拡張は `home/.config/zed/settings.json` の `auto_install_extensions` で起動時に自動導入される）
 4. `scripts\windows\w2a_link_dotfiles.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る（ファイルは symlink、ディレクトリは junction。既存のリンクは張り直す）
    - `unlink`: リンクだけ削除する。`-n`: ドライラン
    - 配置先に実ファイル/実ディレクトリがあると `[ERR]` を出してそのエントリを飛ばし、最後に非ゼロで終了する。**自動退避はしない**。中身を確認して手で退避/削除し、再実行する
@@ -96,7 +96,7 @@ Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Win
 1. `scripts/wsl/l0_setup.sh`: apt の更新、git / curl / wget / zsh の導入、XDG ディレクトリの作成
 2. `scripts/wsl/l0a_apt_install.sh`: CLI ツール（apt）、starship、ghq（ビルド済みバイナリを `~/.local/bin` へ。Go は不要）を導入し、`bat` / `fd` のリンクを張る。Docker や Go は入れない（下の「必要なときだけ入れるもの」）
 3. `scripts/wsl/l1_link_dotfiles.sh [link|unlink] [-n]`: stow で `home/` を `~` に展開する（Windows の `w2a` と同じ引数）。リンク切れの旧 symlink は削除する。展開先に実ファイルがあると `[ERR]` を出して止まる（自動退避はしない。手で退避/削除して再実行）。終わったら `chsh -s /usr/bin/zsh`
-   - `scripts/wsl/l1a_vscode_extensions.sh`: `manifests/vscode-extensions.wsl.txt` の拡張のうち未導入のものを VS Code Server に入れる（`code` コマンドが必要。無ければ Windows の VS Code から一度この WSL を開く）
+   - `scripts/wsl/l1a_vscode_extensions.sh`: `manifests/vscode-extensions.wsl.txt` の拡張を VS Code Server に入れる（導入済みは `code` がスキップする。`code` コマンドが必要。無ければ Windows の VS Code から一度この WSL を開く）
 4. `scripts/wsl/l2_init_workspace.sh`: `~/vault` を作る
 5. `scripts/wsl/l3_get_repos.sh`: ghq で参照用リポジトリを取得する
 
