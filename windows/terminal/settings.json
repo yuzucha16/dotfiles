@@ -47,10 +47,11 @@
             "colorScheme": "GruvboxDark",
             "font": 
             {
-                "face": "HackGen Console NF"
+                "face": "PlemolJP Console NF",
+                "weight": "light"
             },
-            "startingDirectory": "%VAULT_HOME%",
-            "opacity": 100
+            "opacity": 100,
+            "startingDirectory": "%VAULT_HOME%"
         },
         "list": 
         [
@@ -69,7 +70,8 @@
                 "commandline": "wsl.exe -d Ubuntu-24.04",
                 "guid": "{963ff2f7-6aed-5ce3-9d91-90d99571f53a}",
                 "hidden": false,
-                "name": "Ubuntu-24.04"
+                "name": "Ubuntu-24.04",
+                "source": "Microsoft.WSL"
             }
         ]
     },
