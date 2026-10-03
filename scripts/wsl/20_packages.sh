@@ -7,8 +7,18 @@ set -euo pipefail
 # Docker / Go などは入れない（必要なときに README の手順で手動導入）
 #======================================
 
-# 導入するパッケージ一覧（git / curl / wget / zsh は l0_setup.sh）
+echo "[*] Updating package lists..."
+sudo apt update -y
+sudo apt upgrade -y
+
+# 導入するパッケージ一覧
 PACKAGES=(
+    # base
+    git
+    curl
+    wget
+    zsh
+
     # utils
     vim
     unzip
@@ -32,6 +42,9 @@ PACKAGES=(
 
 echo "[*] Installing packages: ${PACKAGES[*]}"
 sudo apt install -y "${PACKAGES[@]}"
+
+sudo apt autoremove -y
+sudo apt clean
 
 mkdir -p "$HOME/.local/bin"
 
