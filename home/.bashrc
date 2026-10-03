@@ -70,6 +70,9 @@ PS1='\[\e[1;32m\]\u@\h \[\e[1;34m\]\w\[\e[0m\]\$ '
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" \
   "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
+# カーソル点滅を止める (DECSCUSR: 2 = 点滅なしブロック。windows/powershell/profile.ps1 と揃える)
+printf '\e[2 q'
+
 #### =========[ 共通設定 (alias / 関数 / fzf / zoxide / CA / EDITOR) ]=========
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/common.sh" ] && . "${XDG_CONFIG_HOME:-$HOME/.config}/shell/common.sh"
 

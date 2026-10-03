@@ -156,6 +156,15 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 
 
 ##########
+# Cursor
+##########
+
+# カーソル点滅を止める (DECSCUSR: 2 = 点滅なしブロック)。zsh はプロンプトごとに再描画するので precmd で毎回送る
+_steady_cursor() { printf '\e[2 q' }
+precmd_functions+=(_steady_cursor)
+
+
+##########
 # Starship
 ##########
 
