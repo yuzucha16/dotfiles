@@ -8,7 +8,7 @@
         <GUIConfig name="noUpdate" autoUpdateMode="0">yes</GUIConfig>
         <GUIConfig name="globalOverride" font="yes" fontSize="yes" />
         <GUIConfig name="Caret" blinkRate="0" />
-        <GUIConfig name="DarkMode" enable="yes" darkThemeName="Gruvbox dark medium.xml" lightThemeName="Gruvbox light medium.xml" />
+        <GUIConfig name="DarkMode" enable="yes" darkThemeName="Gruvbox dark medium.xml" />
         <GUIConfig name="ScintillaPrimaryView" Wrap="yes" />
     </GUIConfigs>
 </NotepadPlus>
