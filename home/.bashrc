@@ -73,7 +73,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # カーソル点滅を止める (DECSCUSR: 2 = 点滅なしブロック。windows/powershell/profile.ps1 と揃える)
 printf '\e[2 q'
 
-#### =========[ 共通設定 (alias / 関数 / fzf / zoxide / CA / EDITOR) ]=========
+#### =========[ 共通設定 (alias / 関数 / zoxide / CA / EDITOR) ]=========
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/common.sh" ] && . "${XDG_CONFIG_HOME:-$HOME/.config}/shell/common.sh"
 
 #### =========[ ローカル上書き（任意） ]=========
