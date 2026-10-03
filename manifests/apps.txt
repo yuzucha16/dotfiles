@@ -40,7 +40,6 @@ which
 rnr
 
 # shell completion
-psfzf
 scoop-completion
 
 # automation
