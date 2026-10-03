@@ -41,7 +41,7 @@ dotfiles/
 | `startup/startup.bat` | スタートアップ。`subst V: C:\vault` |
 | `wsl/.wslconfig` | WSL2 の全体設定（`%USERPROFILE%\.wslconfig` へリンク）。アイドル時にキャッシュのメモリをホストへ返す。`memory` などの上限は PC ごとに RAM が違うので書かない。反映は `wsl --shutdown` 後の再起動 |
 | `powershell/profile.ps1` | PowerShell プロファイル（starship / lsd / zoxide / Emacs キーバインド）。起動を軽くするため、ツール不在時の代替・`cd` 後の自動 `ll`・PSFzf は持たない。コマンド体系は `home/.config/shell/common.sh` と揃える（基本エイリアスのみ。`zfz` の Ctrl+g 割当のみ pwsh 固有） |
-| `autohotkey/` `notepadpp/` `drawio/` | 各アプリの設定（Notepad++ はテーマのみ。アプリが書き換えるファイルは追跡しない） |
+| `autohotkey/` `notepadpp/` `drawio/` | 各アプリの設定（Notepad++ はテーマと `config.min.xml`（初回だけ `20_apps.bat` が `config.xml` として置く最小構成）のみ。アプリが書き換えるファイルは追跡しない） |
 
 ### 新しい設定をどこに置くか
 
@@ -82,12 +82,12 @@ dotfiles/
 2. `scripts\windows\20_apps.bat [home]`: scoop と bucket を導入し、アプリを入れる
    - 会社: `20_apps.bat`（`apps.txt` のみ）
    - 家: `20_apps.bat home`（`apps.txt` + `apps.home.txt`）
+   - Notepad++ の `config.xml` が無い/空のときだけ、`windows\notepadpp\config.min.xml`（タブ幅 2、新規文書 LF、折り返し、スナップショットバックアップ、ダークテーマ、自動更新オフなど）をコピーする。既にあれば触らない。リンクではないので、以後はアプリが自由に書き換える。最小構成を適用し直したいときは `config.xml` を削除（または空に）して再実行する
    - `scripts\windows\24_fonts.bat [--dry-run]`: PlemolJP NF / MoralerspaceHW（`manifests\fonts.txt`）の latest を `gh` で `%USERPROFILE%\download` へ取得する。インストールは手動（展開して .ttf を右クリック → 現在のユーザーにインストール）。`gh auth login` が必要（`--dry-run` は不要）
 3. `scripts\windows\30_link.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る（ファイルは symlink、ディレクトリは junction。既存のリンクは張り直す）
    - `unlink`: リンクだけ削除する。`-n`: ドライラン
    - 配置先に実ファイル/実ディレクトリがあると `[ERR]` を出してそのエントリを飛ばし、最後に非ゼロで終了する。**自動退避はしない**。中身を確認して手で退避/削除し、再実行する
    - `[ERR] mklink failed` は開発者モードがオフのときに出る
-   - `scripts\windows\32_notepadpp.bat [-n]`: Notepad++ の `config.xml` に必要な設定（タブ幅 2、新規文書 LF、折り返し、スナップショットバックアップ、ダークテーマ、自動更新オフなど）だけを差分適用する（何度実行しても同じ結果）。**Notepad++ を閉じて実行**（終了時に `config.xml` を上書きされるため）。`scoop update` 後の再実行は不要（`config.xml` は引き継がれる）
 4. `scripts\windows\40_wsl_enable.bat`（WSL を使う場合）: 管理者権限で実行。WSL2 の機能を有効化する。**再起動後**、表示される `wsl --update` / `wsl --install -d Ubuntu-24.04` を手動で実行する
 5. `scripts\windows\50_repos.bat`: ghq で必要なリポジトリを取得する
 
