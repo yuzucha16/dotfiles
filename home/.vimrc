@@ -86,16 +86,6 @@ if filereadable(s:plug_path)
   augroup END
 endif
 
-""" gtags (global)
-" 現在ファイルのシンボル一覧
-nnoremap <silent> <Space>f :cexpr system('global -f ' . expand('%'))<CR>:copen<CR>
-" 定義ジャンプ（即移動）
-nnoremap <silent> <Space>j :cexpr system('global ' . expand('<cword>'))<CR>:cfirst<CR>
-" 一覧（俯瞰）
-nnoremap <silent> <Space>d :cexpr system('global ' . expand('<cword>'))<CR>:copen<CR>
-" 参照一覧
-nnoremap <silent> <Space>r :cexpr system('global -r ' . expand('<cword>'))<CR>:copen<CR>
-
 """ Filer (fern)
 " Ctrl+n でファイルツリーを表示/非表示する
 nmap <C-n> :Fern . -reveal=% -drawer -toggle -width=25<CR>

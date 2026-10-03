@@ -25,8 +25,6 @@ ghq
 gh
 fork
 p4v
-universal-ctags
-global
 
 # file transfer / terminal emulator
 winscp
@@ -42,5 +40,17 @@ zoxide
 which
 rnr
 
+# shell completion
+psfzf
+scoop-completion
+
 # automation
 autohotkey
+
+# ai
+claude
+claude-code
+chatgpt
+
+# media
+rufus
