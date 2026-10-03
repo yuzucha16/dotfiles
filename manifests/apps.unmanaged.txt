@@ -1,0 +1,19 @@
+# Apps NOT managed by scoop on the Windows PC
+# Excluded: Windows built-in, Microsoft-made apps/runtimes, hardware drivers.
+# Scoop-managed apps are listed in apps.txt / apps.home.txt.
+# Format: name | how it was installed | note
+# Last checked: 2026-10-04
+
+# --- winget ---
+uv                                | winget astral-sh.uv                         |
+Steam                             | winget Valve.Steam                          |
+Sunshine                          | winget LizardByte.Sunshine                  |
+ViGEm Bus Driver                  | winget ViGEm.ViGEmBus                       | needed by Sunshine
+Bambu Studio                      | winget Bambulab.Bambustudio                 |
+
+# --- manual install (vendor installer) ---
+Dell SupportAssist                | vendor (Dell)                               | + OS Recovery Plugin, Store version
+
+# --- same app in two places (kept on purpose) ---
+# Windows Terminal: Win11 built-in (Store) + scoop windows-terminal
+# AutoHotkey: winget lists scoop's own registration; scoop is the only install
