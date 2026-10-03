@@ -1,10 +1,11 @@
 # Extra scoop apps for the home PC: 20_apps.bat home
 # Same format as apps.txt. Uncomment the entries to adopt.
 
-brave
-marp
-
 # candidates (currently unused)
+#brave
+#marp
+#universal-ctags
+#global
 #clangd
 #llvm
 #nu

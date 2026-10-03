@@ -8,6 +8,9 @@
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
   // ==== AI (claude-acp is the main entry point) ====
+  "edit_predictions": {
+    "provider": "none"
+  },
   "agent_servers": {
     "claude-acp": {
       "default_config_options": {
@@ -47,9 +50,6 @@
     }
   },
   // AI goes through claude-acp only: no built-in edit predictions, no telemetry
-  "features": {
-    "edit_prediction_provider": "none"
-  },
   "telemetry": {
     "diagnostics": false,
     "metrics": false
