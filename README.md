@@ -89,6 +89,7 @@ dotfiles/
    - `unlink`: リンクだけ削除する。`-n`: ドライラン
    - 配置先に実ファイル/実ディレクトリがあると `[ERR]` を出してそのエントリを飛ばし、最後に非ゼロで終了する。**自動退避はしない**。中身を確認して手で退避/削除し、再実行する
    - `[ERR] mklink failed` は開発者モードがオフのときに出る
+   - `scripts\windows\32_notepadpp.bat [-n]`: Notepad++ の `config.xml` に必要な設定（タブ幅 2、新規文書 LF、折り返し、スナップショットバックアップ、ダークテーマ、自動更新オフなど）だけを差分適用する（何度実行しても同じ結果）。**Notepad++ を閉じて実行**（終了時に `config.xml` を上書きされるため）。`scoop update` 後の再実行は不要（`config.xml` は引き継がれる）
 4. `scripts\windows\40_wsl_enable.bat`（WSL を使う場合）: 管理者権限で実行。WSL2 の機能を有効化する。**再起動後**、表示される `wsl --update` / `wsl --install -d Ubuntu-24.04` を手動で実行する
 5. `scripts\windows\50_repos.bat`: ghq で必要なリポジトリを取得する
 
