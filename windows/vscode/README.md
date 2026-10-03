@@ -11,7 +11,7 @@
 一覧の拡張をまとめて入れる（導入済みは `code` がスキップする）。
 
 - Windows: `scripts\windows\21_vscode.bat`
-- WSL: `scripts/wsl/21_vscode.sh`
+- WSL / Linux: `scripts/linux/21_vscode.sh`
 
 ## 拡張の書き出し（環境 → 一覧）
 

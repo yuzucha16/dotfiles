@@ -1,0 +1,8 @@
+# Extra apt packages for native Linux desktops: 20_packages.sh desktop
+# Same format as apt.txt.
+
+gparted
+
+# candidates (currently unused)
+#gufw
+#hardinfo

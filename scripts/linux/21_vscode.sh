@@ -8,8 +8,14 @@ set -Eeuo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LIST="${1:-$SCRIPT_DIR/../../manifests/vscode-extensions.wsl.txt}"
 
+. "$SCRIPT_DIR/lib.sh"
+
 if ! command -v code >/dev/null 2>&1; then
-  echo "[WARN] 'code' not found. Open this WSL from VS Code on Windows once, then rerun." >&2
+  if is_wsl; then
+    echo "[WARN] 'code' not found. Open this WSL from VS Code on Windows once, then rerun." >&2
+  else
+    echo "[WARN] 'code' not found. Install VS Code first, then rerun." >&2
+  fi
   exit 0
 fi
 
