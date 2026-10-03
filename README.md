@@ -83,7 +83,6 @@ dotfiles/
    - 会社: `20_apps.bat`（`apps.txt` のみ）
    - 家: `20_apps.bat home`（`apps.txt` + `apps.home.txt`）
    - `scripts\windows\21_vscode.bat`: `manifests\vscode-extensions.win.txt` の VS Code 拡張を入れる（導入済みは `code` がスキップする。Zed の拡張は `home/.config/zed/settings.json` の `auto_install_extensions` で起動時に自動導入される）
-   - `scripts\windows\22_python.bat`: winget で uv を入れ、Python 3.13 を導入する
    - `scripts\windows\24_fonts.bat [--dry-run]`: PlemolJP NF / MoralerspaceHW（`manifests\fonts.txt`）の latest を `gh` で `%USERPROFILE%\download` へ取得する。インストールは手動（展開して .ttf を右クリック → 現在のユーザーにインストール）。`gh auth login` が必要（`--dry-run` は不要）
 3. `scripts\windows\30_link.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る（ファイルは symlink、ディレクトリは junction。既存のリンクは張り直す）
    - `unlink`: リンクだけ削除する。`-n`: ドライラン
