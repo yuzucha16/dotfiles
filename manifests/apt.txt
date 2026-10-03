@@ -4,6 +4,7 @@
 
 # base
 git
+gh
 curl
 wget
 zsh
