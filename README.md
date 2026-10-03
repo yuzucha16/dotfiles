@@ -84,6 +84,7 @@ dotfiles/
    - 家: `20_apps.bat home`（`apps.txt` + `apps.home.txt`）
    - `scripts\windows\21_vscode.bat`: `manifests\vscode-extensions.win.txt` の VS Code 拡張を入れる（導入済みは `code` がスキップする。Zed の拡張は `home/.config/zed/settings.json` の `auto_install_extensions` で起動時に自動導入される）
    - `scripts\windows\22_python.bat`: winget で uv を入れ、Python 3.13 を導入する
+   - `scripts\windows\24_fonts.bat [--dry-run]`: PlemolJP NF / MoralerspaceHW（`manifests\fonts.txt`）の latest を `gh` で `%USERPROFILE%\download` へ取得する。インストールは手動（展開して .ttf を右クリック → 現在のユーザーにインストール）。`gh auth login` が必要（`--dry-run` は不要）
 3. `scripts\windows\30_link.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る（ファイルは symlink、ディレクトリは junction。既存のリンクは張り直す）
    - `unlink`: リンクだけ削除する。`-n`: ドライラン
    - 配置先に実ファイル/実ディレクトリがあると `[ERR]` を出してそのエントリを飛ばし、最後に非ゼロで終了する。**自動退避はしない**。中身を確認して手で退避/削除し、再実行する
@@ -99,6 +100,7 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行す�
 2. `scripts/linux/20_packages.sh [desktop]`: apt の更新、`manifests/apt.txt` のパッケージ（git / curl / wget / zsh と CLI ツール）の導入、starship、ghq（ビルド済みバイナリを `~/.local/bin` へ。Go は不要）の導入、`bat` / `fd` のリンク作成。ネイティブ Linux のデスクトップは `desktop` を付けて `apt.desktop.txt` も入れる。Docker や Go は入れない（下の「必要なときだけ入れるもの」）
    - `scripts/linux/21_vscode.sh`: `manifests/vscode-extensions.wsl.txt` の拡張を入れる（導入済みは `code` がスキップする。`code` コマンドが必要。WSL では、無ければ Windows の VS Code から一度この WSL を開く）
    - `scripts/linux/23_ja.sh`（ネイティブ Linux のみ。WSL では何もしない）: fcitx5 + Mozc、日本語フォントを入れる。Ubuntu 系は言語パックも入れる。入れたら再ログインして、Fcitx 5 設定で Mozc を追加する（手動）
+   - `scripts/linux/24_fonts.sh [--dry-run]`: PlemolJP NF / MoralerspaceHW の latest を `gh` で `~/download` へ取得する（WSL でも WSL 側の `~/download`）。インストールは手動。`gh auth login` が必要（`--dry-run` は不要）
 3. `scripts/linux/30_link.sh [link|unlink] [-n]`: stow で `home/` を `~` に展開する（Windows の `30_link.bat` と同じ引数）。リンク切れの旧 symlink は削除する。展開先に実ファイルがあると `[ERR]` を出して止まる（自動退避はしない。手で退避/削除して再実行）。終わったら `chsh -s /usr/bin/zsh`
 4. `scripts/linux/50_repos.sh`: ghq で参照用リポジトリを取得する
 
