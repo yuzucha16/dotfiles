@@ -2,43 +2,31 @@
 set -euo pipefail
 
 #======================================
-# WSL CLI ツールのセットアップ
+# Linux (WSL / ネイティブ) CLI ツールのセットアップ
 # apt + 単体バイナリ (starship, ghq) + bat/fd のリンク。
 # Docker / Go などは入れない（必要なときに README の手順で手動導入）
+# 使い方: 20_packages.sh [profile]   例: 20_packages.sh desktop
+#   パッケージ一覧は manifests/apt.txt + manifests/apt.<profile>.txt
 #======================================
+
+. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+DOTS_DIR="$(dots_dir)"
+PROFILE_NAME="${1:-}"
+
+# 導入するパッケージ一覧
+mapfile -t PACKAGES < <(read_list "$DOTS_DIR/manifests/apt.txt")
+if [[ -n "$PROFILE_NAME" ]]; then
+  mapfile -t -O "${#PACKAGES[@]}" PACKAGES < <(read_list "$DOTS_DIR/manifests/apt.$PROFILE_NAME.txt")
+fi
+
+if (( ${#PACKAGES[@]} == 0 )); then
+  echo "[ERR] no packages: $DOTS_DIR/manifests/apt.txt" >&2
+  exit 1
+fi
 
 echo "[*] Updating package lists..."
 sudo apt update -y
 sudo apt upgrade -y
-
-# 導入するパッケージ一覧
-PACKAGES=(
-    # base
-    git
-    curl
-    wget
-    zsh
-
-    # utils
-    vim
-    unzip
-    stow
-
-    # console
-    lsd
-    fzf
-    bat
-    tree
-    zoxide
-    ripgrep
-    fd-find
-    zsh-autosuggestions
-
-    # devel
-    build-essential
-    universal-ctags
-    global
-)
 
 echo "[*] Installing packages: ${PACKAGES[*]}"
 sudo apt install -y "${PACKAGES[@]}"

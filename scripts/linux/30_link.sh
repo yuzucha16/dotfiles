@@ -5,7 +5,8 @@ set -Eeuo pipefail
 IFS=$'\n\t'
 
 # ===== Settings (edit if needed) =====
-SRC_DIR_DEFAULT="/mnt/c/vault/repos/github.com/yuzucha16/dotfiles"
+. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+SRC_DIR_DEFAULT="$(dots_dir)"   # このスクリプトのあるリポジトリ（WSL でもネイティブでも同じ）
 DST_DIR_DEFAULT="$HOME"
 
 # ===== CLI Options =====

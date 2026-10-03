@@ -1,4 +1,4 @@
-# Link map for w2a_link_dotfiles.bat (used on every PC)
+# Link map for 30_link.bat (used on every PC)
 # Format : <path relative to dotfiles root>|<destination>
 # - %VAR% in destination is expanded at run time (USERPROFILE, APPDATA, NOTES_DIR ...)
 # - Lines starting with # and blank lines are ignored

@@ -1,0 +1,29 @@
+# apt packages for scripts/linux/20_packages.sh (common / minimal set, used on WSL and native Linux)
+# One package per line. Lines starting with # and blank lines are ignored.
+# Per-profile extras go to apt.<profile>.txt and are loaded with: 20_packages.sh <profile>
+
+# base
+git
+curl
+wget
+zsh
+
+# utils
+vim
+unzip
+stow
+
+# console
+lsd
+fzf
+bat
+tree
+zoxide
+ripgrep
+fd-find
+zsh-autosuggestions
+
+# devel
+build-essential
+universal-ctags
+global

@@ -1,4 +1,4 @@
-# Extra scoop apps for the home PC: w1a_scoop_install.bat home
+# Extra scoop apps for the home PC: 20_apps.bat home
 # Same format as apps.txt. Uncomment the entries to adopt.
 
 brave
