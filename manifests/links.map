@@ -7,7 +7,6 @@
 # Notepad++
 # (only shortcuts and themes; app-rewritten files such as stylers.xml / NppExec.ini are not tracked)
 windows\notepadpp\Gruvbox dark medium.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\themes\Gruvbox dark medium.xml
-windows\notepadpp\Gruvbox light medium.xml|%USERPROFILE%\scoop\apps\notepadplusplus\current\themes\Gruvbox light medium.xml
 
 # Windows (startup / terminal)
 windows\startup\startup.bat|%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\startup.bat
