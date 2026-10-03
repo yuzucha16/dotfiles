@@ -5,7 +5,7 @@ REM ======================================================
 REM  VS Code extensions installer (Windows)
 REM  Installs the extensions listed in manifests\vscode-extensions.win.txt
 REM  (already installed ones are skipped by code itself)
-REM  Usage:  w1b_vscode_extensions.bat [list path]
+REM  Usage:  21_vscode.bat [list path]
 REM  Export: code --list-extensions > manifests\vscode-extensions.win.txt
 REM ======================================================
 
@@ -15,7 +15,7 @@ if not defined LIST set "LIST=%DOTS_DIR%\manifests\vscode-extensions.win.txt"
 
 where code >nul 2>&1
 if errorlevel 1 (
-  echo [ERROR] code not found on PATH. Run w1a_scoop_install.bat first.
+  echo [ERROR] code not found on PATH. Run 20_apps.bat first.
   goto :END
 )
 if not exist "%LIST%" (

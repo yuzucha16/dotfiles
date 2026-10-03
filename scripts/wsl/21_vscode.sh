@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # VS Code Server extensions installer (WSL)
 # manifests/vscode-extensions.wsl.txt にある拡張を入れる（導入済みは code 側がスキップ）
-# 使い方: ./l1a_vscode_extensions.sh [リストのパス]
+# 使い方: ./21_vscode.sh [リストのパス]
 # 書き出し: code --list-extensions > manifests/vscode-extensions.wsl.txt
 set -Eeuo pipefail
 

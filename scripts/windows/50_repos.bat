@@ -1,8 +1,7 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 
-rem dev settings
-ghq get yuzucha16/dotfiles
+rem dev settings (dotfiles itself is already cloned by hand)
 rem ghq get yuzucha16/adv360-pro-zmk
 
 :END
