@@ -68,6 +68,19 @@ if defined APPS (
   call scoop.cmd install%APPS%
 )
 
+REM ▼Notepad++ の config.xml: 無い/空のときだけ最小構成を置く（以後はアプリが書き換える。リンクはしない）
+set "NPP_DIR=%SCOOP_ROOT%\apps\notepadplusplus\current"
+if exist "%NPP_DIR%\" (
+  set "NPP_SEED=1"
+  if exist "%NPP_DIR%\config.xml" for %%F in ("%NPP_DIR%\config.xml") do if %%~zF gtr 0 set "NPP_SEED="
+  if defined NPP_SEED (
+    echo Seeding Notepad++ config.xml
+    copy /Y "%DOTS_DIR%\windows\notepadpp\config.min.xml" "%NPP_DIR%\config.xml" >nul
+  ) else (
+    echo [Exists] Notepad++ config.xml
+  )
+)
+
 echo.
 echo Done. Open a NEW terminal to refresh PATH if needed.
 echo.

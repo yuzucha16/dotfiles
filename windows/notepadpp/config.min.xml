@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<NotepadPlus>
+    <GUIConfigs>
+        <GUIConfig name="ToolBar" visible="no">small</GUIConfig>
+        <GUIConfig name="TabSetting" replaceBySpace="yes" size="2" />
+        <GUIConfig name="NewDocDefaultSettings" format="2" encoding="4" />
+        <GUIConfig name="Backup" isSnapshotMode="yes" />
+        <GUIConfig name="noUpdate" autoUpdateMode="0">yes</GUIConfig>
+        <GUIConfig name="globalOverride" font="yes" fontSize="yes" />
+        <GUIConfig name="Caret" blinkRate="0" />
+        <GUIConfig name="DarkMode" enable="yes" darkThemeName="Gruvbox dark medium.xml" lightThemeName="Gruvbox light medium.xml" />
+        <GUIConfig name="ScintillaPrimaryView" Wrap="yes" />
+    </GUIConfigs>
+</NotepadPlus>
