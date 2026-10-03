@@ -1,3 +1,0 @@
-ms-ceintl.vscode-language-pack-ja
-ms-vscode.cmake-tools
-ms-vscode.cpptools
