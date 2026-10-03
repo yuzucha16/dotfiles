@@ -7,23 +7,12 @@
 // from the command palette.
 [
   {
-    "context": "Workspace",
-    "bindings": {
-      // "shift shift": "file_finder::Toggle"
-    },
-  },
-  {
-    "context": "Editor && vim_mode == insert",
-    "bindings": {
-      // "j k": "vim::NormalBefore"
-    },
-  },
-  {
+    // Pass these through to the shell (PSReadLine / readline) instead of Zed
     "context": "Terminal",
     "bindings": {
       "ctrl-p": ["terminal::SendKeystroke", "ctrl-p"],
       "ctrl-n": ["terminal::SendKeystroke", "ctrl-n"],
       "ctrl-shift-m": ["terminal::SendKeystroke", "ctrl-shift-m"]
     }
-  },
+  }
 ]
