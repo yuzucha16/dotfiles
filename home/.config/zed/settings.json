@@ -102,7 +102,7 @@
   // Trial: Vim off for a week (Ctrl+C copy is consistent with the agent panel). To revert: true + "vim": {"use_system_clipboard": "always"}
   "vim_mode": false,
   "hard_tabs": false,
-  "tab_size": 4,
+  "tab_size": 2,
   "use_smartcase_search": true,
   "git": {
     "inline_blame": {
