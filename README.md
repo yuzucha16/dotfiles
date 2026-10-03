@@ -29,7 +29,7 @@ dotfiles/
 | `.bashrc` `.zshrc` `.profile` `.zprofile` `.bash_logout` `.zlogout` | シェル設定。`.zprofile` は `.profile` を読むだけ |
 | `.vimrc` `.gitconfig` `.gitignore_global` | vim / git（`.vimrc` は初回起動時に vim-plug とプラグインを自動導入する。保存先は Windows が `~/vimfiles`、WSL / Linux が `~/.vim`。`curl` が必要） |
 | `.claude/settings.json` | Claude Code のユーザー設定（許可設定のベース） |
-| `.config/shell/common.sh` | bash / zsh 共通の alias・関数・fzf・zoxide・CA・EDITOR。`.bashrc` / `.zshrc` が source する。コマンド体系は `windows/powershell/profile.ps1` と揃える |
+| `.config/shell/common.sh` | bash / zsh 共通の alias・関数（`zfz`/`cdg` は fzf で選ぶ。fzf のキーバインド・補完は読まない）・zoxide・CA・EDITOR。`.bashrc` / `.zshrc` が source する。コマンド体系は `windows/powershell/profile.ps1` と揃える |
 | `.config/{git/config,starship.toml,bat/config}` | git 共通設定 / starship / bat |
 | `.config/zed/{settings,keymap}.json` | Zed（Windows は `%APPDATA%\zed` へリンク） |
 

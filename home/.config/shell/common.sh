@@ -3,7 +3,8 @@
 # シェル固有の設定（履歴・補完・キーバインド・プロンプト）は各 rc に置く。
 # コマンド体系は pwsh 側 (profile.ps1) と揃えること（基本エイリアスのみ）。
 # 方針: 起動を軽く保つ。ツール (lsd/fzf/fd/bat/zoxide/ghq) は l0a で入る前提で、
-# 不在時の代替は持たない。
+# 不在時の代替は持たない。fzf はキーバインド・補完を読み込まず、zfz/cdg の
+# 選択にだけ使う（履歴検索は標準機能。pwsh と同じ）。
 
 ##########
 # ls 系 (lsd)
@@ -30,22 +31,6 @@ alias b='cd -'
 alias pd='pushd'
 alias po='popd'
 alias dl='dirs -v'
-
-##########
-# fzf
-##########
-export FZF_DEFAULT_COMMAND='fd --hidden --follow --exclude .git'
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_CTRL_T_OPTS='--preview "bat --style=plain --color=always --line-range :200 {}"'
-
-# apt 版 fzf のキーバインド (Ctrl-t / Ctrl-r) と補完
-_fzf_shell=bash
-[ -n "${ZSH_VERSION:-}" ] && _fzf_shell=zsh
-for _fzf_f in key-bindings completion; do
-  [ -f "/usr/share/doc/fzf/examples/$_fzf_f.$_fzf_shell" ] &&
-    . "/usr/share/doc/fzf/examples/$_fzf_f.$_fzf_shell"
-done
-unset _fzf_shell _fzf_f
 
 ##########
 # zoxide (z / zi)

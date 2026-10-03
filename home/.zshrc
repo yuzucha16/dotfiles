@@ -132,7 +132,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 
 
 ##########
-# 共通設定 (alias / 関数 / fzf / zoxide / CA / EDITOR)
+# 共通設定 (alias / 関数 / zoxide / CA / EDITOR)
 ##########
 
 [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/common.sh" ]] &&
