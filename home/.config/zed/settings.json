@@ -147,8 +147,10 @@
 
   // ==== Extensions ====
   "auto_install_extensions": {
+    "git-firefly": true,
     "html": true,
     "powershell": true,
+    "toml": true,
     "windows-batch": true
   }
 }
