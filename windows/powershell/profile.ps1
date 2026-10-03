@@ -1,6 +1,9 @@
 # 非対話式で起動された場合は処理を抜ける (zed::claude)
 if ([Console]::IsOutputRedirected -or [Console]::IsInputRedirected) { return }
 
+# カーソル点滅を止める (DECSCUSR: 2 = 点滅なしブロック)。Windows Terminal に点滅の設定項目は無いため
+[Console]::Write("$([char]27)[2 q")
+
 # 方針: 起動を軽く保つ。ツール (starship/lsd/fzf/fd/zoxide/ghq) は apps.txt で入る前提で、
 # 不在時の代替は持たない。コマンド体系は bash/zsh の common.sh と揃えること（基本エイリアスのみ）。
 
