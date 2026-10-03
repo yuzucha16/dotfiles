@@ -1,8 +1,8 @@
 # dotfiles
 
-Windows 11 + WSL (Ubuntu 24.04) / Linux (apt 系: MX / Ubuntu / Mint) の開発環境を、複数PC（家・会社）で同じ状態に再現するための設定とセットアップスクリプト。
+Windows 11 + WSL (Ubuntu 24.04) / Linux (apt 系: MX / Ubuntu / Mint) の開発環境を、複数PCで同じ状態に再現するための設定とセットアップスクリプト。
 
-- 会社PCは最小構成、家PCは追加分を足す、という運用。差分は `*.home.*` のファイルに分離している。
+- PC1は最小構成、PC2は追加分を足す、という運用。差分は `*.home.*` のファイルに分離している。
 - 設定ファイルはこのリポジトリを正とし、各アプリの場所へシンボリックリンクで配置する（Windows: `30_link.bat`、WSL / Linux: `30_link.sh`/stow）。
 
 ## ディレクトリ
@@ -80,8 +80,8 @@ dotfiles/
 1. `scripts\windows\10_env.bat`: `setx` で環境変数（`XDG_*`、`VAULT_HOME=C:\vault`、`GHQ_ROOT`、`NOTES_DIR` など）を設定し、ディレクトリを作る。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）
    - `scripts\windows\optional\capslock_to_ctrl.reg`（任意）: CapsLock を Ctrl にする。管理者権限が必要で、再起動後に有効。元に戻すときは `capslock_default.reg`
 2. `scripts\windows\20_apps.bat [home]`: scoop と bucket を導入し、アプリを入れる
-   - 会社: `20_apps.bat`（`apps.txt` のみ）
-   - 家: `20_apps.bat home`（`apps.txt` + `apps.home.txt`）
+   - PC1: `20_apps.bat`（`apps.txt` のみ）
+   - PC2: `20_apps.bat home`（`apps.txt` + `apps.home.txt`）
    - Notepad++ の `config.xml` が無い/空のときだけ、`windows\notepadpp\config.min.xml`（タブ幅 2、新規文書 LF、折り返し、スナップショットバックアップ、ダークテーマ、自動更新オフなど）をコピーする。既にあれば触らない。リンクではないので、以後はアプリが自由に書き換える。最小構成を適用し直したいときは `config.xml` を削除（または空に）して再実行する
    - `scripts\windows\24_fonts.bat [--dry-run]`: PlemolJP NF / MoralerspaceHW（`manifests\fonts.txt`）の latest を `gh` で `%USERPROFILE%\download` へ取得する。インストールは手動（展開して .ttf を右クリック → 現在のユーザーにインストール）。`gh auth login` が必要（`--dry-run` は不要）
 3. `scripts\windows\30_link.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る（ファイルは symlink、ディレクトリは junction。既存のリンクは張り直す）
@@ -111,9 +111,9 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行す�
 ## PC ごとの個別設定（リポジトリに入れないもの）
 
 - git のユーザー名・メールアドレス: `~/.gitconfig_local`（`home/.gitconfig` が include する）
-- 社内プロキシの CA 証明書: `%CERTS_DIR%\company-ca.crt`（WSL では `/mnt/c/vault/certs/company-ca.crt`）。あれば `NODE_EXTRA_CA_CERTS` に設定される
+- プロキシの CA 証明書: `%CERTS_DIR%\company-ca.crt`（WSL では `/mnt/c/vault/certs/company-ca.crt`）。あれば `NODE_EXTRA_CA_CERTS` に設定される
 - シェルの個別上書き: `~/.config/{profile,bashrc,zshrc}.local`
-- 家・会社の差分: `manifests/apps.<profile>.txt`
+- PC1,PC2の差分: `manifests/apps.<profile>.txt`
 
 ## 日常の運用
 
