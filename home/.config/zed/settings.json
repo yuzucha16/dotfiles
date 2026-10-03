@@ -7,6 +7,11 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "terminal": {
+    "font_family": "PlemolJP Console NF",
+    "font_weight": 300,
+    "font_fallbacks": ["Moralerspace Neon HW", "Meiryo UI"]
+  },
   "agent_servers": {
     "claude-acp": {
       "default_config_options": {
@@ -32,8 +37,16 @@
     "dark": "Zed (Default)"
   },
 
-  "ui_font_size": 16,
+  "ui_font_family": "PlemolJP Console NF",
+  "ui_font_weight": 300,
+  "ui_font_fallbacks": ["Moralerspace Neon HW", "Meiryo UI"],
+  "ui_font_size": 15,
   "buffer_font_size": 15,
+  "agent_ui_font_size": 15,
+  "agent_buffer_font_size": 15,
+  "buffer_font_family": "PlemolJP Console NF",
+  "buffer_font_weight": 300,
+  "buffer_font_fallbacks": ["Moralerspace Neon HW", "Meiryo UI"],
 
   "theme": {
     "mode": "dark",
