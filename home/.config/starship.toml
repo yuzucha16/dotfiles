@@ -86,10 +86,10 @@ pipestatus = false
 
 [os]
 disabled = false
-format = "[$symbol]($style) "
+format = "[$symbol]($style)"
 style = "dimmed"
 [os.symbols]
-Ubuntu = "󰕈"
+Ubuntu = "󰕈 "
 Linux  = ""
 Windows = ""
 
