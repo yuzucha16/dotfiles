@@ -54,7 +54,7 @@ for %%B in (%BUCKETS%) do (
 )
 
 REM Install apps: common apps.txt + optional apps.PROFILE.txt
-REM Usage: w1a_scoop_install.bat [profile]   e.g. w1a_scoop_install.bat home
+REM Usage: 20_apps.bat [profile]   e.g. 20_apps.bat home
 for %%I in ("%~dp0..\..") do set "DOTS_DIR=%%~fI"
 set "PROFILE_NAME=%~1"
 

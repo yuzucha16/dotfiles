@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Link dotfiles (symmetric with scripts/windows/w2a_link_dotfiles.bat)
+# Link dotfiles (symmetric with scripts/windows/30_link.bat)
 # home/ (~ を鏡写しにしたツリー) を stow で ~ に展開する
 set -Eeuo pipefail
 IFS=$'\n\t'
@@ -16,7 +16,7 @@ DST_DIR="$DST_DIR_DEFAULT"
 
 usage() {
   cat <<'USAGE'
-Usage: l1_link_dotfiles.sh [link|unlink] [options]
+Usage: 30_link.sh [link|unlink] [options]
 
   link              既定。リンクを張る（既存リンクは張り直す）
   unlink            リンクだけ削除する（実ファイルは触らない）
