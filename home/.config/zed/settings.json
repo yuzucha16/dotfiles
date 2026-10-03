@@ -7,11 +7,7 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "terminal": {
-    "font_family": "PlemolJP Console NF",
-    "font_weight": 300,
-    "font_fallbacks": ["Moralerspace Neon HW", "Meiryo UI"]
-  },
+  // ==== AI (claude-acp is the main entry point) ====
   "agent_servers": {
     "claude-acp": {
       "default_config_options": {
@@ -23,55 +19,136 @@
       "type": "registry"
     }
   },
-  "auto_install_extensions": {
-    "html": true,
-    "powershell": true,
-    "windows-batch": true
+  "agent": {
+    "dock": "left",
+    // Enter confirms IME conversion, so send with Ctrl+Enter to avoid accidental sends
+    "use_modifier_to_send": true,
+    "play_sound_when_agent_done": "when_hidden",
+    "show_turn_stats": true,
+    "tool_permissions": {
+      // Defer approval to Claude Code (~/.claude/settings.json); deny/confirm rules below still apply
+      "default": "allow",
+      "tools": {
+        "edit_file": {
+          "always_deny": [
+            { "pattern": "\\.env($|\\.)" },
+            { "pattern": "secrets?/" },
+            { "pattern": "\\.pem$" },
+            { "pattern": "\\.key$" }
+          ]
+        },
+        "terminal": {
+          "always_confirm": [
+            { "pattern": "git\\s+(reset|clean)\\s+--hard" },
+            { "pattern": "git\\s+push\\s+(-f|--force)" }
+          ]
+        }
+      }
+    }
   },
-  
-  "vim_mode": true,
+  // AI goes through claude-acp only: no built-in edit predictions, no telemetry
+  "features": {
+    "edit_prediction_provider": "none"
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
 
+  // ==== Fonts ====
+  // Zed has no shared font setting: ui / buffer / terminal each repeat the same values
+  "ui_font_family": "PlemolJP Console NF",
+  "ui_font_weight": 300,
+  "ui_font_fallbacks": ["Moralerspace Neon HW", "Meiryo UI"],
+  "ui_font_size": 15,
+  "buffer_font_family": "PlemolJP Console NF",
+  "buffer_font_weight": 300,
+  "buffer_font_fallbacks": ["Moralerspace Neon HW", "Meiryo UI"],
+  "buffer_font_size": 15,
+  "agent_ui_font_size": 15,
+  "agent_buffer_font_size": 15,
+  // Japanese text needs more line spacing
+  "buffer_line_height": "comfortable",
+
+  // ==== Theme (kept dark and low-contrast: eye strain / migraine) ====
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "Material Gruvbox Dark"
+  },
   "icon_theme": {
     "mode": "dark",
     "light": "Zed (Default)",
     "dark": "Zed (Default)"
   },
+  "cursor_blink": false,
 
-  "ui_font_family": "PlemolJP Console NF",
-  "ui_font_weight": 300,
-  "ui_font_fallbacks": ["Moralerspace Neon HW", "Meiryo UI"],
-  "ui_font_size": 15,
-  "buffer_font_size": 15,
-  "agent_ui_font_size": 15,
-  "agent_buffer_font_size": 15,
-  "buffer_font_family": "PlemolJP Console NF",
-  "buffer_font_weight": 300,
-  "buffer_font_fallbacks": ["Moralerspace Neon HW", "Meiryo UI"],
-
-  "theme": {
-    "mode": "dark",
-    "light": "One Light",
-    "dark": "Gruvbox Dark"
+  // ==== Layout ====
+  "project_panel": {
+    "dock": "right"
   },
-
   "gutter": {
     "line_numbers": true
   },
-
-  "auto_indent": true,
-  "hard_tabs": false,
-  "tab_size": 4,
-
-  "use_smartcase_search": true,
-
-  "vim": {
-    "use_system_clipboard": "always"
-  },
-
   "status_bar": {
     "active_language_button": true,
     "cursor_position_button": true,
     "line_endings_button": true,
     "active_encoding_button": "enabled"
+  },
+  "confirm_quit": true,
+
+  // ==== Editor ====
+  // Trial: Vim off for a week (Ctrl+C copy is consistent with the agent panel). To revert: true + "vim": {"use_system_clipboard": "always"}
+  "vim_mode": false,
+  "hard_tabs": false,
+  "tab_size": 4,
+  "use_smartcase_search": true,
+  "git": {
+    "inline_blame": {
+      "enabled": false
+    }
+  },
+  "languages": {
+    // Notes vault is shared with Obsidian (tabSize 2, tab indent by default): keep formatting stable
+    "Markdown": {
+      "soft_wrap": "editor_width",
+      "tab_size": 2,
+      "hard_tabs": true,
+      "format_on_save": "off",
+      // two trailing spaces are a hard line break in Markdown
+      "remove_trailing_whitespace_on_save": false
+    }
+  },
+
+  // Keep Obsidian's volatile state out of the project panel / search (defaults are re-listed because this key overrides them)
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/.svn",
+    "**/.hg",
+    "**/.jj",
+    "**/CVS",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/.classpath",
+    "**/.settings",
+    "**/.obsidian/plugins",
+    "**/.obsidian/workspace*.json"
+  ],
+
+  // ==== Terminal ====
+  "terminal": {
+    "shell": { "program": "pwsh" },
+    "blinking": "off",
+    "font_family": "PlemolJP Console NF",
+    "font_weight": 300,
+    "font_fallbacks": ["Moralerspace Neon HW", "Meiryo UI"]
+  },
+
+  // ==== Extensions ====
+  "auto_install_extensions": {
+    "html": true,
+    "powershell": true,
+    "windows-batch": true
   }
 }

@@ -35,6 +35,7 @@ home\.claude\settings.json|%USERPROFILE%\.claude\settings.json
 windows\drawio\config.json|%APPDATA%\draw.io\config.json
 home\.config\zed\keymap.json|%APPDATA%\zed\keymap.json
 home\.config\zed\settings.json|%APPDATA%\zed\settings.json
+home\.config\zed\themes|%APPDATA%\zed\themes
 
 # Vault (notes is a sibling repo of dotfiles and is itself the Obsidian vault root; it holds .obsidian too)
 ..\notes|%NOTES_DIR%
