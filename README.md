@@ -1,9 +1,9 @@
 # dotfiles
 
-Windows 11 + WSL (Ubuntu 24.04) の開発環境を、複数PC（家・会社）で同じ状態に再現するための設定とセットアップスクリプト。
+Windows 11 + WSL (Ubuntu 24.04) / Linux (apt 系: MX / Ubuntu / Mint) の開発環境を、複数PC（家・会社）で同じ状態に再現するための設定とセットアップスクリプト。
 
 - 会社PCは最小構成、家PCは追加分を足す、という運用。差分は `*.home.*` のファイルに分離している。
-- 設定ファイルはこのリポジトリを正とし、各アプリの場所へシンボリックリンクで配置する（Windows: `30_link.bat`、WSL: `30_link.sh`/stow）。
+- 設定ファイルはこのリポジトリを正とし、各アプリの場所へシンボリックリンクで配置する（Windows: `30_link.bat`、WSL / Linux: `30_link.sh`/stow）。
 
 ## ディレクトリ
 
@@ -13,8 +13,8 @@ dotfiles/
 ├── .gitignore
 ├── scripts/
 │   ├── windows/    10〜50 のセットアップスクリプト（`optional/` は任意の .reg）
-│   └── wsl/        10〜50 のセットアップスクリプト
-├── manifests/      スクリプトが読むリスト（apps / links / vscode 拡張）
+│   └── linux/      10〜50 のセットアップスクリプト（WSL とネイティブ Linux 共通。違いは `lib.sh` の `is_wsl` などで分岐）
+├── manifests/      スクリプトが読むリスト（apps / apt / links / vscode 拡張）
 ├── home/           ~ を鏡写しにした共有ツリー（WSL は stow、Windows は links.map でリンク）
 ├── windows/        Windows 専用の設定（links.map からだけ参照される）
 └── templates/      配置しない雛形（`claude/settings.sandbox.json` は、使い捨ての検証環境のプロジェクトで `.claude/settings.json` に手でコピーする。push / reset / clean / rm を許可する広い権限なので、通常のリポジトリには入れない）
@@ -54,11 +54,11 @@ dotfiles/
 
 ## スクリプトの命名規則
 
-`scripts/<windows|wsl>/<NN>_<内容>.<bat|sh>`
+`scripts/<windows|linux>/<NN>_<内容>.<bat|sh>`
 
 - OS はディレクトリで表す（ファイル名に `w` / `l` は付けない）
 - 十の位 = 層（実行順）: `10` 環境・ディレクトリ、`20` アプリ/パッケージ導入、`30` リンク、`40` OS 機能（WSL 有効化など）、`50` リポジトリ取得
-- 一の位 = 同じ層の中身: `0` は層の本体、`1` 以降は固有ツール（`21` = VS Code 拡張、`22` = Python）。Windows と WSL で同じ番号は同じ役割（片方にしかないものは欠番）
+- 一の位 = 同じ層の中身: `0` は層の本体、`1` 以降は固有ツール（`21` = VS Code 拡張、`22` = Python、`23` = 日本語入力（Linux のみ））。Windows と Linux で同じ番号は同じ役割（片方にしかないものは欠番）。WSL とネイティブ Linux は同じスクリプトで、WSL 固有の挙動は `is_wsl` で分ける
 - 任意で実行するものは `optional/` に置く（番号なし）
 - `.bat` のコメントは ASCII（英語）で書く。日本語（UTF-8）のコメントは、コードページ 932 のコンソールで行末のバイトが次の行と混ざり、意図しないコマンドやゴミファイルが生まれることがある
 - 家用のアプリの追加分は `apps.home.txt` のように `.home.` を挟んだファイルに書く（`manifests/`）。リンクの map は共通の `links.map` のみ
@@ -91,15 +91,16 @@ dotfiles/
 4. `scripts\windows\40_wsl_enable.bat`（WSL を使う場合）: 管理者権限で実行。WSL2 の機能を有効化する。**再起動後**、表示される `wsl --update` / `wsl --install -d Ubuntu-24.04` を手動で実行する
 5. `scripts\windows\50_repos.bat`: ghq で必要なリポジトリを取得する
 
-### WSL (Ubuntu 24.04)
+### WSL (Ubuntu 24.04) / Linux (apt 系)
 
-Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/vault/...` から参照する）。
+WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/vault/...` から参照する）。ネイティブ Linux は、OS を入れて `~/vault/repos/github.com/yuzucha16/dotfiles` に clone してから実行する（OS のインストール手順は notes の `resources/cheatsheets/env/debian-family.md`）。`30_link.sh` は、置かれているリポジトリを自動で `--src` にするので、どちらでも同じ呼び方になる。
 
-1. `scripts/wsl/10_dirs.sh`: XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/vault/{build,tools}` を作る
-2. `scripts/wsl/20_packages.sh`: apt の更新、基本ツール（git / curl / wget / zsh）と CLI ツールの導入、starship、ghq（ビルド済みバイナリを `~/.local/bin` へ。Go は不要）の導入、`bat` / `fd` のリンク作成。Docker や Go は入れない（下の「必要なときだけ入れるもの」）
-   - `scripts/wsl/21_vscode.sh`: `manifests/vscode-extensions.wsl.txt` の拡張を VS Code Server に入れる（導入済みは `code` がスキップする。`code` コマンドが必要。無ければ Windows の VS Code から一度この WSL を開く）
-3. `scripts/wsl/30_link.sh [link|unlink] [-n]`: stow で `home/` を `~` に展開する（Windows の `30_link.bat` と同じ引数）。リンク切れの旧 symlink は削除する。展開先に実ファイルがあると `[ERR]` を出して止まる（自動退避はしない。手で退避/削除して再実行）。終わったら `chsh -s /usr/bin/zsh`
-4. `scripts/wsl/50_repos.sh`: ghq で参照用リポジトリを取得する
+1. `scripts/linux/10_dirs.sh`: XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/vault/{build,tools}` を作る
+2. `scripts/linux/20_packages.sh [desktop]`: apt の更新、`manifests/apt.txt` のパッケージ（git / curl / wget / zsh と CLI ツール）の導入、starship、ghq（ビルド済みバイナリを `~/.local/bin` へ。Go は不要）の導入、`bat` / `fd` のリンク作成。ネイティブ Linux のデスクトップは `desktop` を付けて `apt.desktop.txt` も入れる。Docker や Go は入れない（下の「必要なときだけ入れるもの」）
+   - `scripts/linux/21_vscode.sh`: `manifests/vscode-extensions.wsl.txt` の拡張を入れる（導入済みは `code` がスキップする。`code` コマンドが必要。WSL では、無ければ Windows の VS Code から一度この WSL を開く）
+   - `scripts/linux/23_ja.sh`（ネイティブ Linux のみ。WSL では何もしない）: fcitx5 + Mozc、日本語フォントを入れる。Ubuntu 系は言語パックも入れる。入れたら再ログインして、Fcitx 5 設定で Mozc を追加する（手動）
+3. `scripts/linux/30_link.sh [link|unlink] [-n]`: stow で `home/` を `~` に展開する（Windows の `30_link.bat` と同じ引数）。リンク切れの旧 symlink は削除する。展開先に実ファイルがあると `[ERR]` を出して止まる（自動退避はしない。手で退避/削除して再実行）。終わったら `chsh -s /usr/bin/zsh`
+4. `scripts/linux/50_repos.sh`: ghq で参照用リポジトリを取得する
 
 ### 必要なときだけ入れるもの（WSL・手動）
 

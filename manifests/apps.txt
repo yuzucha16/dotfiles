@@ -1,7 +1,7 @@
-# scoop apps for w1a_scoop_install.bat (common / minimal set, used on every PC)
+# scoop apps for 20_apps.bat (common / minimal set, used on every PC)
 # One app per line. Lines starting with # and blank lines are ignored.
-# Per-PC extras go to apps.<profile>.txt and are loaded with: w1a_scoop_install.bat <profile>
-# (buckets are defined in w1a_scoop_install.bat: extras versions nonportable sysinternals)
+# Per-PC extras go to apps.<profile>.txt and are loaded with: 20_apps.bat <profile>
+# (buckets are defined in 20_apps.bat: extras versions nonportable sysinternals)
 
 # terminal / shell
 windows-terminal

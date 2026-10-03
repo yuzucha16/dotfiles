@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
-rem Link dotfiles per manifests\links.map (symmetric with scripts/wsl/30_link.sh)
+rem Link dotfiles per manifests\links.map (symmetric with scripts/linux/30_link.sh)
 rem Usage: 30_link.bat [link|unlink] [-n]
 rem   link    (default) create symlinks / junctions; existing links are replaced
 rem   unlink  remove the links only (real files are left alone)
