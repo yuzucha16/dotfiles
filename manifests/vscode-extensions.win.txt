@@ -1,6 +1,0 @@
-jdinhlife.gruvbox
-ms-ceintl.vscode-language-pack-ja
-ms-vscode-remote.remote-wsl
-plorefice.devicetree
-pkief.material-icon-theme
-wayou.vscode-todo-highlight
