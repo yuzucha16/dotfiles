@@ -22,6 +22,7 @@ winmerge
 
 # dev tools
 ghq
+gh
 fork
 p4v
 universal-ctags
