@@ -41,7 +41,7 @@ dotfiles/
 | `startup/startup.bat` | スタートアップ。`subst V: C:\vault` |
 | `wsl/.wslconfig` | WSL2 の全体設定（`%USERPROFILE%\.wslconfig` へリンク）。アイドル時にキャッシュのメモリをホストへ返す。`memory` などの上限は PC ごとに RAM が違うので書かない。反映は `wsl --shutdown` 後の再起動 |
 | `powershell/profile.ps1` | PowerShell プロファイル（starship / lsd / zoxide / Emacs キーバインド）。起動を軽くするため、ツール不在時の代替・`cd` 後の自動 `ll`・PSFzf は持たない。コマンド体系は `home/.config/shell/common.sh` と揃える（基本エイリアスのみ。`zfz` の Ctrl+g 割当のみ pwsh 固有） |
-| `autohotkey/` `notepadpp/` `drawio/` `vscode/` | 各アプリの設定（Notepad++ は `shortcuts.xml` とテーマのみ。アプリが書き換えるファイルは追跡しない） |
+| `autohotkey/` `notepadpp/` `drawio/` `vscode/` | 各アプリの設定（Notepad++ はテーマのみ。アプリが書き換えるファイルは追跡しない） |
 
 ### 新しい設定をどこに置くか
 
