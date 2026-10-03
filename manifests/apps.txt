@@ -13,7 +13,6 @@ sudo
 # editor / viewer
 vim
 zed
-vscode
 notepadplusplus
 obsidian
 draw.io

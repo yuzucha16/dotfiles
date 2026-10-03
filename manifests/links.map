@@ -23,10 +23,6 @@ home\.config\starship.toml|%USERPROFILE%\.config\starship.toml
 home\.vimrc|%USERPROFILE%\.vimrc
 windows\powershell\profile.ps1|%USERPROFILE%\Documents\PowerShell\profile.ps1
 
-# VS Code (scoop persist) — 拡張一覧は manifests/vscode-extensions.*.txt
-windows\vscode\settings.json|%USERPROFILE%\scoop\persist\vscode\data\user-data\User\settings.json
-windows\vscode\keybindings.json|%USERPROFILE%\scoop\persist\vscode\data\user-data\User\keybindings.json
-
 # Claude Code (user settings: permission base)
 home\.claude\settings.json|%USERPROFILE%\.claude\settings.json
 
