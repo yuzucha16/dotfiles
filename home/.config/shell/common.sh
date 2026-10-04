@@ -1,6 +1,7 @@
 # ~/.config/shell/common.sh — bash / zsh 共通の対話シェル設定
 # .bashrc / .zshrc から source される（zsh では compinit の後）。
-# シェル固有の設定（履歴・補完・キーバインド・プロンプト）は各 rc に置く。
+# シェル固有の設定（履歴・補完・キーバインド・プロンプト）は各 rc に置く
+# （zfz / cdg のキーバインドだけは、関数と一緒にここに置く）。
 # コマンド体系は pwsh 側 (profile.ps1) と揃えること（基本エイリアスのみ）。
 # 方針: 起動を軽く保つ。ツール (lsd/fzf/fd/bat/zoxide/ghq) は l0a で入る前提で、
 # 不在時の代替は持たない。fzf はキーバインド・補完を読み込まず、zfz/cdg の
@@ -54,6 +55,22 @@ cdg() {
   dir="$(ghq list -p | fzf)"
   [ -n "$dir" ] && builtin cd "$dir"
 }
+
+# キーバインド: Alt+j = zfz, Alt+k = cdg（pwsh の profile.ps1 と揃える。全シェルで未使用のキーを選んだ）
+if [ -n "${ZSH_VERSION:-}" ]; then
+  # 入力中の行は残し、移動後にプロンプトを描き直す
+  _zfz_widget() { zle -I; zfz; zle reset-prompt; }
+  _cdg_widget() { zle -I; cdg; zle reset-prompt; }
+  zle -N _zfz_widget
+  zle -N _cdg_widget
+  bindkey '^[j' _zfz_widget
+  bindkey '^[k' _cdg_widget
+else
+  # プロンプトを更新するため、コマンドとして実行する（先頭の空白で履歴には残らない。
+  # 入力中の行は kill ring へ退避されるので Ctrl-y で戻せる）
+  bind '"\ej": "\C-u zfz\C-m"'
+  bind '"\ek": "\C-u cdg\C-m"'
+fi
 
 ##########
 # 社内プロキシ用 CA 証明書 (存在する環境のみ設定)

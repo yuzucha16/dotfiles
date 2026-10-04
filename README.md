@@ -41,7 +41,7 @@ dotfiles/
 | `startup/startup.bat` | スタートアップ。`subst V: C:\vault` |
 | `wsl/.wslconfig` | WSL2 の全体設定（`%USERPROFILE%\.wslconfig` へリンク）。アイドル時にキャッシュのメモリをホストへ返す。`memory` などの上限は PC ごとに RAM が違うので書かない。反映は `wsl --shutdown` 後の再起動 |
 | `powershell/history.seed.txt` | PSReadLine の履歴の種（手で選んだ定型コマンド。個人値は `<…名>` に置換済みで、そのままでは実行されない）。正本は `notes` の `exmem/knowledge/shell-command-usecases.md`。リンクではなく、初回に履歴ファイルが無いときだけコピーする（`scripts\windows\31_history_seed.bat`） |
-| `powershell/profile.ps1` | PowerShell プロファイル（starship / lsd / zoxide / Emacs キーバインド）。起動を軽くするため、ツール不在時の代替・`cd` 後の自動 `ll`・PSFzf は持たない。コマンド体系は `home/.config/shell/common.sh` と揃える（基本エイリアスのみ。`zfz` の Ctrl+g 割当のみ pwsh 固有） |
+| `powershell/profile.ps1` | PowerShell プロファイル（starship / lsd / zoxide / Emacs キーバインド）。起動を軽くするため、ツール不在時の代替・`cd` 後の自動 `ll`・PSFzf は持たない。コマンド体系は `home/.config/shell/common.sh` と揃える（基本エイリアスのみ。`zfz` = `Alt+j`、`cdg` = `Alt+k` は3シェル共通） |
 | `autohotkey/` `notepadpp/` `drawio/` | 各アプリの設定（Notepad++ はテーマと `config.min.xml`（初回だけ `20_apps.bat` が `config.xml` として置く最小構成）のみ。アプリが書き換えるファイルは追跡しない） |
 
 ### 新しい設定をどこに置くか
