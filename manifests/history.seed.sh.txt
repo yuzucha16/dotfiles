@@ -1,0 +1,77 @@
+ghq root
+ghq get <owner名>/<repo名>
+git config --global ghq.root <パス>
+git config --global user.name <ユーザー名>
+git config --global user.email <メールアドレス>
+git config --global core.autocrlf <値>
+git config --global core.symlinks
+git config --list
+git submodule sync
+git submodule update --init --recursive
+uv tool install <ツール名>
+uv tool update-shell
+uv python install <バージョン>
+uv python list
+uv python pin <バージョン>
+gh release download -R <owner名>/<repo名> -p "<ファイルパターン>" -D ~/download
+code --list-extensions > extensions.txt
+xargs -n 1 code --install-extension < extensions.txt
+sudo apt update
+sudo apt upgrade
+sudo apt autoremove
+apt search <名前>
+apt show <名前>
+sudo apt install <パッケージ名>
+sudo apt remove <パッケージ名>
+apt list --installed
+apt list --installed | grep <パターン>
+cargo install <クレート名>
+cargo install --locked <クレート名>
+rustup update
+type -a <コマンド>
+which <コマンド>
+<コマンド> --version
+git status
+git fetch
+git pull
+git pull origin main
+git branch
+git branch -a
+git branch -r
+git branch -a --no-merged
+git checkout main
+git switch main
+git switch -c <ブランチ名>
+git push origin main
+git push origin <ブランチ名>
+git push --tag
+git push origin main --tag
+git push -d origin <tag名>
+git tag
+git tag -a <tag名> -m "<メッセージ>"
+git tag -d <tag名>
+git rebase main
+git rebase main <ブランチ名>
+git rebase <ブランチ名>
+git rebase --continue
+git rebase --abort
+git rebase -i main
+git merge <ブランチ名>
+git merge --squash <ブランチ名>
+git merge --abort
+git branch -d <ブランチ名>
+git branch -D <ブランチ名>
+git log --oneline --graph
+git add .
+git commit -m <メッセージ>
+git reset --hard <リモート名>/<ブランチ名>
+git switch -C main origin/main
+git gc --prune=now
+git archive --format=zip <tag名> <パス> -o <出力ファイル名>.zip
+vim ~/.zshrc
+vim ~/.bashrc
+vim ~/.config/shell/common.sh
+source ~/.zshrc
+source ~/.bashrc
+echo $HISTFILE
+vim ~/.vimrc
