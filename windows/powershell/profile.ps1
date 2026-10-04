@@ -88,3 +88,40 @@ function cdg {
 # 3シェル共通: Alt+j = zfz, Alt+k = cdg（common.sh と揃える。全シェルで未使用のキーを選んだ）
 Set-PSReadLineKeyHandler -Chord Alt+j -ScriptBlock { zfz; [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt() }
 Set-PSReadLineKeyHandler -Chord Alt+k -ScriptBlock { cdg; [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt() }
+
+# fzf の履歴検索 (Ctrl+r) とファイル検索 (Ctrl+t)。bash/zsh の common.sh と同じキー・同じ見た目。
+# PSFzf は使わず、fzf を直接呼ぶ。
+$env:FZF_DEFAULT_OPTS = '--height=40% --reverse'
+
+# PSReadLine の履歴ファイルを、新しい順・重複なしで返す
+function Get-FzfHistory {
+    $seen = [System.Collections.Generic.HashSet[string]]::new()
+    $lines = Get-Content -Path (Get-PSReadLineOption).HistorySavePath -ReadCount 0
+    for ($i = $lines.Count - 1; $i -ge 0; $i--) {
+        if ($lines[$i] -and $seen.Add($lines[$i])) { $lines[$i] }
+    }
+}
+
+function Invoke-FzfHistory {
+    $line = $null; $cursor = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+    $sel = Get-FzfHistory | fzf --scheme=history --tiebreak=index --prompt='history> ' --query="$line"
+    if ($sel) {
+        [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert($sel)
+    }
+    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+}
+
+function Invoke-FzfFile {
+    $sel = fd --hidden --follow --exclude .git | fzf -m --scheme=path --prompt='file> ' --preview 'bat --style=plain --color=always --line-range :200 {}'
+    if ($sel) {
+        # 空白などを含むパスは単一引用符で囲む
+        $text = ($sel | ForEach-Object { if ($_ -match "[\s'`"`$;&(){}\[\]]") { "'" + $_.Replace("'", "''") + "'" } else { $_ } }) -join ' '
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert($text + ' ')
+    }
+    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+}
+
+Set-PSReadLineKeyHandler -Chord Ctrl+r -ScriptBlock { Invoke-FzfHistory }
+Set-PSReadLineKeyHandler -Chord Ctrl+t -ScriptBlock { Invoke-FzfFile }
