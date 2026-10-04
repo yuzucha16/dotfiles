@@ -44,6 +44,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ### 2026-10-04
 
+- 「ナレッジ化して」フックを `AGENTS.md` に定義し、続けて指示文を改善した（プランモードなら先に抜ける、知識の判定基準、既存ノートとの重複確認、単体で読める書き方、実行後の改善報告）。exmem への書き込みは `inbox/` の新規1ファイルだけ。
 - 作業ログの置き場を整理した。dotfiles は exmem を読み取り専用で参照するだけにし、経緯・決定・次にやることは `docs/` に持つ。exmem に書かれていた dotfiles の記録（`contexts/dotfiles/context.md`、`knowledge/dotfiles.md`）はここへ移し、exmem 側から削除した。
 - zfz/cdg を `Alt+j`/`Alt+k` で3シェル共通にした。zsh で ListView 相当の自作一覧を試し、zsh/bash の ListView 相当は作らず、fzf の `Ctrl+R`（履歴）・`Ctrl+T`（ファイル）に切り替えた（コミット・push 済み）。pwsh にも同じキーで fzf を入れ（`ListView` は残す。実機で動作確認済み）、bash の `.bashrc` 末尾の `cd ~` を削除した。
 - 両PCの履歴を分析してユースケースを整理し、「履歴の種」の方針を決めた。傾向と種の本文は exmem の `knowledge/shell-command-usecases.md`、種ファイルは dotfiles。zsh/bash 向けの種（`manifests/history.seed.sh.txt`）と配置スクリプト（`scripts/linux/31_history_seed.sh`）も作った。目的はコマンド履歴のベースを dotfiles 側で管理して、PC 移行時の調べ直しを減らすこと。
