@@ -13,6 +13,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - このPCで `.wslconfig` を反映する: `30_link.bat` → `wsl --shutdown` → 開き直して `vmmemWSL` を観察する。
 - `git config user.name` / `user.email` を `~/.gitconfig_local` にPCごとに設定済みか確認する（仮値 `user <user@example.com>` のままコミットしない）。
 - 既に入っている不要な VS Code 拡張を `code --uninstall-extension` で外す（Windows 6件、WSL 4件）。古い Notepad++ のリンク切れ（`stylers.xml` `contextMenu.xml` `NppExec.ini`）と `~/vimfiles` の旧プラグイン（`:PlugClean`）を掃除する。
+- 参照用に退避した他PCの生ヒストリ（`notes/resources/_local/ConsoleHost_history.txt`。Git 対象外）は、使い終わったら削除する。
 - 新しいPC（または VM）で `10` → `50` を通し実行し、手順書（`notes/resources/cheatsheets/env/`）どおり進むか確認する。MX Linux 25.3 と Win11 の「要確認」を潰す。
 - `gh auth login` を済ませ、`24_fonts.*` で実際にダウンロードしてフォントを入れる。1週間使って「Light で続ける / Text に上げる / HackGen に戻す」を決める（メインフォントは PlemolJP Console NF の Light を試用中。Zed・Windows Terminal・Notepad++ に反映済み）。
 - `30_link.sh` の最後に `chsh` 後の再ログインの案内を足す。`50_repos.sh` の前提（`source ~/.profile`、`ghq` が PATH にある）を整理する。`50_repos.bat` に取得したいリポジトリを足す。
