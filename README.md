@@ -10,7 +10,9 @@ Windows 11 + WSL (Ubuntu 24.04) / Linux (apt 系: MX / Ubuntu / Mint) の開発�
 ```text
 dotfiles/
 ├── README.md
+├── AGENTS.md       エージェント向けの入口（CLAUDE.md は @AGENTS.md だけ）
 ├── .gitignore
+├── docs/           作業ログ（log.md: 現在状態と次にやること）と判断の記録（decisions.md: 根拠・却下案・Gotchas）
 ├── scripts/
 │   ├── windows/    10〜50 のセットアップスクリプト（`optional/` は任意の .reg）
 │   └── linux/      10〜50 のセットアップスクリプト（WSL とネイティブ Linux 共通。違いは `lib.sh` の `is_wsl` などで分岐）
@@ -130,6 +132,13 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行す�
 | コミットメッセージ | `[対象] 内容`（例: `[zed] ...`, `[scripts] ...`） |
 
 アプリが自動で書き換える状態ファイル（Obsidian の `workspace.json` など）は追跡しない。`.gitignore` に追加する。
+
+## exmem との関係
+
+exmem（`C:\vault\notes\resources\exmem`。`notes` リポジトリの一部）は、AIとの壁打ちで得たナレッジの置き場。dotfiles は exmem を**読み取り専用で参照するだけ**で、exmem には書き込まない。作業の経緯・決定・次にやることは、このリポジトリの `docs/` に残す。
+
+- 参照するもの: 履歴の種の本文（`exmem/knowledge/shell-command-usecases.md`。種ファイルはその派生物）。
+- 手順書は `notes` の `resources/cheatsheets/env/`。
 
 ## 履歴リセット (2026-10-02)
 
