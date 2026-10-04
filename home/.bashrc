@@ -81,5 +81,3 @@ printf '\e[2 q'
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/bashrc.local" ] && . "${XDG_CONFIG_HOME:-$HOME/.config}/bashrc.local"
 
 command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
-
-cd ~
