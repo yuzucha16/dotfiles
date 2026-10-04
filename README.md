@@ -40,6 +40,7 @@ dotfiles/
 | `terminal/settings.json` | Windows Terminal |
 | `startup/startup.bat` | スタートアップ。`subst V: C:\vault` |
 | `wsl/.wslconfig` | WSL2 の全体設定（`%USERPROFILE%\.wslconfig` へリンク）。アイドル時にキャッシュのメモリをホストへ返す。`memory` などの上限は PC ごとに RAM が違うので書かない。反映は `wsl --shutdown` 後の再起動 |
+| `powershell/history.seed.txt` | PSReadLine の履歴の種（手で選んだ定型コマンド。個人値は `<…名>` に置換済みで、そのままでは実行されない）。正本は `notes` の `exmem/knowledge/shell-command-usecases.md`。リンクではなく、初回に履歴ファイルが無いときだけコピーする（`scripts\windows\31_history_seed.bat`） |
 | `powershell/profile.ps1` | PowerShell プロファイル（starship / lsd / zoxide / Emacs キーバインド）。起動を軽くするため、ツール不在時の代替・`cd` 後の自動 `ll`・PSFzf は持たない。コマンド体系は `home/.config/shell/common.sh` と揃える（基本エイリアスのみ。`zfz` の Ctrl+g 割当のみ pwsh 固有） |
 | `autohotkey/` `notepadpp/` `drawio/` | 各アプリの設定（Notepad++ はテーマと `config.min.xml`（初回だけ `20_apps.bat` が `config.xml` として置く最小構成）のみ。アプリが書き換えるファイルは追跡しない） |
 
@@ -58,7 +59,7 @@ dotfiles/
 
 - OS はディレクトリで表す（ファイル名に `w` / `l` は付けない）
 - 十の位 = 層（実行順）: `10` 環境・ディレクトリ、`20` アプリ/パッケージ導入、`30` リンク、`40` OS 機能（WSL 有効化など）、`50` リポジトリ取得
-- 一の位 = 同じ層の中身: `0` は層の本体、`1` 以降は固有ツール（`23` = 日本語入力（Linux のみ）、`24` = フォント）。Windows と Linux で同じ番号は同じ役割（片方にしかないものは欠番）。WSL とネイティブ Linux は同じスクリプトで、WSL 固有の挙動は `is_wsl` で分ける
+- 一の位 = 同じ層の中身: `0` は層の本体、`1` 以降は固有ツール（`23` = 日本語入力（Linux のみ）、`24` = フォント、`31` = PSReadLine 履歴の種（Windows のみ））。Windows と Linux で同じ番号は同じ役割（片方にしかないものは欠番）。WSL とネイティブ Linux は同じスクリプトで、WSL 固有の挙動は `is_wsl` で分ける
 - 任意で実行するものは `optional/` に置く（番号なし）
 - `.bat` のコメントは ASCII（英語）で書く。日本語（UTF-8）のコメントは、コードページ 932 のコンソールで行末のバイトが次の行と混ざり、意図しないコマンドやゴミファイルが生まれることがある
 - 家用のアプリの追加分は `apps.home.txt` のように `.home.` を挟んだファイルに書く（`manifests/`）。リンクの map は共通の `links.map` のみ
@@ -88,6 +89,7 @@ dotfiles/
    - `unlink`: リンクだけ削除する。`-n`: ドライラン
    - 配置先に実ファイル/実ディレクトリがあると `[ERR]` を出してそのエントリを飛ばし、最後に非ゼロで終了する。**自動退避はしない**。中身を確認して手で退避/削除し、再実行する
    - `[ERR] mklink failed` は開発者モードがオフのときに出る
+   - `scripts\windows\31_history_seed.bat [-n]`: `windows\powershell\history.seed.txt` を PSReadLine の履歴ファイルへコピーする。履歴ファイルが無い/空のときだけ行い、既存の履歴は上書きしない（`-n`: 確認のみ）。リンクではないので、以後は PSReadLine が自由に追記する。**最初の pwsh を開く前に**実行する
 4. `scripts\windows\40_wsl_enable.bat`（WSL を使う場合）: 管理者権限で実行。WSL2 の機能を有効化する。**再起動後**、表示される `wsl --update` / `wsl --install -d Ubuntu-24.04` を手動で実行する
 5. `scripts\windows\50_repos.bat`: ghq で必要なリポジトリを取得する
 
