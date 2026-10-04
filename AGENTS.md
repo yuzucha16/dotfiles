@@ -4,10 +4,10 @@ dotfiles は、Windows 11 + WSL2 / Linux（apt 系）の作業環境を、複数
 
 ## 共通ルール
 
-作業の開始時に、次を読む。パスは `C:\vault\notes\resources\workflow-kit`（WSL: `/mnt/c/vault/notes/resources/workflow-kit`）。
+共通ルールの置き場は `C:\vault\notes\resources\workflow-kit`（WSL: `/mnt/c/vault/notes/resources/workflow-kit`）。次の時機に、該当のファイルを読む。
 
-- `docs-rules.md`: `docs/` の運用。作業の終わりに `docs/log.md` と `docs/decisions.md` を更新する。
-- `knowledge-hook.md`: ユーザーが「ナレッジ化して」と言ったときだけ実行する。書き込みは `exmem/inbox/` の新規ファイルだけ。
+- `docs-rules.md`: 作業を始める前と、`docs/` を更新するときに読む。`docs/` の運用。作業の終わりに `docs/log.md` と `docs/decisions.md` を更新する。
+- `knowledge-hook.md`: ユーザーが「ナレッジ化して」と言ったときに読み、実行する（言われたときだけ）。書き込みは `exmem/inbox/` の新規ファイルだけ。
 
 上のファイルが読めない場合（`notes` が無いPCなど）は、記憶で代用せず、ユーザーに伝えて止まる。
 
