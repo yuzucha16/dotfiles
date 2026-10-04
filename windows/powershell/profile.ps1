@@ -73,15 +73,18 @@ function dl { Get-Location -Stack }
 # zoxide (z / zi)
 Invoke-Expression (& { (zoxide init powershell --cmd z | Out-String) })
 
-# zoxide DB を fzf で選んでジャンプ (Ctrl+g)
+# zoxide DB を fzf で選んでジャンプ (Alt+j)
 function zfz {
     $dir = zoxide query -l 2>$null | fzf --prompt='zoxide> ' --height=80% --reverse
     if ($dir) { Set-Location -- $dir }
 }
-Set-PSReadLineKeyHandler -Chord Ctrl+g -ScriptBlock { zfz }
 
-# ghq 管理下のリポジトリを fzf で選んで移動
+# ghq 管理下のリポジトリを fzf で選んで移動 (Alt+k)
 function cdg {
     $dir = ghq list -p | fzf
     if ($dir) { Set-Location -- $dir }
 }
+
+# 3シェル共通: Alt+j = zfz, Alt+k = cdg（common.sh と揃える。全シェルで未使用のキーを選んだ）
+Set-PSReadLineKeyHandler -Chord Alt+j -ScriptBlock { zfz; [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt() }
+Set-PSReadLineKeyHandler -Chord Alt+k -ScriptBlock { cdg; [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt() }
