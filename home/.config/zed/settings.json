@@ -139,7 +139,6 @@
 
   // ==== Terminal ====
   "terminal": {
-    "shell": { "program": "pwsh" },
     "blinking": "off",
     "font_family": "PlemolJP Console NF",
     "font_weight": 300,
