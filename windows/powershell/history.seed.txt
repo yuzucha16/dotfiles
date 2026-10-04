@@ -1,0 +1,92 @@
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+Get-ExecutionPolicy -List
+wsl --status
+wsl --update
+wsl --list --online
+wsl --list --verbose
+wsl --install -d <ディストロ名>
+wsl --set-default <ディストロ名>
+wsl --unregister <ディストロ名>
+wsl --shutdown
+ghq root
+ghq get <owner名>/<repo名>
+git config --global ghq.root <パス>
+git config --global user.name <ユーザー名>
+git config --global user.email <メールアドレス>
+git config --global core.autocrlf <値>
+git config --global core.symlinks
+git config --list
+git submodule sync
+git submodule update --init --recursive
+winget search <名前>
+winget install --id <ID> -e
+winget list
+winget uninstall --id <ID>
+uv tool install <ツール名>
+uv tool update-shell
+uv python install <バージョン>
+uv python list
+uv python pin <バージョン>
+gh release download -R <owner名>/<repo名> -p "<ファイルパターン>" -D "$HOME\Downloads"
+setx <変数名> "<値>"
+code --list-extensions > extensions.txt
+Get-Content .\extensions.txt | ForEach-Object { code --install-extension $_ }
+scoop bucket add extras
+scoop search <名前>
+scoop info <名前>
+scoop install <名前>
+scoop uninstall <名前>
+scoop list
+scoop list | Select-String <パターン>
+scoop update *
+scoop update <名前>
+scoop cleanup *
+cargo install <クレート名>
+cargo install --locked <クレート名>
+rustup update
+which <コマンド>
+where <コマンド>
+<コマンド> --version
+git status
+git fetch
+git pull
+git pull origin main
+git branch
+git branch -a
+git branch -r
+git branch -a --no-merged
+git checkout main
+git switch main
+git switch -c <ブランチ名>
+git push origin main
+git push origin <ブランチ名>
+git push --tag
+git push origin main --tag
+git push -d origin <tag名>
+git tag
+git tag -a <tag名> -m "<メッセージ>"
+git tag -d <tag名>
+git rebase main
+git rebase main <ブランチ名>
+git rebase <ブランチ名>
+git rebase --continue
+git rebase --abort
+git rebase -i main
+git merge <ブランチ名>
+git merge --squash <ブランチ名>
+git merge --abort
+git branch -d <ブランチ名>
+git branch -D <ブランチ名>
+git log --oneline --graph
+git add .
+git commit -m <メッセージ>
+git reset --hard <リモート名>/<ブランチ名>
+git switch -C main origin/main
+git gc --prune=now
+git archive --format=zip <tag名> <パス> -o <出力ファイル名>.zip
+notepad $PROFILE.CurrentUserAllHosts
+. $PROFILE.CurrentUserAllHosts
+Get-PSReadLineOption
+Get-PSReadLineOption | Select-Object EditMode, PredictionSource, PredictionViewStyle
+(Get-PSReadLineOption).HistorySavePath
+vim ~/.vimrc
