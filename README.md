@@ -135,7 +135,7 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行す�
 
 ## exmem との関係
 
-exmem（`C:\vault\notes\resources\exmem`。`notes` リポジトリの一部）は、AIとの壁打ちで得たナレッジの置き場。dotfiles は exmem を**読み取り専用で参照するだけ**で、exmem には書き込まない。作業の経緯・決定・次にやることは、このリポジトリの `docs/` に残す。
+exmem（`C:\vault\notes\resources\exmem`。`notes` リポジトリの一部）は、AIとの壁打ちで得たナレッジの置き場。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業の経緯・決定・次にやることは、このリポジトリの `docs/` に残す。書き込みの唯一の例外は、エージェントに「ナレッジ化して」と指示したとき、`exmem/inbox/` に再利用できる知識を1ファイル置くこと（形式と手順は `AGENTS.md`）。
 
 - 参照するもの: 履歴の種の本文（`exmem/knowledge/shell-command-usecases.md`。種ファイルはその派生物）。
 - 手順書は `notes` の `resources/cheatsheets/env/`。
