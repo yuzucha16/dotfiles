@@ -108,13 +108,29 @@ exmem（`C:\vault\notes\resources\exmem`）は読み取り専用の参照先で�
 - Zed の拡張は `%LOCALAPPDATA%\Zed\extensions\installed` と突き合わせて `auto_install_extensions` を更新した（`git-firefly` `toml` `xml` を追加）。
 - 確認済み: `20_apps.bat` の `config.xml` の雛形コピーは実機で動作した。リポジトリは約1.5 MiB（最大は Gruvbox dark の約260 KB）。
 
+### Zed の最適化: 目の負担軽減・AI の窓口・Vim 試験オフ（2026-10-04）
+
+前提: 閃輝暗点を伴う片頭痛があり、光の反射や点滅を減らす。AI は Zed の claude-acp を窓口にする。Markdown は Obsidian と併用する（Zed からは主に AI 経由で読み書き、人間が書くこともある）。優先度は AI の快適さ、見た目、Vim の順。
+
+- **テーマは自作の Material Gruvbox Dark**（`home/.config/zed/themes/material-gruvbox.json`。`links.map` で `%APPDATA%\zed\themes` へジャンクション）。Obsidian の Material Gruvbox（`theme.css`）の配色に合わせる: 背景 `#282828`（サイドバー等は `#1d2021`）、文字 `#d4be98`、アクセント `#7daea3`、見出し `#a7b85a`。根拠: Zed 標準の Gruvbox Dark は文字色 `#ebdbb2` で明るく眩しい。`mode` を dark に固定して light 側が出ないようにする。却下案: 標準 Gruvbox Dark のまま。
+- **カーソル点滅を全環境で止める**: Zed は `cursor_blink: false` と `terminal.blinking: "off"`。シェルは DECSCUSR（`ESC[2 q` = 点滅なしブロック）を、pwsh は `profile.ps1` で1回、bash は `.bashrc` で1回、zsh は `precmd` で毎回送る。根拠: Windows Terminal に点滅の設定項目が無い。zsh はプロンプトごとに再描画するので毎回送らないと上書きされる。見送り: OS 全体の `CursorBlinkRate=-1`（全アプリに効くため、頼まれるまで触らない）。
+- **AI の設定**: 送信は Ctrl+Enter（`use_modifier_to_send`。日本語入力で変換確定の Enter が誤送信になるのを防ぐ）、完了音は画面が見えていないときだけ、`show_turn_stats` で時間を表示。`tool_permissions.default: "allow"` にして承認を Claude Code（`home/.claude/settings.json` の許可リスト）に一本化した。Zed 側の `always_deny`（`.env` `secrets/` `*.pem` `*.key` の編集）と `always_confirm`（`git reset/clean --hard`、`push --force`）は残す。根拠: 外部エージェントでは、Zed が `allow` を返したときだけエージェント側の権限が使われ、`confirm`/`deny` は Zed が優先する。既定の `confirm` のままだと Zed と Claude Code の二重確認になる。モデルは `sonnet` 固定（賢さよりトークン量を優先）。Codex は据え置き（家のPCで使う）。
+- **Markdown（Obsidian と共有する Vault）**: `soft_wrap: editor_width`、`tab_size: 2` + `hard_tabs: true`（Obsidian の `tabSize: 2` と既定のタブ字下げに合わせる）、保存時整形オフ、行末空白は削除しない（2スペースが強制改行のため）。`file_scan_exclusions` に `**/.obsidian/plugins` と `**/.obsidian/workspace*.json` を足した（既定の除外を再掲）。`.obsidian/snippets` と `themes` は除外しない（Zed から編集できる）。
+- **日本語の読みやすさ**: `buffer_line_height: comfortable`。IME・全角幅は Zed の設定項目が無く、フォント（PlemolJP の1:2幅）に依存する。
+- **その他**: 編集予測は無効、telemetry オフ、inline blame オフ、`confirm_quit`。`auto_indent`（既定と同じ）を削除。`settings.json` は AI、フォント、テーマ、レイアウト、エディタ、ターミナル、拡張の見出しで並べ替えた。keymap は使わない雛形を削除し、ターミナルの `ctrl-p` `ctrl-n` `ctrl-shift-m` の通過だけ残した。
+- **Vim は 2026-10-04 から1週間オフにして試す**（`vim_mode: false`、`vim.use_system_clipboard` の設定は削除）。根拠: エージェント画面は Ctrl+C でコピー、エディタはヤンクで、操作が非対称で使いにくい。戻し方は `settings.json` のコメントに書いた。必要な Vim 風キーは keymap で足す案（まだ足していない）。
+- **パネル配置**: エージェント＝左ドック、プロジェクトパネル＝右ドック（`project_panel.dock`）。
+- **`terminal.shell` は指定しない**: 一度 `pwsh` を明示したが、既存の決定（OS 既定に任せる。上の「アプリ設定」）に反するので削除した。`settings.json` は WSL/Linux でも共有されうるため。
+- 却下: チャット画面の見出しを緑・強調をオレンジにする（Zed のチャットの Markdown は見出しがフォントサイズのみ、強調の色の項目が無いと読めた。Obsidian 側の `material-gruvbox-bold.css` で表現する）／エージェントとプロジェクトパネルの上下分割（同じドックのパネルはタブ切替で、並べられない）／スレッドのタブ化（設定項目なし。`agent.threads_sidebar` は位置と自動表示だけ）／フォント設定の共通化（Zed に仕組みが無い。UI・バッファ・ターミナルに重複して書き、コメントで明示）。
+- 確認の範囲: 設定項目は Zed の `assets/settings/default.json`（main）で確認した。**未確認（仮説）**: Zed を再起動しての見え方、`tool_permissions` のパターンが claude-acp のツール名と一致して効くか、`ESC[2 q` が Windows Terminal で効くか、チャット画面の見出し/強調が本当に指定不能か（ソース全文は未読）。
+
 ### インストール経路（2026-10-03）
 
 - Go と Docker は `20_packages.sh` から外し、README の「必要なときだけ入れるもの」に移した。ghq は GitHub Releases のビルド済みバイナリ（`ghq_linux_<arch>.zip`、v1.11.2 で確認）を `~/.local/bin` に置く（apt に `ghq` は無い）。`fdfind` → `fd`、`batcat` → `bat` のリンクを張る。
 - （2026-10-04 に削除済み）VS Code 拡張の導入スクリプト（`21_vscode.*`）と `22_python.bat`（uv）。経緯は Decisions の「不要アプリの削除と Notepad++ config の雛形方式」。
 - リポジトリ取得（`50_repos.*`）は、今後リポジトリを足す置き場と、Windows / Linux の対称性のために残す。
 - `.vimrc`: vim-plug の自動導入は残す（忘れるため）。保存先は OS で切り替え（Windows は `~/vimfiles`、他は `~/.vim`）。テーマ5つ・git 系プラグイン・airline を削除し、標準の `statusline` にした。
-- nvim は撤去（vscode-neovim 設定・拡張・`EDITOR=nvim` 分岐も）。Zed（vim mode）へ移行中のため（`exmem/knowledge/zed-vim.md`）。
+- nvim は撤去（vscode-neovim 設定・拡張・`EDITOR=nvim` 分岐も）。Zed（vim mode）へ移行中のため（`exmem/knowledge/zed-vim.md`）。ただし 2026-10-04 から1週間、Zed の Vim を試験的にオフにしている（次々項「Zed の最適化」）。
 
 ### アプリ設定
 
@@ -176,6 +192,13 @@ exmem（`C:\vault\notes\resources\exmem`）は読み取り専用の参照先で�
 - `windows/terminal/settings.json` と draw.io の設定は小さく意図的なので、変更せず残した。
 
 ## Gotchas
+
+- **`%APPDATA%\zed\themes` が空の実ディレクトリだと `30_link.bat` が `[ERR]`**（実体は触らない仕様）。空であることを確認してから削除し、ジャンクションにした（2026-10-04）。他のPCでも、リンク前に空の `themes` を削除する。
+- **`file_scan_exclusions` は既定の除外を上書きする**。足すときは既定（`**/.git` など）を再掲する。
+- **zsh のカーソル点滅の指定は起動時に1回送るだけでは上書きされる**。`precmd_functions` に登録して毎回送る。
+- **starship の `Scanning current directory timed out`** は `starship.toml` の `scan_timeout = 10` が意図的に短いため（ファイル数の多いディレクトリで出る）。カーソルの件とは無関係。
+- **claude-acp の `default_config_options.mode: "plan"`** が入っていると、Zed からの新しいセッションがプランモードで始まる。書き込みや編集の前に `ExitPlanMode` の承認が要る。
+- **GitHub のコード検索ページ（`github.com/search`）は未ログインでは取得できない**。Zed のソースは `raw.githubusercontent.com` のファイル URL で読む。
 
 - **`git mv` の途中で git 全体が壊れた**（`fatal: unknown error occurred while reading the configuration files`）。`~/.config/git/config` のリンク先が移動中に消えたため。そのリンクだけ新しい場所へ手で張り直した。構造変更では「git が読む設定のリンク元を最初に動かさない」。
 - **リンク解除後の 0 バイトファイルを `.bak-N` に退避し、アプリのフォルダにゴミを21個作った**。ロジックを「ディレクトリのリンクは `rmdir`、ファイルの symlink は属性で判定して `del`、実体は退避」に作り直し、サンドボックスで6ケース検証した（旧実装には実体ディレクトリを再帰削除する経路もあった）。この退避ロジック自体は、のちに自動退避ごと廃止した。

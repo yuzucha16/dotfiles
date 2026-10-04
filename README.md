@@ -33,7 +33,7 @@ dotfiles/
 | `.claude/settings.json` | Claude Code のユーザー設定（許可設定のベース） |
 | `.config/shell/common.sh` | bash / zsh 共通の alias・関数（fzf は `Ctrl+R` 履歴検索・`Ctrl+T` ファイル検索と、`zfz`（`Alt+j`）/`cdg`（`Alt+k`）で使う。fzf の補完と `Alt+c` は使わない）・zoxide・CA・EDITOR。`.bashrc` / `.zshrc` が source する。コマンド体系は `windows/powershell/profile.ps1` と揃える |
 | `.config/{git/config,starship.toml,bat/config}` | git 共通設定 / starship / bat |
-| `.config/zed/{settings,keymap}.json` | Zed（Windows は `%APPDATA%\zed` へリンク） |
+| `.config/zed/{settings,keymap}.json`、`.config/zed/themes/` | Zed（Windows は `%APPDATA%\zed` へリンク。`themes/` はジャンクション。自作テーマ Material Gruvbox Dark） |
 
 ### `windows/`: Windows 専用
 
