@@ -27,6 +27,23 @@ exmem（`C:\vault\notes\resources\exmem`）は読み取り専用の参照先で�
 
 ## Decisions
 
+### `.obsidian` は `notes` に置く。dotfiles には戻さない（2026-10-04）
+
+- 決めたこと: `.obsidian/` は `notes` リポジトリで管理し続ける。Obsidian 設定の作業は `notes` のルートで Claude を開いて行い、`.obsidian/` 専用の `AGENTS.md` と `docs/` は置かない（2026-10-04 に暫定導入した分は撤去する）。
+- 根拠（判断基準。置き場を問う別の設定にも使える）:
+  1. 実体の制約: Obsidian は Vault 直下の `.obsidian` を読む。dotfiles に置くと `notes/.obsidian` へのジャンクションが必須になる（以前の構成。`windows/obsidian/.obsidian`）。
+  2. 変更の連動先: 設定の中身は Vault と連動する（ノート規約、`types.json` のプロパティ型、検索除外 `.claude/` `_archive/`）。Zed とそろえる意図はない（ユーザーの発言。2026-10-04）。
+  3. 依存の向き: 現状は dotfiles → `notes`（`links.map` の `..\notes`）の片方向。dotfiles に置くと `notes` → dotfiles の逆向きが加わる。
+  4. 到達性: Vault を使う全PCで dotfiles も clone する（ユーザーの発言）ので、決め手にならない。将来 dotfiles を clone しない環境が出れば、`notes` 側が有利になる。
+  5. 履歴の軽さ: dotfiles の履歴肥大の原因の一つがプラグイン（2026-10-02、`## 履歴を単一コミットで作り直した`）。
+  6. 粒度（`AGENTS.md` と `docs/` を置く単位）: 置き場では差が出ない。どちらもリポジトリのルートで作業すれば、既存の `AGENTS.md` で足りる。コストが生じるのは `.obsidian/` 単体で Claude を開く運用のときだけ。
+- 判断基準の要約: 設定の連動先が Vault の中身なら Vault 側、環境全体（テーマ・フォントの統一など）なら dotfiles。`AGENTS.md` と `docs/` は、リポジトリのルートか、独立して判断を積む単位にだけ置く。
+- 却下案: dotfiles へ戻す（ジャンクションと逆依存が増える。得られるのは Zed との統一だが、その意図が無い）／`.obsidian/` 単体を作業単位にする（専用の `AGENTS.md` と `docs/` が要る。`log.md` の中身は `git log -- .obsidian` の再掲で、実際に履歴から復元して作れた）。
+- 参考（`.obsidian` を dotfiles に置いて `notes/.obsidian` へリンクした場合の影響。事実は上の基準1・3、ほかは推測で未確認）:
+  - 事実: notes ↔ dotfiles の clone 順が循環する。リンク前に Obsidian が実ディレクトリを作ると、リンクスクリプトが `[ERR]` で止まる（手で退避して再実行）。設定のコミットが dotfiles に入り、notes の `[obsidian]` コミットは使えなくなる。`workspace.json` の除外が両リポジトリで要る。プラグインで dotfiles の履歴が重くなる。
+  - 推測: 改行コードの規則が dotfiles 側になる。notes のルートで Claude を開くと、実体が作業ディレクトリの外なので編集の確認が増える。ripgrep などはリンクをたどらず、検索に出ない可能性がある。シンボリックリンクは開発者モードか管理者権限が要る（ジャンクションは不要）。ファイル単位のリンクは Obsidian の保存で実ファイルに置き換わるおそれがある。コアプラグイン `sync` や WSL（`/mnt/c`）からの見え方は不明。
+- 未確認: Obsidian の「設定フォルダを上書き」機能で `.obsidian` を別の場所に置けるか（記憶による。端末ごとの設定のはずで、採用しても脆い）。
+
 ### リンクスクリプトは Windows / WSL で対称、リンクだけを行う（2026-10-03）
 
 - 引数は `[link|unlink] [-n]`。既存リンクは張り直す。展開先に実ファイル/実ディレクトリがあれば `[ERR]` を出し、件数を表示して非ゼロ終了する。`unlink` はリンクだけを消し、実ファイルに触らない。
