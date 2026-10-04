@@ -13,7 +13,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - 各PC（家・会社）で `git pull` → Windows は `30_link.bat`（家は `link home`）、Linux/WSL は `30_link.sh` を再実行する。新しいシェルで zsh の `lt` / `ll` / `l`、`cdg` を確認する。
 - このPCで `.wslconfig` を反映する: `30_link.bat` → `wsl --shutdown` → 開き直して `vmmemWSL` を観察する。
 - `git config user.name` / `user.email` を `~/.gitconfig_local` にPCごとに設定済みか確認する（仮値 `user <user@example.com>` のままコミットしない）。
-- 未 push のコミットを push する（Zed の最適化の `[zed]` `[shell]`、2026-10-04 の整理分。`22_python` 削除、starship、Zed 拡張、VS Code 削除、Notepad++ の雛形方式、light テーマ削除）。starship と zed のコミットには、別件の削除が混ざっている（`docs/decisions.md` の Gotchas）。分け直すかは任意。
+- 未 push のコミットを push する（Zed の最適化の `[zed]` `[shell]` は push 済み。残りは 2026-10-04 の `[docs]` 分と `terminal.shell` 削除の `[zed]`。整理分の内訳:`22_python` 削除、starship、Zed 拡張、VS Code 削除、Notepad++ の雛形方式、light テーマ削除）。starship と zed のコミットには、別件の削除が混ざっている（`docs/decisions.md` の Gotchas）。分け直すかは任意。
 - 古い Notepad++ のリンク切れ（`stylers.xml` `contextMenu.xml` `NppExec.ini`、`themes\Gruvbox light medium.xml`）と `~/vimfiles` の旧プラグイン（`:PlugClean`）を掃除する。実機に残る scoop の VS Code（`scoop uninstall vscode`、`scoop\persist\vscode` 内のリンク）も、不要なら手で消す。
 - `scripts/linux/30_link.sh` にある旧 `.vscode-server/extensions/extensions.txt` の掃除行を、消すか判断する。
 - 参照用に退避した他PCの生ヒストリ（`notes/resources/_local/ConsoleHost_history.txt`。Git 対象外）は、使い終わったら削除する。
