@@ -43,7 +43,7 @@ exmem（`C:\vault\notes\resources\exmem`）は読み取り専用の参照先で�
 ### 追跡しないもの・絞ったもの
 
 - 追跡しない: Obsidian の `workspace.json`、Notepad++ の `config.xml` `stylers.xml`（約195KB）`NppExec.ini` `contextMenu.xml`、`tmp/`、`.claude/`。
-- Notepad++ は `shortcuts.xml` と Gruvbox テーマ2つだけ追跡する（実物の `links.map` と一致）。このPCでは `config.xml` のリンクを現行内容の実ファイルに置き換えて設定を保った。
+- Notepad++ は Gruvbox dark テーマと `config.min.xml`（`config.xml` の最小構成の雛形。リンクはしない）だけ追跡する。経緯は Decisions の「不要アプリの削除と Notepad++ config の雛形方式」。
 - Office テンプレ・UI 設定は `links.map` から外し、`notes` 側（`resources/office/`）に置く。`notes` の clone 順序への依存を避けるため、初回に手で配置する運用。
 
 ### シェル（2026-10-02〜03）
@@ -86,11 +86,32 @@ exmem（`C:\vault\notes\resources\exmem`）は読み取り専用の参照先で�
 - 却下案: 履歴全体を整形して共有する（秘匿・案件固有の流出リスクと量）。種ファイルへのシンボリックリンク（PSReadLine が追記して作業ツリーが汚れる）。上書きコピー（既存の履歴を壊す）。
 - スクリプト番号: `31`（層 30 の固有ツール枠）。Windows（`.bat`）と Linux（`.sh`）で同じ番号。
 
+### 不要アプリの削除と Notepad++ config の雛形方式（2026-10-04）
+
+- **削除したもの**: `22_python.bat`（アプリ精査で使わないと判明）。VS Code 一式（scoop の `vscode`、`21_vscode.bat` / `21_vscode.sh`、`windows/vscode/`、拡張一覧2つ、`links.map` の3行、README）。Gruvbox light テーマ（ファイル、`links.map` の行、`lightThemeName`）。`32_notepadpp.bat` と `.ps1`。
+- VS Code は復活させる可能性があるので、削除を1コミットにまとめた。戻すときはそのコミットを `git revert`。
+- Gruvbox light が未使用の根拠: 実機の `config.xml` が `DarkMode enable="yes"` かつ `enableWindowsMode="no"`。light テーマは、ダークモードをオフにしたときか Windows 連動をオンにしたときにだけ使われる。
+- **Notepad++ の `config.xml`**: 最小構成の `windows/notepadpp/config.min.xml` を追跡し、`20_apps.bat` が `config.xml` の無い/空のときだけコピーする。以後はアプリが自由に書き換える。Notepad++ は無い項目をデフォルトで補うので最小構成で動く。scoop は空の `config.xml` を作るので、空なら上書きする条件にした。
+- 根拠: 毎回の強制適用（旧 `32_notepadpp.ps1`）が要らなくなり、スクリプトが2本から数行になる。「アプリが書き換えるファイルは追跡しない」の原則とも合う。
+- 却下案: `.gitignore` に入れる（未追跡になり最小構成が残らない）、symlink（アプリが終了時に全体を書き戻して差分が出る）、`git update-index --skip-worktree`（クローンごとの設定で `pull` が衝突しやすい）、`32_notepadpp.*` の維持。
+- トレードオフ: コピーは初回だけ。雛形を変えても既存の環境には反映されない。入れ直すときは `config.xml` を削除/空にして `20_apps.bat` を再実行する。
+### Notepad++ の設定整理（2026-10-04）
+
+- **プラグインは全削除**（未使用）。右クリックメニュー（`contextMenu.xml`）のプラグイン項目も外した。`%APPDATA%\Notepad++` は、ローカル設定モード（`doLocalConf.xml`）で使われない残骸だったので削除した。
+- **`shortcuts.xml` は管理しない**（ほぼ未使用。Scoop の persist の標準に任せる）。`contextMenu.xml` も管理しない。マクロ「Trim Trailing Space and Save」は Markdown の行末スペース2つ（強制改行）を消すので、なくなって困らない。内部コマンド 41010 のショートカット解除も削除した（コマンド名は未特定。仮説）。
+- **`config.xml` の設定値**（`config.min.xml` に反映する対象）: スナップショットバックアップ ON、自動更新オフ（`noUpdate=yes`。更新は Scoop に一本化）、カーソル点滅なし（`blinkRate=0`。点滅停止は未確認で仮説）、新規文書は LF、自動折り返し ON、タブ幅はスペース2（Zed の全体 `tab_size` も 4 から 2 に変更）。`MaintainIndent` は 1（既定）のまま。
+- 検索履歴と MRU は一度消した。`config.xml` と `session.xml` は追跡対象外なのでリポジトリには出ない。上限の設定は変えない（検索の使い勝手を優先）。
+- **`scoop update` の後処理は作らない**。`config.xml` は persist（hardlink）で引き継がれる。`shortcuts.xml` は標準版に戻り、同梱プラグイン（`post_install` が `plugins.original` をコピー）は復活するが、どちらも困らない（Scoop の manifest で確認）。
+- 却下案: 強制適用スクリプト `32_notepadpp`（一度作ったが、雛形コピー方式に置き換えた。理由は上の「不要アプリの削除と Notepad++ config の雛形方式」）。
+
+- **starship の先頭スペース**: `[os]` の Windows と Linux のアイコンが空文字で、format 末尾のスペースだけが出ていた。format から末尾スペースを外し、アイコンのある Ubuntu にスペースを移した。却下案: os モジュールを外す（Ubuntu のアイコンが消える）。
+- Zed の拡張は `%LOCALAPPDATA%\Zed\extensions\installed` と突き合わせて `auto_install_extensions` を更新した（`git-firefly` `toml` `xml` を追加）。
+- 確認済み: `20_apps.bat` の `config.xml` の雛形コピーは実機で動作した。リポジトリは約1.5 MiB（最大は Gruvbox dark の約260 KB）。
+
 ### インストール経路（2026-10-03）
 
 - Go と Docker は `20_packages.sh` から外し、README の「必要なときだけ入れるもの」に移した。ghq は GitHub Releases のビルド済みバイナリ（`ghq_linux_<arch>.zip`、v1.11.2 で確認）を `~/.local/bin` に置く（apt に `ghq` は無い）。`fdfind` → `fd`、`batcat` → `bat` のリンクを張る。
-- `w1b`/`l1a` 系（VS Code 拡張）は一覧（`code --list-extensions` 形式、バージョンなし）から `code --install-extension` を並べて1回で実行する。`remote-containers` は入れる、`devicetree` は入れない（ユーザー判断）。
-- `22_python.bat`（uv）は、固有ツールは一の位で別ファイルという方針で独立させた。
+- （2026-10-04 に削除済み）VS Code 拡張の導入スクリプト（`21_vscode.*`）と `22_python.bat`（uv）。経緯は Decisions の「不要アプリの削除と Notepad++ config の雛形方式」。
 - リポジトリ取得（`50_repos.*`）は、今後リポジトリを足す置き場と、Windows / Linux の対称性のために残す。
 - `.vimrc`: vim-plug の自動導入は残す（忘れるため）。保存先は OS で切り替え（Windows は `~/vimfiles`、他は `~/.vim`）。テーマ5つ・git 系プラグイン・airline を削除し、標準の `statusline` にした。
 - nvim は撤去（vscode-neovim 設定・拡張・`EDITOR=nvim` 分岐も）。Zed（vim mode）へ移行中のため（`exmem/knowledge/zed-vim.md`）。
@@ -166,6 +187,8 @@ exmem（`C:\vault\notes\resources\exmem`）は読み取り専用の参照先で�
 - **`.vimrc` の行末コメント**（`nmap <C-n> ... " コメント`）が右辺に混ざるバグだった。コメントを上の行に移した。
 - **`vim -es` でのテスト**は `termguicolors` で E954 が出るが、端末がないテスト由来で無害。
 - **`git add -A` で `tmp/` のスクリーンショットや空ファイル（`scripts/fdfin` など）を拾った**。パスを指定して `git add` する。`tmp/` は `.gitignore` に追加した。
+- **`git rm` 済みの削除は、別のパスだけ `git add` / `commit` しても次のコミットに混ざる**（ステージ済みのため。2026-10-04 に starship と zed のコミットで発生）。削除を別コミットにしたいときは、先に `git commit <パス>` で分けるか、コミット前に `git status` で確認する。
+- **`Set-Content` でファイルを書き直すと改行コードが変わり、全行が差分になる**（`apps.txt`。2026-10-04）。`git checkout` で戻し、`[IO.File]::ReadAllText` / `WriteAllText` で該当部分だけ置換した。
 - **PowerShell からの `wsl -d ... -- bash -c "..."`** は `$(...)` が PowerShell で展開されて壊れる。スクリプトを LF で書き出して `bash` に渡す。`git commit -F -` への here-string のパイプも渡らないので、一時ファイル経由にする。
 - **実行環境の安全装置が、`rm` `del /F` `cmd /c` を含む PowerShell コマンドを誤検知してブロックした**。スクリプトをファイルに書いてから実行する、`unlink` を使う、で回避した。
 - **`git diff` をパスで絞ると改名検出が効かず全行が「追加」に見える**。改名の確認は `git diff -M HEAD --stat`。

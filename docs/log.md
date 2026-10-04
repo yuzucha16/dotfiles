@@ -12,7 +12,9 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - 各PC（家・会社）で `git pull` → Windows は `30_link.bat`（家は `link home`）、Linux/WSL は `30_link.sh` を再実行する。新しいシェルで zsh の `lt` / `ll` / `l`、`cdg` を確認する。
 - このPCで `.wslconfig` を反映する: `30_link.bat` → `wsl --shutdown` → 開き直して `vmmemWSL` を観察する。
 - `git config user.name` / `user.email` を `~/.gitconfig_local` にPCごとに設定済みか確認する（仮値 `user <user@example.com>` のままコミットしない）。
-- 既に入っている不要な VS Code 拡張を `code --uninstall-extension` で外す（Windows 6件、WSL 4件）。古い Notepad++ のリンク切れ（`stylers.xml` `contextMenu.xml` `NppExec.ini`）と `~/vimfiles` の旧プラグイン（`:PlugClean`）を掃除する。
+- 未 push のコミットを push する（2026-10-04 の整理分。`22_python` 削除、starship、Zed 拡張、VS Code 削除、Notepad++ の雛形方式、light テーマ削除）。starship と zed のコミットには、別件の削除が混ざっている（`docs/decisions.md` の Gotchas）。分け直すかは任意。
+- 古い Notepad++ のリンク切れ（`stylers.xml` `contextMenu.xml` `NppExec.ini`、`themes\Gruvbox light medium.xml`）と `~/vimfiles` の旧プラグイン（`:PlugClean`）を掃除する。実機に残る scoop の VS Code（`scoop uninstall vscode`、`scoop\persist\vscode` 内のリンク）も、不要なら手で消す。
+- `scripts/linux/30_link.sh` にある旧 `.vscode-server/extensions/extensions.txt` の掃除行を、消すか判断する。
 - 参照用に退避した他PCの生ヒストリ（`notes/resources/_local/ConsoleHost_history.txt`。Git 対象外）は、使い終わったら削除する。
 - 新しいPC（または VM）で `10` → `50` を通し実行し、手順書（`notes/resources/cheatsheets/env/`）どおり進むか確認する。MX Linux 25.3 と Win11 の「要確認」を潰す。
 - `gh auth login` を済ませ、`24_fonts.*` で実際にダウンロードしてフォントを入れる。1週間使って「Light で続ける / Text に上げる / HackGen に戻す」を決める（メインフォントは PlemolJP Console NF の Light を試用中。Zed・Windows Terminal・Notepad++ に反映済み）。
@@ -22,7 +24,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Open Questions
 
-- 実機の通し実行が未確認: `10_env.bat`（ユーザー環境変数を書き換える）、`20_apps.bat`、`20_packages.sh`、`21_*`、`22_python.bat`、`40_wsl_enable.bat`、`50_repos.*`、`unlink` の実動作（ドライランのみ確認）。処理は旧スクリプトと同じ文字列置換・統合なので挙動は同じと推定（仮説）。
+- 実機の通し実行が未確認: `10_env.bat`（ユーザー環境変数を書き換える）、`20_apps.bat`（Notepad++ の `config.xml` の雛形コピーは確認済み）、`20_packages.sh`、`40_wsl_enable.bat`、`50_repos.*`、`unlink` の実動作（ドライランのみ確認）。処理は旧スクリプトと同じ文字列置換・統合なので挙動は同じと推定（仮説）。
 - `.wslconfig` を WSL が読むか、`vmmemWSL` が縮むか。**このPCではまだリンクされていない**（2026-10-03 確認）。
 - GitHub の既定ブランチが `main` か。リモートには `main`（`e1e4ac7`）と `202509` の両方がある（2026-10-03 確認）。ローカルの `origin/HEAD` は `202509` を指している。
 - 家・会社のPCで、新構成への再同期後の動作（未確認）。
@@ -32,18 +34,24 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - pwsh の `PSReadLine`（`ListView` 予測表示）のコストは未計測。
 - 「`ListView` は重い可能性があるが見送り」（`docs/decisions.md` のシェルの項）と、現在の `profile.ps1:19` が `ListView` を設定していることが食い違う。見送りを撤回したのか未確認。`ListView` の件数は PSReadLine 2.4.5 で設定項目が無く、10件固定のはず（ソース未確認、記憶による）。
 - pwsh の `Ctrl+R` の候補は、履歴ファイルの行ごとになる。複数行のコマンドは履歴ファイルでは行ごとに分かれているため、複数行コマンドの全体は選べない。
-- WSL の VS Code Server 側の C++ メモリ上限は、リポジトリ管理外（`~/.vscode-server/data/Machine/settings.json`）で未設定。
 - `templates/claude/settings.sandbox.json` の用途（使い捨ての検証環境に手でコピーする）は README に書いたが推測。
 - 他PCに残る旧構成のリンクやファイル（`setx` で作った旧環境変数、旧 Go、旧 vim プラグインなど）の整理。
-- 固有ツールが増えたときの一の位の割り当て順（23, 24…）。Linux にも Python（uv）が要るか（要れば `22_python.sh`）。
+- 固有ツールが増えたときの一の位の割り当て順。`21` と `22` は削除で欠番になった（再利用するか、詰めずに空けておくか）。
 - `w0` 系に残る日本語コメント。
-- `windows/` 配下のアプリ状態ファイル（Notepad++ のテーマなど）の追跡範囲は、今回は見直していない。
+- `windows/` 配下のアプリ状態ファイルの追跡範囲。Notepad++ は Gruvbox dark と `config.min.xml` に絞った（2026-10-04）。他のアプリは見直していない。
 - Zed の Linux デスクトップ導入時の `links.map` 側の対応。
 
 ## Log
 
 ### 2026-10-04
 
+- Notepad++ の設定を把握し、整理した（判断は `docs/decisions.md` の「Notepad++ の設定整理」）。プラグイン全削除、`shortcuts.xml` / `contextMenu.xml` を管理外に、`%APPDATA%\Notepad++` の残骸を削除、`config.xml` の設定値（スナップショット、LF、折り返し、点滅なし、自動更新オフ）を決めた。Zed の `tab_size` も 2 にそろえた。`exmem/inbox/2026-10-04-notepadpp-settings-optimization.md` を作った。
+- 不要なものを整理した（判断は `docs/decisions.md` の「不要アプリの削除と Notepad++ config の雛形方式」）。
+  - 削除: `22_python.bat`、VS Code 一式（1コミット。revert で復活できる）、Gruvbox light、`32_notepadpp.*`。
+  - Notepad++ の `config.xml` は、最小構成の雛形 `config.min.xml` を `20_apps.bat` が初回だけコピーする方式にした（実機で動作確認済み）。
+  - starship の os アイコン後の余分なスペースを直した。Zed の `auto_install_extensions` に `git-firefly` `toml` `xml` を追加した。
+  - 「ナレッジ化して」で `exmem/inbox/2026-10-04-dotfiles-cleanup-notepadpp-config.md` を作った。
+- 「ナレッジ化して」の2回目（`exmem/inbox/2026-10-04-scoop-vs-unmanaged-apps.md`）で出た改善案3点を承認し、`AGENTS.md` を直した: プランモードの承認を拒否されたら書き込まず解除方法を案内する、統合先の確認に検索キーワードを添える、確認した事実に根拠を添える。
 - 「ナレッジ化して」の初回実行（`exmem/inbox/2026-10-04-repo-and-exmem-separation.md`）で出た改善案3点を承認し、`AGENTS.md` を直した: 形式に `tags` と `Principles` を追加（exmem の標準プロンプトと同じ形に）、教訓は Principles へ、1ファイル1テーマ（統合先が違う話題はファイルを分ける）。
 - 「ナレッジ化して」フックを `AGENTS.md` に定義し、続けて指示文を改善した（プランモードなら先に抜ける、知識の判定基準、既存ノートとの重複確認、単体で読める書き方、実行後の改善報告）。exmem への書き込みは `inbox/` の新規1ファイルだけ。
 - 作業ログの置き場を整理した。dotfiles は exmem を読み取り専用で参照するだけにし、経緯・決定・次にやることは `docs/` に持つ。exmem に書かれていた dotfiles の記録（`contexts/dotfiles/context.md`、`knowledge/dotfiles.md`）はここへ移し、exmem 側から削除した。
