@@ -2,100 +2,27 @@
 
 dotfiles は、Windows 11 + WSL2 / Linux（apt 系）の作業環境を、複数PC（家・会社）で同じ状態に再現するための設定とセットアップスクリプト。
 
+## 共通ルール
+
+作業の開始時に、次を読む。パスは `C:\vault\notes\resources\workflow-kit`（WSL: `/mnt/c/vault/notes/resources/workflow-kit`）。
+
+- `docs-rules.md`: `docs/` の運用。作業の終わりに `docs/log.md` と `docs/decisions.md` を更新する。
+- `knowledge-hook.md`: ユーザーが「ナレッジ化して」と言ったときだけ実行する。書き込みは `exmem/inbox/` の新規ファイルだけ。
+
+上のファイルが読めない場合（`notes` が無いPCなど）は、記憶で代用せず、ユーザーに伝えて止まる。
+
 ## 読む順番
 
 1. `docs/log.md`: 現在の状態と Next Actions。作業を再開するときの入口。
 2. `README.md`: 構成、スクリプトの命名規則、セットアップ手順、日常の運用（How）。
 3. `docs/decisions.md`: 判断の根拠、却下案、Gotchas、実機で確認した事実（Why）。
 
-## 記録の置き場
+## このリポジトリ固有のルール
 
-dotfiles の作業の経緯・決定・次にやることは、すべてこのリポジトリの `docs/` に残す。
-
-- 作業の終わりに、`docs/log.md` の Next Actions を更新し、Log に日付つきで追記する。
-- 判断（決めたこと・根拠・却下案）、遭遇した詰まり、実機で確認した事実は `docs/decisions.md` に書く。
 - 構成やスクリプトの使い方は `README.md` が正本。`docs/` に同じ表を重複させない。
-
-## exmem（外部メモリ）との関係
-
-- exmem はAIとの壁打ちから得たナレッジの置き場。場所は `C:\vault\notes\resources\exmem`（WSL: `/mnt/c/vault/notes/resources/exmem`）。`notes` リポジトリの一部で、dotfiles とは別リポジトリ。
-- dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業ログを exmem に残さない。
-- **書き込みの唯一の例外**: ユーザーが「ナレッジ化して」と指示したときだけ、`exmem/inbox/` に新規ファイルを1つ置く（下の「ナレッジ化して」）。`knowledge/` `contexts/` など inbox 以外は編集しない。inbox のメモを `knowledge/` へ統合するのは exmem 側の運用（`exmem/AGENTS.md`）で、ここでは行わない。
+- exmem は `C:\vault\notes\resources\exmem`（WSL: `/mnt/c/vault/notes/resources/exmem`）。`notes` リポジトリの一部で、dotfiles とは別リポジトリ。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業ログを exmem に残さない。書き込みの例外は「ナレッジ化して」だけ（`knowledge/` `contexts/` など inbox 以外は編集しない）。
 - 参照している正本: 履歴の種の本文は `exmem/knowledge/shell-command-usecases.md`。`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` はそこからの派生物なので、種ファイルを直接編集しない。
-
-## 「ナレッジ化して」
-
-dotfiles の作業で得た、次回以降も使える知識を exmem に残すためのフック。ユーザーが「ナレッジ化して」と言ったときだけ実行する（自発的には書かない）。
-
-### 手順
-
-実行の順序: 作業の記録（`docs/log.md` と `docs/decisions.md`）が未更新なら、先に `docs/` を更新してからナレッジ化する。ユーザーが「docs を更新してから」と指示した場合も同じ。ナレッジ化の内容は、更新した `docs/` を根拠にできる。
-
-1. **プランモードなら先に抜ける**。inbox への書き込みは編集なので、プランモードのままでは書けない。`ExitPlanMode` で通常モードに戻してから実行する（承認が必要なら、このフックの実行であることを添える）。承認を拒否されたら、書き込まずに、プランモードの解除方法（Shift+Tab で切り替える）を案内して待つ。Zed の `agent_servers.claude-acp.default_config_options.mode` が `"plan"` だと、新しいセッションは毎回プランモードで始まる。その場合は最初に承認が要ることを想定しておく。
-2. **知識かどうかを判定する**。これまでの会話から、知識・ルール・経験を抜き出す。判定の問いは「この会話を知らない人やAIが、別の作業で使えるか」。使えるものだけを残す。
-   - 残す: 判断の原則と根拠、却下した案とその理由、実機で確認した事実、ハマりどころと解決方法。
-   - 残さない: 何をいつやったかの作業ログ、dotfiles 固有で他に使い回せない経緯（これらは `docs/log.md` と `docs/decisions.md` に残す）。
-3. **該当する知識が無ければ、ファイルは作らず「ナレッジ無し」と答える**。
-4. **既存の知識と重なるか確認する**。`exmem/knowledge/` を検索（ファイル名と見出し）し、近いノートがあれば Goal の末尾に「統合先の候補: `knowledge/<ファイル>.md`」と1行書く。無ければ「新規トピック」と書く。あわせて、検索に使ったキーワードを同じ行に添える（exmem 側の統合で、関連ノートを探し直さずに済む）。
-5. `C:\vault\notes\resources\exmem\inbox\YYYY-MM-DD-<topic>.md`（WSL: `/mnt/c/vault/notes/resources/exmem/inbox/`）に新規作成する。`<topic>` は英小文字の kebab-case。同名のファイルがあれば上書きせず、別の名前にする。
-6. 書くのは inbox の1ファイルだけ。`notes` リポジトリのコミット・push はしない（ユーザーが行う）。
-7. 終わったら、ファイルのパスと、各見出しの要点を1行ずつ報告する。あわせて、下の「このフックの改善」に従って改善案を報告する。
-
-### 書き方
-
-- **単体で読めるように書く**。「上記」「この会話」「さっきの」など会話に依存する表現を避け、読み手が経緯を知らなくても分かるようにする。
-- 日付、バージョン、OS、実機で確認したかどうかを明記する。確認していないことは「仮説」と明記する。確認した事実には、根拠（実行したコマンドや見たファイル）を1語添える（例: 「`pnputil` で確認」）。
-- 会社名・ユーザー名・URL の秘匿値・トークンなど、共有したくない値は書かない（`notes` は共有リポジトリ）。
-- 日付は今日の日付。`sources` は `<実行中のAI名> conversation "<テーマ>"`（例: `Claude Code conversation "fzf のキーバインド整理"`）。
-- `tags` は英小文字の kebab-case で3〜6個。`exmem/tags.md` の語彙から選び、語彙に無いものは書いてよい（統合のときに exmem 側で正規化する）。ソフトウェアは `tool/<名前>`、AIサービスは `ai/<名前>` の形にする。`type` や `status` の値（`inbox`、`knowledge` など）はタグにしない。
-- 方針・原則・教訓（「〜しない」「〜を優先する」）は Principles に書く。Decisions は、決めたこと・根拠・却下案を必ずそろえる。根拠や却下案が無い決定は、Facts に事実として書く。Gotchas は、実際に遭遇した詰まりと解決方法だけにする。
-- **1ファイル1テーマ**（exmem の `knowledge/` が1ファイル1トピックのため）。会話に別々の話題があり、統合先の `knowledge/` のファイルが異なるなら、話題ごとにファイルを分ける。同じ統合先なら1ファイルにまとめる。分けたときは、ファイルごとに `topic` を変える。
-
-### このフックの改善
-
-このフックの指示は、使うたびに直して育てる。実行後に、次を確認して報告する。
-
-- この節の指示で曖昧だった点、迷った点、足りなかった見出しや判断基準。
-- 出力された inbox メモで、exmem の統合（`exmem/AGENTS.md` の「inbox を整理するとき」）に必要なのに欠けていた情報。
-
-改善案があれば1〜3点を提案する。ユーザーが承認したら、この節（`AGENTS.md`）を直し、`docs/log.md` の Log に1行残す。無ければ「改善案なし」と報告する。承認なしに、この節を書き換えない。
-
-ファイルの形式（見出しは省略しない。該当が無い見出しは「なし」と書く。`exmem/inbox/README.md` の標準プロンプトと同じ形）:
-
-````markdown
----
-type: inbox
-title: <テーマ>
-tags:
-  - <タグ>
-created: <今日の日付 YYYY-MM-DD>
-sources:
-  - <このAIサービス名> conversation "<テーマ>"
----
-
-# <テーマ>
-
-## Goal
-この会話で何を考えたかったか。
-
-## Principles
-判断の拠り所になる方針・原則・教訓（「〜しない」「〜を優先する」など）。
-
-## Decisions
-決めたこと。それぞれに根拠と、検討して捨てた案を書く。
-
-## Facts
-確認できた事実。未確認のものは「仮説」と明記する。
-
-## Gotchas
-遭遇したエラーや詰まった点と、その解決方法。
-
-## Open Questions
-まだ決まっていないこと。
-
-## Next Actions
-次にやること。
-````
+- 「ナレッジ化して」で残さないもの（dotfiles 固有で他に使い回せない経緯）は、`docs/log.md` と `docs/decisions.md` に残す。
 
 ## コミット
 
