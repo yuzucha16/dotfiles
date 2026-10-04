@@ -59,7 +59,7 @@ dotfiles/
 
 - OS はディレクトリで表す（ファイル名に `w` / `l` は付けない）
 - 十の位 = 層（実行順）: `10` 環境・ディレクトリ、`20` アプリ/パッケージ導入、`30` リンク、`40` OS 機能（WSL 有効化など）、`50` リポジトリ取得
-- 一の位 = 同じ層の中身: `0` は層の本体、`1` 以降は固有ツール（`23` = 日本語入力（Linux のみ）、`24` = フォント、`31` = PSReadLine 履歴の種（Windows のみ））。Windows と Linux で同じ番号は同じ役割（片方にしかないものは欠番）。WSL とネイティブ Linux は同じスクリプトで、WSL 固有の挙動は `is_wsl` で分ける
+- 一の位 = 同じ層の中身: `0` は層の本体、`1` 以降は固有ツール（`23` = 日本語入力（Linux のみ）、`24` = フォント、`31` = 履歴の種（Windows は PSReadLine、Linux は zsh/bash））。Windows と Linux で同じ番号は同じ役割（片方にしかないものは欠番）。WSL とネイティブ Linux は同じスクリプトで、WSL 固有の挙動は `is_wsl` で分ける
 - 任意で実行するものは `optional/` に置く（番号なし）
 - `.bat` のコメントは ASCII（英語）で書く。日本語（UTF-8）のコメントは、コードページ 932 のコンソールで行末のバイトが次の行と混ざり、意図しないコマンドやゴミファイルが生まれることがある
 - 家用のアプリの追加分は `apps.home.txt` のように `.home.` を挟んだファイルに書く（`manifests/`）。リンクの map は共通の `links.map` のみ
@@ -102,6 +102,7 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行す�
    - `scripts/linux/23_ja.sh`（ネイティブ Linux のみ。WSL では何もしない）: fcitx5 + Mozc、日本語フォントを入れる。Ubuntu 系は言語パックも入れる。入れたら再ログインして、Fcitx 5 設定で Mozc を追加する（手動）
    - `scripts/linux/24_fonts.sh [--dry-run]`: PlemolJP NF / MoralerspaceHW の latest を `gh` で `~/download` へ取得する（WSL でも WSL 側の `~/download`）。インストールは手動。`gh auth login` が必要（`--dry-run` は不要）
 3. `scripts/linux/30_link.sh [link|unlink] [-n]`: stow で `home/` を `~` に展開する（Windows の `30_link.bat` と同じ引数）。リンク切れの旧 symlink は削除する。展開先に実ファイルがあると `[ERR]` を出して止まる（自動退避はしない。手で退避/削除して再実行）。終わったら `chsh -s /usr/bin/zsh`
+   - `scripts/linux/31_history_seed.sh [-n]`: `manifests/history.seed.sh.txt` を `~/.local/state/{zsh,bash}/history`（`XDG_STATE_HOME` があればその下）へコピーする。履歴が無い/空のときだけ行い、既存の履歴は上書きしない（`-n`: 確認のみ）。リンクではないので、以後はシェルが自由に追記する。**最初のシェルを開く前に**実行する
 4. `scripts/linux/50_repos.sh`: ghq で参照用リポジトリを取得する
 
 ### 必要なときだけ入れるもの（WSL・手動）
