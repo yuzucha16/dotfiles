@@ -124,6 +124,13 @@ exmem（`C:\vault\notes\resources\exmem`）は読み取り専用の参照先で�
 - 却下: チャット画面の見出しを緑・強調をオレンジにする（Zed のチャットの Markdown は見出しがフォントサイズのみ、強調の色の項目が無いと読めた。Obsidian 側の `material-gruvbox-bold.css` で表現する）／エージェントとプロジェクトパネルの上下分割（同じドックのパネルはタブ切替で、並べられない）／スレッドのタブ化（設定項目なし。`agent.threads_sidebar` は位置と自動表示だけ）／フォント設定の共通化（Zed に仕組みが無い。UI・バッファ・ターミナルに重複して書き、コメントで明示）。
 - 確認の範囲: 設定項目は Zed の `assets/settings/default.json`（main）で確認した。**未確認（仮説）**: Zed を再起動しての見え方、`tool_permissions` のパターンが claude-acp のツール名と一致して効くか、`ESC[2 q` が Windows Terminal で効くか、チャット画面の見出し/強調が本当に指定不能か（ソース全文は未読）。
 
+### フォント取得は gh のログイン不要、前提チェックと `--dry-run` は持たない（2026-10-04）
+
+- 決めたこと: `24_fonts.*` は `gh release download` を `manifests/fonts.txt` の行ごとに回すだけにした。`gh` の有無だけ確認する。
+- 根拠: 空の `GH_CONFIG_DIR` で未ログインを再現し、`gh release download -R yuru7/PlemolJP -p "PlemolJP_NF_v*.zip"`（153MB）と `-R yuru7/moralerspace -p "MoralerspaceHW_v*.zip"`（102MB）が成功した（gh 2.102.0）。一方 `gh release list` は認証を要求して失敗した（exit 4）。公開リリースのダウンロードだけが未ログインで通る。`gh auth status` で止めると、通る操作を止めてしまう。`--dry-run` は中身が `gh` 1行の表示にすぎず、ダウンロードだけで副作用が小さいので持たない。
+- 却下: `curl` / `Invoke-WebRequest` への置換（アセット名にバージョンが入り、glob が使えない）。
+- 未確認: 未ログインのレート制限（1回2件程度なら問題ないはずだが、推測）。
+
 ### インストール経路（2026-10-03）
 
 - Go と Docker は `20_packages.sh` から外し、README の「必要なときだけ入れるもの」に移した。ghq は GitHub Releases のビルド済みバイナリ（`ghq_linux_<arch>.zip`、v1.11.2 で確認）を `~/.local/bin` に置く（apt に `ghq` は無い）。`fdfind` → `fd`、`batcat` → `bat` のリンクを張る。

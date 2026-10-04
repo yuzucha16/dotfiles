@@ -18,7 +18,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - `scripts/linux/30_link.sh` にある旧 `.vscode-server/extensions/extensions.txt` の掃除行を、消すか判断する。
 - 参照用に退避した他PCの生ヒストリ（`notes/resources/_local/ConsoleHost_history.txt`。Git 対象外）は、使い終わったら削除する。
 - 新しいPC（または VM）で `10` → `50` を通し実行し、手順書（`notes/resources/cheatsheets/env/`）どおり進むか確認する。MX Linux 25.3 と Win11 の「要確認」を潰す。
-- `gh auth login` を済ませ、`24_fonts.*` で実際にダウンロードしてフォントを入れる。1週間使って「Light で続ける / Text に上げる / HackGen に戻す」を決める（メインフォントは PlemolJP Console NF の Light を試用中。Zed・Windows Terminal・Notepad++ に反映済み）。
+- `24_fonts.*` で実際にダウンロードしてフォントを入れる（`gh auth login` は不要）。`fonts.txt` の PlemolJP は `PlemolJP_NF_v*.zip` のまま。試用中の「Console NF」に当たる実際のアセット名はリリースで未確認なので、確かめて合わせる。1週間使って「Light で続ける / Text に上げる / HackGen に戻す」を決める（メインフォントは PlemolJP Console NF の Light を試用中。Zed・Windows Terminal・Notepad++ に反映済み）。
 - `30_link.sh` の最後に `chsh` 後の再ログインの案内を足す。`50_repos.sh` の前提（`source ~/.profile`、`ghq` が PATH にある）を整理する。`50_repos.bat` に取得したいリポジトリを足す。
 - `git bundle` のバックアップの所在を確認する（見つからない）。必要なら保管場所を決める。
 - 古い WSL では `fdfind` → `fd` のリンクが無いので、`20_packages.sh` を再実行するか手でリンクを張る。
@@ -50,6 +50,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ### 2026-10-04
 
+- `24_fonts.*` から `gh auth status` の前提チェックと `--dry-run` を削除した。未ログインで `gh release download` が成功することを実機で確認したため（判断は `docs/decisions.md` の「フォント取得」）。
 - `docs/` の運用と「ナレッジ化して」フックの本文を、共通機能 `notes/resources/workflow-kit/` へ移した。dotfiles の `AGENTS.md` は、共通ルールへの参照と dotfiles 固有のルール（exmem との関係、履歴の種の正本、コミット）だけに薄くした。目的は、同じ仕組みを他の作業ディレクトリでも使い、改善を1か所に集めること。戻すときは、このコミットを `git revert` する（旧 `AGENTS.md` の本文が戻る）。以後のフックの改善は、kit 側の `improvements.md` に残る。
 - 「ナレッジ化して」の4回目（Zed の最適化）で出た改善案のうち2点を承認し、`AGENTS.md` を直した: `claude-acp` の `mode: "plan"` 既定だと毎回プランモードで始まる旨を手順 1 に追記、「`docs/` が未更新なら先に更新してからナレッジ化する」という実行順序を手順の冒頭に追記。
 - Zed の設定を最適化した（判断は `docs/decisions.md` の「Zed の最適化」）。自作テーマ Material Gruvbox Dark、カーソル点滅を Zed・pwsh・bash・zsh で停止、AI の設定（Ctrl+Enter 送信、承認を Claude Code に一本化）、Markdown と Obsidian の併用設定、Vim を1週間オフ、`settings.json` / `keymap.json` の整理。コミットは `[zed]` と `[shell]` の2つ。`terminal.shell` の pwsh 明示は既存の決定に反するので削除した。ナレッジ化は `exmem/inbox/2026-10-04-zed-eye-strain-agent-settings.md` と `2026-10-04-terminal-cursor-blink-decscusr.md`。
