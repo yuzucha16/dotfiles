@@ -29,7 +29,7 @@ exmem（`C:\vault\notes\resources\exmem`）は読み取り専用の参照先で�
 
 ### `.obsidian` は `notes` に置く。dotfiles には戻さない（2026-10-04）
 
-- 決めたこと: `.obsidian/` は `notes` リポジトリで管理し続ける。Obsidian 設定の作業は `notes` のルートで Claude を開いて行い、`.obsidian/` 専用の `AGENTS.md` と `docs/` は置かない（2026-10-04 に暫定導入した分は撤去する）。
+- 決めたこと: `.obsidian/` は `notes` リポジトリで管理し続ける。Obsidian 設定の作業は `notes` のルートで Claude を開いて行い、`.obsidian/` 専用の `AGENTS.md` と `docs/` は置かない（2026-10-04 に暫定導入した分は、同日に撤去済み）。
 - 根拠（判断基準。置き場を問う別の設定にも使える）:
   1. 実体の制約: Obsidian は Vault 直下の `.obsidian` を読む。dotfiles に置くと `notes/.obsidian` へのジャンクションが必須になる（以前の構成。`windows/obsidian/.obsidian`）。
   2. 変更の連動先: 設定の中身は Vault と連動する（ノート規約、`types.json` のプロパティ型、検索除外 `.claude/` `_archive/`）。Zed とそろえる意図はない（ユーザーの発言。2026-10-04）。

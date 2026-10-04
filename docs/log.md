@@ -4,7 +4,6 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
-- `.obsidian` の置き場の決定（2026-10-04）の後始末（`notes` 側の作業。dotfiles からは書かない）: 未コミットの `notes/.obsidian/{AGENTS.md,CLAUDE.md,docs/}` を撤去してよいかユーザーに確認する。撤去後は `notes/AGENTS.md` の「`.obsidian/`」節に、判断基準の要約と「`.obsidian/` 単体で Claude を開かない」を足す。`.obsidian/docs/` にしか無い内容は、置き場の決定（dotfiles 側に記録済み）と、colored-tags の追跡・改行コードの Open Questions（`exmem/inbox/2026-10-04-obsidian-settings-state-and-knowledge-drift.md` に既出）。
 - Zed の最適化（2026-10-04）の後始末: Zed を再起動して、テーマ・Ctrl+Enter 送信・右のプロジェクトパネル・Markdown の見え方を確認する。Vim オフの試験は 2026-10-11 頃に続けるか判断する（戻し方は `settings.json` のコメント）。他のPCでは `30_link.bat` の前に、空の `%APPDATA%\zed\themes` を削除する。WSL で点滅を止めるのは `.bashrc` / `.zshrc`（反映は新しいシェルで確認）。OS 全体の点滅停止（`CursorBlinkRate=-1`）は必要なら検討する。
 - シェルの3シェル共通化（fzf とキーバインドの現仕様の表は `docs/decisions.md` の Facts）:
   - WSL に `ghq` を入れたら `cdg`（zsh/bash）を実機で確認する。
@@ -52,7 +51,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 ### 2026-10-04
 
 - 「ナレッジ化して」（`exmem/inbox/2026-10-04-config-dir-placement-criteria.md`）で出た改善案2点を承認し、workflow-kit の `knowledge-hook.md` を直した: 同日の他メモと決定が食い違うときの書き方、`docs/` の更新済みの確認方法（`docs/log.md` の今日の項目で判定。`git status` の差分では判定できないので、提案の文言を変えた）。記録は `improvements.md`。
-- `.obsidian` を `notes` に置くか dotfiles に置くかの判断基準（6項目）を決め、`notes` に残すと決定した（判断は `docs/decisions.md` の「`.obsidian` は `notes` に置く」）。決め手は、Vault との連動、依存の向き（dotfiles → `notes` の片方向）、ジャンクションが要らないこと。基準6（粒度）は、置き場ではなく Claude を開く場所（`notes` のルート）で解決する。`notes` 側の撤去作業（`.obsidian/AGENTS.md` など）は未実施で、ユーザーの確認待ち。
+- `.obsidian` を `notes` に置くか dotfiles に置くかの判断基準（6項目）を決め、`notes` に残すと決定した（判断は `docs/decisions.md` の「`.obsidian` は `notes` に置く」）。決め手は、Vault との連動、依存の向き（dotfiles → `notes` の片方向）、ジャンクションが要らないこと。基準6（粒度）は、置き場ではなく Claude を開く場所（`notes` のルート）で解決する。`notes` 側の撤去作業（`.obsidian/AGENTS.md` など）は、ユーザーが実施し、ファイルが無いことと `.obsidian` の `git status` が clean であることを確認した（根拠: `Get-ChildItem`、`git status`）。`notes/AGENTS.md` への「`.obsidian/` 単体で Claude を開かない」の追記は、不要とユーザーが判断した。`knowledge/obsidian-vault.md` に「設定」節の更新と置き場の決定を反映した（`notes` の `2893e74`）。
 - 「ナレッジ化して」（`exmem/inbox/2026-10-04-gh-release-download-without-login.md`）で出た改善案2点を承認し、workflow-kit の `knowledge-hook.md` を直した: 既存ノートとの食い違いは Open Questions に「統合時の修正」として書く、統合先の候補は狭い候補と広い候補を並べてよい（`improvements.md` に記録）。
 - `24_fonts.*` から `gh auth status` の前提チェックと `--dry-run` を削除した。未ログインで `gh release download` が成功することを実機で確認したため（判断は `docs/decisions.md` の「フォント取得」）。
 - `docs/` の運用と「ナレッジ化して」フックの本文を、共通機能 `notes/resources/workflow-kit/` へ移した。dotfiles の `AGENTS.md` は、共通ルールへの参照と dotfiles 固有のルール（exmem との関係、履歴の種の正本、コミット）だけに薄くした。目的は、同じ仕組みを他の作業ディレクトリでも使い、改善を1か所に集めること。戻すときは、このコミットを `git revert` する（旧 `AGENTS.md` の本文が戻る）。以後のフックの改善は、kit 側の `improvements.md` に残る。
