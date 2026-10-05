@@ -53,6 +53,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 ### 2026-10-06
 
 - clone 直後の大量の差分（64ファイル、約8,000行）の原因が改行コード（index は LF、作業ツリーは CRLF）と判明。`.gitattributes` を追加（`5af8dd1`）し、`.bat` 8本の index を LF に正規化（`7e9ae20`）。実質差分の4ファイルは破棄し、`git restore .` で作業ツリーを取り直した。`home/.gitconfig` の `[user]` は `~/.gitconfig_local` に移し済みのため破棄。詳細は `docs/decisions.md` の Gotchas。
+- 上の件の「ナレッジ化して」で出た改善2点を、workflow-kit に反映（版 `2026-10-06.3`）: 点検スクリプトの `<…>` 検出からインラインコードを除外、既存知識の検索用 `tools/find-knowledge.ps1` を追加。変更は `workbase` 側（dotfiles のコミット対象外）。
 
 ### 2026-10-04
 
