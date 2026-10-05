@@ -11,7 +11,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 ### Obsidian (per-PC state)
-obsidian/.obsidian/workspace.json
+windows/obsidian/.obsidian/workspace.json
+windows/obsidian/.obsidian/workspace-mobile.json
 
 ### Claude Code
 .claude/

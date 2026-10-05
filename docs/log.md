@@ -23,6 +23,8 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - `git bundle` のバックアップの所在を確認する（見つからない）。必要なら保管場所を決める。
 - 古い WSL では `fdfind` → `fd` のリンクが無いので、`20_packages.sh` を再実行するか手でリンクを張る。
 
+- `notes` の構造変更（`notes/docs/log.md` の 2026-10-05）に合わせた、この変更のコミット（未コミットの差分: `windows/obsidian/` `windows/office/` の追加、`links.map` `10_env.bat` `50_repos.bat` `.gitignore` `README.md` `AGENTS.md`）。コミットは、トップの切り替えと一緒に行う（リンクを先に有効にすると、実ディレクトリの `.obsidian` と衝突して `30_link.bat` が `[ERR]` になる）。Linux の `50_repos.sh`（`workbase` の clone）と `.obsidian` の扱いは TODO。
+
 ## Open Questions
 
 - 実機の通し実行が未確認: `10_env.bat`（ユーザー環境変数を書き換える）、`20_apps.bat`（Notepad++ の `config.xml` の雛形コピーは確認済み）、`20_packages.sh`、`40_wsl_enable.bat`、`50_repos.*`、`unlink` の実動作（ドライランのみ確認）。処理は旧スクリプトと同じ文字列置換・統合なので挙動は同じと推定（仮説）。

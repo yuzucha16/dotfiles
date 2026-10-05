@@ -1,0 +1,16 @@
+{
+  "showLineNumber": false,
+  "autoPairMarkdown": false,
+  "tabSize": 2,
+  "newFileLocation": "current",
+  "attachmentFolderPath": "./",
+  "showIndentGuide": false,
+  "promptDelete": true,
+  "rightToLeft": false,
+  "userIgnoreFilters": [
+    ".tmp.",
+    "_archive/",
+    ".claude/"
+  ],
+  "readableLineLength": true
+}
