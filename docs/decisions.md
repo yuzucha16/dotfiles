@@ -236,6 +236,9 @@ exmem（`C:\vault\notes\resources\exmem`）は読み取り専用の参照先で�
 - **`git add -A` で `tmp/` のスクリーンショットや空ファイル（`scripts/fdfin` など）を拾った**。パスを指定して `git add` する。`tmp/` は `.gitignore` に追加した。
 - **`git rm` 済みの削除は、別のパスだけ `git add` / `commit` しても次のコミットに混ざる**（ステージ済みのため。2026-10-04 に starship と zed のコミットで発生）。削除を別コミットにしたいときは、先に `git commit <パス>` で分けるか、コミット前に `git status` で確認する。
 - **`Set-Content` でファイルを書き直すと改行コードが変わり、全行が差分になる**（`apps.txt`。2026-10-04）。`git checkout` で戻し、`[IO.File]::ReadAllText` / `WriteAllText` で該当部分だけ置換した。
+- **clone 直後に、64ファイル・約8,000行の差分が出た**（2026-10-06）。`git ls-files --eol` で index が LF、作業ツリーが CRLF と確認。原因は、clone 時にシステムの `core.autocrlf=true`（scoop 版 git 2.56.0）が効いて CRLF でチェックアウトされ、その後 `~/.config/git/config`（`autocrlf=false`、`eol=lf`）が有効になったこと（順序は設定の優先順位からの推定）。`git diff --ignore-cr-at-eol` で実質差分を絞ると4ファイルだけで、それも破棄して `git restore .` で LF に取り直した。対策は、リポジトリ直下の `.gitattributes`（`* text=auto eol=lf`、`*.bat` `*.cmd` は `text eol=crlf`）。マシンごとの git 設定に左右されなくなる。
+  - `text eol=crlf` は作業ツリーを CRLF にする指定で、index 内は LF が正規。`.bat` 8本の index は LF に正規化した（`git add --renormalize`、コミット `7e9ae20`）。作業ツリーの `.bat` は CRLF のまま。
+  - `.ps1`（`profile.ps1` のみ）は index が LF だったので、そのまま LF（意図は不明。pwsh は LF でも動く）。
 - **PowerShell からの `wsl -d ... -- bash -c "..."`** は `$(...)` が PowerShell で展開されて壊れる。スクリプトを LF で書き出して `bash` に渡す。`git commit -F -` への here-string のパイプも渡らないので、一時ファイル経由にする。
 - **実行環境の安全装置が、`rm` `del /F` `cmd /c` を含む PowerShell コマンドを誤検知してブロックした**。スクリプトをファイルに書いてから実行する、`unlink` を使う、で回避した。
 - **`git diff` をパスで絞ると改名検出が効かず全行が「追加」に見える**。改名の確認は `git diff -M HEAD --stat`。
