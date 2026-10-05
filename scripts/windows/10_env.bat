@@ -35,7 +35,8 @@ if not exist "%SSH_DIR%"            ( mkdir "%SSH_DIR%" )
 if not exist "%VAULT_HOME%"         ( mkdir "%VAULT_HOME%" )
 if not exist "%GHQ_ROOT%"           ( mkdir "%GHQ_ROOT%" )
 if not exist "%CERTS_DIR%"          ( mkdir "%CERTS_DIR%" )
-REM NOTES_DIR is not created here: 30_link links it to the notes repo (ghq get yuzucha16/notes)
+REM NOTES_DIR is not created here: 30_link creates it as the parent of the .obsidian link, and the workflow hook
+REM turns it into a local repo. The shared repo (workbase) is cloned into %NOTES_DIR%\resources by 50_repos.bat.
 
 REM 確認表示 (現在のセッションでは setx の結果は反映されない点に注意)
 echo HOME               =%HOME%

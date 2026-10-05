@@ -42,8 +42,10 @@ dotfiles/
 | `terminal/settings.json` | Windows Terminal |
 | `startup/startup.bat` | スタートアップ。`subst V: C:\vault` |
 | `wsl/.wslconfig` | WSL2 の全体設定（`%USERPROFILE%\.wslconfig` へリンク）。アイドル時にキャッシュのメモリをホストへ返す。`memory` などの上限は PC ごとに RAM が違うので書かない。反映は `wsl --shutdown` 後の再起動 |
-| `powershell/history.seed.txt` | PSReadLine の履歴の種（手で選んだ定型コマンド。個人値は `<…名>` に置換済みで、そのままでは実行されない）。正本は `notes` の `exmem/knowledge/shell-command-usecases.md`。リンクではなく、初回に履歴ファイルが無いときだけコピーする（`scripts\windows\31_history_seed.bat`） |
+| `powershell/history.seed.txt` | PSReadLine の履歴の種（手で選んだ定型コマンド。個人値は `<…名>` に置換済みで、そのままでは実行されない）。正本は共有リポジトリ `workbase`（`C:\vault\notes\resources`）の `exmem/knowledge/shell-command-usecases.md`。リンクではなく、初回に履歴ファイルが無いときだけコピーする（`scripts\windows\31_history_seed.bat`） |
 | `powershell/profile.ps1` | PowerShell プロファイル（starship / lsd / zoxide / Emacs キーバインド）。起動を軽くするため、ツール不在時の代替・`cd` 後の自動 `ll`・PSFzf は持たない。コマンド体系は `home/.config/shell/common.sh` と揃える（基本エイリアスのみ。`Ctrl+r`/`Ctrl+t` の fzf と `zfz` = `Alt+j`、`cdg` = `Alt+k` は3シェル共通。PSFzf は使わず自前ハンドラ） |
+| `obsidian/.obsidian/` | Obsidian の設定（テーマ、CSS スニペット、プラグイン `colored-tags`、`app.json` など）。`links.map` で `%NOTES_DIR%\.obsidian` へジャンクションを張る。`workspace.json`（端末ごとの状態）は追跡しない |
+| `office/` | Office のテンプレ（`.potx` `.xltx` `.dotm` `.thmx` など）、UI 設定（`.exportedUI`）、サンプル。配置は手動（リンクしない）: テンプレは `%APPDATA%\Microsoft\Templates` と `%APPDATA%\Microsoft\Excel\XLSTART`、UI は Office の「リボンのユーザー設定 → インポート」 |
 | `autohotkey/` `notepadpp/` `drawio/` | 各アプリの設定（Notepad++ はテーマと `config.min.xml`（初回だけ `20_apps.bat` が `config.xml` として置く最小構成）のみ。アプリが書き換えるファイルは追跡しない） |
 
 ### 新しい設定をどこに置くか
@@ -76,10 +78,9 @@ dotfiles/
      ```powershell
      winget install Git.Git
      git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzucha16\dotfiles
-     git clone https://github.com/yuzucha16/notes C:\vault\repos\github.com\yuzucha16\notes
      ```
-     `notes` は Obsidian の Vault そのもの（共有するのは `resources/` と `.obsidian/` だけ）。`links.map` が `dotfiles` の隣にあることを前提に、`C:\vault\notes` へのリンクを張る。**`notes` を先に clone する**（`30_link.bat` より前）。Office のテンプレと UI 設定は自動では張らない。初回に `notes\resources\office` から手で配置する（テンプレ: `%APPDATA%\Microsoft\Templates` と `%APPDATA%\Microsoft\Excel\XLSTART`、UI: Office の「リボンのユーザー設定 → インポート」）。`resources/fonts` などは Git LFS なので `git lfs install` も済ませておく。
-     clone 後、ローカル専用の `projects/` `areas/` `archives/` は gitignore されているため、必要に応じて手で作る。
+     Obsidian の Vault `C:\vault\notes`（`NOTES_DIR`）は、この PC だけのローカルなディレクトリ（ローカルのリポジトリ。remote なし、または非公開）で、clone しない。作り方は、共有リポジトリ `workbase` の `workflow-kit` を参照する。`.obsidian` は `30_link.bat` が、`windows\obsidian\.obsidian` から `NOTES_DIR` へジャンクションで張る（`NOTES_DIR` が無ければ作る）。共有リポジトリ `workbase` は、`50_repos.bat` が `NOTES_DIR\resources` に clone する（ghq の管理外）。Office のテンプレと UI 設定は自動では張らない。初回に `windows\office` から手で配置する（配置先は上の `windows/` の表）。
+     Obsidian を最初に開く前に `30_link.bat` を実行する。先に Obsidian が実ディレクトリの `.obsidian` を作ると、`30_link.bat` が `[ERR]` で止まる（手で退避して再実行する）。
 1. `scripts\windows\10_env.bat`: `setx` で環境変数（`XDG_*`、`VAULT_HOME=C:\vault`、`GHQ_ROOT`、`NOTES_DIR` など）を設定し、ディレクトリを作る。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）
    - `scripts\windows\optional\capslock_to_ctrl.reg`（任意）: CapsLock を Ctrl にする。管理者権限が必要で、再起動後に有効。元に戻すときは `capslock_default.reg`
 2. `scripts\windows\20_apps.bat [home]`: scoop と bucket を導入し、アプリを入れる
@@ -93,7 +94,7 @@ dotfiles/
    - `[ERR] mklink failed` は開発者モードがオフのときに出る
    - `scripts\windows\31_history_seed.bat [-n]`: `windows\powershell\history.seed.txt` を PSReadLine の履歴ファイルへコピーする。履歴ファイルが無い/空のときだけ行い、既存の履歴は上書きしない（`-n`: 確認のみ）。リンクではないので、以後は PSReadLine が自由に追記する。**最初の pwsh を開く前に**実行する
 4. `scripts\windows\40_wsl_enable.bat`（WSL を使う場合）: 管理者権限で実行。WSL2 の機能を有効化する。**再起動後**、表示される `wsl --update` / `wsl --install -d Ubuntu-24.04` を手動で実行する
-5. `scripts\windows\50_repos.bat`: ghq で必要なリポジトリを取得する
+5. `scripts\windows\50_repos.bat`: ghq で必要なリポジトリを取得する。共有リポジトリ `workbase` は、ghq でなく `git clone` で `%NOTES_DIR%\resources` に取得する（既にあれば skip。`NOTES_DIR` が未設定なら `[ERR]`）
 
 ### WSL (Ubuntu 24.04) / Linux (apt 系)
 
@@ -135,10 +136,10 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行す�
 
 ## exmem との関係
 
-exmem（`C:\vault\notes\resources\exmem`。`notes` リポジトリの一部）は、AIとの壁打ちで得たナレッジの置き場。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業の経緯・決定・次にやることは、このリポジトリの `docs/` に残す。書き込みの唯一の例外は、エージェントに「ナレッジ化して」と指示したとき、`exmem/inbox/` に再利用できる知識を1ファイル置くこと（手順と形式は共通機能 `notes/resources/workflow-kit/knowledge-hook.md`）。
+exmem（`C:\vault\notes\resources\exmem`。共有リポジトリ `workbase` の一部）は、AIとの壁打ちで得たナレッジの置き場。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業の経緯・決定・次にやることは、このリポジトリの `docs/` に残す。書き込みの唯一の例外は、エージェントに「ナレッジ化して」と指示したとき、`exmem/inbox/` に再利用できる知識を1ファイル置くこと（手順と形式は共通機能 `notes/resources/workflow-kit/knowledge-hook.md`）。
 
 - 参照するもの: 履歴の種の本文（`exmem/knowledge/shell-command-usecases.md`。種ファイルはその派生物）。
-- 手順書は `notes` の `resources/cheatsheets/env/`。
+- 手順書は `workbase` の `cheatsheets/env/`（`C:\vault\notes\resources\cheatsheets\env\`）。
 
 ## 履歴リセット (2026-10-02)
 
@@ -155,5 +156,6 @@ git gc --prune=now
 
 ## 既知の課題
 
-- Office のテンプレと UI 設定は、2026-10-03 に `notes` リポジトリの `resources/office/` へ移管した（配置は手動。2026-10-03 以降 `links.map` は指さない）。`.obsidian` も `notes` 側で管理している。
+- Office のテンプレと UI 設定、`.obsidian` は、2026-10-03 に `notes` リポジトリへ移管したが、2026-10-05 に dotfiles（`windows/office/`、`windows/obsidian/.obsidian/`）へ戻した（Vault を PC ローカルのリポジトリと共有の `workbase` に分けたため。Office の配置は手動）。
+- Linux（WSL / ネイティブ）は、`workbase` の clone（`50_repos.sh`）と `.obsidian` の扱いが未対応（TODO）。`NOTES_DIR` の Linux での値も未確認。
 - `10_dirs.sh` が作る `~/vault` と Windows の `C:\vault` は別物（WSL からは `/mnt/c/vault` で見える）

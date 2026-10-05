@@ -1,0 +1,4 @@
+/* Readable line length scales with the font size, so zooming in keeps the characters per line (default is a fixed 700px) */
+body {
+  --file-line-width: 58em;
+}

@@ -1,0 +1,19 @@
+/* Material Gruvbox: Bold color / weight */
+.theme-dark .markdown-rendered strong,
+.theme-dark .markdown-rendered b,
+.theme-dark .markdown-source-view.mod-cm6 .cm-strong {
+  /*color: #C6A879 !important;*/
+  font-weight: 500;
+}
+
+/* Heading color: Olive Green */
+.theme-dark .markdown-rendered h1,
+.theme-dark .markdown-rendered h2,
+.theme-dark .markdown-rendered h3,
+.theme-dark .markdown-rendered h4,
+.theme-dark .markdown-rendered h5,
+.theme-dark .markdown-rendered h6,
+.theme-dark .markdown-source-view.mod-cm6 .HyperMD-header,
+.theme-dark .inline-title {
+  color: #A7B85A !important;
+}
