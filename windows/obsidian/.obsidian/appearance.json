@@ -1,0 +1,17 @@
+{
+  "theme": "obsidian",
+  "accentColor": "#5f5cf5",
+  "cssTheme": "Material Gruvbox",
+  "interfaceFontFamily": "PlemolJP Console NF,Moralerspace Neon HW,Meiryo UI",
+  "textFontFamily": "PlemolJP Console NF,Moralerspace Neon HW,Meiryo UI",
+  "monospaceFontFamily": "PlemolJP Console NF,Moralerspace Neon HW,Meiryo UI",
+  "enabledCssSnippets": [
+    "material-gruvbox-bold",
+    "file-explorer-compact",
+    "readable-width"
+  ],
+  "baseFontSize": 14,
+  "baseFontSizeAction": true,
+  "showViewHeader": true,
+  "showRibbon": true
+}

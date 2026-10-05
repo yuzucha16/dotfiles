@@ -31,5 +31,6 @@ home\.config\zed\keymap.json|%APPDATA%\zed\keymap.json
 home\.config\zed\settings.json|%APPDATA%\zed\settings.json
 home\.config\zed\themes|%APPDATA%\zed\themes
 
-# Vault (notes is a sibling repo of dotfiles and is itself the Obsidian vault root; it holds .obsidian too)
-..\notes|%NOTES_DIR%
+# Obsidian config (the vault root %NOTES_DIR% is a plain, PC-local directory/repo made by the workflow hook; it is not linked.
+# The shared repo "workbase" is cloned into %NOTES_DIR%\resources by 50_repos.bat, not linked.)
+windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian
