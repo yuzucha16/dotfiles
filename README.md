@@ -98,15 +98,16 @@ dotfiles/
 
 ### WSL (Ubuntu 24.04) / Linux (apt 系)
 
-WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/vault/...` から参照する）。ネイティブ Linux は、OS を入れて `~/vault/repos/github.com/yuzucha16/dotfiles` に clone してから実行する（OS のインストール手順は notes の `resources/cheatsheets/env/debian-family.md`）。`30_link.sh` は、置かれているリポジトリを自動で `--src` にするので、どちらでも同じ呼び方になる。
+WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/vault/...` から参照する）。ネイティブ Linux は、OS を入れて `~/vault/repos/github.com/yuzucha16/dotfiles` に clone してから実行する（OS のインストール手順は notes の `resources/cheatsheets/env/debian-family.md`）。`30_link.sh` は、置かれているリポジトリを自動で `--src` にするので、どちらでも同じ呼び方になる。Vault のトップ `NOTES_DIR` は、WSL では `/mnt/c/vault/notes`（Windows 側と共有）、ネイティブ Linux では `~/vault/notes`（`home/.profile` が既定値を設定する。`~/.config/profile.local` で上書きできる）。
 
 1. `scripts/linux/10_dirs.sh`: XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/vault/{build,tools}` を作る
 2. `scripts/linux/20_packages.sh [desktop]`: apt の更新、`manifests/apt.txt` のパッケージ（git / curl / wget / zsh と CLI ツール）の導入、starship、ghq（ビルド済みバイナリを `~/.local/bin` へ。Go は不要）の導入、`bat` / `fd` のリンク作成。ネイティブ Linux のデスクトップは `desktop` を付けて `apt.desktop.txt` も入れる。Docker や Go は入れない（下の「必要なときだけ入れるもの」）
    - `scripts/linux/23_ja.sh`（ネイティブ Linux のみ。WSL では何もしない）: fcitx5 + Mozc、日本語フォントを入れる。Ubuntu 系は言語パックも入れる。入れたら再ログインして、Fcitx 5 設定で Mozc を追加する（手動）
    - `scripts/linux/24_fonts.sh`: PlemolJP NF / MoralerspaceHW の latest を `gh` で `~/download` へ取得する（WSL でも WSL 側の `~/download`）。インストールは手動。`gh auth login` は不要
 3. `scripts/linux/30_link.sh [link|unlink] [-n]`: stow で `home/` を `~` に展開する（Windows の `30_link.bat` と同じ引数）。リンク切れの旧 symlink は削除する。展開先に実ファイルがあると `[ERR]` を出して止まる（自動退避はしない。手で退避/削除して再実行）。終わったら `chsh -s /usr/bin/zsh`
+   - ネイティブ Linux のみ: `windows/obsidian/.obsidian` を `$NOTES_DIR/.obsidian`（`~/vault/notes/.obsidian`）へ symlink する（親が無ければ作る。`unlink` で外れる）。実ディレクトリがあると `[ERR]` で止まる（Obsidian を先に開くと、実ディレクトリができる。手で退避して再実行）。WSL では何もしない（Windows 側の `30_link.bat` が張るジャンクションを `/mnt/c` 越しに共有する）
    - `scripts/linux/31_history_seed.sh [-n]`: `manifests/history.seed.sh.txt` を `~/.local/state/{zsh,bash}/history`（`XDG_STATE_HOME` があればその下）へコピーする。履歴が無い/空のときだけ行い、既存の履歴は上書きしない（`-n`: 確認のみ）。リンクではないので、以後はシェルが自由に追記する。**最初のシェルを開く前に**実行する
-4. `scripts/linux/50_repos.sh`: ghq で参照用リポジトリを取得する
+4. `scripts/linux/50_repos.sh`: 共有リポジトリ `workbase` を、ネイティブ Linux では `$NOTES_DIR/resources` に `git clone` する（ghq の管理外。既にあれば skip。`WORKBASE_URL` で URL を変えられる）。WSL では、Windows 側の `50_repos.bat` が clone するので、無ければ `[WARN]` を出すだけ。そのあと、ghq で参照用リポジトリを取得する
 
 ### 必要なときだけ入れるもの（WSL・手動）
 
@@ -157,5 +158,5 @@ git gc --prune=now
 ## 既知の課題
 
 - Office のテンプレと UI 設定、`.obsidian` は、2026-10-03 に `notes` リポジトリへ移管したが、2026-10-05 に dotfiles（`windows/office/`、`windows/obsidian/.obsidian/`）へ戻した（Vault を PC ローカルのリポジトリと共有の `workbase` に分けたため。Office の配置は手動）。
-- Linux（WSL / ネイティブ）は、`workbase` の clone（`50_repos.sh`）と `.obsidian` の扱いが未対応（TODO）。`NOTES_DIR` の Linux での値も未確認。
+- Linux（WSL / ネイティブ）の `workbase` の clone（`50_repos.sh`）、`.obsidian` のリンク（`30_link.sh`、ネイティブのみ）、`NOTES_DIR`（`home/.profile`）は、2026-10-05 に対応した。WSL（Ubuntu 24.04）の実機で、一時ディレクトリと偽の HOME を使って35項目を試験した（ネイティブ Linux の分岐は、`PROC_VERSION_FILE` で差し替えて再現した。ネイティブ Linux の実機は未確認）。ワークスペース生成フックの既定の対象 `C:\vault\notes` は Windows と WSL の標準の場所なので、ネイティブ Linux では対象を言葉で指定する（例: `~/vault/notes`）。
 - `10_dirs.sh` が作る `~/vault` と Windows の `C:\vault` は別物（WSL からは `/mnt/c/vault` で見える）
