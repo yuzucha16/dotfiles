@@ -23,7 +23,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - `git bundle` のバックアップの所在を確認する（見つからない）。必要なら保管場所を決める。
 - 古い WSL では `fdfind` → `fd` のリンクが無いので、`20_packages.sh` を再実行するか手でリンクを張る。
 
-- `notes` の構造変更（`notes/docs/log.md` の 2026-10-05）に合わせた、この変更のコミット（未コミットの差分: `windows/obsidian/` `windows/office/` の追加、`links.map` `10_env.bat` `50_repos.bat` `.gitignore` `README.md` `AGENTS.md`）。コミットは、トップの切り替えと一緒に行う（リンクを先に有効にすると、実ディレクトリの `.obsidian` と衝突して `30_link.bat` が `[ERR]` になる）。Linux の `50_repos.sh`（`workbase` の clone）と `.obsidian` の扱いは TODO。
+- ネイティブ Linux の実機で、`30_link.sh`（`.obsidian` の symlink）と `50_repos.sh`（`workbase` の clone）、`NOTES_DIR` の既定値（`~/vault/notes`）を通して確認する。WSL では、一時ディレクトリで試験済み（2026-10-05）。ネイティブの分岐は、`PROC_VERSION_FILE` の差し替えで再現しただけ。
 
 ## Open Questions
 
@@ -54,6 +54,11 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 - clone 直後の大量の差分（64ファイル、約8,000行）の原因が改行コード（index は LF、作業ツリーは CRLF）と判明。`.gitattributes` を追加（`5af8dd1`）し、`.bat` 8本の index を LF に正規化（`7e9ae20`）。実質差分の4ファイルは破棄し、`git restore .` で作業ツリーを取り直した。`home/.gitconfig` の `[user]` は `~/.gitconfig_local` に移し済みのため破棄。詳細は `docs/decisions.md` の Gotchas。
 - 上の件の「ナレッジ化して」で出た改善2点を、workflow-kit に反映（版 `2026-10-06.3`）: 点検スクリプトの `<…>` 検出からインラインコードを除外、既存知識の検索用 `tools/find-knowledge.ps1` を追加。変更は `workbase` 側（dotfiles のコミット対象外）。
+
+### 2026-10-05
+
+- Vault の構造変更（`notes` を PC ローカルのトップと、共有の `workbase` に分けた）に合わせて、Windows 側を更新した（コミット `cded219`）。`.obsidian`（15ファイル）と `office/` を `windows/` に戻し、`links.map` を `windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian` に、`50_repos.bat` に `workbase` の `git clone`（`%NOTES_DIR%\resources`、ghq の管理外）を足した。ジャンクション越しのディレクトリを Grep / Glob / `rg` が辿らないため、ghq の位置からのリンクにしなかった。
+- Linux 側を対応した（ユーザーの指示）。`scripts/linux/lib.sh` に `notes_dir`（`NOTES_DIR` があればそれ、WSL は `/mnt/c/vault/notes`、ネイティブは `~/vault/notes`）、`clone_workbase`、`link_obsidian` を足し、`50_repos.sh`（ネイティブは `workbase` を `$NOTES_DIR/resources` に clone、WSL は Windows 側が clone するので確認のみ）、`30_link.sh`（ネイティブのみ `.obsidian` を symlink、WSL は Windows 側のジャンクションを共有）、`home/.profile`（`NOTES_DIR` の既定値）を変えた。確認: WSL（Ubuntu 24.04）の実機で、一時ディレクトリと偽の HOME を使い、35項目が合格（構文、`NOTES_DIR` の分岐3種、clone の4場面、`link_obsidian` の9場面、`30_link.sh` の通しの5場面、`50_repos.sh` の5場面）。実環境の `~` は変更していない。`~/.profile` は dotfiles への symlink なので、新しいログインシェルで `NOTES_DIR=/mnt/c/vault/notes` になり、`workbase` の clone が見えることも確認した。試験用に、`is_wsl` と `.profile` に環境変数 `PROC_VERSION_FILE`（`/proc/version` の差し替え）を足した。ネイティブ Linux の実機は未確認。
 
 ### 2026-10-04
 
