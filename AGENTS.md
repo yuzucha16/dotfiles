@@ -23,6 +23,7 @@ dotfiles は、Windows 11 + WSL2 / Linux（apt 系）の作業環境を、複数
 - exmem は `C:\vault\notes\resources\exmem`（WSL: `/mnt/c/vault/notes/resources/exmem`）。共有リポジトリ `workbase`（`C:\vault\notes\resources` に clone）の一部で、dotfiles とは別リポジトリ。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業ログを exmem に残さない。書き込みの例外は「ナレッジ化して」だけ（`knowledge/` `contexts/` など inbox 以外は編集しない）。
 - 参照している正本: 履歴の種の本文は `exmem/knowledge/shell-command-usecases.md`。`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` はそこからの派生物なので、種ファイルを直接編集しない。
 - 「ナレッジ化して」で残さないもの（dotfiles 固有で他に使い回せない経緯）は、`docs/log.md` と `docs/decisions.md` に残す。
+- `scripts/linux/` や `home/.profile` を変えたら、`bash tests/linux/test_scripts.sh` を実行して、失敗が0であることを確認する（WSL で実行できる。観点は `README.md` の「スクリプトの試験」）。
 
 ## コミット
 
