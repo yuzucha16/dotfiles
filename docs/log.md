@@ -57,6 +57,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ### 2026-10-05
 
+- Linux 側の試験スクリプトを `tests/linux/test_scripts.sh` として保存した（ユーザーの承認。試験のたびに使い捨てていたものを、再利用できる形にした）。場所は自動判定、試験用のリポジトリは自前で作る（vault に依存しない）、WSL とネイティブの分岐は `PROC_VERSION_FILE` で強制、実環境を見る項目と `stow` が必要な項目は、無ければ skip する。WSL で36項目すべて合格（確認: 2026-10-05、終了コード0）。`README.md` に「スクリプトの試験」の節と `tests/` を、`AGENTS.md` に「`scripts/linux/` などを変えたら実行する」を足した。
 - Vault の構造変更（`notes` を PC ローカルのトップと、共有の `workbase` に分けた）に合わせて、Windows 側を更新した（コミット `cded219`）。`.obsidian`（15ファイル）と `office/` を `windows/` に戻し、`links.map` を `windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian` に、`50_repos.bat` に `workbase` の `git clone`（`%NOTES_DIR%\resources`、ghq の管理外）を足した。ジャンクション越しのディレクトリを Grep / Glob / `rg` が辿らないため、ghq の位置からのリンクにしなかった。
 - Linux 側を対応した（ユーザーの指示）。`scripts/linux/lib.sh` に `notes_dir`（`NOTES_DIR` があればそれ、WSL は `/mnt/c/vault/notes`、ネイティブは `~/vault/notes`）、`clone_workbase`、`link_obsidian` を足し、`50_repos.sh`（ネイティブは `workbase` を `$NOTES_DIR/resources` に clone、WSL は Windows 側が clone するので確認のみ）、`30_link.sh`（ネイティブのみ `.obsidian` を symlink、WSL は Windows 側のジャンクションを共有）、`home/.profile`（`NOTES_DIR` の既定値）を変えた。確認: WSL（Ubuntu 24.04）の実機で、一時ディレクトリと偽の HOME を使い、35項目が合格（構文、`NOTES_DIR` の分岐3種、clone の4場面、`link_obsidian` の9場面、`30_link.sh` の通しの5場面、`50_repos.sh` の5場面）。実環境の `~` は変更していない。`~/.profile` は dotfiles への symlink なので、新しいログインシェルで `NOTES_DIR=/mnt/c/vault/notes` になり、`workbase` の clone が見えることも確認した。試験用に、`is_wsl` と `.profile` に環境変数 `PROC_VERSION_FILE`（`/proc/version` の差し替え）を足した。ネイティブ Linux の実機は未確認。
 
