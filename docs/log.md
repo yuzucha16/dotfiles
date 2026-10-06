@@ -51,6 +51,11 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
+### 2026-10-06（24_fonts.bat の出力保存と pause、50_repos.bat の変更）
+
+- `24_fonts.bat` に、`31_history_seed.bat` と同じ方式（`:MAIN` の出力を `tmp\24_fonts.log` に記録、表示後に `pause`）を入れた。従来は末尾に `pause` が無く、ダブルクリックで結果が見えなかった。あわせて、`gh release download` の失敗を検出して `[ERROR]` を出し、1件でも失敗したら終了コード 1 にした（従来は失敗しても「Downloaded」と出ていた）。`gh` は `call gh` で呼ぶ。確認: 偽の `gh.cmd` と偽の `USERPROFILE` で、成功（rc=0）、失敗（rc=1、`[ERROR]` が2件）、`gh` なし（rc=1）を実行し期待どおり。実際のダウンロードは未実行。
+- ユーザーが `50_repos.bat` に加えた変更（コメントアウトされていた `ghq get yuzucha16/adv360-pro-zmk` を `ghq get yuzucha16/dotfiles` に置換）を、ユーザーの指示でコミットに含めた。内容は未検証（上の行のコメント「dotfiles itself is already cloned by hand」と食い違っている）。
+
 ### 2026-10-06（31_history_seed.bat の出力保存と pause）
 
 - `31_history_seed.bat` をダブルクリックで実行すると、一瞬でウィンドウが閉じて結果が分からなかった（ユーザーの報告）。本体を `:MAIN` に分けて出力を `tmp\31_history_seed.log`（`.gitignore` 済み、実行のたびに上書き）へ記録し、画面に表示したあと `pause` で止まるようにした。終了コードは従来どおり（成功・SKIP・dry-run は 0、引数誤り・種なし・コピー失敗は 1）。確認: `-n`、不正な引数、偽の `APPDATA` での実コピーと2回目の SKIP を実行し、期待どおり（実環境の履歴 15,964 バイトは不変）。他の `.bat`（`30_link`、`24_fonts` など）にはログを足していない。`pause` の無い `24_fonts.bat` は未対応。
