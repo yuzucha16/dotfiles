@@ -359,7 +359,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
   - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/git-line-endings.md）
 - **`windows/terminal/settings.json` だけ、index が CRLF で作業ツリーが LF だった。Terminal が保存するたびに全行（約200行）が差分になった**（2026-10-07）。`git ls-files --eol` が `i/crlf w/lf attr/eol=lf`。原因は、上の件で `.gitattributes` を足したとき（`7e9ae20`）に正規化したのが `.bat` だけで、このファイルの index は CRLF のまま残っていたこと。`git diff --ignore-space-at-eol` では実質差分は10行だけだった。直し方は、`git add --renormalize <パス>` で index を LF にし、改行だけのコミット（`39930cc`）と内容のコミット（`3c49d9b`）に分けた。
   - 分けるときの落とし穴: `git commit -m ... -- <パス>` は index ではなく作業ツリーの内容をコミットするので、ステージで分けても1コミットにまとまる（1回失敗し、`reset --soft HEAD~1` でやり直した。反映前のコミットだったので書き換えは許される範囲）。index だけを LF にしたいときは、`git hash-object -w --no-filters` と `git update-index --cacheinfo` で index に直接入れ、パス指定なしで `git commit` する。
-  - 【汎用】行き先: 未仕分け
+  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-07-gitattributes-leftover-crlf-index.md）
 - **重複した WSL プロファイル（同名 `Ubuntu-24.04`）が Terminal の `settings.json` に残った**（2026-10-07）。WSL を再インストールすると guid が変わり、Terminal が新しいエントリを足し、古い方は自動では消えない。`commandline: "wsl.exe -d Ubuntu-24.04"` 付きの古い方（`963ff2f7…`）を削除し、`commandline` なしの自動生成の形（`c83ff58d…`）を残した（ユーザーの指示）。確認: 古い guid はリポジトリ内のどこからも参照されていない（grep）、`defaultProfile` は PowerShell、`wsl -l -v` で Ubuntu-24.04 は1つだけ。`guid` が再インストールで変わる理由と、Terminal が消したエントリを書き戻さないかは、未確認（仮説）。再インストールのたびに同じ手当てが要る見込み。
   - 【この件】行き先: local（Windows Terminal の設定の重複。dotfiles 固有）
 
