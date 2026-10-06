@@ -75,18 +75,20 @@ dotfiles/
 
 0. **事前準備（手動）**
    - 設定 → 開発者向け で「開発者モード」をオンにする（管理者権限なしで symlink を作るため。必須。オフだと `30_link.bat` は `[ERR]` になる）
-   - git を入れ、次の場所に clone する（このパス構成が前提。**最初から ghq の場所に clone する**ので、zip の取得や、dotfiles の二重取得・`30_link` のやり直しは要らない）
+   - scoop と git を入れ、次の場所に clone する（このパス構成が前提。**最初から ghq の場所に clone する**ので、zip の取得や、dotfiles の二重取得・`30_link` のやり直しは要らない）。git は最初から scoop のもの1種類だけにする（winget の git は使わない。管理者権限が要らず、PATH の優先順位の問題も起きない）
      ```powershell
-     winget install Git.Git
+     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+     Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression
+     scoop install git
      git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzucha16\dotfiles
      ```
-     この winget の git は最初の clone 用の一時的なもの。git の正本は scoop の git で、`20_apps.bat` が、winget の git を見つけたら（確認のうえ）`winget uninstall` で消す（機械全体の git はシステムの PATH にあり、scoop の shim が入るユーザーの PATH より先に見つかるため、残すと winget の git が使われる）。消すのに UAC が出ることがある。zip での取得は使わない（`.git` が無く、あとで ghq の場所と食い違う）
+     リポジトリは private なので、`git clone` で GitHub のサインイン（Git Credential Manager。scoop の git に同梱）が開く。`scoop install git` のあとに `git` が見つからなければ、新しい PowerShell を開き直す。zip での取得は使わない（`.git` が無く、あとで ghq の場所と食い違う）。すでに winget の git が入っているPCは、一度だけ `winget uninstall --id Git.Git -e` で消す
      Obsidian の Vault `C:\vault\works`（`WORKS_DIR`）は、この PC だけのローカルなディレクトリ（ローカルのリポジトリ。remote なし、または非公開）で、clone しない。作り方は、共有リポジトリ `workbase` の `workflow-kit` を参照する。`.obsidian` は `30_link.bat` が、`windows\obsidian\.obsidian` から `WORKS_DIR` へジャンクションで張る（`WORKS_DIR` が無ければ作る）。共有リポジトリ `workbase` は、`50_repos.bat` が `WORKS_DIR\resources` に clone する（ghq の管理外）。Office のテンプレと UI 設定は自動では張らない。初回に `windows\office` から手で配置する（配置先は上の `windows/` の表）。
      Obsidian を最初に開く前に `30_link.bat` を実行する。先に Obsidian が実ディレクトリの `.obsidian` を作ると、`30_link.bat` が `[ERR]` で止まる（手で退避して再実行する）。
 1. `scripts\windows\10_env.bat`: `setx` で環境変数（`XDG_*`、`VAULT_HOME=C:\vault`、`GHQ_ROOT`、`WORKS_DIR` など）を設定し、ディレクトリを作る。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）
    - `scripts\windows\optional\capslock_to_ctrl.reg`（任意）: CapsLock を Ctrl にする。管理者権限が必要で、再起動後に有効。元に戻すときは `capslock_default.reg`
-   - `scripts\windows\11_git_identity.bat`: `~\.gitconfig_local`（PC ごとの git の名前・メール）が無いときだけ、`user.name` / `user.email` を対話的に聞いて作る（`credential.helperselector.selected = manager` も入れる）。既にあれば触らない。**`30_link.bat` の前に**実行する（git が必要。手順 0 の winget の git でよい）。`git config --global` は使わない: リンク前は実ファイルの `~\.gitconfig` ができて `30_link.bat` が `[ERR]` になり、リンク後はリポジトリ内の `home\.gitconfig` を書き換えてしまうため。`~\.gitconfig` が `include` するので、読まれるのは `30_link.bat` の後。無効な入力は5回で `[ERR]`（入力が閉じていても無限ループしない）
-2. `scripts\windows\20_apps.bat [home]`: scoop と bucket を導入し、アプリを入れる（先に git を入れる。winget の git があれば、確認のうえ消す）
+   - `scripts\windows\11_git_identity.bat`: `~\.gitconfig_local`（PC ごとの git の名前・メール）が無いときだけ、`user.name` / `user.email` を対話的に聞いて作る（`credential.helperselector.selected = manager` も入れる）。既にあれば触らない。**`30_link.bat` の前に**実行する（git が必要。手順 0 で入れた scoop の git でよい）。`git config --global` は使わない: リンク前は実ファイルの `~\.gitconfig` ができて `30_link.bat` が `[ERR]` になり、リンク後はリポジトリ内の `home\.gitconfig` を書き換えてしまうため。`~\.gitconfig` が `include` するので、読まれるのは `30_link.bat` の後。無効な入力は5回で `[ERR]`（入力が閉じていても無限ループしない）
+2. `scripts\windows\20_apps.bat [home]`: scoop と bucket を導入し、アプリを入れる（手順 0 で scoop を入れていれば、導入は skip する。git は先に入る）
    - PC1: `20_apps.bat`（`apps.txt` のみ）
    - PC2: `20_apps.bat home`（`apps.txt` + `apps.home.txt`）
    - Notepad++ の `config.xml` が無い/空のときだけ、`windows\notepadpp\config.min.xml`（タブ幅 2、新規文書 LF、折り返し、スナップショットバックアップ、ダークテーマ、自動更新オフなど）をコピーする。既にあれば触らない。リンクではないので、以後はアプリが自由に書き換える。最小構成を適用し直したいときは `config.xml` を削除（または空に）して再実行する
