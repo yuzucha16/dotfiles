@@ -32,10 +32,11 @@ fi
 export WORKS_DIR
 
 # ghq root: native Linux puts it under the vault ($WORKS_DIR/repos), as on Windows.
-# WSL keeps its own on the Linux filesystem (not /mnt/c: git is slow there).
+# WSL keeps its own at ~/works/repos on the Linux filesystem (not /mnt/c: git is slow there),
+# so the layout (works/repos) matches on every OS.
 if [ -z "${GHQ_ROOT:-}" ]; then
   if [ "$_wsl" = 1 ]; then
-    GHQ_ROOT="$HOME/vault/repos"
+    GHQ_ROOT="$HOME/works/repos"
   else
     GHQ_ROOT="$WORKS_DIR/repos"
   fi

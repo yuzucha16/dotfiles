@@ -136,7 +136,7 @@ dotfiles/
 
 WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/Users/<Windows のユーザー名>/works/repos/...` から参照する）。ネイティブ Linux は、OS を入れて、冒頭の「クイックスタート（ネイティブ Linux）」で `~/works/repos/github.com/yuzucha16/dotfiles` に clone してから実行する（OS のインストール手順は works の `resources/cheatsheets/env/debian-family.md`）。`30_link.sh` は、置かれているリポジトリを自動で `--src` にするので、どちらでも同じ呼び方になる。Vault のトップ `WORKS_DIR` は、WSL では `/mnt/c/Users/<Windows のユーザー名>/works`（Windows 側と共有）、ネイティブ Linux では `~/works`（`home/.profile` が既定値を設定する。`~/.config/profile.local` で上書きできる）。
 
-1. `scripts/linux/10_dirs.sh`: XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/vault/{build,tools}` を作る
+1. `scripts/linux/10_dirs.sh`: XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/works/{build,tools}` を作る
    - `scripts/linux/11_git_identity.sh`: `~/.gitconfig_local`（PC ごとの git の名前・メール）が無いときだけ、`user.name` / `user.email` を対話的に聞いて作る（Windows の `11_git_identity.bat` と同じ。既にあれば触らない）。**`30_link.sh` の前に**実行する（git が必要。ネイティブ Linux はクイックスタートで入っている。WSL は Ubuntu 標準の git か、`20_packages.sh` の後）。`git config --global` は使わない（理由は Windows 版と同じ。`~/.gitconfig` は `30_link.sh` が張る symlink）。`credential.helperselector`（Git Credential Manager）は Windows 版も書かず、`home/.gitconfig` に静的に持つ。無効な入力は5回で `[ERR]`
 2. `scripts/linux/20_packages.sh [desktop]`: apt の更新、`manifests/apt.txt` のパッケージ（git / curl / wget / zsh と CLI ツール）の導入、starship、ghq（ビルド済みバイナリを `~/.local/bin` へ。Go は不要）の導入、`bat` / `fd` のリンク作成。ネイティブ Linux のデスクトップは `desktop` を付けて `apt.desktop.txt` も入れる。Docker や Go は入れない（下の「必要なときだけ入れるもの」）
    - `scripts/linux/23_ja.sh`（ネイティブ Linux のみ。WSL では何もしない）: fcitx5 + Mozc、日本語フォントを入れる。Ubuntu 系は言語パックも入れる。入れたら再ログインして、Fcitx 5 設定で Mozc を追加する（手動）
@@ -209,4 +209,4 @@ git gc --prune=now
 
 - Office のテンプレと UI 設定、`.obsidian` は、2026-10-03 に `notes` リポジトリへ移管したが、2026-10-05 に dotfiles（`windows/office/`、`windows/obsidian/.obsidian/`）へ戻した（Vault を PC ローカルのリポジトリと共有の `workbase` に分けたため。Office の配置は手動）。
 - Linux（WSL / ネイティブ）の `workbase` の clone（`50_repos.sh`）、`.obsidian` のリンク（`30_link.sh`、ネイティブのみ）、`WORKS_DIR`（`home/.profile`）は、2026-10-05 に対応した。WSL（Ubuntu 24.04）の実機で、一時ディレクトリと偽の HOME を使って35項目を試験した（ネイティブ Linux の分岐は、`PROC_VERSION_FILE` で差し替えて再現した。ネイティブ Linux の実機は未確認）。ワークスペース生成フックの既定の対象 `$HOME\works` は Windows と WSL の標準の場所なので、ネイティブ Linux では対象を言葉で指定する（例: `~/works`）。
-- `10_dirs.sh` が作る `~/vault`（WSL 自身の作業用。`GHQ_ROOT` の既定も `~/vault/repos`）と、Windows の `%USERPROFILE%\works` は別物（後者は WSL から `/mnt/c/Users/<Windows のユーザー名>/works` で見える。2026-10-06 に `C:\vault` から移した）
+- `10_dirs.sh` が作る `~/works`（WSL 自身の作業用。`GHQ_ROOT` の既定も `~/works/repos`。Windows と同じ並びにそろえた。2026-10-06 に `~/vault` から改めた）と、Windows の `%USERPROFILE%\works` は別物（後者は WSL から `/mnt/c/Users/<Windows のユーザー名>/works` で見える。2026-10-06 に `C:\vault` から移した）
