@@ -14,7 +14,7 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - **置き場の判断基準**: WSL でも使う → `home/` ／ Windows 専用 → `windows/<アプリ>/` ／ 配置しない雛形 → `templates/` ／ 不要 → 削除（履歴に残る）。
 - **`.bat` のコメントは ASCII（英語）**。日本語（UTF-8）は cp932 コンソールで壊れる。バッチは cp932 でもテストする。
 - **exmem には基本書かない**。dotfiles は exmem を参照するだけ。作業の経緯・決定・次にやることは dotfiles の `docs/` に残す（2026-10-04 決定）。
-- **例外は「ナレッジ化して」だけ**（2026-10-04 決定）。作業中に得た再利用できる知識（作業ログではないもの）を、`exmem/inbox/YYYY-MM-DD-<topic>.md` に置く。根拠: exmem は inbox のメモを `knowledge/` へ統合する仕組みを持つので、dotfiles 側は inbox に置くだけで育成のループに乗る。書き込み先を inbox の新規1ファイルに限り、`knowledge/` `contexts/` は触らない。ユーザーが指示したときだけ実行し、`notes` のコミットはユーザーが行う。手順と形式は、共通機能 `notes/resources/workflow-kit/knowledge-hook.md` が正本（2026-10-04 に `AGENTS.md` から移した。それ以前の本文は git 履歴にある）。却下案: `knowledge/` へ直接書く（統合時の実物照合・タグ正規化を飛ばす）、作業終了ごとの自動書き込み（作業ログが流れ込む）。
+- **例外は「ナレッジ化して」だけ**（2026-10-04 決定）。作業中に得た再利用できる知識（作業ログではないもの）を、`exmem/inbox/YYYY-MM-DD-<topic>.md` に置く。根拠: exmem は inbox のメモを `knowledge/` へ統合する仕組みを持つので、dotfiles 側は inbox に置くだけで育成のループに乗る。書き込み先を inbox の新規1ファイルに限り、`knowledge/` `contexts/` は触らない。ユーザーが指示したときだけ実行し、`notes` のコミットはユーザーが行う。手順と形式は、共通機能 `works/resources/workflow-kit/knowledge-hook.md` が正本（2026-10-04 に `AGENTS.md` から移した。それ以前の本文は git 履歴にある）。却下案: `knowledge/` へ直接書く（統合時の実物照合・タグ正規化を飛ばす）、作業終了ごとの自動書き込み（作業ログが流れ込む）。
 
 ## 構成と命名の根拠
 
@@ -23,7 +23,7 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - Office テンプレと `.obsidian` は `notes` リポジトリへ移管済み。`links.map` に残るのは `..\notes|%NOTES_DIR%`（Vault）だけ。
 - スクリプト番号は、十の位が層、一の位が同じ層の固有ツール。10 刻みなのは後から差し込む余地のため。Windows と Linux で同じ番号は同じ役割で、無い側は欠番にする。OS 接頭辞（w / l）と英字の枝番は廃止した（OS はディレクトリで分かれる）。
 - 実行順は、Linux は「ディレクトリ → パッケージ」（ghq を `~/.local/bin` に置くため）。`notes` を先に clone してから `30_link`（`..\notes` をリンクするため）。
-- `manifests/` の一覧は、スクリプトと手順書（`notes/resources/cheatsheets/env/`）で重複させない。`lib.sh` の `read_list` は行内の空白を全部消すので、2列の一覧は `:` 区切りにする（`fonts.txt` は `owner/repo:asset glob`）。
+- `manifests/` の一覧は、スクリプトと手順書（`works/resources/cheatsheets/env/`）で重複させない。`lib.sh` の `read_list` は行内の空白を全部消すので、2列の一覧は `:` 区切りにする（`fonts.txt` は `owner/repo:asset glob`）。
 
 ## Decisions
 
