@@ -27,6 +27,13 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Vault を `%USERPROFILE%\works`、ghq の root を `%USERPROFILE%\works\repos` に移し、Linux 側も `~/works`、`~/works/repos` にそろえる（2026-10-06。ユーザーの決定と指示）
+
+- 決めたこと: Windows の `10_env.bat` は `VAULT_HOME` を廃止し、`WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos` にする。`WORKS_DIR` は `WSLENV`（`WORKS_DIR/p`）で WSL に渡す。Linux 側は、WSL の `GHQ_ROOT` を `~/works/repos`、`10_dirs.sh` の作業ディレクトリを `~/works/{build,tools}` にする（対称性のため。ユーザーの指示）。WSL の ghq の root は、`/mnt/c` の上に置かず（git が遅い）、WSL 自身の `~/works/repos` に置く。
+- 根拠と却下案: 一般化した内容は、works の `docs/decisions.md` の同名の決定にある（却下案は未検討。承認のみ）。
+- 確認済み（2026-10-06）: `bash tests/linux/test_scripts.sh` が 51/51 合格（WSL で実行）。**未確認**: `10_env.bat` の再実行後の `WSLENV`（`WORKS_DIR/p`、`CERTS_DIR/p` が1回ずつ）と、新しい WSL セッションでの `WORKS_DIR` の値。
+- 行き先: local（dotfiles のスクリプトの実装。一般化した内容は works の決定と exmem の inbox メモにある）
+
 ### 【この件】会社 CA 証明書の置き場を `%USERPROFILE%\.certs` にする。WSL へは `WSLENV` で渡す（2026-10-06）
 
 - 確認済み（2026-10-06）: `bash -n common.sh`、`CERTS_DIR` 指定時と未指定時の分岐、`WSLENV` の重複判定の論理（実行して確認）。**未確認**: `10_env.bat` の実行（`setx`）と、新しい WSL セッションで `$CERTS_DIR` が `/mnt/c/Users/.../.certs` になること。
