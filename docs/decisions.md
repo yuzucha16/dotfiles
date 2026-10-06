@@ -148,6 +148,12 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - 却下: `curl` / `Invoke-WebRequest` への置換（アセット名にバージョンが入り、glob が使えない）。
 - 未確認: 未ログインのレート制限（1回2件程度なら問題ないはずだが、推測）。
 
+### `scoop-completion` と Moralerspace を manifest から外した。`.bat` のコメントは全て英語にした（2026-10-06）
+
+- **`scoop-completion`**: `apps.txt` から削除。PowerShell の補完は `profile.ps1` で使っていない（`scoop-completion` / `Import-Module` の参照なし。確認: Grep）。「`PSFzf` / `scoop-completion` を削除した」という前の決定（「シェル」の項）に、`apps.txt` の行だけが取り残されていた。このPCには導入済みなので、不要なら `scoop uninstall scoop-completion`（手動）。
+- **Moralerspace**: `manifests/fonts.txt` の `yuru7/moralerspace:MoralerspaceHW_v*.zip` を削除（ユーザーの指示）。一覧は Windows の `24_fonts.bat` と Linux の `24_fonts.sh` の共有なので、両方で取得されなくなる。メインは PlemolJP Console NF。**残っている参照**: Zed の `settings.json` と Obsidian の `appearance.json` のフォントのフォールバックに `Moralerspace Neon HW` が残る（入っていなければ次の候補 `Meiryo UI` に落ちるだけ。未対応）。過去の記録（フォント取得の項）は当時のまま残した。
+- **`.bat` の日本語コメントで文字化け**: `20_apps.bat` の冒頭で、日本語コメント（`REM PS_EXE は完全パスにして、…`）の末尾のバイトが cp932 のコンソールで次の行と混ざり、文字化けしたコマンドとして実行されて「認識されていません」になった。原則（「`.bat` のコメントは ASCII（英語）」）に反して、`10_env` / `20_apps` / `40_wsl_enable` に日本語コメントが残っていた。全て英語にし、`scripts/windows/*.bat` の全体が ASCII であることを `tests/windows/test_20_apps.ps1` で検査するようにした（再発防止）。実機での再実行は未確認（試験は ASCII であることの確認）。
+
 ### 初回は scoop の git だけで最終の場所に clone する（winget の git は使わない）（2026-10-06。同日、下の「winget の git で…」の (1)(2) を撤回して置き換えた）
 
 - **決めたこと**（ユーザーの判断: 「理想は scoop で完結したい」）: 手順 0 を、`Set-ExecutionPolicy ... RemoteSigned -Scope CurrentUser` → scoop の導入（公式の1行）→ `scoop install git` → `git clone`（最終の場所）にする。winget は使わない。`20_apps.bat` の winget の git の撤去処理と、その試験7件は削除した（winget 追加前のコミットの状態に戻した）。`11_git_identity.bat` はそのまま使う。すでに winget の git があるPCは、一度だけ手で `winget uninstall --id Git.Git -e`。

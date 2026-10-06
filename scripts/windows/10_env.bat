@@ -13,7 +13,7 @@ set "GHQ_ROOT=%VAULT_HOME%\repos"
 set "WORKS_DIR=%VAULT_HOME%\works"
 set "CERTS_DIR=%WORKS_DIR%\areas\dev-env\certs"
 
-REM 永続化するために setx を使う (User スコープ)
+REM Persist with setx (User scope)
 setx HOME "%HOME%"
 setx XDG_CONFIG_HOME "%XDG_CONFIG_HOME%"
 setx XDG_CACHE_HOME "%XDG_CACHE_HOME%"
@@ -25,7 +25,7 @@ setx GHQ_ROOT "%GHQ_ROOT%"
 setx CERTS_DIR "%CERTS_DIR%"
 setx WORKS_DIR "%WORKS_DIR%"
 
-REM ディレクトリ作成
+REM Create directories
 if not exist "%XDG_CONFIG_HOME%"    ( mkdir "%XDG_CONFIG_HOME%" )
 if not exist "%XDG_CACHE_HOME%"     ( mkdir "%XDG_CACHE_HOME%" )
 if not exist "%XDG_DATA_HOME%"      ( mkdir "%XDG_DATA_HOME%" )
@@ -38,7 +38,7 @@ REM CERTS_DIR (under WORKS_DIR\areas) is not created here either: place it by ha
 REM WORKS_DIR is not created here: 30_link creates it as the parent of the .obsidian link, and the workflow hook
 REM turns it into a local repo. The shared repo (workbase) is cloned into %WORKS_DIR%\resources by 50_repos.bat.
 
-REM 確認表示 (現在のセッションでは setx の結果は反映されない点に注意)
+REM Show values (note: setx results are NOT reflected in the current session)
 echo HOME               =%HOME%
 echo XDG_CONFIG_HOME    =%XDG_CONFIG_HOME%
 echo XDG_CACHE_HOME     =%XDG_CACHE_HOME%

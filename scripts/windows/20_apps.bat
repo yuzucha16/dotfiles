@@ -2,22 +2,22 @@
 setlocal EnableExtensions EnableDelayedExpansion
 REM ======================================================
 REM  Scoop apps/buckets installer (User mode only)
-REM  管理者権限は不要。全てユーザースコープで実行します。
+REM  No admin rights needed. Everything runs in user scope.
 REM ======================================================
 
-REM ▼Scoop のパス
+REM Scoop paths
 set "SCOOP_ROOT=%USERPROFILE%\scoop"
 set "SCOOP_SHIMS=%SCOOP_ROOT%\shims"
 if exist "%SCOOP_SHIMS%\scoop.cmd" (
   set "PATH=%SCOOP_SHIMS%;%PATH%"
 )
 
-REM Scoop が無ければ導入
-REM 新しいアカウントで「-ExecutionPolicy Bypass + iwr | iex」が「アクセスが拒否されました。」で失敗した（2026-10-06。原因は未特定）。
-REM 実機で成功した手順（CurrentUser を RemoteSigned にしてから Invoke-RestMethod | Invoke-Expression。Scoop 公式の手順）に合わせる。
-REM ただし実行ポリシーは、実効値が Restricted/AllSigned/Undefined のときだけ変える（Scoop が要求する Unrestricted/RemoteSigned/Bypass なら触らない）。
-REM 変更に失敗しても警告だけで導入は続ける（グループポリシー下では Scoop 側が理由を表示して止まる）。
-REM PS_EXE は完全パスにして、PATH とカレントの影響を受けない（試験では差し替える）。
+REM Install Scoop if missing
+REM On a new account, "-ExecutionPolicy Bypass" with iwr and iex failed with "Access is denied." (2026-10-06; cause not identified).
+REM Follow the steps that worked on the real machine (set CurrentUser to RemoteSigned, then Invoke-RestMethod and Invoke-Expression; the official Scoop steps).
+REM The execution policy is changed only when the effective value is Restricted/AllSigned/Undefined (left alone for Unrestricted/RemoteSigned/Bypass, which Scoop accepts).
+REM If the change fails, only warn and continue (under Group Policy, Scoop itself shows the reason and stops).
+REM PS_EXE is a full path, so PATH and the current directory do not matter (tests replace it).
 if not defined PS_EXE set "PS_EXE=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
 if not exist "%SCOOP_SHIMS%\scoop.cmd" (
   echo Scoop not found. Installing...
@@ -30,7 +30,7 @@ if not exist "%SCOOP_SHIMS%\scoop.cmd" (
   if exist "%SCOOP_SHIMS%\scoop.cmd" set "PATH=%SCOOP_SHIMS%;%PATH%"
 )
 
-REM ▼最終確認
+REM Final check
 where scoop.cmd >nul 2>&1
 if errorlevel 1 (
   echo [ERROR] scoop.cmd not found on PATH. Please check install.
@@ -38,11 +38,11 @@ if errorlevel 1 (
 )
 
 REM ---------------------------------------------
-REM  バケツとアプリ
+REM  Buckets and apps
 REM ---------------------------------------------
 set "BUCKETS=extras versions nonportable sysinternals"
 
-REM ▼git は必須なので先に確保
+REM git is required, so get it first
 if not exist "%SCOOP_ROOT%\apps\git\" (
   echo Installing git...
   call scoop.cmd install git
@@ -50,7 +50,7 @@ if not exist "%SCOOP_ROOT%\apps\git\" (
   echo [Installed] git
 )
 
-REM ▼バケツ追加
+REM Add buckets
 for %%B in (%BUCKETS%) do (
   if exist "%SCOOP_ROOT%\buckets\%%~B\" (
     echo [Added] %%~B
@@ -85,7 +85,7 @@ if errorlevel 1 (
   echo [Installed] VC++ 2015-2022 x64 runtime
 )
 
-REM ▼Notepad++ の config.xml: 無い/空のときだけ最小構成を置く（以後はアプリが書き換える。リンクはしない）
+REM Notepad++ config.xml: put the minimal one only when missing or empty (the app rewrites it afterwards; not linked)
 set "NPP_DIR=%SCOOP_ROOT%\apps\notepadplusplus\current"
 if exist "%NPP_DIR%\" (
   set "NPP_SEED=1"
