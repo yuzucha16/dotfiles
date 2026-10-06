@@ -99,7 +99,13 @@
     "tool/ripgrep": 17,
     "theming": 57,
     "testing": 58,
-    "tool/stow": 18
+    "tool/stow": 18,
+    "embedded": 59,
+    "c-language": 60,
+    "static-analysis": 61,
+    "para": 62,
+    "metrics": 63,
+    "human-ai-collaboration": 64
   },
   "_version": 3
 }
