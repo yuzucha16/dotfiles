@@ -51,6 +51,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
+### 2026-10-06（31_history_seed.bat の出力保存と pause）
+
+- `31_history_seed.bat` をダブルクリックで実行すると、一瞬でウィンドウが閉じて結果が分からなかった（ユーザーの報告）。本体を `:MAIN` に分けて出力を `tmp\31_history_seed.log`（`.gitignore` 済み、実行のたびに上書き）へ記録し、画面に表示したあと `pause` で止まるようにした。終了コードは従来どおり（成功・SKIP・dry-run は 0、引数誤り・種なし・コピー失敗は 1）。確認: `-n`、不正な引数、偽の `APPDATA` での実コピーと2回目の SKIP を実行し、期待どおり（実環境の履歴 15,964 バイトは不変）。他の `.bat`（`30_link`、`24_fonts` など）にはログを足していない。`pause` の無い `24_fonts.bat` は未対応。
+
 ### 2026-10-06（vcredist2022 の提案への対応）
 
 - `20_apps.bat` の `scoop install` で、lsd / ripgrep / bat / starship / windows-terminal / chatgpt が `extras/vcredist2022` を提案する件を調べた。`suggest`（任意）で必須ではなく、`extras/vcredist2022` のインストーラが UAC 昇格（`-RunAs`）を要するため、ユーザースコープのみの方針と衝突する。自動導入はせず、`20_apps.bat` に、VC++ 2015-2022 x64 ランタイムがレジストリに無いときだけ `[WARN]` と手動導入コマンドを出す確認を足した。入れる基準3点は `docs/decisions.md` の「vcredist2022 は自動導入せず、不足時だけ警告する」。確認: `pwsh tests/windows/test_20_apps.ps1` が failures=0（既存の試験。新しい警告の分岐の自動試験は未作成）、`reg query` の判定は「ある」「ない」の両方を実機で確認。`bat` の `less`・`vim` の `vimtutor` の提案は入れない判断（同じ項に記載）。

@@ -93,7 +93,7 @@ dotfiles/
    - `unlink`: リンクだけ削除する。`-n`: ドライラン
    - 配置先に実ファイル/実ディレクトリがあると `[ERR]` を出してそのエントリを飛ばし、最後に非ゼロで終了する。**自動退避はしない**。中身を確認して手で退避/削除し、再実行する
    - `[ERR] mklink failed` は開発者モードがオフのときに出る
-   - `scripts\windows\31_history_seed.bat [-n]`: `windows\powershell\history.seed.txt` を PSReadLine の履歴ファイルへコピーする。履歴ファイルが無い/空のときだけ行い、既存の履歴は上書きしない（`-n`: 確認のみ）。リンクではないので、以後は PSReadLine が自由に追記する。**最初の pwsh を開く前に**実行する
+   - `scripts\windows\31_history_seed.bat [-n]`: `windows\powershell\history.seed.txt` を PSReadLine の履歴ファイルへコピーする。履歴ファイルが無い/空のときだけ行い、既存の履歴は上書きしない（`-n`: 確認のみ）。リンクではないので、以後は PSReadLine が自由に追記する。**最初の pwsh を開く前に**実行する。出力は `tmp\31_history_seed.log`（Git 対象外、実行のたびに上書き）にも残り、最後に `pause` で止まる
 4. `scripts\windows\40_wsl_enable.bat`（WSL を使う場合）: 管理者権限で実行。WSL2 の機能を有効化する。**再起動後**、表示される `wsl --update` / `wsl --install -d Ubuntu-24.04` を手動で実行する
 5. `scripts\windows\50_repos.bat`: ghq で必要なリポジトリを取得する。共有リポジトリ `workbase` は、ghq でなく `git clone` で `%WORKS_DIR%\resources` に取得する（既にあれば skip。`WORKS_DIR` が未設定なら `[ERR]`）
 
