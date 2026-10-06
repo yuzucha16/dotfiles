@@ -21,8 +21,8 @@ else
 fi
 
 # c++ samples
-ghq get bareflank/static_interface_pattern
-ghq get skypjack/entt
+#ghq get bareflank/static_interface_pattern
+#ghq get skypjack/entt
 #ghq get microsoft/proxy
 #ghq get foonathan/type_safe
 #ghq get mpusz/mp-units
