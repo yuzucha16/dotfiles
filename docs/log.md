@@ -4,6 +4,8 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- Windows Terminal を再起動して、削除した古い WSL プロファイルが `settings.json` に書き戻されないか確認する（2026-10-07。書き戻されたら `git diff` に出る）。出ないなら、他PCで WSL を入れ直したときも同じ手当て（古い `commandline` 付きのエントリを消す）が要る。
+- 他PCでは `git pull` のあと、`.reg` / `.ahk`（`.gitattributes` の変更）と Terminal の `settings.json`（改行の正規化）の `git status` が clean か確認する（2026-10-07。作業ツリーが LF のまま残っていると差分に見える場合は、`git add --renormalize` か取り直しが要る）。
 - `10_env.bat` を再実行して、`%USERPROFILE%\.certs` ができること、`CERTS_DIR` と `WSLENV`（`CERTS_DIR/p` が1回だけ）が更新されることを確認する。新しいターミナルと新しい WSL セッション（`wsl --shutdown` のあと）で、`$CERTS_DIR` が `/mnt/c/Users/<名前>/.certs` になり、`company-ca.crt` があれば `NODE_EXTRA_CA_CERTS` が設定されることを確認する。旧 `works\areas\dev-env\certs`（空）は、確認後に削除する（2026-10-06 時点）。
 - 履歴の種の `git config --global user.name` / `user.email`（`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` の各2行）を見直す。`~/.gitconfig` は `30_link` が張る symlink なので、リンク後に実行すると、リポジトリ内の `home/.gitconfig` が書き換わる。種の正本は exmem の `knowledge/shell-command-usecases.md` で、種ファイルは派生物なので、直すのは正本の統合のあと（種を直接編集しない。2026-10-06 時点）。
 - VC++ ランタイムの `[WARN]`（ランタイムが無いとき）の表示を確認する。新アカウントでは `[Installed]` 側しか出ず、`[WARN]` 側は実機で未確認（2026-10-06 時点。ランタイムが無い環境でだけ出る。判断基準は `docs/decisions.md` の「vcredist2022 は自動導入せず…」）。
@@ -30,6 +32,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Open Questions
 
+- `windows/notepadpp/Gruvbox dark medium.xml` の改行（index が CRLF）を LF にそろえるか。Notepad++ が保存時に CRLF へ書き直すかが未確認（2026-10-07）。`windows/office/*.exportedUI` は意図的に `-text` なので対象外。
 - dotfiles のリポジトリを公開にするか非公開にするか（未定。2026-10-06 時点は非公開）。決まったら、README のクイックスタート（Windows・Linux）と、workbase の手順書 `win11.md` の手順 5・`debian-family.md` の手順 7 から、使わない方の記述を削除する。
 
 
@@ -56,6 +59,14 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-07（Windows Terminal の `settings.json` の差分の解消。`.gitattributes` に `.reg` と `.ahk` を追加）
+
+- WSL を再インストールしたあとに `windows/terminal/settings.json` の差分（約200行）が出た件を、ユーザーの依頼で調べて直した。原因は2つ。(1) index が CRLF のまま残っていたため（`.gitattributes` は LF を正としているのに、`.bat` しか正規化していなかった）。(2) WSL の再インストールで、Terminal が同名の `Ubuntu-24.04` を新しい guid で追加したため。実質の差分は10行だけだった（`git diff --ignore-space-at-eol`）。
+- 直したこと（判断と落とし穴は `docs/decisions.md` の Gotchas の2項）: 改行だけを LF にそろえた（`39930cc`）。古い方の WSL プロファイル（`commandline: "wsl.exe -d Ubuntu-24.04"`、guid `963ff2f7…`）を削除した（`3c49d9b`。Terminal が並べ替えた `Terminal.FindText` も含む）。確認: JSON として読める、参照が無い（grep）、`wsl -l -v` で Ubuntu-24.04 は1つ。
+- ユーザーの決定で、`.gitattributes` に `*.reg text eol=crlf` と `*.ahk text eol=crlf` を足し、index を LF にした（`cf4a54f`。判断は `docs/decisions.md` の Decisions）。`windows/notepadpp/Gruvbox dark medium.xml` は、index が CRLF のまま未決（Open Questions）。
+- 反省: 最初の2コミット（`39930cc`、`3c49d9b`）を、`docs-rules.md` の「コミットの身元」に従わず、ユーザーの名義（`yuzucha16`）で作った。トレーラーも無い。`cf4a54f` からは `agent` 名義とトレーラー付き。履歴は書き換えていない（未 push のため、書き換えるかはユーザーの判断。`rebase` は事前確認が要る）。
+- 未確認: Terminal を再起動して、削除した WSL プロファイルが書き戻されないか。再インストールのたびに guid が変わる理由。
 
 ### 2026-10-06（Vault を `%USERPROFILE%\works` へ移した。Linux 側も `~/works` にそろえた）
 
