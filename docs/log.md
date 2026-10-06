@@ -24,7 +24,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - `git bundle` のバックアップの所在を確認する（見つからない）。必要なら保管場所を決める。
 - 古い WSL では `fdfind` → `fd` のリンクが無いので、`20_packages.sh` を再実行するか手でリンクを張る。
 
-- ネイティブ Linux の実機で、`30_link.sh`（`.obsidian` の symlink）と `50_repos.sh`（`workbase` の clone）、`NOTES_DIR` の既定値（`~/vault/notes`）を通して確認する。WSL では、一時ディレクトリで試験済み（2026-10-05）。ネイティブの分岐は、`PROC_VERSION_FILE` の差し替えで再現しただけ。
+- ネイティブ Linux の実機で、`30_link.sh`（`.obsidian` の symlink）と `50_repos.sh`（`workbase` の clone）、`WORKS_DIR` の既定値（`~/vault/works`。2026-10-06 に `NOTES_DIR` / `notes` から改名）を通して確認する。WSL では、一時ディレクトリで試験済み（2026-10-05）。ネイティブの分岐は、`PROC_VERSION_FILE` の差し替えで再現しただけ。
 
 ## Open Questions
 
