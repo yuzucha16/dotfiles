@@ -78,11 +78,15 @@ if defined APPS (
 REM VC++ 2015-2022 x64 runtime: scoop only "suggests" extras/vcredist2022 (lsd, ripgrep, bat, starship, ...).
 REM It is NOT installed here: its installer runs elevated (UAC), which breaks "user mode only".
 REM Warn only when the runtime is missing; install it by hand if an app fails with VCRUNTIME140 / MSVCP140 not found.
+REM Both lines are printed in orange (ANSI 256-color 208) because they are easy to miss. ESC is captured with prompt $E (ASCII-only source).
+for /F "delims=" %%E in ('echo prompt $E^| cmd') do set "ESC=%%E"
+set "ORANGE=%ESC%[38;5;208m"
+set "RESET=%ESC%[0m"
 reg query "HKLM\SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64" /v Installed 2>nul | find "0x1" >nul
 if errorlevel 1 (
-  echo [WARN] VC++ 2015-2022 x64 runtime not found. If an app fails with VCRUNTIME140 / MSVCP140 not found, run: scoop install extras/vcredist2022  ^(asks for UAC^)
+  echo %ORANGE%[WARN] VC++ 2015-2022 x64 runtime not found. If an app fails with VCRUNTIME140 / MSVCP140 not found, run: scoop install extras/vcredist2022  ^(asks for UAC^)%RESET%
 ) else (
-  echo [Installed] VC++ 2015-2022 x64 runtime
+  echo %ORANGE%[Installed] VC++ 2015-2022 x64 runtime%RESET%
 )
 
 REM Notepad++ config.xml: put the minimal one only when missing or empty (the app rewrites it afterwards; not linked)

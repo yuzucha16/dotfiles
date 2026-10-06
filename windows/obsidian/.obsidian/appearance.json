@@ -2,9 +2,9 @@
   "theme": "obsidian",
   "accentColor": "#5f5cf5",
   "cssTheme": "Material Gruvbox",
-  "interfaceFontFamily": "PlemolJP Console NF,Moralerspace Neon HW,Meiryo UI",
-  "textFontFamily": "PlemolJP Console NF,Moralerspace Neon HW,Meiryo UI",
-  "monospaceFontFamily": "PlemolJP Console NF,Moralerspace Neon HW,Meiryo UI",
+  "interfaceFontFamily": "PlemolJP Console NF,Meiryo UI",
+  "textFontFamily": "PlemolJP Console NF,Meiryo UI",
+  "monospaceFontFamily": "PlemolJP Console NF,Meiryo UI",
   "enabledCssSnippets": [
     "material-gruvbox-bold",
     "file-explorer-compact",
