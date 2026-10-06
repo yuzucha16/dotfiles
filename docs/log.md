@@ -4,7 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
-- 新しい Windows アカウントで `20_apps.bat` を実行し、Scoop の導入が通るか確認する（2026-10-06 の修正の実機確認）。まだ失敗するなら、表示される `Get-ExecutionPolicy -List` と、旧コマンドを手で実行した結果を `docs/decisions.md` の Gotchas に足して、原因を絞る。
+- 新しい Windows アカウントで `20_apps.bat` を実行し、Scoop の導入が通るか確認する（2026-10-06 の修正の実機確認）。あわせて、VC++ ランタイムの `[WARN]` / `[Installed]` の表示と、入れる基準（`docs/decisions.md`）が実用になるかも見る。まだ失敗するなら、表示される `Get-ExecutionPolicy -List` と、旧コマンドを手で実行した結果を `docs/decisions.md` の Gotchas に足して、原因を絞る。
 - Zed の最適化（2026-10-04）の後始末: Zed を再起動して、テーマ・Ctrl+Enter 送信・右のプロジェクトパネル・Markdown の見え方を確認する。Vim オフの試験は 2026-10-11 頃に続けるか判断する（戻し方は `settings.json` のコメント）。他のPCでは `30_link.bat` の前に、空の `%APPDATA%\zed\themes` を削除する。WSL で点滅を止めるのは `.bashrc` / `.zshrc`（反映は新しいシェルで確認）。OS 全体の点滅停止（`CursorBlinkRate=-1`）は必要なら検討する。
 - シェルの3シェル共通化（fzf とキーバインドの現仕様の表は `docs/decisions.md` の Facts）:
   - WSL に `ghq` を入れたら `cdg`（zsh/bash）を実機で確認する。
@@ -50,6 +50,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（vcredist2022 の提案への対応）
+
+- `20_apps.bat` の `scoop install` で、lsd / ripgrep / bat / starship / windows-terminal / chatgpt が `extras/vcredist2022` を提案する件を調べた。`suggest`（任意）で必須ではなく、`extras/vcredist2022` のインストーラが UAC 昇格（`-RunAs`）を要するため、ユーザースコープのみの方針と衝突する。自動導入はせず、`20_apps.bat` に、VC++ 2015-2022 x64 ランタイムがレジストリに無いときだけ `[WARN]` と手動導入コマンドを出す確認を足した。入れる基準3点は `docs/decisions.md` の「vcredist2022 は自動導入せず、不足時だけ警告する」。確認: `pwsh tests/windows/test_20_apps.ps1` が failures=0（既存の試験。新しい警告の分岐の自動試験は未作成）、`reg query` の判定は「ある」「ない」の両方を実機で確認。`bat` の `less`・`vim` の `vimtutor` の提案は入れない判断（同じ項に記載）。
 
 ### 2026-10-06（`vault\notes` → `vault\works` の rename 後の点検）
 

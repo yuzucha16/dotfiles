@@ -75,6 +75,16 @@ if defined APPS (
   call scoop.cmd install%APPS%
 )
 
+REM VC++ 2015-2022 x64 runtime: scoop only "suggests" extras/vcredist2022 (lsd, ripgrep, bat, starship, ...).
+REM It is NOT installed here: its installer runs elevated (UAC), which breaks "user mode only".
+REM Warn only when the runtime is missing; install it by hand if an app fails with VCRUNTIME140 / MSVCP140 not found.
+reg query "HKLM\SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64" /v Installed 2>nul | find "0x1" >nul
+if errorlevel 1 (
+  echo [WARN] VC++ 2015-2022 x64 runtime not found. If an app fails with VCRUNTIME140 / MSVCP140 not found, run: scoop install extras/vcredist2022  ^(asks for UAC^)
+) else (
+  echo [Installed] VC++ 2015-2022 x64 runtime
+)
+
 REM ▼Notepad++ の config.xml: 無い/空のときだけ最小構成を置く（以後はアプリが書き換える。リンクはしない）
 set "NPP_DIR=%SCOOP_ROOT%\apps\notepadplusplus\current"
 if exist "%NPP_DIR%\" (

@@ -148,6 +148,16 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - 却下: `curl` / `Invoke-WebRequest` への置換（アセット名にバージョンが入り、glob が使えない）。
 - 未確認: 未ログインのレート制限（1回2件程度なら問題ないはずだが、推測）。
 
+### vcredist2022 は自動導入せず、不足時だけ警告する（2026-10-06）
+
+- **経緯**: `20_apps.bat` の `scoop install` で、lsd / ripgrep / bat / starship / windows-terminal / chatgpt が `suggests installing 'extras/vcredist2022'` と出る。`suggest` は任意の提案で、`depends`（必須）ではない（確認: 各 `buckets\*\bucket\<app>.json` の `suggest`、`depends` は空）。vcredist2022 は「Microsoft Visual C++ 2015-2022 再頒布可能パッケージ」で、MSVC でビルドしたアプリが動的リンクする `vcruntime140.dll` / `msvcp140.dll` を提供する。
+- **決めたこと**: 自動導入しない。`apps.txt` にも足さない。`20_apps.bat` は、レジストリ `HKLM\SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64` の `Installed` が 1 でなければ `[WARN]` を出し、手で `scoop install extras/vcredist2022` する案内だけをする。
+- **根拠**: (1) `extras/vcredist2022` の `post_install` が `-RunAs`（UAC で昇格）でインストーラを動かす（確認: マニフェスト）。`20_apps.bat` の「管理者権限は不要・ユーザースコープのみ」と衝突する。(2) このPC（Win11 10.0.26200）には既に x64 の 14.50.35719 が入っており（確認: レジストリと `System32\vcruntime140.dll`）、素の Win11 でも他アプリ経由で入っていることが多い（推測）。(3) 対象アプリは x64 ビルドなので、x86 版は不要（`ripgrep` のマニフェストで確認。他は未確認）。
+- **インストール判断基準**（上から。1つでも該当したら入れる）: ① アプリ起動時に `VCRUNTIME140*.dll` / `MSVCP140*.dll` が無い、または `0xc000007b` のエラー。② 上のレジストリ確認が `[WARN]`（x64 が無い）。③ 新品の Windows / Sandbox / VM で、最初の通し実行のとき（①②が出る可能性が高い）。該当しなければ入れない。入れる場合は、UAC を承認できる状態で `scoop install extras/vcredist2022` を実行し、終わったら `scoop uninstall vcredist2022` でインストーラだけ消してよい（ランタイムは OS に残る。マニフェストの `notes`）。
+- **却下案**: `apps.txt` に足す（UAC が必須になり、会社PCで権限が無いと止まる）。`winget install Microsoft.VCRedist.2015+.x64`（これも昇格が要り、経路が増える）。`suggest` の表示を抑える（scoop に抑止の設定は確認できず、未確認）。
+- **同時に出た他の提案**: `bat` の `less`、`vim` の `vimtutor`。どちらも入れない。`less` は Git for Windows 同梱の `less.exe`（`scoop\apps\git\current\usr\bin\`）があるが PATH には無い。bat は `less` が無いときのページャの挙動が未確認（パイプ経由の試験では出力は出たが、対話端末での挙動は未確認）。ページャが要るなら、`less` を `apps.txt` に足すかを、そのとき判断する。`vimtutor` は学習用で不要。
+- **未確認**: VC++ ランタイムが無い新アカウントでの `[WARN]` の表示（この PC では「入っている」側の分岐のみ実機で確認。「無い」側はレジストリのキーを差し替えた `reg query` の判定で確認）。
+
 ### インストール経路（2026-10-03）
 
 - Go と Docker は `20_packages.sh` から外し、README の「必要なときだけ入れるもの」に移した。ghq は GitHub Releases のビルド済みバイナリ（`ghq_linux_<arch>.zip`、v1.11.2 で確認）を `~/.local/bin` に置く（apt に `ghq` は無い）。`fdfind` → `fd`、`batcat` → `bat` のリンクを張る。
