@@ -39,9 +39,6 @@ zoxide
 which
 rnr
 
-# shell completion
-scoop-completion
-
 # automation
 autohotkey
 

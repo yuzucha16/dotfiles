@@ -1,12 +1,12 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 
-rem --- 必須コンポーネント（WSL2に必要） ---
+rem --- Required components (needed for WSL2) ---
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 dism.exe /online /enable-feature /featurename:HypervisorPlatform /all /norestart
 
-rem --- ハイパーバイザ起動を有効化 ---
+rem --- Enable hypervisor launch ---
 bcdedit /set hypervisorlaunchtype auto
 
 echo Please reboot now. After reboot, run the following manually:

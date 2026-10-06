@@ -82,5 +82,12 @@ foreach ($p in 'RemoteSigned', 'Unrestricted', 'Bypass') {
 $o = Run-Snippet 'Restricted' $true
 Check 'snippet: set fails -> warns and still installs' (($o -match 'Set-ExecutionPolicy failed: denied') -and ($o -match 'LOG=set,irm,iex'))
 
+# 5. scripts/windows の .bat は、コメントを含めて全体が ASCII（日本語の UTF-8 は cp932 のコンソールで行末のバイトが次の行と混ざり、
+#    意図しないコマンドとして実行される。2026-10-06 に 20_apps.bat の冒頭で文字化けした）
+foreach ($f in Get-ChildItem (Join-Path $repo 'scripts\windows') -Filter '*.bat') {
+  $n = ([IO.File]::ReadAllBytes($f.FullName) | Where-Object { $_ -gt 127 }).Count
+  Check "ascii only: $($f.Name)" ($n -eq 0)
+}
+
 "RESULT: failures=$fail"
 exit $fail

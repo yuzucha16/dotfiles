@@ -1,6 +1,5 @@
 # fonts for scripts/*/24_fonts.{sh,bat}: downloaded from GitHub releases (latest) with gh into ~/download
 # One font per line: <owner/repo>:<asset glob>. Lines starting with # and blank lines are ignored.
-# Install is manual (both are 1:2 monospace with Nerd Fonts glyphs; Moralerspace v2+ bundles them in HW).
+# Install is manual (1:2 monospace with Nerd Fonts glyphs).
 
 yuru7/PlemolJP:PlemolJP_NF_v*.zip
-yuru7/moralerspace:MoralerspaceHW_v*.zip

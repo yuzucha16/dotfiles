@@ -2,7 +2,7 @@
 set -euo pipefail
 
 #======================================
-# フォント (PlemolJP NF / MoralerspaceHW) を GitHub の latest release から ~/download へ取得する
+# フォント (PlemolJP NF) を GitHub の latest release から ~/download へ取得する
 # インストールは手動（zip を展開して OS のフォント設定へ）。WSL でも保存先は WSL の ~/download
 # 使い方: 24_fonts.sh
 #   一覧は manifests/fonts.txt（<owner/repo>:<asset glob>）

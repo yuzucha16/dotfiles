@@ -2,7 +2,7 @@
 setlocal EnableExtensions
 
 REM ======================================================
-REM  Fonts (PlemolJP NF / MoralerspaceHW) downloader
+REM  Fonts (PlemolJP NF) downloader
 REM  Gets the latest GitHub release zips with gh into %USERPROFILE%\download
 REM  Install is manual: unzip, select the .ttf files, right click, Install for current user.
 REM  Usage:  24_fonts.bat
