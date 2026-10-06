@@ -27,6 +27,14 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】`.reg` と `.ahk` は、index は LF、作業ツリーは CRLF にする（`.gitattributes`。2026-10-07。ユーザーの決定）
+
+- 決めたこと: `.gitattributes` に `*.reg text eol=crlf` と `*.ahk text eol=crlf` を足した（`.bat` `*.cmd` と同じ形。コミット `cf4a54f`）。index にあった CRLF は `git add --renormalize` で LF にした（作業ツリーは CRLF のまま）。
+- 根拠: Windows 向けの形式なので、作業ツリーは CRLF が無難。index を LF にそろえると、git の設定（`autocrlf` など）に左右されない（上の `.bat` と同じ理由。Gotchas の2026-10-06の項）。`.reg` と `.ahk` の先頭バイトに BOM はなく、`.reg` は UTF-16 ではない（`ReadAllBytes` で確認。UTF-16 なら git が `text` 扱いしない可能性があった）。
+- 却下案: 全部 LF（`.reg` は Windows 標準の形式から外れる。`.ahk` は v1 や行継続の挙動に差が出るかを未確認で、リスクのほうが大きい）。
+- 未決: `windows/notepadpp/Gruvbox dark medium.xml`（index が CRLF、作業ツリーも CRLF）。XML なので LF でも読めるはずだが、Notepad++ が保存時に CRLF へ書き直すかが未確認なので、触っていない。`windows/office/*.exportedUI` は `-text`（改行を変換しない。バイナリ扱い）の指定が意図的に付いているので、そのまま。
+- 行き先: local（dotfiles の `.gitattributes` の規則）
+
 ### 【この件】Vault を `%USERPROFILE%\works`、ghq の root を `%USERPROFILE%\works\repos` に移し、Linux 側も `~/works`、`~/works/repos` にそろえる（2026-10-06。ユーザーの決定と指示）
 
 - 決めたこと: Windows の `10_env.bat` は `VAULT_HOME` を廃止し、`WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos` にする。`WORKS_DIR` は `WSLENV`（`WORKS_DIR/p`）で WSL に渡す。Linux 側は、WSL の `GHQ_ROOT` を `~/works/repos`、`10_dirs.sh` の作業ディレクトリを `~/works/{build,tools}` にする（対称性のため。ユーザーの指示）。WSL の ghq の root は、`/mnt/c` の上に置かず（git が遅い）、WSL 自身の `~/works/repos` に置く。
@@ -349,6 +357,12 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
   - `text eol=crlf` は作業ツリーを CRLF にする指定で、index 内は LF が正規。`.bat` 8本の index は LF に正規化した（`git add --renormalize`、コミット `7e9ae20`）。作業ツリーの `.bat` は CRLF のまま。
   - `.ps1`（`profile.ps1` のみ）は index が LF だったので、そのまま LF（意図は不明。pwsh は LF でも動く）。
   - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/git-line-endings.md）
+- **`windows/terminal/settings.json` だけ、index が CRLF で作業ツリーが LF だった。Terminal が保存するたびに全行（約200行）が差分になった**（2026-10-07）。`git ls-files --eol` が `i/crlf w/lf attr/eol=lf`。原因は、上の件で `.gitattributes` を足したとき（`7e9ae20`）に正規化したのが `.bat` だけで、このファイルの index は CRLF のまま残っていたこと。`git diff --ignore-space-at-eol` では実質差分は10行だけだった。直し方は、`git add --renormalize <パス>` で index を LF にし、改行だけのコミット（`39930cc`）と内容のコミット（`3c49d9b`）に分けた。
+  - 分けるときの落とし穴: `git commit -m ... -- <パス>` は index ではなく作業ツリーの内容をコミットするので、ステージで分けても1コミットにまとまる（1回失敗し、`reset --soft HEAD~1` でやり直した。反映前のコミットだったので書き換えは許される範囲）。index だけを LF にしたいときは、`git hash-object -w --no-filters` と `git update-index --cacheinfo` で index に直接入れ、パス指定なしで `git commit` する。
+  - 【汎用】行き先: 未仕分け
+- **重複した WSL プロファイル（同名 `Ubuntu-24.04`）が Terminal の `settings.json` に残った**（2026-10-07）。WSL を再インストールすると guid が変わり、Terminal が新しいエントリを足し、古い方は自動では消えない。`commandline: "wsl.exe -d Ubuntu-24.04"` 付きの古い方（`963ff2f7…`）を削除し、`commandline` なしの自動生成の形（`c83ff58d…`）を残した（ユーザーの指示）。確認: 古い guid はリポジトリ内のどこからも参照されていない（grep）、`defaultProfile` は PowerShell、`wsl -l -v` で Ubuntu-24.04 は1つだけ。`guid` が再インストールで変わる理由と、Terminal が消したエントリを書き戻さないかは、未確認（仮説）。再インストールのたびに同じ手当てが要る見込み。
+  - 【この件】行き先: local（Windows Terminal の設定の重複。dotfiles 固有）
+
 - **PowerShell からの `wsl -d ... -- bash -c "..."`** は `$(...)` が PowerShell で展開されて壊れる。
   - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
 - **実行環境の安全装置が、`rm` `del /F` `cmd /c` を含む PowerShell コマンドを誤検知してブロックした**。
