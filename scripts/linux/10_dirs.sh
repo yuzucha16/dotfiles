@@ -18,7 +18,7 @@ mkdir -p \
   "$XDG_STATE_HOME" \
   "$HOME/.local/bin" \
   "$HOME/.ssh" \
-  "$HOME/vault/build" \
-  "$HOME/vault/tools"
+  "$HOME/works/build" \
+  "$HOME/works/tools"
 
-echo "[*] Directories ready (workspace: $HOME/vault)"
+echo "[*] Directories ready (workspace: $HOME/works)"

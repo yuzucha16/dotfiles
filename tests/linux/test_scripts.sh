@@ -39,7 +39,7 @@ check "native -> \$HOME/works" '[[ "$r" == /home/u/works ]]'
 r=$(env -i HOME=/home/u USER=u PATH="$PATH" PROC_VERSION_FILE="$T/ver_native" /bin/sh -c ". $DOTS/home/.profile; echo \$GHQ_ROOT")
 check "native GHQ_ROOT -> \$WORKS_DIR/repos" '[[ "$r" == /home/u/works/repos ]]'
 r=$(env -i HOME=/home/u USER=u PATH="$PATH" PROC_VERSION_FILE="$T/ver_wsl" /bin/sh -c ". $DOTS/home/.profile; echo \$GHQ_ROOT")
-check "WSL GHQ_ROOT -> \$HOME/vault/repos (Linux filesystem)" '[[ "$r" == /home/u/vault/repos ]]'
+check "WSL GHQ_ROOT -> \$HOME/works/repos (Linux filesystem)" '[[ "$r" == /home/u/works/repos ]]'
 r=$(env -i HOME=/home/u PATH="$PATH" WORKS_DIR=/x/y PROC_VERSION_FILE="$T/ver_native" /bin/sh -c ". $DOTS/home/.profile; echo \$WORKS_DIR")
 check "explicit WORKS_DIR wins" '[[ "$r" == /x/y ]]'
 r=$(env -i HOME=/home/u PATH="$PATH" PROC_VERSION_FILE="$T/ver_wsl" /bin/sh -c ". $DOTS/home/.profile; env | grep -c '^WORKS_DIR='")
@@ -117,11 +117,11 @@ echo "== 50_repos.sh (stub ghq, fake HOME)"
 FH2="$T/fh2"; mkdir -p "$FH2" "$T/bin"; : > "$FH2/.profile"
 printf '#!/bin/sh\necho "ghq-stub $*"\n' > "$T/bin/ghq"; chmod +x "$T/bin/ghq"
 out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/n50" WORKBASE_URL="$T/workbase.git" bash "$REPOS" 2>&1); rc=$?
-check "native: cloned, then ghq stub called" '[[ $rc -eq 0 && -d "$T/n50/resources/.git" && "$out" == *ghq-stub* ]]'
+check "native: cloned (ghq get lines are commented out, so no ghq call)" '[[ $rc -eq 0 && -d "$T/n50/resources/.git" && "$out" != *ghq-stub* ]]'
 out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/n50" WORKBASE_URL="$T/workbase.git" bash "$REPOS" 2>&1); rc=$?
 check "native re-run: skip" '[[ $rc -eq 0 && "$out" == *"[SKIP] already cloned"* ]]'
 out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_wsl" WORKS_DIR="$T/n51" bash "$REPOS" 2>&1); rc=$?
-check "WSL: WARN when not cloned, no clone, ghq still runs" '[[ $rc -eq 0 && "$out" == *"[WARN] WSL"* && ! -e "$T/n51" && "$out" == *ghq-stub* ]]'
+check "WSL: WARN when not cloned, no clone" '[[ $rc -eq 0 && "$out" == *"[WARN] WSL"* && ! -e "$T/n51" ]]'
 out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_wsl" WORKS_DIR="$T/n50" bash "$REPOS" 2>&1); rc=$?
 check "WSL: SKIP when already cloned" '[[ $rc -eq 0 && "$out" == *"[SKIP] workbase already cloned (Windows side)"* ]]'
 # WORKS_DIR is passed from Windows via WSLENV (WORKS_DIR/p); without it, this check is skipped (the WSL user name can differ)
