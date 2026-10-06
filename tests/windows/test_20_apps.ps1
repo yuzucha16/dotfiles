@@ -44,6 +44,7 @@ function Run-Case($psExit, $withScoop) {
 $r = Run-Case 0 $false
 Check 'no scoop: installer is invoked'             ($r.Out -match 'Scoop not found')
 Check 'no scoop: sets RemoteSigned for CurrentUser' ($r.Calls -match 'Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser')
+Check 'no scoop: policy is changed only when needed' ($r.Calls -match "-in 'Restricted','AllSigned','Undefined'")
 Check 'no scoop: fetches get.scoop.sh'             ($r.Calls -match 'get\.scoop\.sh')
 Check 'no scoop: no -ExecutionPolicy Bypass flag'  ($r.Calls -notmatch '-ExecutionPolicy Bypass')
 Check 'no scoop: proceeds to scoop install'        ($r.Calls -match 'scoop install')
@@ -59,6 +60,27 @@ Check 'failure: scoop is not called'                 ($r.Calls -notmatch 'scoop 
 $r = Run-Case 0 $true
 Check 'scoop present: installer is not invoked' ($r.Calls -notmatch 'get\.scoop\.sh')
 Check 'scoop present: proceeds to scoop install' ($r.Calls -match 'scoop install')
+
+# 4. バット内の PowerShell 部分を実際に取り出し、Set-ExecutionPolicy / Invoke-RestMethod を偽物（関数）に差し替えて分岐を試験する。
+#    実効ポリシーは powershell.exe の -ExecutionPolicy（Process スコープ）で作る。実機のレジストリは変えない。
+$snippet = ((Get-Content $bat) | Where-Object { $_ -match 'Set-ExecutionPolicy' -and $_ -match 'call "%PS_EXE%"' } | Select-Object -First 1) -replace '^.*-NoProfile -Command "(.*)"\s*$', '$1'
+$realPs = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+function Run-Snippet($policy, $setThrows) {
+  $mock = "`$global:log=@(); function Set-ExecutionPolicy { `$global:log += 'set'; if ($(if ($setThrows) {'$true'} else {'$false'})) { throw 'denied' } }; " +
+          "function Invoke-RestMethod { `$global:log += 'irm'; '' }; function Invoke-Expression { `$global:log += 'iex' }; "
+  $out = & $realPs -NoProfile -ExecutionPolicy $policy -Command ($mock + $snippet + "; 'LOG=' + (`$global:log -join ',')") 2>&1
+  ($out | Out-String)
+}
+foreach ($p in 'Restricted', 'AllSigned') {
+  $o = Run-Snippet $p $false
+  Check "snippet: $p -> sets policy then installs" ($o -match 'LOG=set,irm,iex')
+}
+foreach ($p in 'RemoteSigned', 'Unrestricted', 'Bypass') {
+  $o = Run-Snippet $p $false
+  Check "snippet: $p -> leaves policy alone" ($o -match 'LOG=irm,iex')
+}
+$o = Run-Snippet 'Restricted' $true
+Check 'snippet: set fails -> warns and still installs' (($o -match 'Set-ExecutionPolicy failed: denied') -and ($o -match 'LOG=set,irm,iex'))
 
 "RESULT: failures=$fail"
 exit $fail
