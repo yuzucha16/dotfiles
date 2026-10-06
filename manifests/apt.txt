@@ -28,3 +28,4 @@ zsh-autosuggestions
 build-essential
 universal-ctags
 global
+clang-format  # C のコードリーディング用の整形（works の learn-c-pool-allocator。2026-10-06）
