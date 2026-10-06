@@ -56,6 +56,11 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
+### 2026-10-06（`docs/decisions.md` の棚卸しと「ナレッジ化して」）
+
+- ユーザーの指示で、`check-docs.ps1` の FAIL 64 件（全項目に行き先が無い）を直した。65 項目にラベルと行き先を付けた（コミット `23857da` に混ざって入った。経緯は下の kit 版 `2026-10-06.16` の項目）。内訳: local 35、転記済 12（exmem に、同じ話題のノートがあることを、キーワード検索で確認したもの。根拠・却下案の全体の突き合わせは未実施）、未仕分けだった汎用項目 17（下の「ナレッジ化して」で転記待ちにした）。`.obsidian` を `notes` に置く決定（2026-10-04）は、2026-10-05 の構造変更で dotfiles に戻っている（works の `docs/log.md`）ので、撤回の扱いをユーザーに確認する（`local` の理由に書いた）。結果: FAIL 0、WARN 0（転記待ちは上限の 20 件）。
+- 「ナレッジ化して」を実行した（ユーザーの指示）。`exmem/inbox/` に3つのメモを作った（コミット対象外。点検スクリプト PASS 71、FAIL 0、WARN 0）: `2026-10-06-certs-location-wslenv-path.md`（置き場の変更と `WSLENV`）、`2026-10-06-windows-cli-pitfalls.md`（PowerShell・バッチ・git の落とし穴）、`2026-10-06-dotfiles-startup-and-tracking-tips.md`（起動時間、WSL、追跡方針）。対応する項目の行き先を `転記待ち` にした。
+
 ### 2026-10-06（会社 CA 証明書の置き場を `%USERPROFILE%\.certs` に変更）
 
 - ユーザーの指示で、`CERTS_DIR` を `works\areas\dev-env\certs` から `%USERPROFILE%\.certs` へ移した。`scripts/windows/10_env.bat`（値、mkdir、`WSLENV` への `CERTS_DIR/p` の追加。重複して足さない）、`home/.config/shell/common.sh`（`${CERTS_DIR:-$HOME/.certs}`）、`README.md` を更新。判断は `docs/decisions.md`（【この件】会社 CA 証明書の置き場…）。構文と分岐は確認済み。`10_env.bat` の実行と WSL での `$CERTS_DIR` は未確認（Next Actions）。
