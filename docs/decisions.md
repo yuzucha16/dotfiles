@@ -35,7 +35,7 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - 確認済み（2026-10-06）: `bash -n common.sh`、`CERTS_DIR` 指定時と未指定時の分岐、`WSLENV` の重複判定の論理（実行して確認）。**未確認**: `10_env.bat` の実行（`setx`）と、新しい WSL セッションで `$CERTS_DIR` が `/mnt/c/Users/.../.certs` になること。
 - 行き先: 転記待ち（→ exmem/inbox/2026-10-06-certs-location-wslenv-path.md。dotfiles 固有のパスは剥がして一般化した）
 
-### 【この件】`.obsidian` は `notes` に置く。dotfiles には戻さない（2026-10-04）
+### 【この件】（撤回済み）`.obsidian` は `notes` に置く。dotfiles には戻さない（2026-10-04）
 
 - 決めたこと: `.obsidian/` は `notes` リポジトリで管理し続ける。Obsidian 設定の作業は `notes` のルートで Claude を開いて行い、`.obsidian/` 専用の `AGENTS.md` と `docs/` は置かない（2026-10-04 に暫定導入した分は、同日に撤去済み）。
 - 根拠（判断基準。置き場を問う別の設定にも使える）:
@@ -51,7 +51,8 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
   - 事実: notes ↔ dotfiles の clone 順が循環する。リンク前に Obsidian が実ディレクトリを作ると、リンクスクリプトが `[ERR]` で止まる（手で退避して再実行）。設定のコミットが dotfiles に入り、notes の `[obsidian]` コミットは使えなくなる。`workspace.json` の除外が両リポジトリで要る。プラグインで dotfiles の履歴が重くなる。
   - 推測: 改行コードの規則が dotfiles 側になる。notes のルートで Claude を開くと、実体が作業ディレクトリの外なので編集の確認が増える。ripgrep などはリンクをたどらず、検索に出ない可能性がある。シンボリックリンクは開発者モードか管理者権限が要る（ジャンクションは不要）。ファイル単位のリンクは Obsidian の保存で実ファイルに置き換わるおそれがある。コアプラグイン `sync` や WSL（`/mnt/c`）からの見え方は不明。
 - 未確認: Obsidian の「設定フォルダを上書き」機能で `.obsidian` を別の場所に置けるか（記憶による。端末ごとの設定のはずで、採用しても脆い）。
-- 行き先: local（2026-10-05 の構造変更で `.obsidian` は dotfiles に戻っている。works/docs/log.md。この項目の撤回の扱いはユーザー確認待ち）
+- **撤回済み（2026-10-06 ユーザー確認）**: 2026-10-05 の構造変更で、`.obsidian` の実体は dotfiles に戻った（works の `docs/log.md`）。以下は当時の記録。
+- 行き先: local（撤回済み。当時の判断基準の記録）
 
 ### 【この件】リンクスクリプトは Windows / WSL で対称、リンクだけを行う（2026-10-03）
 
