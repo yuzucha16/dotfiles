@@ -53,6 +53,8 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ### 2026-10-06
 
+- Scoop 導入の失敗と実行ポリシーの扱い、PowerShell の二重引用符で文書が壊れた件を「ナレッジ化して」で `exmem/inbox/2026-10-06-scoop-install-execution-policy.md` に残した（実機の新アカウントでの確認は未実施のため、Open Questions に残してある）。実行で出た改善1点（仮説の表記 `（仮説）` は完全一致で書く）を承認し、workflow-kit に反映した（版 `2026-10-06.7`）。変更は `workbase` 側で、dotfiles のコミット対象外。
+
 - Windows 側の試験環境（`tests/windows/`）を「ナレッジ化して」で `exmem/inbox/2026-10-06-windows-bat-script-testing-dryrun.md` に残した（WSL 側の `shell-script-testing-wsl` と対称。Scoop の原因調査と実行ポリシーの判断は、実機確認後にナレッジ化する）。実行で出た改善1点（ファイル名の語数の数え方と `sources` の定形）を承認し、workflow-kit に反映した（版 `2026-10-06.6`）。変更は `workbase` 側で、dotfiles のコミット対象外。
 
 - 新しい Windows アカウントで、Scoop の導入が「アクセスが拒否されました。」で失敗した件を調べた（ユーザーの報告では `10_env.bat` だが、該当処理は `20_apps.bat`）。原因は特定できず（候補の検討と却下は `docs/decisions.md` の Gotchas）。実機で成功した手順（`Invoke-RestMethod | Invoke-Expression`）に合わせて `20_apps.bat` を直した。`powershell.exe` を完全パス（`PS_EXE`）で呼び、失敗時に `Get-ExecutionPolicy -List` を出す。実行ポリシーは、ユーザーの判断で、実効値が Restricted/AllSigned/Undefined のときだけ CurrentUser を RemoteSigned にし、変更の失敗は警告で続行する。あわせて、ネットワーク無し・実インストール無しの試験 `tests/windows/test_20_apps.ps1` を作り、18/18 合格（確認: 2026-10-06、終了コード0。実機のポリシーは不変）。新アカウントでの実機確認は未実施。
