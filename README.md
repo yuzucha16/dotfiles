@@ -5,6 +5,19 @@ Windows 11 + WSL (Ubuntu 24.04) / Linux (apt 系: MX / Ubuntu / Mint) の開発�
 - PC1は最小構成、PC2は追加分を足す、という運用。差分は `*.home.*` のファイルに分離している。
 - 設定ファイルはこのリポジトリを正とし、各アプリの場所へシンボリックリンクで配置する（Windows: `30_link.bat`、WSL / Linux: `30_link.sh`/stow）。
 
+## クイックスタート（Windows・新しいPC）
+
+先に、設定 → 開発者向け で「開発者モード」をオンにする（手動。`30_link.bat` の symlink に必須）。そのあと、PowerShell に次の4行を貼る（scoop と git を入れ、ghq の場所に clone する。clone で GitHub のサインインが開く）。
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression
+scoop install git
+git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzucha16\dotfiles
+```
+
+続きは「セットアップ手順」の手順 1（`10_env.bat`）から。`git` が見つからなければ、新しい PowerShell を開き直してから3行目以降を実行する。詳しい注意は手順 0。
+
 ## ディレクトリ
 
 ```text
@@ -75,14 +88,8 @@ dotfiles/
 
 0. **事前準備（手動）**
    - 設定 → 開発者向け で「開発者モード」をオンにする（管理者権限なしで symlink を作るため。必須。オフだと `30_link.bat` は `[ERR]` になる）
-   - scoop と git を入れ、次の場所に clone する（このパス構成が前提。**最初から ghq の場所に clone する**ので、zip の取得や、dotfiles の二重取得・`30_link` のやり直しは要らない）。git は最初から scoop のもの1種類だけにする（winget の git は使わない。管理者権限が要らず、PATH の優先順位の問題も起きない）
-     ```powershell
-     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-     Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression
-     scoop install git
-     git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzucha16\dotfiles
-     ```
-     リポジトリは private なので、`git clone` で GitHub のサインイン（Git Credential Manager。scoop の git に同梱）が開く。`scoop install git` のあとに `git` が見つからなければ、新しい PowerShell を開き直す。zip での取得は使わない（`.git` が無く、あとで ghq の場所と食い違う）。すでに winget の git が入っているPCは、一度だけ `winget uninstall --id Git.Git -e` で消す
+   - scoop と git を入れ、clone する（冒頭の「クイックスタート」の4行。このパス構成が前提。**最初から ghq の場所に clone する**ので、zip の取得や、dotfiles の二重取得・`30_link` のやり直しは要らない）。git は最初から scoop のもの1種類だけにする（winget の git は使わない。管理者権限が要らず、PATH の優先順位の問題も起きない）
+     リポジトリは private なので、`git clone` で GitHub のサインイン（Git Credential Manager。scoop の git に同梱）が開く。zip での取得は使わない（`.git` が無く、あとで ghq の場所と食い違う）。すでに winget の git が入っているPCは、一度だけ `winget uninstall --id Git.Git -e` で消す
      Obsidian の Vault `C:\vault\works`（`WORKS_DIR`）は、この PC だけのローカルなディレクトリ（ローカルのリポジトリ。remote なし、または非公開）で、clone しない。作り方は、共有リポジトリ `workbase` の `workflow-kit` を参照する。`.obsidian` は `30_link.bat` が、`windows\obsidian\.obsidian` から `WORKS_DIR` へジャンクションで張る（`WORKS_DIR` が無ければ作る）。共有リポジトリ `workbase` は、`50_repos.bat` が `WORKS_DIR\resources` に clone する（ghq の管理外）。Office のテンプレと UI 設定は自動では張らない。初回に `windows\office` から手で配置する（配置先は上の `windows/` の表）。
      Obsidian を最初に開く前に `30_link.bat` を実行する。先に Obsidian が実ディレクトリの `.obsidian` を作ると、`30_link.bat` が `[ERR]` で止まる（手で退避して再実行する）。
 1. `scripts\windows\10_env.bat`: `setx` で環境変数（`XDG_*`、`VAULT_HOME=C:\vault`、`GHQ_ROOT`、`WORKS_DIR` など）を設定し、ディレクトリを作る。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）

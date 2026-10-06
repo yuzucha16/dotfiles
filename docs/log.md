@@ -28,7 +28,6 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Open Questions
 
-- 手順 0（開発者モード・scoop と git の導入・clone）をスクリプト化するか。リポジトリが private のため、clone 前にリポジトリのスクリプトを匿名で取得できない（raw URL は 404）。選択肢は、README の貼り付けブロックのままにするか、ブラウザで Raw を保存して実行する `00_bootstrap.bat` を作るか（後者は LF の `.bat` のラベル問題あり）。報告を参照。
 
 - Linux / WSL 側の git の名前・メール（`~/.gitconfig_local`）の作成を、`11_git_identity.bat` と同じように対話で行うスクリプトにするか（未決。現在は手作業）。
 
