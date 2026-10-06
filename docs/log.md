@@ -4,6 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- WSL に `clang-format` を導入して、`clang-format --version` が通ることを確認する（`sudo apt install -y clang-format`、または `bash scripts/linux/20_packages.sh`。2026-10-06 時点。`works` の Project が使う）。
 - `10_env.bat` を再実行して、`%USERPROFILE%\.certs` ができること、`CERTS_DIR` と `WSLENV`（`CERTS_DIR/p` が1回だけ）が更新されることを確認する。新しいターミナルと新しい WSL セッション（`wsl --shutdown` のあと）で、`$CERTS_DIR` が `/mnt/c/Users/<名前>/.certs` になり、`company-ca.crt` があれば `NODE_EXTRA_CA_CERTS` が設定されることを確認する。旧 `works\areas\dev-env\certs`（空）は、確認後に削除する（2026-10-06 時点）。
 - 履歴の種の `git config --global user.name` / `user.email`（`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` の各2行）を見直す。`~/.gitconfig` は `30_link` が張る symlink なので、リンク後に実行すると、リポジトリ内の `home/.gitconfig` が書き換わる。種の正本は exmem の `knowledge/shell-command-usecases.md` で、種ファイルは派生物なので、直すのは正本の統合のあと（種を直接編集しない。2026-10-06 時点）。
 - VC++ ランタイムの `[WARN]`（ランタイムが無いとき）の表示を確認する。新アカウントでは `[Installed]` 側しか出ず、`[WARN]` 側は実機で未確認（2026-10-06 時点。ランタイムが無い環境でだけ出る。判断基準は `docs/decisions.md` の「vcredist2022 は自動導入せず…」）。
@@ -55,6 +56,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（`clang-format` を `manifests/apt.txt` に足した）
+
+- `works` の Project `learn-c-pool-allocator`（C の学習）で、コードリーディングのコストを抑えるために `clang-format` を使う（ユーザーの指示。一貫性のためではなく、読みやすさのため）。`manifests/apt.txt` の `# devel` に `clang-format` を追記した。`read_list` が行内コメントを除くことを確認した。`bash tests/linux/test_scripts.sh` は 50/50 合格（確認: 2026-10-06、WSL）。実機（WSL）への導入は、`sudo` にパスワードが要るため、ユーザーが `sudo apt install -y clang-format`（または `20_packages.sh`）で行う。`works` 側の詳細は、`projects/learn-c-pool-allocator/docs/dotfiles-additions.md`。
 
 ### 2026-10-06（`転記待ち` 20 件を `転記済` に進めた。「inboxを整理して」の最初の実行。kit 版 `2026-10-06.18`）
 
