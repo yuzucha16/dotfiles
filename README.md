@@ -7,7 +7,7 @@ Windows 11 + WSL (Ubuntu 24.04) / Linux (apt 系: MX / Ubuntu / Mint) の開発�
 
 ## クイックスタート（Windows・新しいPC）
 
-先に、設定 → 開発者向け で「開発者モード」をオンにする（手動。`30_link.bat` の symlink に必須）。そのあと、PowerShell に次の4行を貼る（scoop と git を入れ、ghq の場所に clone する。clone で GitHub のサインインが開く）。
+先に、設定 → 開発者向け で「開発者モード」をオンにする（手動。`30_link.bat` の symlink に必須）。そのあと、PowerShell に次の4行を貼る（scoop と git を入れ、ghq の場所に clone する）。リポジトリの公開・非公開は未定（2026-10-06 時点は非公開）。**非公開なら、clone で GitHub のサインインが開く。公開なら、サインインは出ない（4行は同じ）。**運用が決まったら、この注記を整理する。
 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -20,7 +20,16 @@ git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzuch
 
 ## クイックスタート（ネイティブ Linux・新しいPC）
 
-OS を入れたあと、ターミナルに次の4行を貼る（git と gh を入れ、GitHub にサインインして、ghq の場所に clone する）。リポジトリは private なので、サインインが要る。`gh auth login` は、GitHub.com → HTTPS → ブラウザ（ワンタイムコード）の順に選ぶ。**未確認**: 新しい Linux の実機では未実行（Ubuntu 24.04 の apt に `gh` 2.45.0 があることだけ確認した）。
+OS を入れたあと、ターミナルで ghq の場所に clone する。**リポジトリの公開・非公開は未定**（2026-10-06 時点は非公開）。状況に合わせて A か B に読み替える。運用が決まったら、使わない方を削除する（手順書 `debian-family.md` の手順 7 も同じ）。
+
+**A. 公開の場合**（サインイン不要）:
+
+```bash
+sudo apt install -y git
+git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha16/dotfiles
+```
+
+**B. 非公開の場合**（git と gh を入れ、GitHub にサインインして clone する。`gh auth login` は、GitHub.com → HTTPS → ブラウザ（ワンタイムコード）の順に選ぶ）:
 
 ```bash
 sudo apt install -y git gh
@@ -28,6 +37,8 @@ gh auth login
 gh auth setup-git
 git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha16/dotfiles
 ```
+
+B は**未確認**: 新しい Linux の実機では未実行（Ubuntu 24.04 の apt に `gh` 2.45.0 があることだけ確認した）。
 
 続きは「セットアップ手順」の「WSL / Linux」の手順 1（`10_dirs.sh`）から。SSH 鍵で取得してもよい（`git clone git@github.com:yuzucha16/dotfiles.git`。鍵の登録は手順書 `debian-family.md` の「SSH と GitHub」）。WSL は Windows 側の clone を使うので、このクイックスタートは不要（Windows 側のクイックスタートを済ませる）。
 
@@ -102,7 +113,7 @@ dotfiles/
 0. **事前準備（手動）**
    - 設定 → 開発者向け で「開発者モード」をオンにする（管理者権限なしで symlink を作るため。必須。オフだと `30_link.bat` は `[ERR]` になる）
    - scoop と git を入れ、clone する（冒頭の「クイックスタート」の4行。このパス構成が前提。**最初から ghq の場所に clone する**ので、zip の取得や、dotfiles の二重取得・`30_link` のやり直しは要らない）。git は最初から scoop のもの1種類だけにする（winget の git は使わない。管理者権限が要らず、PATH の優先順位の問題も起きない）
-     リポジトリは private なので、`git clone` で GitHub のサインイン（Git Credential Manager。scoop の git に同梱）が開く。zip での取得は使わない（`.git` が無く、あとで ghq の場所と食い違う）。すでに winget の git が入っているPCは、一度だけ `winget uninstall --id Git.Git -e` で消す
+     非公開の場合は、`git clone` で GitHub のサインイン（Git Credential Manager。scoop の git に同梱）が開く（公開の場合は出ない）。zip での取得は使わない（`.git` が無く、あとで ghq の場所と食い違う）。すでに winget の git が入っているPCは、一度だけ `winget uninstall --id Git.Git -e` で消す
      Obsidian の Vault `C:\vault\works`（`WORKS_DIR`）は、この PC だけのローカルなディレクトリ（ローカルのリポジトリ。remote なし、または非公開）で、clone しない。作り方は、共有リポジトリ `workbase` の `workflow-kit` を参照する。`.obsidian` は `30_link.bat` が、`windows\obsidian\.obsidian` から `WORKS_DIR` へジャンクションで張る（`WORKS_DIR` が無ければ作る）。共有リポジトリ `workbase` は、`50_repos.bat` が `WORKS_DIR\resources` に clone する（ghq の管理外）。Office のテンプレと UI 設定は自動では張らない。初回に `windows\office` から手で配置する（配置先は上の `windows/` の表）。
      Obsidian を最初に開く前に `30_link.bat` を実行する。先に Obsidian が実ディレクトリの `.obsidian` を作ると、`30_link.bat` が `[ERR]` で止まる（手で退避して再実行する）。
 1. `scripts\windows\10_env.bat`: `setx` で環境変数（`XDG_*`、`VAULT_HOME=C:\vault`、`GHQ_ROOT`、`WORKS_DIR` など）を設定し、ディレクトリを作る。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）
