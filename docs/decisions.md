@@ -148,8 +148,17 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - 却下: `curl` / `Invoke-WebRequest` への置換（アセット名にバージョンが入り、glob が使えない）。
 - 未確認: 未ログインのレート制限（1回2件程度なら問題ないはずだが、推測）。
 
-### 初回の取得は winget の git で最終の場所に clone し、git は scoop に統一する。git の名前・メールは `11_git_identity.bat`（2026-10-06）
+### 初回は scoop の git だけで最終の場所に clone する（winget の git は使わない）（2026-10-06。同日、下の「winget の git で…」の (1)(2) を撤回して置き換えた）
 
+- **決めたこと**（ユーザーの判断: 「理想は scoop で完結したい」）: 手順 0 を、`Set-ExecutionPolicy ... RemoteSigned -Scope CurrentUser` → scoop の導入（公式の1行）→ `scoop install git` → `git clone`（最終の場所）にする。winget は使わない。`20_apps.bat` の winget の git の撤去処理と、その試験7件は削除した（winget 追加前のコミットの状態に戻した）。`11_git_identity.bat` はそのまま使う。すでに winget の git があるPCは、一度だけ手で `winget uninstall --id Git.Git -e`。
+- **根拠**: git が1種類で済み、管理者権限（UAC）が要らず、システムの PATH が先に見つかる問題も起きない。専用の処理と試験が要らない。winget が使えない会社PCでも通る。
+- **却下案**: 前項の「winget の git → scoop に統一」（git が2種類併存し、撤去の処理と UAC、PATH の優先順位の扱いが要る）。
+- **確認済み**: リポジトリは private（`gh repo view` が `PRIVATE`、匿名の `git ls-remote` は認証を要求、raw URL は 404。確認: 2026-10-06）。scoop の git の system gitconfig が GCM（`git-credential-manager.exe`）を `credential.helper` にしているので、clone でサインインが開く（`git config --system --list --show-origin`）。
+- **未確認**: 新しい Windows アカウントで、`scoop install git` のあと同じセッションで `git` が使えるか（使えないなら、手順に「新しい PowerShell を開く」とある）。
+
+### （撤回済み）初回の取得は winget の git で最終の場所に clone し、git は scoop に統一する。git の名前・メールは `11_git_identity.bat`（2026-10-06）
+
+- **撤回済み（2026-10-06）**: 決めたことの (1) の winget の git、(2) の winget の git の撤去は、上の「初回は scoop の git だけで…」に置き換えた。(3)（`11_git_identity.bat`）と (4)（`50_repos.bat` は dotfiles を取得しない）は有効。以下は当時の記録。
 - **経緯**: 運用が「dotfiles を zip で取得 → 各 bat を番号順に実行（`30_link` は zip の展開先に張る）→ `50_repos` で ghq 管理下に再取得 → `30_link` をもう一度」になっていて、取得もリンクも二重だった。原因は、最初の置き場所と ghq の場所（`GHQ_ROOT=C:\vault\repos`）が違うこと。README の手順 0（winget で git → 最終の場所に `git clone`）は、もともと二重にならない設計だった。
 - **決めたこと**（ユーザーの選択）: (1) 初回は winget の git で、最初から `C:\vault\repos\github.com\yuzucha16\dotfiles` に clone する。zip は使わない。(2) git の正本は scoop の git。`20_apps.bat` が、scoop の git が入ったあとで `winget list --id Git.Git -e` を見て、あれば確認（既定は消さない）のうえ `winget uninstall --id Git.Git -e` する。(3) git の名前・メールは新スクリプト `11_git_identity.bat`（10 の環境層の固有ツール。Windows のみ）が、`~\.gitconfig_local` が無いときだけ対話的に作る。(4) `50_repos.bat` は dotfiles を取得しない（ユーザーが足した `ghq get yuzucha16/dotfiles` は、元のコメント行に戻した）。
 - **根拠**: (1) 番号の入れ替えは難しい。`50_repos` は `ghq`（`20_apps` で入る）と `GHQ_ROOT`（`10_env`）に依存するので、`50` を `20` の前に出せない。置き場所をそろえれば順序は変えずに済む。(2) 機械全体（machine scope）の git はシステムの PATH にあり、scoop の shim があるユーザーの PATH より先に見つかる（Windows の PATH の解決順。この PC では winget の git は無く、確認できていない）。そのため残すと winget の git が使われる。scoop の git には GCM（`git-credential-manager.exe`）が同梱されている（確認: `scoop\apps\git\current\ucrt64\bin`、`git credential-manager --version` が 2.9.1）ので、`credential.helperselector = manager` は引き続き使える。(3) `git config --global` は使えない。`~\.gitconfig` はリポジトリ内の `home\.gitconfig` への symlink で、リンク前は実ファイルができて `30_link` が `[ERR]` になり、リンク後は repo を書き換える。`git config --file ~\.gitconfig_local` なら、どちらの時点でも安全で、引用符や `&` も `git config` が扱う。`~\.gitconfig_local` は `~\.gitconfig` の `include` 経由でしか読まれないので、clone 自体には効かない（`30_link` の後に有効）。

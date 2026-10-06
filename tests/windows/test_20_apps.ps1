@@ -11,18 +11,11 @@ function Check($name, $ok) {
 }
 
 # 1場面を実行して、出力と偽コマンドの呼び出し記録を返す。$psExit: 偽 powershell の終了コード、$withScoop: 最初から scoop があるか
-# 偽の winget は WINGET_EXE で差し替える（実機の winget は呼ばない）。$wgFound: winget に Git.Git があるか、$answer: 「消すか」への入力（空 = 入力なし）、
-# $wgUninstallExit: 偽の uninstall の終了コード、$scoopGit: scoop の git ディレクトリがあるか
-function Run-Case($psExit, $withScoop, $wgFound = $false, $answer = '', $wgUninstallExit = 0, $scoopGit = $true) {
+function Run-Case($psExit, $withScoop) {
   $root = Join-Path ([IO.Path]::GetTempPath()) ("t20apps-" + [guid]::NewGuid().ToString('N'))
   $home_ = Join-Path $root 'home'; $shims = Join-Path $home_ 'scoop\shims'
   New-Item -ItemType Directory -Force $shims | Out-Null
-  if ($scoopGit) { New-Item -ItemType Directory -Force (Join-Path $home_ 'scoop\apps\git\current') | Out-Null }
   $log = Join-Path $root 'calls.log'
-
-  $wgStub = Join-Path $root 'fakewinget.cmd'
-  $wgListExit = if ($wgFound) { 0 } else { 1 }
-  Set-Content $wgStub ("@echo off`r`necho winget %*>>`"$log`"`r`nif `"%1`"==`"list`" exit /b $wgListExit`r`nif `"%1`"==`"uninstall`" exit /b $wgUninstallExit`r`nexit /b 0`r`n") -Encoding ascii
 
   # 偽の scoop.cmd: 引数を記録するだけ
   $scoopStub = "@echo off`r`necho scoop %*>>`"$log`"`r`nexit /b 0`r`n"
@@ -35,13 +28,13 @@ function Run-Case($psExit, $withScoop, $wgFound = $false, $answer = '', $wgUnins
   $body += "exit /b $psExit`r`n"
   Set-Content $psStub $body -Encoding ascii
 
-  $old = @{ UP = $env:USERPROFILE; PS = $env:PS_EXE; WG = $env:WINGET_EXE; PATH = $env:PATH }
+  $old = @{ UP = $env:USERPROFILE; PS = $env:PS_EXE; PATH = $env:PATH }
   try {
-    $env:USERPROFILE = $home_; $env:PS_EXE = $psStub; $env:WINGET_EXE = $wgStub
-    $out = if ($answer) { ($answer | cmd /c "`"$bat`" 2>&1") -join "`n" } else { (cmd /c "`"$bat`" < nul 2>&1") -join "`n" }
+    $env:USERPROFILE = $home_; $env:PS_EXE = $psStub
+    $out = (cmd /c "`"$bat`" < nul 2>&1") -join "`n"
     $calls = if (Test-Path $log) { Get-Content $log -Raw } else { '' }
   } finally {
-    $env:USERPROFILE = $old.UP; $env:PS_EXE = $old.PS; $env:WINGET_EXE = $old.WG; $env:PATH = $old.PATH
+    $env:USERPROFILE = $old.UP; $env:PS_EXE = $old.PS; $env:PATH = $old.PATH
     Remove-Item $root -Recurse -Force -ErrorAction SilentlyContinue
   }
   [pscustomobject]@{ Out = $out; Calls = $calls }
@@ -67,21 +60,6 @@ Check 'failure: scoop is not called'                 ($r.Calls -notmatch 'scoop 
 $r = Run-Case 0 $true
 Check 'scoop present: installer is not invoked' ($r.Calls -notmatch 'get\.scoop\.sh')
 Check 'scoop present: proceeds to scoop install' ($r.Calls -match 'scoop install')
-
-# 3b. winget の Git の撤去（scoop の git があるときだけ。確認で Y のときだけ uninstall する）
-$r = Run-Case 0 $true $false
-Check 'winget git: not installed -> winget list only, no prompt' (($r.Calls -match 'winget list --id Git.Git -e') -and ($r.Calls -notmatch 'winget uninstall') -and ($r.Out -notmatch 'winget Git'))
-$r = Run-Case 0 $true $true ''
-Check 'winget git: found, no input -> kept (default is not to uninstall)' (($r.Out -match '\[SKIP\] winget Git is kept') -and ($r.Calls -notmatch 'winget uninstall'))
-$r = Run-Case 0 $true $true 'N'
-Check 'winget git: found, answer N -> kept' (($r.Out -match '\[SKIP\] winget Git is kept') -and ($r.Calls -notmatch 'winget uninstall'))
-$r = Run-Case 0 $true $true 'Y'
-Check 'winget git: found, answer Y -> uninstalls Git.Git' (($r.Calls -match 'winget uninstall --id Git.Git -e') -and ($r.Out -match '\[DONE\] winget Git removed'))
-Check 'winget git: scoop install still proceeds after uninstall' ($r.Calls -match 'scoop install')
-$r = Run-Case 0 $true $true 'Y' 5
-Check 'winget git: uninstall fails -> warns and still installs apps' (($r.Out -match '\[WARN\] uninstall failed') -and ($r.Calls -match 'scoop install'))
-$r = Run-Case 0 $true $true 'Y' 0 $false
-Check 'winget git: scoop git missing -> winget is not touched' ($r.Calls -notmatch 'winget')
 
 # 4. バット内の PowerShell 部分を実際に取り出し、Set-ExecutionPolicy / Invoke-RestMethod を偽物（関数）に差し替えて分岐を試験する。
 #    実効ポリシーは powershell.exe の -ExecutionPolicy（Process スコープ）で作る。実機のレジストリは変えない。

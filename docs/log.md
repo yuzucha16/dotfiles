@@ -28,6 +28,8 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Open Questions
 
+- 手順 0（開発者モード・scoop と git の導入・clone）をスクリプト化するか。リポジトリが private のため、clone 前にリポジトリのスクリプトを匿名で取得できない（raw URL は 404）。選択肢は、README の貼り付けブロックのままにするか、ブラウザで Raw を保存して実行する `00_bootstrap.bat` を作るか（後者は LF の `.bat` のラベル問題あり）。報告を参照。
+
 - Linux / WSL 側の git の名前・メール（`~/.gitconfig_local`）の作成を、`11_git_identity.bat` と同じように対話で行うスクリプトにするか（未決。現在は手作業）。
 
 - 実機の通し実行が未確認: `10_env.bat`（ユーザー環境変数を書き換える）、`20_apps.bat`（Notepad++ の `config.xml` の雛形コピーは確認済み）、`20_packages.sh`、`40_wsl_enable.bat`、`50_repos.*`、`unlink` の実動作（ドライランのみ確認）。処理は旧スクリプトと同じ文字列置換・統合なので挙動は同じと推定（仮説）。
@@ -52,6 +54,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（初回の git を scoop だけにする。winget の git を撤回）
+
+- ユーザーの判断（「理想は scoop で完結」）で、手順 0 の git を winget から scoop に変えた（判断は `docs/decisions.md` の「初回は scoop の git だけで最終の場所に clone する」。前項の winget 案は「撤回済み」として残した）。`20_apps.bat` の winget の git の撤去処理と試験7件を削除（直前のコミット `3f7e794` の前の状態に戻した）。README の手順 0 を scoop の4コマンドに書き換えた。確認: `pwsh tests/windows/test_20_apps.ps1` が failures=0。実機の新アカウントでの通し実行は未確認。リポジトリが private で、clone に GitHub のサインインが要ることも確認し、README に書いた。手順 1〜3 のスクリプト化は検討中（結果は報告のとおり。決まったら Open Questions から移す）。
 
 ### 2026-10-06（初回取得の見直し: 最終の場所に clone、git は scoop に統一、11_git_identity.bat）
 
