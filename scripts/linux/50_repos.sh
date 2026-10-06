@@ -7,17 +7,17 @@ source ~/.profile
 
 # workbase (shared knowledge repo): clone straight into the vault top, outside ghq
 # (a link to a ghq path is not followed by Grep/Glob/rg).
-# WSL: the Windows side (scripts\windows\50_repos.bat) clones it into C:\vault\notes\resources, shared via /mnt/c.
+# WSL: the Windows side (scripts\windows\50_repos.bat) clones it into C:\vault\works\resources, shared via /mnt/c.
 : "${WORKBASE_URL:=https://github.com/yuzucha16/workbase}"
-NOTES="$(notes_dir)"
+WORKS="$(works_dir)"
 if is_wsl; then
-  if [[ -d "$NOTES/resources/.git" ]]; then
-    echo "[SKIP] workbase already cloned (Windows side): $NOTES/resources"
+  if [[ -d "$WORKS/resources/.git" ]]; then
+    echo "[SKIP] workbase already cloned (Windows side): $WORKS/resources"
   else
-    echo "[WARN] WSL: run scripts\\windows\\50_repos.bat on Windows to clone workbase into $NOTES/resources"
+    echo "[WARN] WSL: run scripts\\windows\\50_repos.bat on Windows to clone workbase into $WORKS/resources"
   fi
 else
-  clone_workbase "$NOTES" "$WORKBASE_URL"
+  clone_workbase "$WORKS" "$WORKBASE_URL"
 fi
 
 # c++ samples

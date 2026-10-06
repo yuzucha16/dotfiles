@@ -12,23 +12,23 @@ is_wsl() {
   grep -qi microsoft "${PROC_VERSION_FILE:-/proc/version}" 2>/dev/null
 }
 
-# Vault top (NOTES_DIR): an existing NOTES_DIR wins.
-# WSL shares C:\vault\notes through /mnt/c; native Linux uses ~/vault/notes
-notes_dir() {
-  if [[ -n "${NOTES_DIR:-}" ]]; then
-    echo "$NOTES_DIR"
+# Vault top (WORKS_DIR): an existing WORKS_DIR wins.
+# WSL shares C:\vault\works through /mnt/c; native Linux uses ~/vault/works
+works_dir() {
+  if [[ -n "${WORKS_DIR:-}" ]]; then
+    echo "$WORKS_DIR"
   elif is_wsl; then
-    echo "/mnt/c/vault/notes"
+    echo "/mnt/c/vault/works"
   else
-    echo "$HOME/vault/notes"
+    echo "$HOME/vault/works"
   fi
 }
 
-# clone the shared repo (workbase) straight into <notes_dir>/resources.
+# clone the shared repo (workbase) straight into <works_dir>/resources.
 # Outside ghq on purpose: a link to a ghq path is not followed by Grep/Glob/rg. Skips when already cloned.
-# usage: clone_workbase <notes_dir> <url>
+# usage: clone_workbase <works_dir> <url>
 clone_workbase() {
-  local notes="$1" url="$2" dest="$1/resources"
+  local works="$1" url="$2" dest="$1/resources"
   if [[ -d "$dest/.git" ]]; then
     echo "[SKIP] already cloned: $dest"
     return 0
@@ -37,11 +37,11 @@ clone_workbase() {
     echo "[ERR] $dest exists and is not empty (and is not a git repo). Move it by hand." >&2
     return 1
   fi
-  mkdir -p "$notes"
+  mkdir -p "$works"
   git clone "$url" "$dest"
 }
 
-# link the Obsidian config (dotfiles windows/obsidian/.obsidian) to <notes_dir>/.obsidian (native Linux only)
+# link the Obsidian config (dotfiles windows/obsidian/.obsidian) to <works_dir>/.obsidian (native Linux only)
 # usage: link_obsidian <link|unlink> <src> <dst> <dry 0|1>   (returns 1 on [ERR])
 link_obsidian() {
   local mode="$1" src="$2" dst="$3" dry="$4"

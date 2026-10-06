@@ -10,8 +10,8 @@ set "SSH_DIR=%USERPROFILE%\.ssh"
 
 set "VAULT_HOME=C:\vault"
 set "GHQ_ROOT=%VAULT_HOME%\repos"
-set "CERTS_DIR=%VAULT_HOME%\certs"
-set "NOTES_DIR=%VAULT_HOME%\notes"
+set "WORKS_DIR=%VAULT_HOME%\works"
+set "CERTS_DIR=%WORKS_DIR%\areas\dev-env\certs"
 
 REM 永続化するために setx を使う (User スコープ)
 setx HOME "%HOME%"
@@ -23,7 +23,7 @@ setx XDG_STATE_HOME "%XDG_STATE_HOME%"
 setx VAULT_HOME "%VAULT_HOME%"
 setx GHQ_ROOT "%GHQ_ROOT%"
 setx CERTS_DIR "%CERTS_DIR%"
-setx NOTES_DIR "%NOTES_DIR%"
+setx WORKS_DIR "%WORKS_DIR%"
 
 REM ディレクトリ作成
 if not exist "%XDG_CONFIG_HOME%"    ( mkdir "%XDG_CONFIG_HOME%" )
@@ -34,9 +34,9 @@ if not exist "%SSH_DIR%"            ( mkdir "%SSH_DIR%" )
 
 if not exist "%VAULT_HOME%"         ( mkdir "%VAULT_HOME%" )
 if not exist "%GHQ_ROOT%"           ( mkdir "%GHQ_ROOT%" )
-if not exist "%CERTS_DIR%"          ( mkdir "%CERTS_DIR%" )
-REM NOTES_DIR is not created here: 30_link creates it as the parent of the .obsidian link, and the workflow hook
-REM turns it into a local repo. The shared repo (workbase) is cloned into %NOTES_DIR%\resources by 50_repos.bat.
+REM CERTS_DIR (under WORKS_DIR\areas) is not created here either: place it by hand after the workspace is made.
+REM WORKS_DIR is not created here: 30_link creates it as the parent of the .obsidian link, and the workflow hook
+REM turns it into a local repo. The shared repo (workbase) is cloned into %WORKS_DIR%\resources by 50_repos.bat.
 
 REM 確認表示 (現在のセッションでは setx の結果は反映されない点に注意)
 echo HOME               =%HOME%
@@ -49,6 +49,6 @@ echo SSH_DIR            =%SSH_DIR%
 echo VAULT_HOME         =%VAULT_HOME%
 echo GHQ_ROOT           =%GHQ_ROOT%
 echo CERTS_DIR          =%CERTS_DIR%
-echo NOTES_DIR          =%NOTES_DIR%
+echo WORKS_DIR          =%WORKS_DIR%
 
 pause
