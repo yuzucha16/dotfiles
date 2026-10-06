@@ -62,6 +62,8 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ### 2026-10-06（11_git_identity.bat に schannel の質問を追加）
 
+- 「ナレッジ化して」の改善1点をユーザーが承認し、workflow-kit を版 `2026-10-06.16` に上げた（変更は `workbase` 側で、dotfiles のコミット対象外）: `docs-rules.md` の「コミットの前に確認する」①に、`git diff --cached --stat` の行数が自分の変更量と合うかの確認を足した。コミット `23857da` で、並行編集（ラベルと行き先の付与）の約40行が `docs/decisions.md` に混ざったため。ユーザーは、混ざったコミットはこのままでよいと判断した（履歴は書き換えない）。
+
 - 「ナレッジ化して」を実行し、`exmem/inbox/2026-10-06-git-ssl-backend-credential-placement.md` を作った（コミット対象外。点検スクリプト PASS 27、失敗0、警告0）。`docs/decisions.md` に決定と Gotcha（`https.sslVerify` は git に無いキー）を足し、行き先を `転記待ち` にした。
 
 - ユーザーの依頼で、`scripts/windows/11_git_identity.bat` に「SSL バックエンドを schannel にするか」の質問を足した。`y` で `.gitconfig_local` に `[http] sslBackend = schannel` と `sslVerify = true`（`[http]` 内。当初の `https.sslVerify` は git に無いキーなので `http.sslVerify` に直した） を書き、`n`・空は何も書かない（既定の OpenSSL）。y/n 以外は再入力で、5回で `[ERR]`。`tests/windows/test_11_git_identity.ps1` に6件を足し、failures=0（確認: 2026-10-06、`test_20_apps.ps1` も failures=0）。README の該当行も更新。`credential.helperselector.selected = manager` は、ユーザーの決定で `home/.gitconfig` に静的に持ち、スクリプトからは書かない（`11_git_identity.bat` から削除、試験は「書かない」に変更）。`home/.gitconfig` にあった未コミットの schannel 設定は、ユーザーが外した（確認: `Get-Content`。`helperselector` だけが残る）ので、`n` なら OpenSSL のまま。
