@@ -28,6 +28,8 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Open Questions
 
+- Linux / WSL 側の git の名前・メール（`~/.gitconfig_local`）の作成を、`11_git_identity.bat` と同じように対話で行うスクリプトにするか（未決。現在は手作業）。
+
 - 実機の通し実行が未確認: `10_env.bat`（ユーザー環境変数を書き換える）、`20_apps.bat`（Notepad++ の `config.xml` の雛形コピーは確認済み）、`20_packages.sh`、`40_wsl_enable.bat`、`50_repos.*`、`unlink` の実動作（ドライランのみ確認）。処理は旧スクリプトと同じ文字列置換・統合なので挙動は同じと推定（仮説）。
 - `.wslconfig` を WSL が読むか、`vmmemWSL` が縮むか。**このPCではまだリンクされていない**（2026-10-03 確認）。
 - GitHub の既定ブランチが `main` か。リモートには `main`（`e1e4ac7`）と `202509` の両方がある（2026-10-03 確認）。ローカルの `origin/HEAD` は `202509` を指している。
@@ -50,6 +52,12 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（初回取得の見直し: 最終の場所に clone、git は scoop に統一、11_git_identity.bat）
+
+- 運用が「zip で取得 → 番号順に実行 → `50_repos` で ghq 管理下に再取得 → `30_link` をもう一度」で二重だったのを見直した（判断は `docs/decisions.md` の「初回の取得は winget の git で最終の場所に clone し、git は scoop に統一する」）。ユーザーの選択で、初回は winget の git で最初から `C:\vault\repos\github.com\yuzucha16\dotfiles` に clone し（README の手順 0 のとおり。zip は使わない）、git の正本は scoop。`50` を前に出す案は、`ghq` と `GHQ_ROOT` に依存するため採らず、置き場所をそろえた。
+- 追加・変更: (1) `scripts/windows/11_git_identity.bat` を新設。`~\.gitconfig_local` が無いときだけ、`user.name` / `user.email` を対話入力し、`git config --file` で作る（`--global` は `30_link` と衝突するので使わない）。無効な入力は5回で `[ERR]`。(2) `20_apps.bat` に、scoop の git のあとで winget の git を検出し、確認（既定は消さない）のうえ `winget uninstall --id Git.Git -e` する処理を足した（`WINGET_EXE` で差し替え可能）。(3) `50_repos.bat` のユーザーの変更 `ghq get yuzucha16/dotfiles` は、取得済みで不要になったので、元のコメント行（`rem ghq get yuzucha16/adv360-pro-zmk`）に戻した。(4) README の手順 0・1・2・5 を更新。
+- 確認: `pwsh tests/windows/test_20_apps.ps1`（winget の分岐 7 件を追加）と、新規の `tests/windows/test_11_git_identity.ps1`（15 件）が failures=0。偽の `USERPROFILE` と偽の `winget` だけを使い、実環境の `~\.gitconfig_local` は不変。実機で winget の git を入れた PC での通し実行は未確認。
 
 ### 2026-10-06（24_fonts.bat の出力保存と pause、50_repos.bat の変更）
 

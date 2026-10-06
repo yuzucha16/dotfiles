@@ -50,6 +50,10 @@ if not exist "%SCOOP_ROOT%\apps\git\" (
   echo [Installed] git
 )
 
+REM The first clone of dotfiles uses a winget Git (bootstrap). scoop Git is the managed one, so offer to remove the winget one.
+REM (A machine-scope Git sits in the system PATH, which comes BEFORE the user PATH that holds the scoop shims: it would win.)
+call :WINGET_GIT
+
 REM ▼バケツ追加
 for %%B in (%BUCKETS%) do (
   if exist "%SCOOP_ROOT%\buckets\%%~B\" (
@@ -110,6 +114,26 @@ if not exist "%~1" (
 )
 echo Using list: %~1
 for /F "usebackq eol=# tokens=1" %%A in ("%~1") do set "APPS=!APPS! %%A"
+goto :EOF
+
+:WINGET_GIT
+REM WINGET_EXE can be replaced (tests use a fake). Skip silently when scoop Git is missing, winget is missing or Git.Git is not installed by winget.
+if not defined WINGET_EXE set "WINGET_EXE=winget"
+if not exist "%SCOOP_ROOT%\apps\git\current\" goto :EOF
+call "%WINGET_EXE%" list --id Git.Git -e >nul 2>&1
+if errorlevel 1 goto :EOF
+echo [WARN] A Git installed by winget was found. scoop Git is the managed one.
+choice /C YN /N /M "Uninstall the winget Git now? It may ask for UAC. [Y/N] "
+if errorlevel 2 (
+  echo [SKIP] winget Git is kept. It stays first in PATH; uninstall it later: winget uninstall --id Git.Git -e
+  goto :EOF
+)
+call "%WINGET_EXE%" uninstall --id Git.Git -e
+if errorlevel 1 (
+  echo [WARN] uninstall failed. Remove it in Settings ^> Apps, or run: winget uninstall --id Git.Git -e
+  goto :EOF
+)
+echo [DONE] winget Git removed. Open a NEW terminal: git now resolves to %SCOOP_SHIMS%\git.exe
 goto :EOF
 
 :END

@@ -64,7 +64,7 @@ dotfiles/
 
 - OS はディレクトリで表す（ファイル名に `w` / `l` は付けない）
 - 十の位 = 層（実行順）: `10` 環境・ディレクトリ、`20` アプリ/パッケージ導入、`30` リンク、`40` OS 機能（WSL 有効化など）、`50` リポジトリ取得
-- 一の位 = 同じ層の中身: `0` は層の本体、`1` 以降は固有ツール（`23` = 日本語入力（Linux のみ）、`24` = フォント、`31` = 履歴の種（Windows は PSReadLine、Linux は zsh/bash））。Windows と Linux で同じ番号は同じ役割（片方にしかないものは欠番）。WSL とネイティブ Linux は同じスクリプトで、WSL 固有の挙動は `is_wsl` で分ける
+- 一の位 = 同じ層の中身: `0` は層の本体、`1` 以降は固有ツール（`11` = git の名前・メール（Windows のみ）、`23` = 日本語入力（Linux のみ）、`24` = フォント、`31` = 履歴の種（Windows は PSReadLine、Linux は zsh/bash））。Windows と Linux で同じ番号は同じ役割（片方にしかないものは欠番）。WSL とネイティブ Linux は同じスクリプトで、WSL 固有の挙動は `is_wsl` で分ける
 - 任意で実行するものは `optional/` に置く（番号なし）
 - `.bat` のコメントは ASCII（英語）で書く。日本語（UTF-8）のコメントは、コードページ 932 のコンソールで行末のバイトが次の行と混ざり、意図しないコマンドやゴミファイルが生まれることがある
 - 家用のアプリの追加分は `apps.home.txt` のように `.home.` を挟んだファイルに書く（`manifests/`）。リンクの map は共通の `links.map` のみ
@@ -75,16 +75,18 @@ dotfiles/
 
 0. **事前準備（手動）**
    - 設定 → 開発者向け で「開発者モード」をオンにする（管理者権限なしで symlink を作るため。必須。オフだと `30_link.bat` は `[ERR]` になる）
-   - git を入れ、次の場所に clone する（このパス構成が前提）
+   - git を入れ、次の場所に clone する（このパス構成が前提。**最初から ghq の場所に clone する**ので、zip の取得や、dotfiles の二重取得・`30_link` のやり直しは要らない）
      ```powershell
      winget install Git.Git
      git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzucha16\dotfiles
      ```
+     この winget の git は最初の clone 用の一時的なもの。git の正本は scoop の git で、`20_apps.bat` が、winget の git を見つけたら（確認のうえ）`winget uninstall` で消す（機械全体の git はシステムの PATH にあり、scoop の shim が入るユーザーの PATH より先に見つかるため、残すと winget の git が使われる）。消すのに UAC が出ることがある。zip での取得は使わない（`.git` が無く、あとで ghq の場所と食い違う）
      Obsidian の Vault `C:\vault\works`（`WORKS_DIR`）は、この PC だけのローカルなディレクトリ（ローカルのリポジトリ。remote なし、または非公開）で、clone しない。作り方は、共有リポジトリ `workbase` の `workflow-kit` を参照する。`.obsidian` は `30_link.bat` が、`windows\obsidian\.obsidian` から `WORKS_DIR` へジャンクションで張る（`WORKS_DIR` が無ければ作る）。共有リポジトリ `workbase` は、`50_repos.bat` が `WORKS_DIR\resources` に clone する（ghq の管理外）。Office のテンプレと UI 設定は自動では張らない。初回に `windows\office` から手で配置する（配置先は上の `windows/` の表）。
      Obsidian を最初に開く前に `30_link.bat` を実行する。先に Obsidian が実ディレクトリの `.obsidian` を作ると、`30_link.bat` が `[ERR]` で止まる（手で退避して再実行する）。
 1. `scripts\windows\10_env.bat`: `setx` で環境変数（`XDG_*`、`VAULT_HOME=C:\vault`、`GHQ_ROOT`、`WORKS_DIR` など）を設定し、ディレクトリを作る。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）
    - `scripts\windows\optional\capslock_to_ctrl.reg`（任意）: CapsLock を Ctrl にする。管理者権限が必要で、再起動後に有効。元に戻すときは `capslock_default.reg`
-2. `scripts\windows\20_apps.bat [home]`: scoop と bucket を導入し、アプリを入れる
+   - `scripts\windows\11_git_identity.bat`: `~\.gitconfig_local`（PC ごとの git の名前・メール）が無いときだけ、`user.name` / `user.email` を対話的に聞いて作る（`credential.helperselector.selected = manager` も入れる）。既にあれば触らない。**`30_link.bat` の前に**実行する（git が必要。手順 0 の winget の git でよい）。`git config --global` は使わない: リンク前は実ファイルの `~\.gitconfig` ができて `30_link.bat` が `[ERR]` になり、リンク後はリポジトリ内の `home\.gitconfig` を書き換えてしまうため。`~\.gitconfig` が `include` するので、読まれるのは `30_link.bat` の後。無効な入力は5回で `[ERR]`（入力が閉じていても無限ループしない）
+2. `scripts\windows\20_apps.bat [home]`: scoop と bucket を導入し、アプリを入れる（先に git を入れる。winget の git があれば、確認のうえ消す）
    - PC1: `20_apps.bat`（`apps.txt` のみ）
    - PC2: `20_apps.bat home`（`apps.txt` + `apps.home.txt`）
    - Notepad++ の `config.xml` が無い/空のときだけ、`windows\notepadpp\config.min.xml`（タブ幅 2、新規文書 LF、折り返し、スナップショットバックアップ、ダークテーマ、自動更新オフなど）をコピーする。既にあれば触らない。リンクではないので、以後はアプリが自由に書き換える。最小構成を適用し直したいときは `config.xml` を削除（または空に）して再実行する
@@ -95,7 +97,7 @@ dotfiles/
    - `[ERR] mklink failed` は開発者モードがオフのときに出る
    - `scripts\windows\31_history_seed.bat [-n]`: `windows\powershell\history.seed.txt` を PSReadLine の履歴ファイルへコピーする。履歴ファイルが無い/空のときだけ行い、既存の履歴は上書きしない（`-n`: 確認のみ）。リンクではないので、以後は PSReadLine が自由に追記する。**最初の pwsh を開く前に**実行する。出力は `tmp\31_history_seed.log`（Git 対象外、実行のたびに上書き）にも残り、最後に `pause` で止まる
 4. `scripts\windows\40_wsl_enable.bat`（WSL を使う場合）: 管理者権限で実行。WSL2 の機能を有効化する。**再起動後**、表示される `wsl --update` / `wsl --install -d Ubuntu-24.04` を手動で実行する
-5. `scripts\windows\50_repos.bat`: ghq で必要なリポジトリを取得する。共有リポジトリ `workbase` は、ghq でなく `git clone` で `%WORKS_DIR%\resources` に取得する（既にあれば skip。`WORKS_DIR` が未設定なら `[ERR]`）
+5. `scripts\windows\50_repos.bat`: ghq で必要なリポジトリを取得する（dotfiles 自身は手順 0 で取得済みなので、ここでは取得しない）。共有リポジトリ `workbase` は、ghq でなく `git clone` で `%WORKS_DIR%\resources` に取得する（既にあれば skip。`WORKS_DIR` が未設定なら `[ERR]`）
 
 ### WSL (Ubuntu 24.04) / Linux (apt 系)
 
