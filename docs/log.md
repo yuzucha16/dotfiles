@@ -4,7 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
-- 新しい Windows アカウントで `20_apps.bat` を実行し、Scoop の導入が通るか確認する（2026-10-06 の修正の実機確認）。あわせて、VC++ ランタイムの `[WARN]` / `[Installed]` の表示と、入れる基準（`docs/decisions.md`）が実用になるかも見る。まだ失敗するなら、表示される `Get-ExecutionPolicy -List` と、旧コマンドを手で実行した結果を `docs/decisions.md` の Gotchas に足して、原因を絞る。
+- VC++ ランタイムの `[WARN]`（ランタイムが無いとき）の表示を確認する。新アカウントでは `[Installed]` 側しか出ず、`[WARN]` 側は実機で未確認（2026-10-06 時点。ランタイムが無い環境でだけ出る。判断基準は `docs/decisions.md` の「vcredist2022 は自動導入せず…」）。
 - Zed の最適化（2026-10-04）の後始末: Zed を再起動して、テーマ・Ctrl+Enter 送信・右のプロジェクトパネル・Markdown の見え方を確認する。Vim オフの試験は 2026-10-11 頃に続けるか判断する（戻し方は `settings.json` のコメント）。他のPCでは `30_link.bat` の前に、空の `%APPDATA%\zed\themes` を削除する。WSL で点滅を止めるのは `.bashrc` / `.zshrc`（反映は新しいシェルで確認）。OS 全体の点滅停止（`CursorBlinkRate=-1`）は必要なら検討する。
 - シェルの3シェル共通化（fzf とキーバインドの現仕様の表は `docs/decisions.md` の Facts）:
   - WSL に `ghq` を入れたら `cdg`（zsh/bash）を実機で確認する。
@@ -13,13 +13,12 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - GitHub の既定ブランチを `main` にし、問題が無ければ `202509` をリモート・ローカルで削除する（ユーザーの確認待ち）。
 - 各PC（家・会社）で `git pull` → Windows は `30_link.bat`（家は `link home`）、Linux/WSL は `30_link.sh` を再実行する。新しいシェルで zsh の `lt` / `ll` / `l`、`cdg` を確認する。
 - このPCで `.wslconfig` を反映する: `30_link.bat` → `wsl --shutdown` → 開き直して `vmmemWSL` を観察する。
-- `git config user.name` / `user.email` を `~/.gitconfig_local` にPCごとに設定済みか確認する（仮値 `user <user@example.com>` のままコミットしない）。
 - 未 push のコミットを push する（Zed の最適化の `[zed]` `[shell]` は push 済み。残りは 2026-10-04 の `[docs]` 分と `terminal.shell` 削除の `[zed]`。整理分の内訳:`22_python` 削除、starship、Zed 拡張、VS Code 削除、Notepad++ の雛形方式、light テーマ削除）。starship と zed のコミットには、別件の削除が混ざっている（`docs/decisions.md` の Gotchas）。分け直すかは任意。
 - 古い Notepad++ のリンク切れ（`stylers.xml` `contextMenu.xml` `NppExec.ini`、`themes\Gruvbox light medium.xml`）と `~/vimfiles` の旧プラグイン（`:PlugClean`）を掃除する。実機に残る scoop の VS Code（`scoop uninstall vscode`、`scoop\persist\vscode` 内のリンク）も、不要なら手で消す。
 - `scripts/linux/30_link.sh` にある旧 `.vscode-server/extensions/extensions.txt` の掃除行を、消すか判断する。
 - 参照用に退避した他PCの生ヒストリ（`works/resources/_local/ConsoleHost_history.txt`。Git 対象外）は、使い終わったら削除する。
-- 新しいPC（または VM）で `10` → `50` を通し実行し、手順書（`works/resources/cheatsheets/env/`）どおり進むか確認する。MX Linux 25.3 と Win11 の「要確認」を潰す。
-- `24_fonts.*` で実際にダウンロードしてフォントを入れる（`gh auth login` は不要）。`fonts.txt` の PlemolJP は `PlemolJP_NF_v*.zip` のまま。試用中の「Console NF」に当たる実際のアセット名はリリースで未確認なので、確かめて合わせる。1週間使って「Light で続ける / Text に上げる / HackGen に戻す」を決める（メインフォントは PlemolJP Console NF の Light を試用中。Zed・Windows Terminal・Notepad++ に反映済み）。
+- 新しいPC（または VM）に Linux を入れ、`10` → `50` を通し実行して、手順書（`works/resources/cheatsheets/env/debian-family.md`）どおり進むか確認する。MX Linux 25.3 の「要確認」を潰す。非公開リポジトリの手順 B（`gh auth login` から clone まで）もここで確認する。
+- `24_fonts.sh`（Linux）で、実際にダウンロードしてフォントを入れる（Windows の `24_fonts.bat` は 2026-10-06 に実機で確認済み）。1週間使って「Light で続ける / Text に上げる / HackGen に戻す」を決める（メインフォントは PlemolJP Console NF の Light を試用中。Zed・Windows Terminal・Notepad++ に反映済み）。
 - `30_link.sh` の最後に `chsh` 後の再ログインの案内を足す。`50_repos.sh` の前提（`source ~/.profile`、`ghq` が PATH にある）を整理する。`50_repos.bat` に取得したいリポジトリを足す。
 - `git bundle` のバックアップの所在を確認する（見つからない）。必要なら保管場所を決める。
 - 古い WSL では `fdfind` → `fd` のリンクが無いので、`20_packages.sh` を再実行するか手でリンクを張る。
@@ -32,7 +31,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 
 
-- 実機の通し実行が未確認: `10_env.bat`（ユーザー環境変数を書き換える）、`20_apps.bat`（Notepad++ の `config.xml` の雛形コピーは確認済み）、`20_packages.sh`、`40_wsl_enable.bat`、`50_repos.*`、`unlink` の実動作（ドライランのみ確認）。処理は旧スクリプトと同じ文字列置換・統合なので挙動は同じと推定（仮説）。
+- 実機の通し実行が未確認: `20_packages.sh`、`40_wsl_enable.bat`、`50_repos.sh`、`unlink` の実動作（ドライランのみ確認）。`10_env.bat` / `20_apps.bat` / `50_repos.bat` は、2026-10-06 に新アカウントの Windows で確認済み。処理は旧スクリプトと同じ文字列置換・統合なので挙動は同じと推定（仮説）。
 - `.wslconfig` を WSL が読むか、`vmmemWSL` が縮むか。**このPCではまだリンクされていない**（2026-10-03 確認）。
 - GitHub の既定ブランチが `main` か。リモートには `main`（`e1e4ac7`）と `202509` の両方がある（2026-10-03 確認）。ローカルの `origin/HEAD` は `202509` を指している。
 - 家・会社のPCで、新構成への再同期後の動作（未確認）。
@@ -54,6 +53,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（動作確認の Close）
+
+- ユーザーが新しい Windows アカウントで、`10` から `50` の Windows スクリプトを実機で通し、問題なしと報告した。`24_fonts.bat` は実際にダウンロードした。VC++ ランタイムの `[WARN]` は出なかった（`[Installed]` 側のみ。`[WARN]` 側は未確認のまま Next Actions に残した）。これを受けて、次の項目を Close（削除）した: 新アカウントでの `20_apps.bat` と Scoop 導入、`10_env.bat` / `20_apps.bat` / `50_repos.bat` の実機の通し実行、Windows の新PCでの通し実行と Win11 の「要確認」、`scoop install git` 直後の `git` 利用、`.bat` の文字化け修正の再実行、`11_git_identity.bat` の実機動作、`24_fonts.bat` の実ダウンロード（PlemolJP のアセット名 `PlemolJP_NF_v*.zip` が通る）、`~/.gitconfig_local` の設定確認（`11_git_identity` で置き換わった）、winget の git の `winget uninstall`（決定を撤回済み）。Windows の OOBE 回避（手順書の 1〜4）は、この確認に含まれず、手順書に「要確認」のまま。
 
 ### 2026-10-06（workbase の手順書を現在のスクリプトに合わせた）
 

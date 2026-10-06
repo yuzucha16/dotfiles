@@ -160,7 +160,7 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 
 - **`scoop-completion`**: `apps.txt` から削除。PowerShell の補完は `profile.ps1` で使っていない（`scoop-completion` / `Import-Module` の参照なし。確認: Grep）。「`PSFzf` / `scoop-completion` を削除した」という前の決定（「シェル」の項）に、`apps.txt` の行だけが取り残されていた。このPCには導入済みなので、不要なら `scoop uninstall scoop-completion`（手動）。
 - **Moralerspace**: `manifests/fonts.txt` の `yuru7/moralerspace:MoralerspaceHW_v*.zip` を削除（ユーザーの指示）。一覧は Windows の `24_fonts.bat` と Linux の `24_fonts.sh` の共有なので、両方で取得されなくなる。メインは PlemolJP Console NF。フォントのフォールバックの `Moralerspace Neon HW` も、Zed の `settings.json`（3か所）と Obsidian の `appearance.json`（3か所）から外した（ユーザーの指示。同日）。次の候補は `Meiryo UI`。過去の記録（フォント取得の項）は当時のまま残した。
-- **`.bat` の日本語コメントで文字化け**: `20_apps.bat` の冒頭で、日本語コメント（`REM PS_EXE は完全パスにして、…`）の末尾のバイトが cp932 のコンソールで次の行と混ざり、文字化けしたコマンドとして実行されて「認識されていません」になった。原則（「`.bat` のコメントは ASCII（英語）」）に反して、`10_env` / `20_apps` / `40_wsl_enable` に日本語コメントが残っていた。全て英語にし、`scripts/windows/*.bat` の全体が ASCII であることを `tests/windows/test_20_apps.ps1` で検査するようにした（再発防止）。実機での再実行は未確認（試験は ASCII であることの確認）。
+- **`.bat` の日本語コメントで文字化け**: `20_apps.bat` の冒頭で、日本語コメント（`REM PS_EXE は完全パスにして、…`）の末尾のバイトが cp932 のコンソールで次の行と混ざり、文字化けしたコマンドとして実行されて「認識されていません」になった。原則（「`.bat` のコメントは ASCII（英語）」）に反して、`10_env` / `20_apps` / `40_wsl_enable` に日本語コメントが残っていた。全て英語にし、`scripts/windows/*.bat` の全体が ASCII であることを `tests/windows/test_20_apps.ps1` で検査するようにした（再発防止）。実機での再実行は、2026-10-06 に新アカウントで確認済み（ユーザー報告。問題なし）。
 
 ### 初回は scoop の git だけで最終の場所に clone する（winget の git は使わない）（2026-10-06。同日、下の「winget の git で…」の (1)(2) を撤回して置き換えた）
 
@@ -168,7 +168,7 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - **根拠**: git が1種類で済み、管理者権限（UAC）が要らず、システムの PATH が先に見つかる問題も起きない。専用の処理と試験が要らない。winget が使えない会社PCでも通る。
 - **却下案**: 前項の「winget の git → scoop に統一」（git が2種類併存し、撤去の処理と UAC、PATH の優先順位の扱いが要る）。
 - **確認済み**: リポジトリは private（`gh repo view` が `PRIVATE`、匿名の `git ls-remote` は認証を要求、raw URL は 404。確認: 2026-10-06）。scoop の git の system gitconfig が GCM（`git-credential-manager.exe`）を `credential.helper` にしているので、clone でサインインが開く（`git config --system --list --show-origin`）。
-- **未確認**: 新しい Windows アカウントで、`scoop install git` のあと同じセッションで `git` が使えるか（使えないなら、手順に「新しい PowerShell を開く」とある）。
+- **確認済み（2026-10-06）**: 新しい Windows アカウントで、クイックスタートから `20_apps.bat` 以降まで通った（ユーザー報告）。`scoop install git` のあとの `git` の扱いも含めて、問題は出なかった。
 
 ### （撤回済み）初回の取得は winget の git で最終の場所に clone し、git は scoop に統一する。git の名前・メールは `11_git_identity.bat`（2026-10-06）
 
@@ -178,7 +178,6 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - **根拠**: (1) 番号の入れ替えは難しい。`50_repos` は `ghq`（`20_apps` で入る）と `GHQ_ROOT`（`10_env`）に依存するので、`50` を `20` の前に出せない。置き場所をそろえれば順序は変えずに済む。(2) 機械全体（machine scope）の git はシステムの PATH にあり、scoop の shim があるユーザーの PATH より先に見つかる（Windows の PATH の解決順。この PC では winget の git は無く、確認できていない）。そのため残すと winget の git が使われる。scoop の git には GCM（`git-credential-manager.exe`）が同梱されている（確認: `scoop\apps\git\current\ucrt64\bin`、`git credential-manager --version` が 2.9.1）ので、`credential.helperselector = manager` は引き続き使える。(3) `git config --global` は使えない。`~\.gitconfig` はリポジトリ内の `home\.gitconfig` への symlink で、リンク前は実ファイルができて `30_link` が `[ERR]` になり、リンク後は repo を書き換える。`git config --file ~\.gitconfig_local` なら、どちらの時点でも安全で、引用符や `&` も `git config` が扱う。`~\.gitconfig_local` は `~\.gitconfig` の `include` 経由でしか読まれないので、clone 自体には効かない（`30_link` の後に有効）。
 - **却下案**: zip を最終の場所に展開して、あとで `.git` を付ける（`init` + `fetch` + `reset`。複雑で、zip との差分と改行の確認が要る。git を先に入れられない環境向けの代替として残してあるだけで、未実装）。`50_repos.bat` の先頭で `.gitconfig_local` を作る（`30_link` の後になるので、リンク前に作る目的に合わない）。`10_env.bat` の末尾（git が必須になる）。最初から scoop の git だけを使う（scoop の導入を `20_apps.bat` の外の1行コマンドで先に行う案。ユーザーが winget の git を選んだので採らなかった。winget の git の撤去が不要になる利点があった）。
 - **Gotchas（この作業で遭遇）**: (a) `set /p` は標準入力がパイプだと、2つ目以降の入力を取りこぼす（`(echo a& echo b) | cmd /c x.bat` で `B` が空。ファイルのリダイレクトなら読める。確認: 最小のバッチで再現）。実際のコンソールでは問題ない。試験は入力をファイルで渡す。(b) 空入力の再入力ループは、標準入力が閉じていると無限ループになる。5回で `[ERR]` にして止めた。(c) `.bat` から `.cmd`（偽の `gh`、`winget`）を `call` なしで呼ぶと制御が戻らない。実機は `.exe` の shim なので問題ないが、`call` を付けておく。
-- **未確認**: winget の git があるPCでの、実際の `winget uninstall`（UAC の有無、現在のターミナルの PATH の扱い。偽の `winget` での試験のみ）。`winget install Git.Git` が machine scope かどうか（`winget show` にスコープの記載が出なかった）。
 
 ### vcredist2022 は自動導入せず、不足時だけ警告する（2026-10-06）
 
@@ -188,7 +187,7 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - **インストール判断基準**（上から。1つでも該当したら入れる）: ① アプリ起動時に `VCRUNTIME140*.dll` / `MSVCP140*.dll` が無い、または `0xc000007b` のエラー。② 上のレジストリ確認が `[WARN]`（x64 が無い）。③ 新品の Windows / Sandbox / VM で、最初の通し実行のとき（①②が出る可能性が高い）。該当しなければ入れない。入れる場合は、UAC を承認できる状態で `scoop install extras/vcredist2022` を実行し、終わったら `scoop uninstall vcredist2022` でインストーラだけ消してよい（ランタイムは OS に残る。マニフェストの `notes`）。
 - **却下案**: `apps.txt` に足す（UAC が必須になり、会社PCで権限が無いと止まる）。`winget install Microsoft.VCRedist.2015+.x64`（これも昇格が要り、経路が増える）。`suggest` の表示を抑える（scoop に抑止の設定は確認できず、未確認）。
 - **同時に出た他の提案**: `bat` の `less`、`vim` の `vimtutor`。どちらも入れない。`less` は Git for Windows 同梱の `less.exe`（`scoop\apps\git\current\usr\bin\`）があるが PATH には無い。bat は `less` が無いときのページャの挙動が未確認（パイプ経由の試験では出力は出たが、対話端末での挙動は未確認）。ページャが要るなら、`less` を `apps.txt` に足すかを、そのとき判断する。`vimtutor` は学習用で不要。
-- **未確認**: VC++ ランタイムが無い新アカウントでの `[WARN]` の表示（この PC では「入っている」側の分岐のみ実機で確認。「無い」側はレジストリのキーを差し替えた `reg query` の判定で確認）。
+- **確認の範囲**: `[Installed]` 側は、このPCと新アカウントの実機で確認済み（2026-10-06。ユーザー報告で `[WARN]` は出なかった）。**`[WARN]` 側の表示（ランタイムが無い環境）は実機で未確認**。「無い」側の判定は、レジストリのキーを差し替えた `reg query` でだけ確認した。
 
 ### インストール経路（2026-10-03）
 
