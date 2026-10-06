@@ -52,6 +52,8 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ### 2026-10-06
 
+- `main` が `origin/main` と分岐（各4コミット）したので、ユーザーの指示でローカルを `origin/main` の上に rebase した。衝突は `docs/log.md` の Log 節だけ（双方が新しい日付の節を足した）で、両方を残して日付の降順にした。順序は、ローカルが 2026-10-05 23:12〜23:27、リモートが 2026-10-06 08:18〜08:25（別PCと思われる）で、古い側を新しい側の上に載せた形（時系列に沿う。事後にユーザーへ確認）。ローカル4コミットのコミット日時は 2026-10-06 09:12 に変わった（author date は元のまま）。rebase 前は `7fe015f`（reflog から `git reset --hard 7fe015f` で戻せる）。反省: rebase 前に双方の日時を比べず、順序をユーザーに確認しなかった。以後は `AGENTS.md` のコミットの項のとおり事前に確認する。
+- rebase 後に WSL（Ubuntu 24.04）で `bash tests/linux/test_scripts.sh` を実行し、36/36 合格、失敗0を確認した（根拠: スクリプトの出力 `RESULT: 36/36 passed, failures=0`）。未 push（`origin/main` の先頭が祖先なので、通常の `git push` で足りる）。
 - clone 直後の大量の差分（64ファイル、約8,000行）の原因が改行コード（index は LF、作業ツリーは CRLF）と判明。`.gitattributes` を追加（`5af8dd1`）し、`.bat` 8本の index を LF に正規化（`7e9ae20`）。実質差分の4ファイルは破棄し、`git restore .` で作業ツリーを取り直した。`home/.gitconfig` の `[user]` は `~/.gitconfig_local` に移し済みのため破棄。詳細は `docs/decisions.md` の Gotchas。
 - 上の件の「ナレッジ化して」で出た改善2点を、workflow-kit に反映（版 `2026-10-06.3`）: 点検スクリプトの `<…>` 検出からインラインコードを除外、既存知識の検索用 `tools/find-knowledge.ps1` を追加。変更は `workbase` 側（dotfiles のコミット対象外）。
 
