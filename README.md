@@ -88,7 +88,7 @@ dotfiles/
    - PC1: `20_apps.bat`（`apps.txt` のみ）
    - PC2: `20_apps.bat home`（`apps.txt` + `apps.home.txt`）
    - Notepad++ の `config.xml` が無い/空のときだけ、`windows\notepadpp\config.min.xml`（タブ幅 2、新規文書 LF、折り返し、スナップショットバックアップ、ダークテーマ、自動更新オフなど）をコピーする。既にあれば触らない。リンクではないので、以後はアプリが自由に書き換える。最小構成を適用し直したいときは `config.xml` を削除（または空に）して再実行する
-   - `scripts\windows\24_fonts.bat`: PlemolJP NF / MoralerspaceHW（`manifests\fonts.txt`）の latest を `gh` で `%USERPROFILE%\download` へ取得する。インストールは手動（展開して .ttf を右クリック → 現在のユーザーにインストール）。`gh auth login` は不要
+   - `scripts\windows\24_fonts.bat`: PlemolJP NF / MoralerspaceHW（`manifests\fonts.txt`）の latest を `gh` で `%USERPROFILE%\download` へ取得する。インストールは手動（展開して .ttf を右クリック → 現在のユーザーにインストール）。`gh auth login` は不要。出力は `tmp\24_fonts.log`（Git 対象外、実行のたびに上書き）にも残り、最後に `pause` で止まる。ダウンロードが1件でも失敗したら終了コード 1
 3. `scripts\windows\30_link.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る（ファイルは symlink、ディレクトリは junction。既存のリンクは張り直す）
    - `unlink`: リンクだけ削除する。`-n`: ドライラン
    - 配置先に実ファイル/実ディレクトリがあると `[ERR]` を出してそのエントリを飛ばし、最後に非ゼロで終了する。**自動退避はしない**。中身を確認して手で退避/削除し、再実行する

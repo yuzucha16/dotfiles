@@ -2,7 +2,7 @@
 setlocal EnableExtensions EnableDelayedExpansion
 
 rem dev settings (dotfiles itself is already cloned by hand)
-rem ghq get yuzucha16/adv360-pro-zmk
+ghq get yuzucha16/dotfiles
 
 rem workbase (shared knowledge repo) is cloned straight into the vault, outside ghq:
 rem a ghq path would need a junction, and Grep/Glob/rg do not follow junctions.
