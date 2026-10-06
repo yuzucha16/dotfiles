@@ -8,9 +8,9 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 
 - 【この件】**目的**: Windows 11 + WSL2（Ubuntu 24.04）とネイティブ Linux で、家PCと会社PC（プロキシ・CA 証明書あり）の作業環境を、手順書とスクリプトで同じように再現できる状態を保つ。軽く、ポータブルに。管理・整理・最適化はAIに任せる前提で、構成と判断の根拠は `docs/` に残す。 行き先: local（dotfiles の目的）
 - 【この件】**会社は最小構成、家は追加分**。差分は `*.home.*` のファイル（`apps.home.txt`）に分け、引数 `home` で切り替える。コメントアウト運用はやめた。 行き先: local（dotfiles の構成）
-- 【汎用】**軽くポータブルに保つ**。履歴に戻ったりブランチを切ったりしない。CLI が遅く・重くなるものは削る。複雑なコードは読まないので、複雑さを生む仕様（フォールバック、モード、自動退避）は仕様ごと削り、運用（手動手順・README）へ移す。 行き先: 転記待ち（→ exmem/inbox/2026-10-06-dotfiles-startup-and-tracking-tips.md）
+- 【汎用】**軽くポータブルに保つ**。履歴に戻ったりブランチを切ったりしない。CLI が遅く・重くなるものは削る。 行き先: 転記済（2026-10-06 → exmem/knowledge/dotfiles-shell-tuning.md。「複雑さを生む仕様は仕様ごと削り、運用へ移す」の部分。上の2文は dotfiles 固有なのでここに残す）
 - 【汎用】**リスクや制約が生まれる変更は、事前にユーザーへ確認する**。 行き先: 転記済（2026-10-06 → kit/docs-rules.md）
-- 【汎用】**アプリが自動生成・書き換えるファイルは追跡しない**。リンク越しに差分が出続け、初期状態としての価値が薄い。 行き先: 転記待ち（→ exmem/inbox/2026-10-06-dotfiles-startup-and-tracking-tips.md）
+- 【汎用】**アプリが自動生成・書き換えるファイルは追跡しない**。 行き先: 転記済（2026-10-06 → exmem/knowledge/dotfiles-shell-tuning.md）
 - 【この件】**置き場の判断基準**: WSL でも使う → `home/` ／ Windows 専用 → `windows/<アプリ>/` ／ 配置しない雛形 → `templates/` ／ 不要 → 削除（履歴に残る）。 行き先: local（dotfiles のディレクトリ構成）
 - 【汎用】**`.bat` のコメントは ASCII（英語）**。日本語（UTF-8）は cp932 コンソールで壊れる。バッチは cp932 でもテストする。 行き先: 転記済（2026-10-06 → exmem/knowledge/shell-script-testing-wsl.md）
 - 【この件】**exmem には基本書かない**。dotfiles は exmem を参照するだけ。作業の経緯・決定・次にやることは dotfiles の `docs/` に残す（2026-10-04 決定）。 行き先: local（dotfiles と exmem の関係）
@@ -29,11 +29,8 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 
 ### 【この件】会社 CA 証明書の置き場を `%USERPROFILE%\.certs` にする。WSL へは `WSLENV` で渡す（2026-10-06）
 
-- 決めたこと: `CERTS_DIR` を `works\areas\dev-env\certs` から `%USERPROFILE%\.certs` へ移す（ユーザーの指示）。`10_env.bat` が `SSH_DIR` と同じ扱いで mkdir する。環境変数 `CERTS_DIR` は残す（`profile.ps1` を変えない）。WSL へは `10_env.bat` が `WSLENV` に `CERTS_DIR/p` を足して渡し、`common.sh` は `${CERTS_DIR:-$HOME/.certs}` を読む（`/mnt/c/...` の直読みをやめる）。
-- 根拠: ワークスペースの構造（`areas/dev-env/`）に依存しない。`/mnt/c` の直読みは、二重管理を避けるためだけだった（ユーザーの発言）。今後も WSL へは環境変数で寄せていく方針（ユーザーの発言）。
-- 却下案: WSL 側にも `~/.certs` を置く（2か所管理）、`/mnt/c/Users/<名前>/.certs` を `wslpath` で求める（起動が遅くなる）、環境変数をやめて固定パス（`profile.ps1` と `common.sh` の変更が要る）。
 - 確認済み（2026-10-06）: `bash -n common.sh`、`CERTS_DIR` 指定時と未指定時の分岐、`WSLENV` の重複判定の論理（実行して確認）。**未確認**: `10_env.bat` の実行（`setx`）と、新しい WSL セッションで `$CERTS_DIR` が `/mnt/c/Users/.../.certs` になること。
-- 行き先: 転記待ち（→ exmem/inbox/2026-10-06-certs-location-wslenv-path.md。dotfiles 固有のパスは剥がして一般化した）
+- 行き先: 転記済（2026-10-06 → exmem/knowledge/obsidian-vault.md）
 
 ### 【この件】（撤回済み）`.obsidian` は `notes` に置く。dotfiles には戻さない（2026-10-04）
 
@@ -196,11 +193,8 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 
 ### 【汎用】git の SSL バックエンド（schannel）は PC ごとの選択として `.gitconfig_local` に、credential は固定値として `home/.gitconfig` に置く（2026-10-06）
 
-- **決めたこと**（ユーザーの依頼と判断）: (1) `11_git_identity.bat` が「schannel を使うか」を `[y/N]` で聞く。`y` なら `http.sslBackend = schannel` と `http.sslVerify = true` を `.gitconfig_local` に書き、`n`・空は何も書かない（暗黙の OpenSSL）。y/n 以外は再入力で、5回で `[ERR]`。(2) `credential.helperselector.selected = manager` は全 Windows PC で固定なので、`home/.gitconfig` に静的に持ち、スクリプトからは書かない（削除）。(3) 当初の指定 `https.sslVerify` は `http.sslVerify` に直した。
-- **根拠**: schannel は PC ごとに使う・使わないが違うので、PC ごとのファイルに置く。`home/.gitconfig` はリポジトリ管理で全 PC（Linux 含む）に配られるため、PC ごとの選択を入れると `n` が効かない。`helperselector` は選択肢が無い固定値で、`git pull` だけで全 PC に届く方が、`.gitconfig_local` が既にあるとスクリプトが書かない仕様と相性が良い。
-- **却下案**: `helperselector` を `y/N` で聞く（選択肢が無い）、`helperselector` を両方に書く（重複で、どちらが効くか分かりにくい）、schannel を `home/.gitconfig` に直書き（`n` が効かず、Linux に入る）。
 - **確認済み**（2026-10-06）: `pwsh tests/windows/test_11_git_identity.ps1` が failures=0（y / n / 空 / 不正 / 不正5回、`helperselector` を書かないこと）。実機の schannel での通信は未確認。
-- 行き先: 転記待ち（→ exmem/inbox/2026-10-06-git-ssl-backend-credential-placement.md）
+- 行き先: 転記済（2026-10-06 → exmem/knowledge/pc-setup-manuals.md）
 
 ### 【この件】初回は scoop の git だけで最終の場所に clone する（winget の git は使わない）（2026-10-06。同日、下の「winget の git で…」の (1)(2) を撤回して置き換えた）
 
@@ -250,11 +244,9 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 
 ### 【汎用】起動時間
 
-- zsh: `~/.zshenv` に `skip_global_compinit=1`、`.zshrc` は `compinit -C`。約 0.15 秒 → 約 0.06 秒（この PC、5回計測）。Ubuntu の `/etc/zsh/zshrc` が `~/.zshrc` より前に、検査つきの `compinit` を実行していたのが原因。`compinit -C` だけでは速くならない。
-- pwsh: `Invoke-Expression (& starship init powershell --print-full-init | Out-String)`。`starship init powershell` はスタブを返し starship を2回起動する。`profile.ps1` 全体 約190ms → 約148ms。
 - 初期化結果のキャッシュ（`zoxide` 約50ms→13ms など）は、古くなる管理の複雑さのため見送った。
 - VS Code 拡張を削減した（Windows: remote 系・テーマ、WSL: cpptools 系・todo-tree など）。
-- 行き先: 転記待ち（→ exmem/inbox/2026-10-06-dotfiles-startup-and-tracking-tips.md）
+- 行き先: 転記済（2026-10-06 → exmem/knowledge/dotfiles-shell-tuning.md。zsh と pwsh の起動時間の短縮。キャッシュの見送りと VS Code 拡張の削減は固有なので、上に残す）
 
 ## Facts
 
@@ -295,19 +287,17 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 
 - 【この件】複雑度の順位（分岐・重複・同期義務で評価）: 1 シェル設定の3重実装、2 ツール不在時の代替、3 XDG の4重定義、4 apt スクリプト、5 アプリが書き換える設定の symlink 管理、6 `.vimrc`、7 `starship.toml`、8 インストーラー系、9 Claude 権限設定、10 git 設定。 行き先: local（dotfiles の複雑度の評価）
 - 【汎用】Zed の `auto_install_extensions` の既定は `{ "html": true }`。`false` は「入れない」で、アンインストールはしない。 行き先: 転記済（2026-10-06 → exmem/knowledge/zed-dotfiles.md）
-- 【汎用】`/mnt/c` 配下は 777 に見えるため、dircolors の `ow=34;42`（緑背景）が `lsd` にも効き、Gruvbox で文字が読めなかった。`LS_COLORS` の `ow`/`tw`/`st` を `01;34` に上書きして解消した。 行き先: 転記待ち（→ exmem/inbox/2026-10-06-dotfiles-startup-and-tracking-tips.md）
-- 【汎用】PowerShell ではエイリアスが関数より優先される。`function ls` は組み込みの `ls` エイリアスに負けるので `Remove-Item Alias:ls` が要る（旧 profile の `ls`→lsd は効いていなかった）。`mv` も同じで、関数名を `gmv` にした。 行き先: 転記待ち（→ exmem/inbox/2026-10-06-windows-cli-pitfalls.md）
-- 【汎用】Windows バッチの `if exist` は、リンク切れ symlink に対しても真を返す。`dir /AL` はジャンクション先の中身を見るのでリンク判定に使えない。`for %%F in ("path") do set "ATTR=%%~aF"` の属性文字列（1文字目 `d`、9文字目 `l`）で判定する。 行き先: 転記待ち（→ exmem/inbox/2026-10-06-windows-cli-pitfalls.md）
-- 【汎用】WSL のメモリ: 既定で 16GB（ホスト RAM 31GB の50%）まで使える。実使用 0.7GB に対し `vmmemWSL` は 1.6GB を保持していた（WSL 2.7.14）。 行き先: 転記待ち（→ exmem/inbox/2026-10-06-dotfiles-startup-and-tracking-tips.md）
+- 【汎用】/mnt/c 配下は 777 に見え、dircolors の ow が lsd にも効いて、Gruvbox で文字が読めなかった。 行き先: 転記済（2026-10-06 → exmem/knowledge/dotfiles-shell-tuning.md）
+- 【汎用】PowerShell ではエイリアスが関数より優先される（ls mv。旧 profile の ls→lsd は効いていなかった）。 行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
+- 【汎用】Windows バッチの if exist は、リンク切れ symlink に対しても真を返す。 行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
+- 【汎用】WSL のメモリは、既定でホストの RAM の50%まで使える（実使用 0.7GB に対し mmemWSL は 1.6GB。WSL 2.7.14）。 行き先: 転記済（2026-10-06 → exmem/knowledge/dotfiles-shell-tuning.md）
 - 【この件】WSL のユーザー名は `yy`。Ubuntu の `fd-find` は `fdfind`、`bat` は `batcat`。 行き先: local（WSL のユーザー名は PC 固有）
 - 【この件】`windows/terminal/settings.json` と draw.io の設定は小さく意図的なので、変更せず残した。 行き先: local（dotfiles の設定ファイルの扱い）
 
 ## Gotchas
 
 - 状況: schannel の設定として `https.sslVerify true` を指定された（`[https] sslVerify = true`）
-  - 原因: git に `https.sslVerify` というキーは無い（本物は `http.sslVerify`。既定は true）。書いても効かず、エラーにもならない
-  - 解決: `http.sslVerify` に直した（2026-10-06）
-  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-06-git-ssl-backend-credential-placement.md）
+  - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/pc-setup-manuals.md）
 
 - **新しいアカウントで `20_apps.bat` の Scoop 導入が「アクセスが拒否されました。」で失敗した**（2026-10-06。ユーザーの報告では `10_env.bat` だが、Scoop 導入があるのは `20_apps.bat`）。旧コマンドは `powershell -NoProfile -ExecutionPolicy Bypass -Command "iwr -useb get.scoop.sh | iex"`。`Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force` の後に `Invoke-RestMethod ... | Invoke-Expression` で実行すると成功した（ユーザーの実機）。**原因は未特定**。確認したこと: ① 失敗の出力に、インストーラ自身の最初のメッセージ `Initializing...` が無く、インストーラ（`get.scoop.sh`、28,743 バイトを読んで確認）の中の失敗とは考えにくい（出力の見落としがなければ）。② 「カレントに `powershell` フォルダがあると cmd が `powershell` を実行できない」説は、再現せず却下（Win11 10.0.26200、フォルダを置いても起動した）。③ 実行ポリシーは、インストーラの検査が `Bypass` を許可しており、原因にならない。④ 新アカウントの既定は、LocalMachine が Restricted の可能性（仮説。このPCは RemoteSigned）。未検証の仮説: セキュリティ製品や AppLocker によるブロック、新アカウント側の `C:\vault` の ACL。対策（ユーザーが「必要なときだけ設定する」案を採用、2026-10-06）: 実機で成功した手順に合わせ、`powershell.exe` を完全パス（`PS_EXE`）で呼び、失敗時は `Get-ExecutionPolicy -List` を表示する。実行ポリシーは、実効値が Restricted/AllSigned/Undefined のときだけ `CurrentUser` を RemoteSigned にする（永続する設定変更。Scoop は Unrestricted/RemoteSigned/Bypass を要求）。変更に失敗しても警告だけで導入は続ける。却下案: 常に `-Force` で設定（意図して設定した AllSigned 等を無確認で下げる。失敗で導入が止まる）。効いた原因が RemoteSigned か（`iwr` と `irm` の違いなど）は未切り分け。再発したら、`Get-ExecutionPolicy -List` の表示と、旧コマンドを手で実行した結果を確認する。`-ExecutionPolicy Bypass` はこの手順では使わない。
   - 【この件】行き先: local（原因未特定。再発したときの確認手順を本文に残している）
@@ -322,10 +312,10 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - **claude-acp の `default_config_options.mode: "plan"`** が入っていると、Zed からの新しいセッションがプランモードで始まる。書き込みや編集の前に `ExitPlanMode` の承認が要る。
   - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/zed-acp.md）
 - **GitHub のコード検索ページ（`github.com/search`）は未ログインでは取得できない**。Zed のソースは `raw.githubusercontent.com` のファイル URL で読む。
-  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-06-windows-cli-pitfalls.md）
+  - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
 
-- **`git mv` の途中で git 全体が壊れた**（`fatal: unknown error occurred while reading the configuration files`）。`~/.config/git/config` のリンク先が移動中に消えたため。そのリンクだけ新しい場所へ手で張り直した。構造変更では「git が読む設定のリンク元を最初に動かさない」。
-  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-06-windows-cli-pitfalls.md）
+- **`git mv` の途中で git 全体が壊れた**（`fatal: unknown error occurred while reading the configuration files`）。
+  - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
 - **リンク解除後の 0 バイトファイルを `.bak-N` に退避し、アプリのフォルダにゴミを21個作った**。ロジックを「ディレクトリのリンクは `rmdir`、ファイルの symlink は属性で判定して `del`、実体は退避」に作り直し、サンドボックスで6ケース検証した（旧実装には実体ディレクトリを再帰削除する経路もあった）。この退避ロジック自体は、のちに自動退避ごと廃止した。
   - 【この件】行き先: local（廃止済みの退避ロジックの経緯）
 - **cp932 でバッチが壊れた**。日本語コメント行の `->` がリダイレクトと解釈され、文字化けした名前の空ファイルが2つ生成された。コメントを ASCII 化して削除した。テストを UTF-8 コンソール（65001）でしか行っていなかったのが見逃しの原因。
@@ -334,29 +324,29 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
   - 【この件】行き先: local（解決済みの退行）
 - **`windows/vscode/settings.json` のカンマ抜け**で、VS Code が設定を読めていなかった可能性がある。nvim 設定の削除時に修正した。
   - 【この件】行き先: local（修正済み）
-- **AutoHotkey 実行中は `autohotkey/` ディレクトリを rename できない**（Permission denied）。ファイル単位で `git mv` した。
-  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-06-dotfiles-startup-and-tracking-tips.md）
-- **Claude Code は `~/.claude/settings.json` の symlink を実ファイルに置き換えることがある**（内容は同一だった）。
-  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-06-dotfiles-startup-and-tracking-tips.md）
+- **AutoHotkey 実行中は `autohotkey/` ディレクトリを rename できない**（Permission denied）。
+  - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/dotfiles-shell-tuning.md）
+- **Claude Code は `~/.claude/settings.json` の symlink を実ファイルに置き換えることがある**。
+  - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/dotfiles-shell-tuning.md）
 - **`.vimrc` の行末コメント**（`nmap <C-n> ... " コメント`）が右辺に混ざるバグだった。コメントを上の行に移した。
   - 【この件】行き先: local（.vimrc の修正済み）
 - **`vim -es` でのテスト**は `termguicolors` で E954 が出るが、端末がないテスト由来で無害。
   - 【この件】行き先: local（無害な表示のみ）
 - **`git add -A` で `tmp/` のスクリーンショットや空ファイル（`scripts/fdfin` など）を拾った**。パスを指定して `git add` する。`tmp/` は `.gitignore` に追加した。
   - 【汎用】行き先: 転記済（2026-10-06 → kit/docs-rules.md）
-- **`git rm` 済みの削除は、別のパスだけ `git add` / `commit` しても次のコミットに混ざる**（ステージ済みのため。2026-10-04 に starship と zed のコミットで発生）。削除を別コミットにしたいときは、先に `git commit <パス>` で分けるか、コミット前に `git status` で確認する。
-  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-06-windows-cli-pitfalls.md）
-- **`Set-Content` でファイルを書き直すと改行コードが変わり、全行が差分になる**（`apps.txt`。2026-10-04）。`git checkout` で戻し、`[IO.File]::ReadAllText` / `WriteAllText` で該当部分だけ置換した。
-  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-06-windows-cli-pitfalls.md）
+- **`git rm` 済みの削除は、別のパスだけ `git add` / `commit` しても次のコミットに混ざる**（2026-10-04 に starship と zed のコミットで発生）。
+  - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
+- **`Set-Content` でファイルを書き直すと改行コードが変わり、全行が差分になる**（`apps.txt`。2026-10-04）。
+  - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
 - **clone 直後に、64ファイル・約8,000行の差分が出た**（2026-10-06）。`git ls-files --eol` で index が LF、作業ツリーが CRLF と確認。原因は、clone 時にシステムの `core.autocrlf=true`（scoop 版 git 2.56.0）が効いて CRLF でチェックアウトされ、その後 `~/.config/git/config`（`autocrlf=false`、`eol=lf`）が有効になったこと（順序は設定の優先順位からの推定）。`git diff --ignore-cr-at-eol` で実質差分を絞ると4ファイルだけで、それも破棄して `git restore .` で LF に取り直した。対策は、リポジトリ直下の `.gitattributes`（`* text=auto eol=lf`、`*.bat` `*.cmd` は `text eol=crlf`）。マシンごとの git 設定に左右されなくなる。
   - `text eol=crlf` は作業ツリーを CRLF にする指定で、index 内は LF が正規。`.bat` 8本の index は LF に正規化した（`git add --renormalize`、コミット `7e9ae20`）。作業ツリーの `.bat` は CRLF のまま。
   - `.ps1`（`profile.ps1` のみ）は index が LF だったので、そのまま LF（意図は不明。pwsh は LF でも動く）。
   - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/git-line-endings.md）
-- **PowerShell からの `wsl -d ... -- bash -c "..."`** は `$(...)` が PowerShell で展開されて壊れる。スクリプトを LF で書き出して `bash` に渡す。`git commit -F -` への here-string のパイプも渡らないので、一時ファイル経由にする。
-  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-06-windows-cli-pitfalls.md）
-- **実行環境の安全装置が、`rm` `del /F` `cmd /c` を含む PowerShell コマンドを誤検知してブロックした**。スクリプトをファイルに書いてから実行する、`unlink` を使う、で回避した。
-  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-06-windows-cli-pitfalls.md）
-- **`git diff` をパスで絞ると改名検出が効かず全行が「追加」に見える**。改名の確認は `git diff -M HEAD --stat`。
-  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-06-windows-cli-pitfalls.md）
+- **PowerShell からの `wsl -d ... -- bash -c "..."`** は `$(...)` が PowerShell で展開されて壊れる。
+  - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
+- **実行環境の安全装置が、`rm` `del /F` `cmd /c` を含む PowerShell コマンドを誤検知してブロックした**。
+  - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
+- **`git diff` をパスで絞ると改名検出が効かず全行が「追加」に見える**。
+  - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
 - **PowerShell の単一引用符の文字列には `` `r`n `` が展開されない**。
-  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-06-windows-cli-pitfalls.md）
+  - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
