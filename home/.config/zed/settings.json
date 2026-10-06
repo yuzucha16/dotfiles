@@ -60,11 +60,11 @@
   // Zed has no shared font setting: ui / buffer / terminal each repeat the same values
   "ui_font_family": "PlemolJP Console NF",
   "ui_font_weight": 300,
-  "ui_font_fallbacks": ["Moralerspace Neon HW", "Meiryo UI"],
+  "ui_font_fallbacks": ["Meiryo UI"],
   "ui_font_size": 15,
   "buffer_font_family": "PlemolJP Console NF",
   "buffer_font_weight": 300,
-  "buffer_font_fallbacks": ["Moralerspace Neon HW", "Meiryo UI"],
+  "buffer_font_fallbacks": ["Meiryo UI"],
   "buffer_font_size": 15,
   "agent_ui_font_size": 15,
   "agent_buffer_font_size": 15,
@@ -142,7 +142,7 @@
     "blinking": "off",
     "font_family": "PlemolJP Console NF",
     "font_weight": 300,
-    "font_fallbacks": ["Moralerspace Neon HW", "Meiryo UI"]
+    "font_fallbacks": ["Meiryo UI"]
   },
 
   // ==== Extensions ====

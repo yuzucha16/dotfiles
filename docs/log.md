@@ -56,7 +56,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ### 2026-10-06（Windows の実機確認後の調整）
 
-- ユーザーが Windows の通し実行を実機で確認した（問題なし）。その中で出た3点を直した（判断は `docs/decisions.md` の「`scoop-completion` と Moralerspace を manifest から外した。`.bat` のコメントは全て英語にした」）。(1) `20_apps.bat` の冒頭の文字化け: 日本語コメントが cp932 のコンソールで壊れていたので、`10_env` / `20_apps` / `40_wsl_enable` のコメントを全て英語にし、`scripts/windows/*.bat` が ASCII であることの検査を `tests/windows/test_20_apps.ps1` に足した。(2) `scoop-completion` は未使用だったので `apps.txt` から削除（このPCの導入済み分は手で `scoop uninstall scoop-completion`）。(3) `fonts.txt` の Moralerspace を削除（README とコメントも更新）。確認: `test_20_apps.ps1` が failures=0（ASCII の検査8件を含む）、WSL の `tests/linux/test_scripts.sh` が 36/36 合格。未対応: Zed と Obsidian のフォントのフォールバックに `Moralerspace Neon HW` が残っている。
+- ユーザーが Windows の通し実行を実機で確認した（問題なし）。その中で出た3点を直した（判断は `docs/decisions.md` の「`scoop-completion` と Moralerspace を manifest から外した。`.bat` のコメントは全て英語にした」）。(1) `20_apps.bat` の冒頭の文字化け: 日本語コメントが cp932 のコンソールで壊れていたので、`10_env` / `20_apps` / `40_wsl_enable` のコメントを全て英語にし、`scripts/windows/*.bat` が ASCII であることの検査を `tests/windows/test_20_apps.ps1` に足した。(2) `scoop-completion` は未使用だったので `apps.txt` から削除（このPCの導入済み分は手で `scoop uninstall scoop-completion`）。(3) `fonts.txt` の Moralerspace を削除（README とコメントも更新）。確認: `test_20_apps.ps1` が failures=0（ASCII の検査8件を含む）、WSL の `tests/linux/test_scripts.sh` が 36/36 合格。続けて、Zed と Obsidian のフォントのフォールバックから `Moralerspace Neon HW` を外した（ユーザーの指示。Zed 3か所、Obsidian 3か所）。また `20_apps.bat` の VC++ ランタイムの表示（`[Installed]` / `[WARN]`）を、見落としを防ぐため、オレンジ（ANSI 256色の 208）にした。ESC は `prompt $E` で取得するので、ソースは ASCII のまま。`test_20_apps.ps1` が failures=0（色の検査2件を含む）。実機の表示は未確認（Windows Terminal / Win11 のコンソールは対応している想定）。
 
 ### 2026-10-06（初回の git を scoop だけにする。winget の git を撤回）
 
