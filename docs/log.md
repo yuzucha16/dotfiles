@@ -55,6 +55,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
+### 2026-10-06（「ナレッジ化して」の続き: 点検スクリプトのナレッジ化と、workflow-kit の改善）
+
+- ユーザーの指示で、点検スクリプト（`check-inbox.ps1`、`find-knowledge.ps1`）の設計・限界・育て方を `exmem/inbox/2026-10-06-inbox-check-script-design.md` に残した（コミット対象外）。既存の知識ノート `workflow-kit.md` には、版の記録として1行言及があるだけだった。あわせて、`vcredist2022` を自動導入しない決定は、ユーザーの承認で「現時点の決定」として Decisions に残した（`2026-10-06-scoop-suggest-vcredist-runtime.md`。解除するときは、現在形の記述を直し、日付つきの記録は書き換えずに「撤回済み」と理由を足す。時制の方針）。workflow-kit を版 `2026-10-06.11` に上げた（ユーザーの承認と指示。変更は `workbase` 側の `e3cfb82` で、dotfiles のコミット対象外）: 「なし」は見出しの直後に1語だけの行にする、分けた複数のメモに共通する事実・落とし穴は1つにだけ書く、依頼された実装は依頼を根拠に Decisions に書ける（依頼に無い選択は「提案」）、点検スクリプトの改善も、フックの改善と同じ承認制の手順で回す。
+
 ### 2026-10-06（「ナレッジ化して」の実行）
 
 - 「ナレッジ化して」を実行し、3話題を `exmem/inbox/` に作った（コミット対象外）: `2026-10-06-windows-bat-scripting-pitfalls.md`（`.bat` の ASCII、`set /p` とパイプ、`%errorlevel%`、対話ループの上限、試験の番人）、`2026-10-06-fresh-pc-bootstrap-private-repo.md`（最終の場所への初回 clone、scoop だけの git、private の扱い、`git config --file`）、`2026-10-06-scoop-suggest-vcredist-runtime.md`（`suggest` と VC++ ランタイムの判断基準）。点検スクリプトは3件とも PASS（失敗0、警告0）。メモの中で、履歴の種（exmem の `knowledge/shell-command-usecases.md`）の `git config --global user.name` / `user.email` の行が、symlink の `~/.gitconfig` と食い違うことを「統合時の修正」に書いた。dotfiles 固有の経緯（Zed と Obsidian のフォント、Linux との対称化の範囲、手順書の更新）は、ナレッジ化せず `docs/` に残してある。
