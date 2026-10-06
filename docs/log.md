@@ -4,7 +4,6 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
-- WSL に `gcc-arm-none-eabi` を導入して、`arm-none-eabi-gcc --version` が通ることを確認する（`sudo apt install -y gcc-arm-none-eabi`、または `bash scripts/linux/20_packages.sh`。約 490MB。2026-10-06 時点。`works` の Project が、Cortex-M 向けのフットプリントと libc 非依存の実測に使う）。`clang-format` は導入済み（ユーザーの報告、18.1.3）。
 - `10_env.bat` を再実行して、`%USERPROFILE%\.certs` ができること、`CERTS_DIR` と `WSLENV`（`CERTS_DIR/p` が1回だけ）が更新されることを確認する。新しいターミナルと新しい WSL セッション（`wsl --shutdown` のあと）で、`$CERTS_DIR` が `/mnt/c/Users/<名前>/.certs` になり、`company-ca.crt` があれば `NODE_EXTRA_CA_CERTS` が設定されることを確認する。旧 `works\areas\dev-env\certs`（空）は、確認後に削除する（2026-10-06 時点）。
 - 履歴の種の `git config --global user.name` / `user.email`（`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` の各2行）を見直す。`~/.gitconfig` は `30_link` が張る symlink なので、リンク後に実行すると、リポジトリ内の `home/.gitconfig` が書き換わる。種の正本は exmem の `knowledge/shell-command-usecases.md` で、種ファイルは派生物なので、直すのは正本の統合のあと（種を直接編集しない。2026-10-06 時点）。
 - VC++ ランタイムの `[WARN]`（ランタイムが無いとき）の表示を確認する。新アカウントでは `[Installed]` 側しか出ず、`[WARN]` 側は実機で未確認（2026-10-06 時点。ランタイムが無い環境でだけ出る。判断基準は `docs/decisions.md` の「vcredist2022 は自動導入せず…」）。
@@ -56,6 +55,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（`clang-format` と `gcc-arm-none-eabi` を、実機（WSL）に導入した）
+
+- ユーザーが、`manifests/apt.txt` に追記した 2 つ（`clang-format` 18.1.3、`gcc-arm-none-eabi` 13.2.1）を、WSL に導入した（ユーザーの報告。`arm-none-eabi-gcc --version` の出力で確認）。`works` の Project が、Cortex-M 向けのフットプリントと libc 非依存の実測に使った（Cortex-M0 で除算の補助関数への依存が出て、M0 を対象外にした。詳細は `works` の `archives/learn-c-pool-allocator/docs/`）。Next Actions の導入待ちの項目を消した。
 
 ### 2026-10-06（`gcc-arm-none-eabi` を `manifests/apt.txt` に足した）
 
