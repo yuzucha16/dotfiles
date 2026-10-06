@@ -30,3 +30,4 @@ dotfiles は、Windows 11 + WSL2 / Linux（apt 系）の作業環境を、複数
 - メッセージは `[対象] 内容`（例: `[shell] ...`, `[scripts] ...`, `[docs] ...`）。
 - `git add` はパスを指定する（`git add -A` は `tmp/` などを拾う）。
 - リスクや制約が生まれる変更は、事前にユーザーへ確認する。
+- rebase / merge の前に、双方のコミット日時（`git log --format='%h %ad %s' --date=iso`）を比べ、どちらが新しいかをユーザーに伝えて、順序でよいか確認する（rebase はコミットの日時と並びを書き換えるため）。
