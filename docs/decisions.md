@@ -27,6 +27,14 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 
 ## Decisions
 
+### 【この件】会社 CA 証明書の置き場を `%USERPROFILE%\.certs` にする。WSL へは `WSLENV` で渡す（2026-10-06）
+
+- 決めたこと: `CERTS_DIR` を `works\areas\dev-env\certs` から `%USERPROFILE%\.certs` へ移す（ユーザーの指示）。`10_env.bat` が `SSH_DIR` と同じ扱いで mkdir する。環境変数 `CERTS_DIR` は残す（`profile.ps1` を変えない）。WSL へは `10_env.bat` が `WSLENV` に `CERTS_DIR/p` を足して渡し、`common.sh` は `${CERTS_DIR:-$HOME/.certs}` を読む（`/mnt/c/...` の直読みをやめる）。
+- 根拠: ワークスペースの構造（`areas/dev-env/`）に依存しない。`/mnt/c` の直読みは、二重管理を避けるためだけだった（ユーザーの発言）。今後も WSL へは環境変数で寄せていく方針（ユーザーの発言）。
+- 却下案: WSL 側にも `~/.certs` を置く（2か所管理）、`/mnt/c/Users/<名前>/.certs` を `wslpath` で求める（起動が遅くなる）、環境変数をやめて固定パス（`profile.ps1` と `common.sh` の変更が要る）。
+- 確認済み（2026-10-06）: `bash -n common.sh`、`CERTS_DIR` 指定時と未指定時の分岐、`WSLENV` の重複判定の論理（実行して確認）。**未確認**: `10_env.bat` の実行（`setx`）と、新しい WSL セッションで `$CERTS_DIR` が `/mnt/c/Users/.../.certs` になること。
+- 行き先: local（dotfiles 固有のパスと環境変数。`WSLENV` の `/p` による受け渡しは、別途ナレッジ化の候補）
+
 ### `.obsidian` は `notes` に置く。dotfiles には戻さない（2026-10-04）
 
 - 決めたこと: `.obsidian/` は `notes` リポジトリで管理し続ける。Obsidian 設定の作業は `notes` のルートで Claude を開いて行い、`.obsidian/` 専用の `AGENTS.md` と `docs/` は置かない（2026-10-04 に暫定導入した分は、同日に撤去済み）。
