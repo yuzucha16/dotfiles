@@ -56,7 +56,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ### 2026-10-06（初回の git を scoop だけにする。winget の git を撤回）
 
-- ユーザーの判断（「理想は scoop で完結」）で、手順 0 の git を winget から scoop に変えた（判断は `docs/decisions.md` の「初回は scoop の git だけで最終の場所に clone する」。前項の winget 案は「撤回済み」として残した）。`20_apps.bat` の winget の git の撤去処理と試験7件を削除（直前のコミット `3f7e794` の前の状態に戻した）。README の手順 0 を scoop の4コマンドに書き換えた。確認: `pwsh tests/windows/test_20_apps.ps1` が failures=0。実機の新アカウントでの通し実行は未確認。リポジトリが private で、clone に GitHub のサインインが要ることも確認し、README に書いた。手順 1〜3 のスクリプト化は検討中（結果は報告のとおり。決まったら Open Questions から移す）。
+- ユーザーの判断（「理想は scoop で完結」）で、手順 0 の git を winget から scoop に変えた（判断は `docs/decisions.md` の「初回は scoop の git だけで最終の場所に clone する」。前項の winget 案は「撤回済み」として残した）。`20_apps.bat` の winget の git の撤去処理と試験7件を削除（直前のコミット `3f7e794` の前の状態に戻した）。README の手順 0 を scoop の4コマンドに書き換えた。確認: `pwsh tests/windows/test_20_apps.ps1` が failures=0。実機の新アカウントでの通し実行は未確認。リポジトリが private で、clone に GitHub のサインインが要ることも確認し、README に書いた。手順 1〜3 のスクリプト化は、リポジトリが private で clone 前にスクリプトを匿名で取得できない（raw URL は 404）ため、ユーザーの判断でスクリプトにせず、README の貼り付けブロックにした。4コマンドを README の冒頭「クイックスタート」に置き、手順 0 はそこを参照する（コマンドの重複を避けた）。却下案: ブラウザで Raw を保存して実行する `00_bootstrap.bat`（GitHub の Raw は LF で、`.bat` のラベルが壊れることがあるため、ラベルなしの書き方が要る。受け渡しの手間もある）。開発者モードは管理者権限が要るので自動化できない（symlink を試しに作れば有効か確認はできる）。
 
 ### 2026-10-06（初回取得の見直し: 最終の場所に clone、git は scoop に統一、11_git_identity.bat）
 
