@@ -29,7 +29,6 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 ## Open Questions
 
 
-- Linux / WSL 側の git の名前・メール（`~/.gitconfig_local`）の作成を、`11_git_identity.bat` と同じように対話で行うスクリプトにするか（未決。現在は手作業）。
 
 - 実機の通し実行が未確認: `10_env.bat`（ユーザー環境変数を書き換える）、`20_apps.bat`（Notepad++ の `config.xml` の雛形コピーは確認済み）、`20_packages.sh`、`40_wsl_enable.bat`、`50_repos.*`、`unlink` の実動作（ドライランのみ確認）。処理は旧スクリプトと同じ文字列置換・統合なので挙動は同じと推定（仮説）。
 - `.wslconfig` を WSL が読むか、`vmmemWSL` が縮むか。**このPCではまだリンクされていない**（2026-10-03 確認）。
@@ -53,6 +52,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（Linux / WSL を Windows と対称にする）
+
+- ユーザーの指示で、今日 Windows 側に入れた変更を Linux / WSL にそろえた（判断と「対称にしないもの」の理由は `docs/decisions.md` の「Linux / WSL を Windows と対称にした」）。(1) `scripts/linux/11_git_identity.sh` を新設（`~/.gitconfig_local` を対話で作る）。(2) `24_fonts.sh` が、1件失敗しても続行し、最後に終了コード 1 にする。(3) README に「クイックスタート（ネイティブ Linux）」（`apt install git gh` → `gh auth login` → `gh auth setup-git` → `git clone`）と、Linux の手順 1 の `11`、試験の説明を追記。(4) `tests/linux/test_scripts.sh` に 14 項目を追加。確認: WSL（Ubuntu 24.04.4）で 50/50 合格、Windows 側の試験も合格（`test_20_apps.ps1` 28 件、`test_11_git_identity.ps1` 15 件）。未確認: 新しい Linux の実機での `gh auth login` から clone までの通し。workbase の手順書 `debian-family.md` の手順 7（「公開リポジトリ」）がリポジトリの private 化と食い違っている（dotfiles からは直していない）。
 
 ### 2026-10-06（Windows の実機確認後の調整）
 
