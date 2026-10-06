@@ -7,8 +7,24 @@ rem Copies only when the history file does not exist or is empty. An existing hi
 rem Not a symlink: PSReadLine appends to the history file on every command, which would dirty the repo.
 rem Run it before the first pwsh session (a running pwsh keeps its own history in memory).
 rem Seed lines hold <...> placeholders and do not run as they are (see exmem: shell-command-usecases).
+rem The output is also saved to tmp\31_history_seed.log (git-ignored, overwritten on every run),
+rem and the window waits at the end (pause) so a double-click does not close it.
 
 for %%I in ("%~dp0..\..") do set "DOTS_DIR=%%~fI"
+set "LOG_DIR=%DOTS_DIR%\tmp"
+set "LOG=%LOG_DIR%\31_history_seed.log"
+if not exist "%LOG_DIR%\" mkdir "%LOG_DIR%"
+
+> "%LOG%" echo [INFO] %DATE% %TIME%  %~nx0 %*
+call :MAIN "%~1" >> "%LOG%" 2>&1
+set "RC=%errorlevel%"
+
+type "%LOG%"
+echo [INFO] exit=%RC%  log=%LOG%
+pause
+endlocal & exit /b %RC%
+
+:MAIN
 set "SEED=%DOTS_DIR%\windows\powershell\history.seed.txt"
 set "DEST_DIR=%APPDATA%\Microsoft\Windows\PowerShell\PSReadLine"
 set "DEST=%DEST_DIR%\ConsoleHost_history.txt"
@@ -48,4 +64,4 @@ if errorlevel 1 (
   exit /b 1
 )
 echo [DONE] seeded the history. Open a new pwsh.
-endlocal
+exit /b 0
