@@ -4,6 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- workbase の手順書 `cheatsheets/env/win11.md` に、現在のスクリプトと食い違う古い記述が残っている（2026-10-06 時点）: 手順 6 の表の `21_vscode.bat` と `22_python.bat`（どちらも削除済み）、`24_fonts.bat [--dry-run]` と「`gh auth login` が必要」と「MoralerspaceHW」（`--dry-run` と前提チェックは削除、ログイン不要、Moralerspace は一覧から削除）、`31` 以外の `40` / `50` の説明。直すかはユーザーが決める。
 - 新しい Windows アカウントで `20_apps.bat` を実行し、Scoop の導入が通るか確認する（2026-10-06 の修正の実機確認）。あわせて、VC++ ランタイムの `[WARN]` / `[Installed]` の表示と、入れる基準（`docs/decisions.md`）が実用になるかも見る。まだ失敗するなら、表示される `Get-ExecutionPolicy -List` と、旧コマンドを手で実行した結果を `docs/decisions.md` の Gotchas に足して、原因を絞る。
 - Zed の最適化（2026-10-04）の後始末: Zed を再起動して、テーマ・Ctrl+Enter 送信・右のプロジェクトパネル・Markdown の見え方を確認する。Vim オフの試験は 2026-10-11 頃に続けるか判断する（戻し方は `settings.json` のコメント）。他のPCでは `30_link.bat` の前に、空の `%APPDATA%\zed\themes` を削除する。WSL で点滅を止めるのは `.bashrc` / `.zshrc`（反映は新しいシェルで確認）。OS 全体の点滅停止（`CursorBlinkRate=-1`）は必要なら検討する。
 - シェルの3シェル共通化（fzf とキーバインドの現仕様の表は `docs/decisions.md` の Facts）:
@@ -27,6 +28,8 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - ネイティブ Linux の実機で、`30_link.sh`（`.obsidian` の symlink）と `50_repos.sh`（`workbase` の clone）、`WORKS_DIR` の既定値（`~/vault/works`。2026-10-06 に `NOTES_DIR` / `notes` から改名）を通して確認する。WSL では、一時ディレクトリで試験済み（2026-10-05）。ネイティブの分岐は、`PROC_VERSION_FILE` の差し替えで再現しただけ。
 
 ## Open Questions
+
+- dotfiles のリポジトリを公開にするか非公開にするか（未定。2026-10-06 時点は非公開）。決まったら、README のクイックスタート（Windows・Linux）と、workbase の手順書 `win11.md` の手順 5・`debian-family.md` の手順 7 から、使わない方の記述を削除する。
 
 
 
@@ -52,6 +55,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（リポジトリの公開・非公開が未定なので、手順を両方併記）
+
+- ユーザーの判断で、リポジトリを公開にするか非公開にするかは未定のため、手順を両方書いた（運用が決まったら、使わない方を削除する。判断は `docs/decisions.md` の「リポジトリの公開・非公開は未定。両方の手順を併記した」）。dotfiles の `README.md`: Windows のクイックスタートに「非公開ならサインインが開く、公開なら出ない（4行は同じ）」を追記、Linux のクイックスタートを「A. 公開（git だけ）」「B. 非公開（`gh auth login` ほか）」にした。workbase の手順書（`cheatsheets/env/debian-family.md` の手順 7・8・10、`win11.md` の手順 5・6 と付録）も同じ方針で更新し、`11_git_identity` の案内も足した。`win11.md` の手順 5 は、winget の git を使わず scoop の4行にそろえた（dotfiles の README と矛盾していたため。同じ節の範囲）。`win11.md` には、ほかにも古い記述が残る（下の Next Actions）。変更は workbase 側（別リポジトリ）にもあり、そちらは別コミット。
 
 ### 2026-10-06（Linux / WSL を Windows と対称にする）
 
