@@ -148,6 +148,14 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - 却下: `curl` / `Invoke-WebRequest` への置換（アセット名にバージョンが入り、glob が使えない）。
 - 未確認: 未ログインのレート制限（1回2件程度なら問題ないはずだが、推測）。
 
+### Linux 側の試験スクリプトを `tests/linux/` に置く（2026-10-05）
+
+- 決めたこと（ユーザーの承認）: 試験スクリプトを `tests/linux/test_scripts.sh` として保存する。WSL とネイティブの分岐は `PROC_VERSION_FILE` で強制し、一時ディレクトリと偽の HOME だけを使う（実環境の vault や `~` に触れない）。
+- 根拠: 観点（新規作成、再実行、dry-run、元に戻す、実体があれば止まる、リンク切れ、元が無い）は、リンク配置スクリプトの変更のたびに使える。使い捨てでは、次回に作り直しになる。
+- 却下案: 使い捨てのまま、知識（inbox のメモ）だけに残す（コードの再利用ができない）。
+- 確認済み: WSL で36項目すべて合格、終了コード0（確認: 2026-10-05）。`AGENTS.md` に「`scripts/linux/` などを変えたら実行する」を足した。
+- 補足: 試験の観点そのものは、知識として `exmem/knowledge/shell-script-testing-wsl.md` にある。
+
 ### Linux / WSL を Windows と対称にした（2026-10-06）
 
 - **対象**（Windows 側で今日入れた変更のうち、Linux にも意味があるもの）: (1) `scripts/linux/11_git_identity.sh` を新設（Windows の `11_git_identity.bat` と同じ。`~/.gitconfig_local` が無いときだけ対話で作る。`git config --file` を使う理由は同じ: `~/.gitconfig` は `30_link.sh` が張る symlink）。(2) `24_fonts.sh` を、1件失敗しても残りを続け、最後に `[ERROR]` と終了コード 1 にした（`24_fonts.bat` と同じ）。(3) README に「クイックスタート（ネイティブ Linux）」を足した。(4) 試験を足した（`tests/linux/test_scripts.sh` は 36 → 50 項目）。
