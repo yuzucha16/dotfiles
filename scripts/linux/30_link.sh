@@ -127,7 +127,7 @@ case "$MODE" in
 esac
 
 # ===== Obsidian config (native Linux only) =====
-# WSL は、Windows 側の 30_link.bat が C:\vault\works\.obsidian へジャンクションを張る（/mnt/c で共有）ので、何もしない。
+# WSL は、Windows 側の 30_link.bat が %WORKS_DIR%\.obsidian へジャンクションを張る（/mnt/c で共有）ので、何もしない。
 # ネイティブ Linux は、windows/obsidian/.obsidian を $WORKS_DIR/.obsidian へ symlink する（WORKS_DIR は lib.sh の works_dir）。
 obsidian_err=0
 if ! is_wsl; then

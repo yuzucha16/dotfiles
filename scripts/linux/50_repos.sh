@@ -7,7 +7,7 @@ source ~/.profile
 
 # workbase (shared knowledge repo): clone straight into the vault top, outside ghq
 # (a link to a ghq path is not followed by Grep/Glob/rg).
-# WSL: the Windows side (scripts\windows\50_repos.bat) clones it into C:\vault\works\resources, shared via /mnt/c.
+# WSL: the Windows side (scripts\windows\50_repos.bat) clones it into %USERPROFILE%\works\resources, shared via /mnt/c.
 : "${WORKBASE_URL:=https://github.com/yuzucha16/workbase}"
 WORKS="$(works_dir)"
 if is_wsl; then

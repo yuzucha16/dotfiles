@@ -1,3 +1,3 @@
 @echo off
-subst V: C:\vault
+subst V: "%WORKS_DIR%"
 
