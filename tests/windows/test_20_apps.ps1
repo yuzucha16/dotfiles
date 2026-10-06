@@ -61,6 +61,11 @@ $r = Run-Case 0 $true
 Check 'scoop present: installer is not invoked' ($r.Calls -notmatch 'get\.scoop\.sh')
 Check 'scoop present: proceeds to scoop install' ($r.Calls -match 'scoop install')
 
+# 3b. VC++ ランタイムの表示はオレンジ（ESC[38;5;208m ... ESC[0m）。実機のレジストリで [Installed] か [WARN] のどちらかになる
+$esc = [char]27
+Check 'vc++ runtime line is orange' ($r.Out -match [regex]::Escape("$esc[38;5;208m") + '\[(Installed|WARN)\] VC\+\+ 2015-2022 x64 runtime')
+Check 'vc++ runtime line resets the color' ($r.Out -match [regex]::Escape("$esc[0m"))
+
 # 4. バット内の PowerShell 部分を実際に取り出し、Set-ExecutionPolicy / Invoke-RestMethod を偽物（関数）に差し替えて分岐を試験する。
 #    実効ポリシーは powershell.exe の -ExecutionPolicy（Process スコープ）で作る。実機のレジストリは変えない。
 $snippet = ((Get-Content $bat) | Where-Object { $_ -match 'Set-ExecutionPolicy' -and $_ -match 'call "%PS_EXE%"' } | Select-Object -First 1) -replace '^.*-NoProfile -Command "(.*)"\s*$', '$1'
