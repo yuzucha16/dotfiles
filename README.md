@@ -17,7 +17,7 @@ dotfiles/
 │   ├── windows/    10〜50 のセットアップスクリプト（`optional/` は任意の .reg）
 │   └── linux/      10〜50 のセットアップスクリプト（WSL とネイティブ Linux 共通。違いは `lib.sh` の `is_wsl` などで分岐）
 ├── manifests/      スクリプトが読むリスト（apps / apt / links）
-├── tests/          スクリプトの試験（`tests/linux/test_scripts.sh`。下の「スクリプトの試験」）
+├── tests/          スクリプトの試験（`tests/linux/test_scripts.sh`、`tests/windows/test_20_apps.ps1`。下の「スクリプトの試験」）
 ├── home/           ~ を鏡写しにした共有ツリー（WSL は stow、Windows は links.map でリンク）
 ├── windows/        Windows 専用の設定（links.map からだけ参照される）
 └── templates/      配置しない雛形（`claude/settings.sandbox.json` は、使い捨ての検証環境のプロジェクトで `.claude/settings.json` に手でコピーする。push / reset / clean / rm を許可する広い権限なので、通常のリポジトリには入れない）
@@ -118,6 +118,10 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行す�
 - WSL とネイティブ Linux の分岐は、環境変数 `PROC_VERSION_FILE`（`/proc/version` の差し替え）で強制する。どちらの環境でも、両方の分岐を試験できる。実環境を見る項目は、WSL でないとき等は skip する。
 - 観点: 構文と改行コード、`NOTES_DIR` の分岐、`clone_workbase`（新規・skip・非空のディレクトリ・空のディレクトリ）、`link_obsidian`（dry-run・再リンク・unlink・実体があれば `[ERR]`・リンク切れ・元が無い）、`30_link.sh` の通し、`50_repos.sh`。`stow` が無いと、`30_link.sh` の通しは skip する。
 - 新しいスクリプトや関数を足したときは、同じ観点（新規作成、再実行、dry-run、元に戻す、実体があれば止まる）で項目を足す。
+
+### スクリプトの試験（Windows）
+
+`pwsh -NoProfile -File tests/windows/test_20_apps.ps1` で、`scripts/windows/20_apps.bat` の Scoop 導入の分岐を試験する（終了コード = 失敗数。11項目）。偽の `USERPROFILE`、環境変数 `PS_EXE` で差し替えた偽の powershell、偽の `scoop.cmd` だけを使い、ネットワークにも実環境の scoop にも触れない（観点: scoop が無く導入成功、導入失敗、scoop が既にある）。実際の導入は、新しいアカウントか VM で確認する。
 
 ### 必要なときだけ入れるもの（WSL・手動）
 

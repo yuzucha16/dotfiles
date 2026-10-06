@@ -12,12 +12,17 @@ if exist "%SCOOP_SHIMS%\scoop.cmd" (
   set "PATH=%SCOOP_SHIMS%;%PATH%"
 )
 
-REM Scoop が無ければ導入 (Bypass)
+REM Scoop が無ければ導入
+REM 新しいアカウントで「-ExecutionPolicy Bypass + iwr | iex」が「アクセスが拒否されました。」で失敗した（2026-10-06。原因は未特定）。
+REM 実機で成功した手順（CurrentUser を RemoteSigned にしてから Invoke-RestMethod | Invoke-Expression。Scoop 公式の手順）に合わせる。
+REM PS_EXE は完全パスにして、PATH とカレントの影響を受けない（試験では差し替える）。
+if not defined PS_EXE set "PS_EXE=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
 if not exist "%SCOOP_SHIMS%\scoop.cmd" (
   echo Scoop not found. Installing...
-  powershell -NoProfile -ExecutionPolicy Bypass -Command "iwr -useb get.scoop.sh | iex"
+  call "%PS_EXE%" -NoProfile -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; if ($?) { Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression } else { exit 1 }"
   if errorlevel 1 (
-    echo [ERROR] Scoop install failed.
+    echo [ERROR] Scoop install failed. Execution policy of this account:
+    call "%PS_EXE%" -NoProfile -Command "Get-ExecutionPolicy -List | Format-Table -AutoSize | Out-String"
     goto :END
   )
   if exist "%SCOOP_SHIMS%\scoop.cmd" set "PATH=%SCOOP_SHIMS%;%PATH%"
