@@ -148,6 +148,14 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - 却下: `curl` / `Invoke-WebRequest` への置換（アセット名にバージョンが入り、glob が使えない）。
 - 未確認: 未ログインのレート制限（1回2件程度なら問題ないはずだが、推測）。
 
+### Linux / WSL を Windows と対称にした（2026-10-06）
+
+- **対象**（Windows 側で今日入れた変更のうち、Linux にも意味があるもの）: (1) `scripts/linux/11_git_identity.sh` を新設（Windows の `11_git_identity.bat` と同じ。`~/.gitconfig_local` が無いときだけ対話で作る。`git config --file` を使う理由は同じ: `~/.gitconfig` は `30_link.sh` が張る symlink）。(2) `24_fonts.sh` を、1件失敗しても残りを続け、最後に `[ERROR]` と終了コード 1 にした（`24_fonts.bat` と同じ）。(3) README に「クイックスタート（ネイティブ Linux）」を足した。(4) 試験を足した（`tests/linux/test_scripts.sh` は 36 → 50 項目）。
+- **対称にしないもの（理由）**: `credential.helperselector`（Git Credential Manager。Linux には無い）、VC++ ランタイムの確認と色付け（Windows 固有）、`scoop` / winget（Windows 固有）、`24_fonts` / `31_history_seed` のログ保存と `pause`（ダブルクリックでウィンドウが閉じる問題は Windows だけ。Linux はターミナルに出力が残る）、`.sh` のコメントの ASCII 化（`.bat` が cp932 で壊れる問題は `.sh` に無い。`.sh` は日本語コメントのまま）。`apps.txt` の `scoop-completion` に当たる、apt 側の補完パッケージは無い。
+- **ネイティブ Linux の初回 clone は認証が要る**: リポジトリは private（`gh repo view` が `PRIVATE`、確認: 2026-10-06）。Windows は scoop の git に GCM が同梱されていて、clone でサインインが開くが、Linux の git には無い。クイックスタートは `apt install git gh` → `gh auth login` → `gh auth setup-git` → `git clone`（HTTPS）にした。`gh` は `apt.txt` にもあり、Ubuntu 24.04 の apt に 2.45.0 がある（確認: `apt-cache policy gh`）。却下案・代替: SSH 鍵（鍵の登録が手動で先に要る。手順書に手順がある）、PAT を手で入れる。**未確認**: 新しい Linux の実機での `gh auth login`（ブラウザ / ワンタイムコード）から clone までの通し。
+- **手順書（workbase の `cheatsheets/env/debian-family.md`）との食い違い（未修正）**: 手順 7 が「公開リポジトリなので、SSH 鍵が無くても HTTPS で取れる」と書いているが、リポジトリは private になった。dotfiles からは書き込まない場所なので、ここでは直していない（ユーザーが直すか、指示を待つ）。同じ手順 7 の `git config --file ~/.gitconfig_local ...` の手順は、`11_git_identity.sh` に置き換えられる。
+- **確認済み**: WSL（Ubuntu 24.04.4）で `bash tests/linux/test_scripts.sh` が 50/50 合格（確認: 2026-10-06）。
+
 ### `scoop-completion` と Moralerspace を manifest から外した。`.bat` のコメントは全て英語にした（2026-10-06）
 
 - **`scoop-completion`**: `apps.txt` から削除。PowerShell の補完は `profile.ps1` で使っていない（`scoop-completion` / `Import-Module` の参照なし。確認: Grep）。「`PSFzf` / `scoop-completion` を削除した」という前の決定（「シェル」の項）に、`apps.txt` の行だけが取り残されていた。このPCには導入済みなので、不要なら `scoop uninstall scoop-completion`（手動）。

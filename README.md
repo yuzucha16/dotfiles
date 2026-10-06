@@ -18,6 +18,19 @@ git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzuch
 
 続きは「セットアップ手順」の手順 1（`10_env.bat`）から。`git` が見つからなければ、新しい PowerShell を開き直してから3行目以降を実行する。詳しい注意は手順 0。
 
+## クイックスタート（ネイティブ Linux・新しいPC）
+
+OS を入れたあと、ターミナルに次の4行を貼る（git と gh を入れ、GitHub にサインインして、ghq の場所に clone する）。リポジトリは private なので、サインインが要る。`gh auth login` は、GitHub.com → HTTPS → ブラウザ（ワンタイムコード）の順に選ぶ。**未確認**: 新しい Linux の実機では未実行（Ubuntu 24.04 の apt に `gh` 2.45.0 があることだけ確認した）。
+
+```bash
+sudo apt install -y git gh
+gh auth login
+gh auth setup-git
+git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha16/dotfiles
+```
+
+続きは「セットアップ手順」の「WSL / Linux」の手順 1（`10_dirs.sh`）から。SSH 鍵で取得してもよい（`git clone git@github.com:yuzucha16/dotfiles.git`。鍵の登録は手順書 `debian-family.md` の「SSH と GitHub」）。WSL は Windows 側の clone を使うので、このクイックスタートは不要（Windows 側のクイックスタートを済ませる）。
+
 ## ディレクトリ
 
 ```text
@@ -77,7 +90,7 @@ dotfiles/
 
 - OS はディレクトリで表す（ファイル名に `w` / `l` は付けない）
 - 十の位 = 層（実行順）: `10` 環境・ディレクトリ、`20` アプリ/パッケージ導入、`30` リンク、`40` OS 機能（WSL 有効化など）、`50` リポジトリ取得
-- 一の位 = 同じ層の中身: `0` は層の本体、`1` 以降は固有ツール（`11` = git の名前・メール（Windows のみ）、`23` = 日本語入力（Linux のみ）、`24` = フォント、`31` = 履歴の種（Windows は PSReadLine、Linux は zsh/bash））。Windows と Linux で同じ番号は同じ役割（片方にしかないものは欠番）。WSL とネイティブ Linux は同じスクリプトで、WSL 固有の挙動は `is_wsl` で分ける
+- 一の位 = 同じ層の中身: `0` は層の本体、`1` 以降は固有ツール（`11` = git の名前・メール、`23` = 日本語入力（Linux のみ）、`24` = フォント、`31` = 履歴の種（Windows は PSReadLine、Linux は zsh/bash））。Windows と Linux で同じ番号は同じ役割（片方にしかないものは欠番）。WSL とネイティブ Linux は同じスクリプトで、WSL 固有の挙動は `is_wsl` で分ける
 - 任意で実行するものは `optional/` に置く（番号なし）
 - `.bat` のコメントは ASCII（英語）で書く。日本語（UTF-8）のコメントは、コードページ 932 のコンソールで行末のバイトが次の行と混ざり、意図しないコマンドやゴミファイルが生まれることがある
 - 家用のアプリの追加分は `apps.home.txt` のように `.home.` を挟んだファイルに書く（`manifests/`）。リンクの map は共通の `links.map` のみ
@@ -110,12 +123,13 @@ dotfiles/
 
 ### WSL (Ubuntu 24.04) / Linux (apt 系)
 
-WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/vault/...` から参照する）。ネイティブ Linux は、OS を入れて `~/vault/repos/github.com/yuzucha16/dotfiles` に clone してから実行する（OS のインストール手順は works の `resources/cheatsheets/env/debian-family.md`）。`30_link.sh` は、置かれているリポジトリを自動で `--src` にするので、どちらでも同じ呼び方になる。Vault のトップ `WORKS_DIR` は、WSL では `/mnt/c/vault/works`（Windows 側と共有）、ネイティブ Linux では `~/vault/works`（`home/.profile` が既定値を設定する。`~/.config/profile.local` で上書きできる）。
+WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/vault/...` から参照する）。ネイティブ Linux は、OS を入れて、冒頭の「クイックスタート（ネイティブ Linux）」で `~/vault/repos/github.com/yuzucha16/dotfiles` に clone してから実行する（OS のインストール手順は works の `resources/cheatsheets/env/debian-family.md`）。`30_link.sh` は、置かれているリポジトリを自動で `--src` にするので、どちらでも同じ呼び方になる。Vault のトップ `WORKS_DIR` は、WSL では `/mnt/c/vault/works`（Windows 側と共有）、ネイティブ Linux では `~/vault/works`（`home/.profile` が既定値を設定する。`~/.config/profile.local` で上書きできる）。
 
 1. `scripts/linux/10_dirs.sh`: XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/vault/{build,tools}` を作る
+   - `scripts/linux/11_git_identity.sh`: `~/.gitconfig_local`（PC ごとの git の名前・メール）が無いときだけ、`user.name` / `user.email` を対話的に聞いて作る（Windows の `11_git_identity.bat` と同じ。既にあれば触らない）。**`30_link.sh` の前に**実行する（git が必要。ネイティブ Linux はクイックスタートで入っている。WSL は Ubuntu 標準の git か、`20_packages.sh` の後）。`git config --global` は使わない（理由は Windows 版と同じ。`~/.gitconfig` は `30_link.sh` が張る symlink）。Windows 版にある `credential.helperselector`（Git Credential Manager）は書かない。無効な入力は5回で `[ERR]`
 2. `scripts/linux/20_packages.sh [desktop]`: apt の更新、`manifests/apt.txt` のパッケージ（git / curl / wget / zsh と CLI ツール）の導入、starship、ghq（ビルド済みバイナリを `~/.local/bin` へ。Go は不要）の導入、`bat` / `fd` のリンク作成。ネイティブ Linux のデスクトップは `desktop` を付けて `apt.desktop.txt` も入れる。Docker や Go は入れない（下の「必要なときだけ入れるもの」）
    - `scripts/linux/23_ja.sh`（ネイティブ Linux のみ。WSL では何もしない）: fcitx5 + Mozc、日本語フォントを入れる。Ubuntu 系は言語パックも入れる。入れたら再ログインして、Fcitx 5 設定で Mozc を追加する（手動）
-   - `scripts/linux/24_fonts.sh`: PlemolJP NF の latest を `gh` で `~/download` へ取得する（WSL でも WSL 側の `~/download`）。インストールは手動。`gh auth login` は不要
+   - `scripts/linux/24_fonts.sh`: PlemolJP NF の latest を `gh` で `~/download` へ取得する（WSL でも WSL 側の `~/download`）。インストールは手動。`gh auth login` は不要。1件失敗しても残りは続け、最後に `[ERROR]` と終了コード 1（Windows の `24_fonts.bat` と同じ）
 3. `scripts/linux/30_link.sh [link|unlink] [-n]`: stow で `home/` を `~` に展開する（Windows の `30_link.bat` と同じ引数）。リンク切れの旧 symlink は削除する。展開先に実ファイルがあると `[ERR]` を出して止まる（自動退避はしない。手で退避/削除して再実行）。終わったら `chsh -s /usr/bin/zsh`
    - ネイティブ Linux のみ: `windows/obsidian/.obsidian` を `$WORKS_DIR/.obsidian`（`~/vault/works/.obsidian`）へ symlink する（親が無ければ作る。`unlink` で外れる）。実ディレクトリがあると `[ERR]` で止まる（Obsidian を先に開くと、実ディレクトリができる。手で退避して再実行）。WSL では何もしない（Windows 側の `30_link.bat` が張るジャンクションを `/mnt/c` 越しに共有する）
    - `scripts/linux/31_history_seed.sh [-n]`: `manifests/history.seed.sh.txt` を `~/.local/state/{zsh,bash}/history`（`XDG_STATE_HOME` があればその下）へコピーする。履歴が無い/空のときだけ行い、既存の履歴は上書きしない（`-n`: 確認のみ）。リンクではないので、以後はシェルが自由に追記する。**最初のシェルを開く前に**実行する
@@ -123,16 +137,16 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行す�
 
 ### スクリプトの試験（WSL / Linux）
 
-`bash tests/linux/test_scripts.sh` で、`scripts/linux/*.sh` と `home/.profile` を試験する（終了コード = 失敗数。36項目）。`scripts/linux/` や `home/.profile` を変えたら実行する。
+`bash tests/linux/test_scripts.sh` で、`scripts/linux/*.sh` と `home/.profile` を試験する（終了コード = 失敗数。50項目）。`scripts/linux/` や `home/.profile` を変えたら実行する。
 
 - 一時ディレクトリと偽の HOME だけを使い、実環境の `~` は変更しない。ネットワークも使わない（`ghq` は偽物、clone 元はローカルの bare リポジトリ）。
 - WSL とネイティブ Linux の分岐は、環境変数 `PROC_VERSION_FILE`（`/proc/version` の差し替え）で強制する。どちらの環境でも、両方の分岐を試験できる。実環境を見る項目は、WSL でないとき等は skip する。
-- 観点: 構文と改行コード、`WORKS_DIR` の分岐、`clone_workbase`（新規・skip・非空のディレクトリ・空のディレクトリ）、`link_obsidian`（dry-run・再リンク・unlink・実体があれば `[ERR]`・リンク切れ・元が無い）、`30_link.sh` の通し、`50_repos.sh`。`stow` が無いと、`30_link.sh` の通しは skip する。
+- 観点: 構文と改行コード、`WORKS_DIR` の分岐、`clone_workbase`（新規・skip・非空のディレクトリ・空のディレクトリ）、`link_obsidian`（dry-run・再リンク・unlink・実体があれば `[ERR]`・リンク切れ・元が無い）、`30_link.sh` の通し、`50_repos.sh`、`11_git_identity.sh`（新規・skip・空入力・`@` なし・特殊文字・入力が閉じている・git なし）、`24_fonts.sh`（偽の `gh` で、成功・1件失敗しても続行・`gh` なし）。`stow` が無いと、`30_link.sh` の通しは skip する。
 - 新しいスクリプトや関数を足したときは、同じ観点（新規作成、再実行、dry-run、元に戻す、実体があれば止まる）で項目を足す。
 
 ### スクリプトの試験（Windows）
 
-`pwsh -NoProfile -File tests/windows/test_20_apps.ps1` で、`scripts/windows/20_apps.bat` の Scoop 導入の分岐を試験する（終了コード = 失敗数。18項目）。偽の `USERPROFILE`、環境変数 `PS_EXE` で差し替えた偽の powershell、偽の `scoop.cmd` だけを使い、ネットワークにも実環境の scoop にも触れない（観点: scoop が無く導入成功、導入失敗、scoop が既にある。バット内の PowerShell 部分は取り出して、実効ポリシー5種と、設定失敗時の続行を試験する）。実際の導入は、新しいアカウントか VM で確認する。
+`pwsh -NoProfile -File tests/windows/test_20_apps.ps1` で、`scripts/windows/20_apps.bat` の Scoop 導入の分岐と、VC++ ランタイム表示の色、`scripts/windows/*.bat` が ASCII だけであることを試験する（終了コード = 失敗数。28項目）。`pwsh -NoProfile -File tests/windows/test_11_git_identity.ps1` で、`11_git_identity.bat` を試験する（15項目。偽の `USERPROFILE` と、ファイルのリダイレクトで渡す入力を使う。`set /p` は標準入力がパイプだと2行目以降を取りこぼすため）。偽の `USERPROFILE`、環境変数 `PS_EXE` で差し替えた偽の powershell、偽の `scoop.cmd` だけを使い、ネットワークにも実環境の scoop にも触れない（観点: scoop が無く導入成功、導入失敗、scoop が既にある。バット内の PowerShell 部分は取り出して、実効ポリシー5種と、設定失敗時の続行を試験する）。実際の導入は、新しいアカウントか VM で確認する。
 
 ### 必要なときだけ入れるもの（WSL・手動）
 
