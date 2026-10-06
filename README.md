@@ -168,7 +168,7 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行す�
 ## PC ごとの個別設定（リポジトリに入れないもの）
 
 - git のユーザー名・メールアドレス: `~/.gitconfig_local`（`home/.gitconfig` が include する）
-- プロキシの CA 証明書: `%CERTS_DIR%\company-ca.crt`（`C:\vault\works\areas\dev-env\certs`。WSL では `/mnt/c/vault/works/areas/dev-env/certs/company-ca.crt`）。あれば `NODE_EXTRA_CA_CERTS` に設定される
+- プロキシの CA 証明書: `%CERTS_DIR%\company-ca.crt`（`%USERPROFILE%\.certs`。`10_env.bat` が作る）。WSL へは `WSLENV`（`CERTS_DIR/p`）で `$CERTS_DIR` として渡る（`/mnt/c/...` を直接読まない）。環境変数が無い Linux では `~/.certs`。あれば `NODE_EXTRA_CA_CERTS` に設定される
 - シェルの個別上書き: `~/.config/{profile,bashrc,zshrc}.local`
 - PC1,PC2の差分: `manifests/apps.<profile>.txt`
 
