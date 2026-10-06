@@ -55,6 +55,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
+### 2026-10-06（11_git_identity.bat に schannel の質問を追加）
+
+- ユーザーの依頼で、`scripts/windows/11_git_identity.bat` に「SSL バックエンドを schannel にするか」の質問を足した。`y` で `.gitconfig_local` に `[http] sslBackend = schannel` と `sslVerify = true`（`[http]` 内。当初の `https.sslVerify` は git に無いキーなので `http.sslVerify` に直した） を書き、`n`・空は何も書かない（既定の OpenSSL）。y/n 以外は再入力で、5回で `[ERR]`。`tests/windows/test_11_git_identity.ps1` に6件を足し、failures=0（確認: 2026-10-06、`test_20_apps.ps1` も failures=0）。README の該当行も更新。`credential.helperselector.selected = manager` は、ユーザーの決定で `home/.gitconfig` に静的に持ち、スクリプトからは書かない（`11_git_identity.bat` から削除、試験は「書かない」に変更）。`home/.gitconfig` にあった未コミットの schannel 設定は、ユーザーが外した（確認: `Get-Content`。`helperselector` だけが残る）ので、`n` なら OpenSSL のまま。
+
 ### 2026-10-06（works の docs の行き先の点検で、決定を転記）
 
 - works の docs/decisions.md の項目を、転記先と突き合わせる点検（kit の版 `2026-10-06.13` の仕組み）で、dotfiles の決定「Linux 側の試験スクリプトを `tests/linux/` に置く（2026-10-05）」が、works にだけ記録され、この docs/decisions.md に無いことが分かった。docs/decisions.md に項目を足した（ユーザーの承認。内容は、works にあった決めたこと・根拠・却下案・確認済み。コミット `fc23286`）。log.md の 2026-10-05 の記録（試験スクリプトの保存）とは対応している。

@@ -33,13 +33,13 @@ function Run-Case($lines, $existing = $null, $noGit = $false) {
   [pscustomobject]@{ Out = $out; Rc = $rc; File = $content }
 }
 
-# 1. 新規作成: user.name / user.email と credential の設定が入る
+# 1. 新規作成: user.name / user.email が入る（credential は home/.gitconfig に静的に持つので書かない）
 $r = Run-Case @('Taro Yamada', 'taro@example.com')
 Check 'create: exit 0'                       ($r.Rc -eq 0)
 Check 'create: [DONE]'                       ($r.Out -match '\[DONE\] created')
 Check 'create: user.name written'            ($r.File -match 'name = Taro Yamada')
 Check 'create: user.email written'           ($r.File -match 'email = taro@example.com')
-Check 'create: helperselector = manager'     (($r.File -match '\[credential "helperselector"\]') -and ($r.File -match 'selected = manager'))
+Check 'create: no helperselector (static in home/.gitconfig)' ($r.File -notmatch 'helperselector')
 
 # 2. 既にある: 触らない
 $r = Run-Case @('x', 'x@y.z') "[user]`n`tname = keep`n"
@@ -68,6 +68,19 @@ Check 'no git: no file created'              ($null -eq $r.File)
 $r = Run-Case @()
 Check 'closed stdin: gives up with [ERR] and exit 1' (($r.Out -match '\[ERR\] no valid input after 5 tries') -and ($r.Rc -eq 1))
 Check 'closed stdin: no file created'                ($null -eq $r.File)
+
+# 8. schannel の質問: y なら http.sslBackend / https.sslVerify を書く。n・空は何も書かない（暗黙の OpenSSL）。y/n 以外は再入力
+$r = Run-Case @('Taro', 'taro@example.com', 'y')
+Check 'schannel y: [http] sslBackend = schannel' (($r.File -match '\[http\]') -and ($r.File -match 'sslBackend = schannel'))
+Check 'schannel y: [http] sslVerify = true'      (($r.File -notmatch '\[https\]') -and ($r.File -match 'sslVerify = true'))
+$r = Run-Case @('Taro', 'taro@example.com', 'n')
+Check 'schannel n: nothing written'              (($r.Rc -eq 0) -and ($r.File -notmatch 'sslBackend') -and ($r.File -notmatch 'sslVerify'))
+$r = Run-Case @('Taro', 'taro@example.com', '')
+Check 'schannel empty = n: nothing written'      (($r.Rc -eq 0) -and ($r.File -notmatch 'sslBackend') -and ($r.File -notmatch 'sslVerify'))
+$r = Run-Case @('Taro', 'taro@example.com', 'maybe', 'Y')
+Check 'schannel invalid -> warns, asks again, Y accepted' (($r.Out -match 'answer y or n') -and ($r.File -match 'sslBackend = schannel'))
+$r = Run-Case @('Taro', 'taro@example.com', 'a', 'b', 'c', 'd', 'e')
+Check 'schannel invalid x5: [ERR], no file'      (($r.Rc -eq 1) -and ($r.Out -match 'no valid input after 5 tries') -and ($null -eq $r.File))
 
 "RESULT: failures=$fail"
 exit $fail
