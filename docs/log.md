@@ -4,6 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- 履歴の種の `git config --global user.name` / `user.email`（`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` の各2行）を見直す。`~/.gitconfig` は `30_link` が張る symlink なので、リンク後に実行すると、リポジトリ内の `home/.gitconfig` が書き換わる。種の正本は exmem の `knowledge/shell-command-usecases.md` で、種ファイルは派生物なので、直すのは正本の統合のあと（種を直接編集しない。2026-10-06 時点）。
 - VC++ ランタイムの `[WARN]`（ランタイムが無いとき）の表示を確認する。新アカウントでは `[Installed]` 側しか出ず、`[WARN]` 側は実機で未確認（2026-10-06 時点。ランタイムが無い環境でだけ出る。判断基準は `docs/decisions.md` の「vcredist2022 は自動導入せず…」）。
 - Zed の最適化（2026-10-04）の後始末: Zed を再起動して、テーマ・Ctrl+Enter 送信・右のプロジェクトパネル・Markdown の見え方を確認する。Vim オフの試験は 2026-10-11 頃に続けるか判断する（戻し方は `settings.json` のコメント）。他のPCでは `30_link.bat` の前に、空の `%APPDATA%\zed\themes` を削除する。WSL で点滅を止めるのは `.bashrc` / `.zshrc`（反映は新しいシェルで確認）。OS 全体の点滅停止（`CursorBlinkRate=-1`）は必要なら検討する。
 - シェルの3シェル共通化（fzf とキーバインドの現仕様の表は `docs/decisions.md` の Facts）:
@@ -53,6 +54,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（「ナレッジ化して」の実行）
+
+- 「ナレッジ化して」を実行し、3話題を `exmem/inbox/` に作った（コミット対象外）: `2026-10-06-windows-bat-scripting-pitfalls.md`（`.bat` の ASCII、`set /p` とパイプ、`%errorlevel%`、対話ループの上限、試験の番人）、`2026-10-06-fresh-pc-bootstrap-private-repo.md`（最終の場所への初回 clone、scoop だけの git、private の扱い、`git config --file`）、`2026-10-06-scoop-suggest-vcredist-runtime.md`（`suggest` と VC++ ランタイムの判断基準）。点検スクリプトは3件とも PASS（失敗0、警告0）。メモの中で、履歴の種（exmem の `knowledge/shell-command-usecases.md`）の `git config --global user.name` / `user.email` の行が、symlink の `~/.gitconfig` と食い違うことを「統合時の修正」に書いた。dotfiles 固有の経緯（Zed と Obsidian のフォント、Linux との対称化の範囲、手順書の更新）は、ナレッジ化せず `docs/` に残してある。
 
 ### 2026-10-06（動作確認の Close）
 
