@@ -9,7 +9,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - シェルの3シェル共通化（fzf とキーバインドの現仕様の表は `docs/decisions.md` の Facts）:
   - WSL に `ghq` を入れたら `cdg`（zsh/bash）を実機で確認する。
   - その他、3シェルの差を洗い出して共通化する。
-- ヒストリの種を進める。方針と種の本文（正本）は exmem の `knowledge/shell-command-usecases.md`。種ファイル `windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt`、配置スクリプト `scripts/{windows,linux}/31_history_seed.*` は作成・検証済み。残り: 新しいPCで通し実行、数週間使って間引き（置換した apt などの行を優先して見直す）。
+- ヒストリの種を進める。方針と種の本文（正本）は exmem の `knowledge/shell-command-usecases.md`。種ファイル `windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt`、配置スクリプト `scripts/{windows,linux}/31_history_seed.*` は作成・検証済み。Windows の `31_history_seed.bat` は、新アカウントの実機で通し済み（2026-10-06、ユーザー報告）。残り: Linux（zsh/bash）の `31_history_seed.sh` を新しいPCで通し実行、数週間使って間引き（置換した apt などの行を優先して見直す）。
 - GitHub の既定ブランチを `main` にし、問題が無ければ `202509` をリモート・ローカルで削除する（ユーザーの確認待ち）。
 - 各PC（家・会社）で `git pull` → Windows は `30_link.bat`（家は `link home`）、Linux/WSL は `30_link.sh` を再実行する。新しいシェルで zsh の `lt` / `ll` / `l`、`cdg` を確認する。
 - このPCで `.wslconfig` を反映する: `30_link.bat` → `wsl --shutdown` → 開き直して `vmmemWSL` を観察する。
@@ -56,7 +56,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ### 2026-10-06（動作確認の Close）
 
-- ユーザーが新しい Windows アカウントで、`10` から `50` の Windows スクリプトを実機で通し、問題なしと報告した。`24_fonts.bat` は実際にダウンロードした。VC++ ランタイムの `[WARN]` は出なかった（`[Installed]` 側のみ。`[WARN]` 側は未確認のまま Next Actions に残した）。これを受けて、次の項目を Close（削除）した: 新アカウントでの `20_apps.bat` と Scoop 導入、`10_env.bat` / `20_apps.bat` / `50_repos.bat` の実機の通し実行、Windows の新PCでの通し実行と Win11 の「要確認」、`scoop install git` 直後の `git` 利用、`.bat` の文字化け修正の再実行、`11_git_identity.bat` の実機動作、`24_fonts.bat` の実ダウンロード（PlemolJP のアセット名 `PlemolJP_NF_v*.zip` が通る）、`~/.gitconfig_local` の設定確認（`11_git_identity` で置き換わった）、winget の git の `winget uninstall`（決定を撤回済み）。Windows の OOBE 回避（手順書の 1〜4）は、この確認に含まれず、手順書に「要確認」のまま。
+- ユーザーが新しい Windows アカウントで、`10` から `50` の Windows スクリプトを実機で通し、問題なしと報告した。`24_fonts.bat` は実際にダウンロードした。VC++ ランタイムの `[WARN]` は出なかった（`[Installed]` 側のみ。`[WARN]` 側は未確認のまま Next Actions に残した）。これを受けて、次の項目を Close（削除）した: 新アカウントでの `20_apps.bat` と Scoop 導入、`10_env.bat` / `20_apps.bat` / `50_repos.bat` の実機の通し実行、Windows の新PCでの通し実行と Win11 の「要確認」、`scoop install git` 直後の `git` 利用、`.bat` の文字化け修正の再実行、`11_git_identity.bat` の実機動作、`24_fonts.bat` の実ダウンロード（PlemolJP のアセット名 `PlemolJP_NF_v*.zip` が通る）、`~/.gitconfig_local` の設定確認（`11_git_identity` で置き換わった）、winget の git の `winget uninstall`（決定を撤回済み）。Windows の OOBE 回避（手順書の 1〜4）は、この確認に含まれず、手順書に「要確認」のまま。続けて、`31_history_seed.bat` も同じ新アカウントの実機で通し済みと確認した（Windows 側のみ。Linux の `31_history_seed.sh` は未確認のまま Next Actions に残した）。この後、ユーザーが「ナレッジ化して」を依頼する予定（`docs/` は更新済み）。
 
 ### 2026-10-06（workbase の手順書を現在のスクリプトに合わせた）
 
