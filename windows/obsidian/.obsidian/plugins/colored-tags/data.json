@@ -89,7 +89,17 @@
     "tool/windows-terminal": 13,
     "tool/gh": 14,
     "link-management": 51,
-    "trial": 52
+    "trial": 52,
+    "tls": 53,
+    "ssl-inspection": 54,
+    "tool/git": 15,
+    "tool/docker": 16,
+    "line-endings": 55,
+    "repository-design": 56,
+    "tool/ripgrep": 17,
+    "theming": 57,
+    "testing": 58,
+    "tool/stow": 18
   },
   "_version": 3
 }
