@@ -4,7 +4,6 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
-- `転記待ち` が上限の 20 件に達している。exmem（`C:\vault\works\resources\exmem`）で「inboxを整理して」を実行し、`転記済` に進める案を承認する（2026-10-06 時点。メモは4つ、`exmem/inbox/` にある）。
 - `10_env.bat` を再実行して、`%USERPROFILE%\.certs` ができること、`CERTS_DIR` と `WSLENV`（`CERTS_DIR/p` が1回だけ）が更新されることを確認する。新しいターミナルと新しい WSL セッション（`wsl --shutdown` のあと）で、`$CERTS_DIR` が `/mnt/c/Users/<名前>/.certs` になり、`company-ca.crt` があれば `NODE_EXTRA_CA_CERTS` が設定されることを確認する。旧 `works\areas\dev-env\certs`（空）は、確認後に削除する（2026-10-06 時点）。
 - 履歴の種の `git config --global user.name` / `user.email`（`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` の各2行）を見直す。`~/.gitconfig` は `30_link` が張る symlink なので、リンク後に実行すると、リポジトリ内の `home/.gitconfig` が書き換わる。種の正本は exmem の `knowledge/shell-command-usecases.md` で、種ファイルは派生物なので、直すのは正本の統合のあと（種を直接編集しない。2026-10-06 時点）。
 - VC++ ランタイムの `[WARN]`（ランタイムが無いとき）の表示を確認する。新アカウントでは `[Installed]` 側しか出ず、`[WARN]` 側は実機で未確認（2026-10-06 時点。ランタイムが無い環境でだけ出る。判断基準は `docs/decisions.md` の「vcredist2022 は自動導入せず…」）。
@@ -56,6 +55,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（`転記待ち` 20 件を `転記済` に進めた。「inboxを整理して」の最初の実行）
+
+- exmem の統合（`b70f0d4`。メモ4つを `knowledge/` の `dotfiles-shell-tuning.md`、`windows-cli-pitfalls.md`、`pc-setup-manuals.md`、`obsidian-vault.md` に統合）のあと、`docs/decisions.md` の `転記待ち` 20 件を、統合先の本文と照らして `転記済` に進めた（ユーザーの承認）。確認: 各項目の根拠と却下案が、統合先に写っていること（全件「突き合わせ済み」。「存在の確認のみ」は無し）。汎用の本文を外し、固有の文脈（Principles の「履歴に戻らない・ブランチを切らない」、起動時間のキャッシュ見送りと VS Code 拡張の削減、git の SSL の試験結果）は残した。統合先の Facts の多くは「再現は未実施」のまま。結果: `check-docs.ps1` が FAIL 0、WARN 0、`転記待ち` 0 件。
 
 ### 2026-10-06（共通ルールに「終了処理して」を足した。`.obsidian` の決定を撤回済みにした）
 
