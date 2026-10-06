@@ -2,7 +2,7 @@
 
 構成・スクリプト命名・セットアップ手順（How）は `README.md` が正本。ここには、なぜそうしたか（Why）、却下案、遭遇した詰まり、実機で確認した事実を残す。現在の状態と次にやることは `docs/log.md`。
 
-exmem（`C:\vault\notes\resources\exmem`）は読み取り専用の参照先で、ここからは書き込まない。参照するときは `exmem/knowledge/<ファイル>.md` と書く。
+exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で、ここからは書き込まない。参照するときは `exmem/knowledge/<ファイル>.md` と書く。
 
 ## Principles
 

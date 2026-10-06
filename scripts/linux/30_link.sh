@@ -29,7 +29,7 @@ Options:
   -h, --help        このヘルプ
 
 展開先に実ファイルがある場合は [ERR] を出して止まる。中身を確認し、手で退避/削除してから再実行する。
-ネイティブ Linux では、windows/obsidian/.obsidian を $NOTES_DIR/.obsidian へ symlink する（WSL は Windows 側が張る）。
+ネイティブ Linux では、windows/obsidian/.obsidian を $WORKS_DIR/.obsidian へ symlink する（WSL は Windows 側が張る）。
 USAGE
 }
 
@@ -127,11 +127,11 @@ case "$MODE" in
 esac
 
 # ===== Obsidian config (native Linux only) =====
-# WSL は、Windows 側の 30_link.bat が C:\vault\notes\.obsidian へジャンクションを張る（/mnt/c で共有）ので、何もしない。
-# ネイティブ Linux は、windows/obsidian/.obsidian を $NOTES_DIR/.obsidian へ symlink する（NOTES_DIR は lib.sh の notes_dir）。
+# WSL は、Windows 側の 30_link.bat が C:\vault\works\.obsidian へジャンクションを張る（/mnt/c で共有）ので、何もしない。
+# ネイティブ Linux は、windows/obsidian/.obsidian を $WORKS_DIR/.obsidian へ symlink する（WORKS_DIR は lib.sh の works_dir）。
 obsidian_err=0
 if ! is_wsl; then
-  link_obsidian "$MODE" "$SRC_DIR/windows/obsidian/.obsidian" "$(notes_dir)/.obsidian" "$DRY_RUN" || obsidian_err=1
+  link_obsidian "$MODE" "$SRC_DIR/windows/obsidian/.obsidian" "$(works_dir)/.obsidian" "$DRY_RUN" || obsidian_err=1
 fi
 
 echo

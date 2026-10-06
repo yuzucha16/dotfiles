@@ -31,23 +31,23 @@ check "sh -n .profile (POSIX sh: $(readlink -f /bin/sh))" '/bin/sh -n "$DOTS/hom
 cr=$(cat "$DOTS/scripts/linux/lib.sh" "$LINK" "$REPOS" "$DOTS/home/.profile" | tr -cd '\r' | wc -c)
 check "no CR in the edited files" '[[ "$cr" == 0 ]]'
 
-echo "== .profile: NOTES_DIR"
-r=$(env -i HOME=/home/u PATH="$PATH" PROC_VERSION_FILE="$T/ver_wsl" /bin/sh -c ". $DOTS/home/.profile; echo \$NOTES_DIR")
-check "WSL -> /mnt/c/vault/notes" '[[ "$r" == /mnt/c/vault/notes ]]'
-r=$(env -i HOME=/home/u PATH="$PATH" PROC_VERSION_FILE="$T/ver_native" /bin/sh -c ". $DOTS/home/.profile; echo \$NOTES_DIR")
-check "native -> \$HOME/vault/notes" '[[ "$r" == /home/u/vault/notes ]]'
-r=$(env -i HOME=/home/u PATH="$PATH" NOTES_DIR=/x/y PROC_VERSION_FILE="$T/ver_native" /bin/sh -c ". $DOTS/home/.profile; echo \$NOTES_DIR")
-check "explicit NOTES_DIR wins" '[[ "$r" == /x/y ]]'
-r=$(env -i HOME=/home/u PATH="$PATH" PROC_VERSION_FILE="$T/ver_wsl" /bin/sh -c ". $DOTS/home/.profile; env | grep -c '^NOTES_DIR='")
-check "NOTES_DIR is exported" '[[ "$r" == 1 ]]'
+echo "== .profile: WORKS_DIR"
+r=$(env -i HOME=/home/u PATH="$PATH" PROC_VERSION_FILE="$T/ver_wsl" /bin/sh -c ". $DOTS/home/.profile; echo \$WORKS_DIR")
+check "WSL -> /mnt/c/vault/works" '[[ "$r" == /mnt/c/vault/works ]]'
+r=$(env -i HOME=/home/u PATH="$PATH" PROC_VERSION_FILE="$T/ver_native" /bin/sh -c ". $DOTS/home/.profile; echo \$WORKS_DIR")
+check "native -> \$HOME/vault/works" '[[ "$r" == /home/u/vault/works ]]'
+r=$(env -i HOME=/home/u PATH="$PATH" WORKS_DIR=/x/y PROC_VERSION_FILE="$T/ver_native" /bin/sh -c ". $DOTS/home/.profile; echo \$WORKS_DIR")
+check "explicit WORKS_DIR wins" '[[ "$r" == /x/y ]]'
+r=$(env -i HOME=/home/u PATH="$PATH" PROC_VERSION_FILE="$T/ver_wsl" /bin/sh -c ". $DOTS/home/.profile; env | grep -c '^WORKS_DIR='")
+check "WORKS_DIR is exported" '[[ "$r" == 1 ]]'
 
-echo "== lib.sh: notes_dir"
-r=$(NOTES_DIR=/a/b notes_dir); check "explicit wins" '[[ "$r" == /a/b ]]'
-r=$(unset NOTES_DIR; PROC_VERSION_FILE="$T/ver_wsl" notes_dir); check "WSL" '[[ "$r" == /mnt/c/vault/notes ]]'
-r=$(unset NOTES_DIR; HOME=/home/u PROC_VERSION_FILE="$T/ver_native" notes_dir); check "native" '[[ "$r" == /home/u/vault/notes ]]'
-r=$(unset NOTES_DIR; notes_dir)
-if is_wsl; then check "real environment (WSL) -> /mnt/c/vault/notes" '[[ "$r" == /mnt/c/vault/notes ]]'
-else check "real environment (native) -> \$HOME/vault/notes" '[[ "$r" == "$HOME/vault/notes" ]]'; fi
+echo "== lib.sh: works_dir"
+r=$(WORKS_DIR=/a/b works_dir); check "explicit wins" '[[ "$r" == /a/b ]]'
+r=$(unset WORKS_DIR; PROC_VERSION_FILE="$T/ver_wsl" works_dir); check "WSL" '[[ "$r" == /mnt/c/vault/works ]]'
+r=$(unset WORKS_DIR; HOME=/home/u PROC_VERSION_FILE="$T/ver_native" works_dir); check "native" '[[ "$r" == /home/u/vault/works ]]'
+r=$(unset WORKS_DIR; works_dir)
+if is_wsl; then check "real environment (WSL) -> /mnt/c/vault/works" '[[ "$r" == /mnt/c/vault/works ]]'
+else check "real environment (native) -> \$HOME/vault/works" '[[ "$r" == "$HOME/vault/works" ]]'; fi
 
 echo "== lib.sh: clone_workbase (a local bare repo is the remote)"
 git init -q "$T/src"
@@ -94,17 +94,17 @@ check "missing source -> skip, nothing created" '[[ ! -e "$T/nn3" ]]'
 echo "== 30_link.sh end to end (fake HOME; needs stow)"
 if command -v stow >/dev/null 2>&1; then
   FH="$T/fh"; mkdir -p "$FH"
-  out=$(PROC_VERSION_FILE="$T/ver_wsl" NOTES_DIR="$T/wslnotes" bash "$LINK" link -n --dst "$FH" 2>&1); rc=$?
+  out=$(PROC_VERSION_FILE="$T/ver_wsl" WORKS_DIR="$T/wworks" bash "$LINK" link -n --dst "$FH" 2>&1); rc=$?
   check "WSL dry-run: rc=0, no .obsidian handling" '[[ $rc -eq 0 && "$out" != *obsidian* ]]'
-  out=$(PROC_VERSION_FILE="$T/ver_native" NOTES_DIR="$T/nnotes" bash "$LINK" link -n --dst "$FH" 2>&1); rc=$?
-  check "native dry-run: rc=0 + [DRY] .obsidian, nothing created" '[[ $rc -eq 0 && "$out" == *"[DRY] link $T/nnotes/.obsidian"* && ! -e "$T/nnotes" ]]'
-  out=$(PROC_VERSION_FILE="$T/ver_native" NOTES_DIR="$T/nnotes" bash "$LINK" link --dst "$FH" 2>&1); rc=$?
-  check "native link: rc=0, .obsidian -> dotfiles, home files stowed" '[[ $rc -eq 0 && "$(readlink "$T/nnotes/.obsidian")" == "$DOTS/windows/obsidian/.obsidian" && -L "$FH/.profile" ]]'
-  out=$(PROC_VERSION_FILE="$T/ver_native" NOTES_DIR="$T/nnotes" bash "$LINK" unlink --dst "$FH" 2>&1); rc=$?
-  check "native unlink: .obsidian link removed, home files unstowed" '[[ $rc -eq 0 && ! -e "$T/nnotes/.obsidian" && ! -L "$FH/.profile" ]]'
-  mkdir -p "$T/nnotes/.obsidian"; echo keep > "$T/nnotes/.obsidian/x"
-  out=$(PROC_VERSION_FILE="$T/ver_native" NOTES_DIR="$T/nnotes" bash "$LINK" link --dst "$FH" 2>&1); rc=$?
-  check "native link with a real .obsidian: rc=1 + [ERR], untouched" '[[ $rc -eq 1 && "$out" == *"[ERR] real file/dir exists"* && -f "$T/nnotes/.obsidian/x" ]]'
+  out=$(PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/nworks" bash "$LINK" link -n --dst "$FH" 2>&1); rc=$?
+  check "native dry-run: rc=0 + [DRY] .obsidian, nothing created" '[[ $rc -eq 0 && "$out" == *"[DRY] link $T/nworks/.obsidian"* && ! -e "$T/nworks" ]]'
+  out=$(PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/nworks" bash "$LINK" link --dst "$FH" 2>&1); rc=$?
+  check "native link: rc=0, .obsidian -> dotfiles, home files stowed" '[[ $rc -eq 0 && "$(readlink "$T/nworks/.obsidian")" == "$DOTS/windows/obsidian/.obsidian" && -L "$FH/.profile" ]]'
+  out=$(PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/nworks" bash "$LINK" unlink --dst "$FH" 2>&1); rc=$?
+  check "native unlink: .obsidian link removed, home files unstowed" '[[ $rc -eq 0 && ! -e "$T/nworks/.obsidian" && ! -L "$FH/.profile" ]]'
+  mkdir -p "$T/nworks/.obsidian"; echo keep > "$T/nworks/.obsidian/x"
+  out=$(PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/nworks" bash "$LINK" link --dst "$FH" 2>&1); rc=$?
+  check "native link with a real .obsidian: rc=1 + [ERR], untouched" '[[ $rc -eq 1 && "$out" == *"[ERR] real file/dir exists"* && -f "$T/nworks/.obsidian/x" ]]'
 else
   skip "stow is not installed"
 fi
@@ -112,19 +112,19 @@ fi
 echo "== 50_repos.sh (stub ghq, fake HOME)"
 FH2="$T/fh2"; mkdir -p "$FH2" "$T/bin"; : > "$FH2/.profile"
 printf '#!/bin/sh\necho "ghq-stub $*"\n' > "$T/bin/ghq"; chmod +x "$T/bin/ghq"
-out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_native" NOTES_DIR="$T/n50" WORKBASE_URL="$T/workbase.git" bash "$REPOS" 2>&1); rc=$?
+out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/n50" WORKBASE_URL="$T/workbase.git" bash "$REPOS" 2>&1); rc=$?
 check "native: cloned, then ghq stub called" '[[ $rc -eq 0 && -d "$T/n50/resources/.git" && "$out" == *ghq-stub* ]]'
-out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_native" NOTES_DIR="$T/n50" WORKBASE_URL="$T/workbase.git" bash "$REPOS" 2>&1); rc=$?
+out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/n50" WORKBASE_URL="$T/workbase.git" bash "$REPOS" 2>&1); rc=$?
 check "native re-run: skip" '[[ $rc -eq 0 && "$out" == *"[SKIP] already cloned"* ]]'
-out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_wsl" NOTES_DIR="$T/n51" bash "$REPOS" 2>&1); rc=$?
+out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_wsl" WORKS_DIR="$T/n51" bash "$REPOS" 2>&1); rc=$?
 check "WSL: WARN when not cloned, no clone, ghq still runs" '[[ $rc -eq 0 && "$out" == *"[WARN] WSL"* && ! -e "$T/n51" && "$out" == *ghq-stub* ]]'
-out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_wsl" NOTES_DIR="$T/n50" bash "$REPOS" 2>&1); rc=$?
+out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_wsl" WORKS_DIR="$T/n50" bash "$REPOS" 2>&1); rc=$?
 check "WSL: SKIP when already cloned" '[[ $rc -eq 0 && "$out" == *"[SKIP] workbase already cloned (Windows side)"* ]]'
-if is_wsl && [[ -d /mnt/c/vault/notes/resources/.git ]]; then
-  out=$(unset NOTES_DIR; HOME="$FH2" PATH="$T/bin:$PATH" bash "$REPOS" 2>&1); rc=$?
-  check "real WSL: default NOTES_DIR sees the Windows-side clone" '[[ $rc -eq 0 && "$out" == *"[SKIP] workbase already cloned (Windows side): /mnt/c/vault/notes/resources"* ]]'
+if is_wsl && [[ -d /mnt/c/vault/works/resources/.git ]]; then
+  out=$(unset WORKS_DIR; HOME="$FH2" PATH="$T/bin:$PATH" bash "$REPOS" 2>&1); rc=$?
+  check "real WSL: default WORKS_DIR sees the Windows-side clone" '[[ $rc -eq 0 && "$out" == *"[SKIP] workbase already cloned (Windows side): /mnt/c/vault/works/resources"* ]]'
 else
-  skip "real WSL check (needs WSL with /mnt/c/vault/notes/resources)"
+  skip "real WSL check (needs WSL with /mnt/c/vault/works/resources)"
 fi
 
 echo

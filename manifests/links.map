@@ -1,6 +1,6 @@
 # Link map for 30_link.bat (used on every PC)
 # Format : <path relative to dotfiles root>|<destination>
-# - %VAR% in destination is expanded at run time (USERPROFILE, APPDATA, NOTES_DIR ...)
+# - %VAR% in destination is expanded at run time (USERPROFILE, APPDATA, WORKS_DIR ...)
 # - Lines starting with # and blank lines are ignored
 # - Do not indent entries
 
@@ -31,6 +31,6 @@ home\.config\zed\keymap.json|%APPDATA%\zed\keymap.json
 home\.config\zed\settings.json|%APPDATA%\zed\settings.json
 home\.config\zed\themes|%APPDATA%\zed\themes
 
-# Obsidian config (the vault root %NOTES_DIR% is a plain, PC-local directory/repo made by the workflow hook; it is not linked.
-# The shared repo "workbase" is cloned into %NOTES_DIR%\resources by 50_repos.bat, not linked.)
-windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian
+# Obsidian config (the vault root %WORKS_DIR% is a plain, PC-local directory/repo made by the workflow hook; it is not linked.
+# The shared repo "workbase" is cloned into %WORKS_DIR%\resources by 50_repos.bat, not linked.)
+windows\obsidian\.obsidian|%WORKS_DIR%\.obsidian
