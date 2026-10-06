@@ -4,7 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
-- WSL に `clang-format` を導入して、`clang-format --version` が通ることを確認する（`sudo apt install -y clang-format`、または `bash scripts/linux/20_packages.sh`。2026-10-06 時点。`works` の Project が使う）。
+- WSL に `gcc-arm-none-eabi` を導入して、`arm-none-eabi-gcc --version` が通ることを確認する（`sudo apt install -y gcc-arm-none-eabi`、または `bash scripts/linux/20_packages.sh`。約 490MB。2026-10-06 時点。`works` の Project が、Cortex-M 向けのフットプリントと libc 非依存の実測に使う）。`clang-format` は導入済み（ユーザーの報告、18.1.3）。
 - `10_env.bat` を再実行して、`%USERPROFILE%\.certs` ができること、`CERTS_DIR` と `WSLENV`（`CERTS_DIR/p` が1回だけ）が更新されることを確認する。新しいターミナルと新しい WSL セッション（`wsl --shutdown` のあと）で、`$CERTS_DIR` が `/mnt/c/Users/<名前>/.certs` になり、`company-ca.crt` があれば `NODE_EXTRA_CA_CERTS` が設定されることを確認する。旧 `works\areas\dev-env\certs`（空）は、確認後に削除する（2026-10-06 時点）。
 - 履歴の種の `git config --global user.name` / `user.email`（`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` の各2行）を見直す。`~/.gitconfig` は `30_link` が張る symlink なので、リンク後に実行すると、リポジトリ内の `home/.gitconfig` が書き換わる。種の正本は exmem の `knowledge/shell-command-usecases.md` で、種ファイルは派生物なので、直すのは正本の統合のあと（種を直接編集しない。2026-10-06 時点）。
 - VC++ ランタイムの `[WARN]`（ランタイムが無いとき）の表示を確認する。新アカウントでは `[Installed]` 側しか出ず、`[WARN]` 側は実機で未確認（2026-10-06 時点。ランタイムが無い環境でだけ出る。判断基準は `docs/decisions.md` の「vcredist2022 は自動導入せず…」）。
@@ -56,6 +56,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（`gcc-arm-none-eabi` を `manifests/apt.txt` に足した）
+
+- `works` の Project `learn-c-pool-allocator`（組込み向けの C の学習）で、Cortex-M 向けの `.text` `.data` `.bss` の実測と、libc 非依存の確認（ARM 向けのビルドで未定義シンボルが無いこと）を行うため、`manifests/apt.txt` の `# devel` に `gcc-arm-none-eabi` を追記した（ユーザーの承認）。確認: `apt-cache policy` で、Ubuntu 24.04 に `15:13.2.rel1-2`（GCC 13.2）がある。インストールサイズは約 490MB（`Installed-Size: 505199` KB）。`libnewlib-arm-none-eabi` が推奨で、`20_packages.sh` の `apt install -y` は推奨も入れる（今回は freestanding のビルドなので newlib は不要。必要なら `--no-install-recommends`）。実機への導入は、`sudo` にパスワードが要るため、ユーザーが行う。
 
 ### 2026-10-06（`clang-format` を `manifests/apt.txt` に足した）
 
