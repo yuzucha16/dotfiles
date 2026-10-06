@@ -32,10 +32,14 @@ cr=$(cat "$DOTS/scripts/linux/lib.sh" "$DOTS/scripts/linux/11_git_identity.sh" "
 check "no CR in the edited files" '[[ "$cr" == 0 ]]'
 
 echo "== .profile: WORKS_DIR"
-r=$(env -i HOME=/home/u PATH="$PATH" PROC_VERSION_FILE="$T/ver_wsl" /bin/sh -c ". $DOTS/home/.profile; echo \$WORKS_DIR")
-check "WSL -> /mnt/c/vault/works" '[[ "$r" == /mnt/c/vault/works ]]'
-r=$(env -i HOME=/home/u PATH="$PATH" PROC_VERSION_FILE="$T/ver_native" /bin/sh -c ". $DOTS/home/.profile; echo \$WORKS_DIR")
-check "native -> \$HOME/vault/works" '[[ "$r" == /home/u/vault/works ]]'
+r=$(env -i HOME=/home/u USER=u PATH="$PATH" PROC_VERSION_FILE="$T/ver_wsl" /bin/sh -c ". $DOTS/home/.profile; echo \$WORKS_DIR")
+check "WSL -> /mnt/c/Users/\$USER/works (fallback)" '[[ "$r" == /mnt/c/Users/u/works ]]'
+r=$(env -i HOME=/home/u USER=u PATH="$PATH" PROC_VERSION_FILE="$T/ver_native" /bin/sh -c ". $DOTS/home/.profile; echo \$WORKS_DIR")
+check "native -> \$HOME/works" '[[ "$r" == /home/u/works ]]'
+r=$(env -i HOME=/home/u USER=u PATH="$PATH" PROC_VERSION_FILE="$T/ver_native" /bin/sh -c ". $DOTS/home/.profile; echo \$GHQ_ROOT")
+check "native GHQ_ROOT -> \$WORKS_DIR/repos" '[[ "$r" == /home/u/works/repos ]]'
+r=$(env -i HOME=/home/u USER=u PATH="$PATH" PROC_VERSION_FILE="$T/ver_wsl" /bin/sh -c ". $DOTS/home/.profile; echo \$GHQ_ROOT")
+check "WSL GHQ_ROOT -> \$HOME/vault/repos (Linux filesystem)" '[[ "$r" == /home/u/vault/repos ]]'
 r=$(env -i HOME=/home/u PATH="$PATH" WORKS_DIR=/x/y PROC_VERSION_FILE="$T/ver_native" /bin/sh -c ". $DOTS/home/.profile; echo \$WORKS_DIR")
 check "explicit WORKS_DIR wins" '[[ "$r" == /x/y ]]'
 r=$(env -i HOME=/home/u PATH="$PATH" PROC_VERSION_FILE="$T/ver_wsl" /bin/sh -c ". $DOTS/home/.profile; env | grep -c '^WORKS_DIR='")
@@ -43,11 +47,11 @@ check "WORKS_DIR is exported" '[[ "$r" == 1 ]]'
 
 echo "== lib.sh: works_dir"
 r=$(WORKS_DIR=/a/b works_dir); check "explicit wins" '[[ "$r" == /a/b ]]'
-r=$(unset WORKS_DIR; PROC_VERSION_FILE="$T/ver_wsl" works_dir); check "WSL" '[[ "$r" == /mnt/c/vault/works ]]'
-r=$(unset WORKS_DIR; HOME=/home/u PROC_VERSION_FILE="$T/ver_native" works_dir); check "native" '[[ "$r" == /home/u/vault/works ]]'
+r=$(unset WORKS_DIR; USER=u PROC_VERSION_FILE="$T/ver_wsl" works_dir); check "WSL" '[[ "$r" == /mnt/c/Users/u/works ]]'
+r=$(unset WORKS_DIR; HOME=/home/u PROC_VERSION_FILE="$T/ver_native" works_dir); check "native" '[[ "$r" == /home/u/works ]]'
 r=$(unset WORKS_DIR; works_dir)
-if is_wsl; then check "real environment (WSL) -> /mnt/c/vault/works" '[[ "$r" == /mnt/c/vault/works ]]'
-else check "real environment (native) -> \$HOME/vault/works" '[[ "$r" == "$HOME/vault/works" ]]'; fi
+if is_wsl; then check "real environment (WSL) -> /mnt/c/Users/\$USER/works (fallback)" '[[ "$r" == "/mnt/c/Users/$USER/works" ]]'
+else check "real environment (native) -> \$HOME/works" '[[ "$r" == "$HOME/works" ]]'; fi
 
 echo "== lib.sh: clone_workbase (a local bare repo is the remote)"
 git init -q "$T/src"
@@ -120,11 +124,12 @@ out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_wsl" WORKS_DIR="
 check "WSL: WARN when not cloned, no clone, ghq still runs" '[[ $rc -eq 0 && "$out" == *"[WARN] WSL"* && ! -e "$T/n51" && "$out" == *ghq-stub* ]]'
 out=$(HOME="$FH2" PATH="$T/bin:$PATH" PROC_VERSION_FILE="$T/ver_wsl" WORKS_DIR="$T/n50" bash "$REPOS" 2>&1); rc=$?
 check "WSL: SKIP when already cloned" '[[ $rc -eq 0 && "$out" == *"[SKIP] workbase already cloned (Windows side)"* ]]'
-if is_wsl && [[ -d /mnt/c/vault/works/resources/.git ]]; then
-  out=$(unset WORKS_DIR; HOME="$FH2" PATH="$T/bin:$PATH" bash "$REPOS" 2>&1); rc=$?
-  check "real WSL: default WORKS_DIR sees the Windows-side clone" '[[ $rc -eq 0 && "$out" == *"[SKIP] workbase already cloned (Windows side): /mnt/c/vault/works/resources"* ]]'
+# WORKS_DIR is passed from Windows via WSLENV (WORKS_DIR/p); without it, this check is skipped (the WSL user name can differ)
+if is_wsl && [[ -n "${WORKS_DIR:-}" && -d "$WORKS_DIR/resources/.git" ]]; then
+  out=$(HOME="$FH2" PATH="$T/bin:$PATH" bash "$REPOS" 2>&1); rc=$?
+  check "real WSL: WORKS_DIR from WSLENV sees the Windows-side clone" '[[ $rc -eq 0 && "$out" == *"[SKIP] workbase already cloned (Windows side): $WORKS_DIR/resources"* ]]'
 else
-  skip "real WSL check (needs WSL with /mnt/c/vault/works/resources)"
+  skip "real WSL check (needs WSL with WORKS_DIR passed via WSLENV and a clone at \$WORKS_DIR/resources)"
 fi
 
 echo "== 11_git_identity.sh (fake HOME; input from stdin)"

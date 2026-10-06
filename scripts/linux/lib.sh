@@ -13,14 +13,15 @@ is_wsl() {
 }
 
 # Vault top (WORKS_DIR): an existing WORKS_DIR wins.
-# WSL shares C:\vault\works through /mnt/c; native Linux uses ~/vault/works
+# WSL shares %USERPROFILE%\works through /mnt/c (normally passed in WORKS_DIR via WSLENV; the fallback assumes the
+# WSL and Windows user names match); native Linux uses ~/works
 works_dir() {
   if [[ -n "${WORKS_DIR:-}" ]]; then
     echo "$WORKS_DIR"
   elif is_wsl; then
-    echo "/mnt/c/vault/works"
+    echo "/mnt/c/Users/$USER/works"
   else
-    echo "$HOME/vault/works"
+    echo "$HOME/works"
   fi
 }
 

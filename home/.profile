@@ -11,20 +11,37 @@
 : "${XDG_CACHE_HOME:=$HOME/.cache}"
 : "${XDG_DATA_HOME:=$HOME/.local/share}"
 : "${XDG_STATE_HOME:=$HOME/.local/state}"
-: "${GHQ_ROOT:=$HOME/vault/repos}"
-export XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME GHQ_ROOT
+export XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME
 
 # Vault top (a PC-local repo; the shared repo workbase is cloned into $WORKS_DIR/resources).
-# WSL shares Windows' C:\vault\works through /mnt/c; native Linux uses ~/vault/works.
-# PROC_VERSION_FILE is only for tests.
+# WSL shares Windows' %USERPROFILE%\works through /mnt/c: Windows passes WORKS_DIR via WSLENV (WORKS_DIR/p),
+# because the WSL user name can differ from the Windows one. The /mnt/c/Users/$USER fallback assumes they match.
+# Native Linux uses ~/works. PROC_VERSION_FILE is only for tests.
+if grep -qi microsoft "${PROC_VERSION_FILE:-/proc/version}" 2>/dev/null; then
+  _wsl=1
+else
+  _wsl=0
+fi
 if [ -z "${WORKS_DIR:-}" ]; then
-  if grep -qi microsoft "${PROC_VERSION_FILE:-/proc/version}" 2>/dev/null; then
-    WORKS_DIR=/mnt/c/vault/works
+  if [ "$_wsl" = 1 ]; then
+    WORKS_DIR="/mnt/c/Users/$USER/works"
   else
-    WORKS_DIR="$HOME/vault/works"
+    WORKS_DIR="$HOME/works"
   fi
 fi
 export WORKS_DIR
+
+# ghq root: native Linux puts it under the vault ($WORKS_DIR/repos), as on Windows.
+# WSL keeps its own on the Linux filesystem (not /mnt/c: git is slow there).
+if [ -z "${GHQ_ROOT:-}" ]; then
+  if [ "$_wsl" = 1 ]; then
+    GHQ_ROOT="$HOME/vault/repos"
+  else
+    GHQ_ROOT="$WORKS_DIR/repos"
+  fi
+fi
+export GHQ_ROOT
+unset _wsl
 
 ##########
 # 2) PATH の整備（重複防止で冪等）
