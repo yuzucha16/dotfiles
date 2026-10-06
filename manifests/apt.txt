@@ -29,3 +29,4 @@ build-essential
 universal-ctags
 global
 clang-format  # C のコードリーディング用の整形（works の learn-c-pool-allocator。2026-10-06）
+gcc-arm-none-eabi  # Cortex-M 向けのフットプリントと libc 非依存の実測（同上。2026-10-06。約 490MB。推奨の newlib も入る）
