@@ -4,6 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- 新しい Windows アカウントで 20_apps.bat を実行し、Scoop の導入が通るか確認する（2026-10-06 の修正の実機確認）。まだ失敗するなら、表示される Get-ExecutionPolicy -List と、旧コマンドを手で実行した結果を docs/decisions.md の Gotchas に足して、原因を絞る。
 - Zed の最適化（2026-10-04）の後始末: Zed を再起動して、テーマ・Ctrl+Enter 送信・右のプロジェクトパネル・Markdown の見え方を確認する。Vim オフの試験は 2026-10-11 頃に続けるか判断する（戻し方は `settings.json` のコメント）。他のPCでは `30_link.bat` の前に、空の `%APPDATA%\zed\themes` を削除する。WSL で点滅を止めるのは `.bashrc` / `.zshrc`（反映は新しいシェルで確認）。OS 全体の点滅停止（`CursorBlinkRate=-1`）は必要なら検討する。
 - シェルの3シェル共通化（fzf とキーバインドの現仕様の表は `docs/decisions.md` の Facts）:
   - WSL に `ghq` を入れたら `cdg`（zsh/bash）を実機で確認する。
@@ -52,6 +53,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ### 2026-10-06
 
+- 新しい Windows アカウントで、Scoop の導入が「アクセスが拒否されました。」で失敗した件を調べた（ユーザーの報告では 10_env.bat だが、該当処理は 20_apps.bat）。原因は特定できず（候補の検討と却下は docs/decisions.md の Gotchas）。実機で成功した手順（CurrentUser を RemoteSigned にして Invoke-RestMethod | Invoke-Expression）に合わせて 20_apps.bat を直し、powershell.exe を完全パス（PS_EXE）で呼び、失敗時に Get-ExecutionPolicy -List を出すようにした。あわせて、ネットワーク無し・実インストール無しの試験 	ests/windows/test_20_apps.ps1 を作り、11/11 合格（確認: 2026-10-06、終了コード0）。新アカウントでの実機確認は未実施。
 - `main` が `origin/main` と分岐（各4コミット）したので、ユーザーの指示でローカルを `origin/main` の上に rebase した。衝突は `docs/log.md` の Log 節だけ（双方が新しい日付の節を足した）で、両方を残して日付の降順にした。順序は、ローカルが 2026-10-05 23:12〜23:27、リモートが 2026-10-06 08:18〜08:25（別PCと思われる）で、古い側を新しい側の上に載せた形（時系列に沿う。事後にユーザーへ確認）。ローカル4コミットのコミット日時は 2026-10-06 09:12 に変わった（author date は元のまま）。rebase 前は `7fe015f`（reflog から `git reset --hard 7fe015f` で戻せる）。反省: rebase 前に双方の日時を比べず、順序をユーザーに確認しなかった。以後は `AGENTS.md` のコミットの項のとおり事前に確認する。
 - rebase 後に WSL（Ubuntu 24.04）で `bash tests/linux/test_scripts.sh` を実行し、36/36 合格、失敗0を確認した（根拠: スクリプトの出力 `RESULT: 36/36 passed, failures=0`）。未 push（`origin/main` の先頭が祖先なので、通常の `git push` で足りる）。
 - clone 直後の大量の差分（64ファイル、約8,000行）の原因が改行コード（index は LF、作業ツリーは CRLF）と判明。`.gitattributes` を追加（`5af8dd1`）し、`.bat` 8本の index を LF に正規化（`7e9ae20`）。実質差分の4ファイルは破棄し、`git restore .` で作業ツリーを取り直した。`home/.gitconfig` の `[user]` は `~/.gitconfig_local` に移し済みのため破棄。詳細は `docs/decisions.md` の Gotchas。

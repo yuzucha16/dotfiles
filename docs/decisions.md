@@ -217,6 +217,7 @@ exmem（`C:\vault\notes\resources\exmem`）は読み取り専用の参照先で�
 
 ## Gotchas
 
+- **新しいアカウントで 20_apps.bat の Scoop 導入が「アクセスが拒否されました。」で失敗した**（2026-10-06。ユーザーの報告では 10_env.bat だが、Scoop 導入があるのは 20_apps.bat）。旧コマンドは powershell -NoProfile -ExecutionPolicy Bypass -Command "iwr -useb get.scoop.sh | iex"。Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force の後に Invoke-RestMethod ... | Invoke-Expression で実行すると成功した（ユーザーの実機）。**原因は未特定**。確認したこと: ① 失敗の出力に、インストーラ自身の最初のメッセージ Initializing... が無く、インストーラ（get.scoop.sh、28,743 バイトを読んで確認）の中の失敗とは考えにくい（出力の見落としがなければ）。② 「カレントに powershell フォルダがあると cmd が powershell を実行できない」説は、再現せず却下（Win11 10.0.26200、フォルダを置いても起動した）。③ 実行ポリシーは、インストーラの検査が Bypass を許可しており、原因にならない。④ 新アカウントの既定は、LocalMachine が Restricted の可能性（仮説。このPCは RemoteSigned）。未検証の仮説: セキュリティ製品や AppLocker によるブロック、新アカウント側の C:\vault の ACL。対策: 実機で成功した手順に合わせ、powershell.exe を完全パス（PS_EXE）で呼び、失敗時は Get-ExecutionPolicy -List を表示する。CurrentUser を RemoteSigned にするのは Scoop 公式の手順で、永続する設定変更。再発したら、その表示と、旧コマンドを手で実行した結果を確認する。-ExecutionPolicy Bypass はこの手順では使わない。
 - **`%APPDATA%\zed\themes` が空の実ディレクトリだと `30_link.bat` が `[ERR]`**（実体は触らない仕様）。空であることを確認してから削除し、ジャンクションにした（2026-10-04）。他のPCでも、リンク前に空の `themes` を削除する。
 - **`file_scan_exclusions` は既定の除外を上書きする**。足すときは既定（`**/.git` など）を再掲する。
 - **zsh のカーソル点滅の指定は起動時に1回送るだけでは上書きされる**。`precmd_functions` に登録して毎回送る。
