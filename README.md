@@ -13,7 +13,7 @@ Windows 11 + WSL (Ubuntu 24.04) / Linux (apt 系: MX / Ubuntu / Mint) の開発�
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression
 scoop install git
-git clone https://github.com/yuzucha16/dotfiles C:\vault\repos\github.com\yuzucha16\dotfiles
+git clone https://github.com/yuzucha16/dotfiles $HOME\works\repos\github.com\yuzucha16\dotfiles
 ```
 
 続きは「セットアップ手順」の手順 1（`10_env.bat`）から。`git` が見つからなければ、新しい PowerShell を開き直してから3行目以降を実行する。詳しい注意は手順 0。
@@ -26,7 +26,7 @@ OS を入れたあと、ターミナルで ghq の場所に clone する。**リ
 
 ```bash
 sudo apt install -y git
-git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha16/dotfiles
+git clone https://github.com/yuzucha16/dotfiles ~/works/repos/github.com/yuzucha16/dotfiles
 ```
 
 **B. 非公開の場合**（git と gh を入れ、GitHub にサインインして clone する。`gh auth login` は、GitHub.com → HTTPS → ブラウザ（ワンタイムコード）の順に選ぶ）:
@@ -35,7 +35,7 @@ git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha
 sudo apt install -y git gh
 gh auth login
 gh auth setup-git
-git clone https://github.com/yuzucha16/dotfiles ~/vault/repos/github.com/yuzucha16/dotfiles
+git clone https://github.com/yuzucha16/dotfiles ~/works/repos/github.com/yuzucha16/dotfiles
 ```
 
 B は**未確認**: 新しい Linux の実機では未実行（Ubuntu 24.04 の apt に `gh` 2.45.0 があることだけ確認した）。
@@ -78,9 +78,9 @@ dotfiles/
 | パス | 内容 |
 |---|---|
 | `terminal/settings.json` | Windows Terminal |
-| `startup/startup.bat` | スタートアップ。`subst V: C:\vault` |
+| `startup/startup.bat` | スタートアップ。`subst V: %WORKS_DIR%` |
 | `wsl/.wslconfig` | WSL2 の全体設定（`%USERPROFILE%\.wslconfig` へリンク）。アイドル時にキャッシュのメモリをホストへ返す。`memory` などの上限は PC ごとに RAM が違うので書かない。反映は `wsl --shutdown` 後の再起動 |
-| `powershell/history.seed.txt` | PSReadLine の履歴の種（手で選んだ定型コマンド。個人値は `<…名>` に置換済みで、そのままでは実行されない）。正本は共有リポジトリ `workbase`（`C:\vault\works\resources`）の `exmem/knowledge/shell-command-usecases.md`。リンクではなく、初回に履歴ファイルが無いときだけコピーする（`scripts\windows\31_history_seed.bat`） |
+| `powershell/history.seed.txt` | PSReadLine の履歴の種（手で選んだ定型コマンド。個人値は `<…名>` に置換済みで、そのままでは実行されない）。正本は共有リポジトリ `workbase`（`$HOME\works\resources`）の `exmem/knowledge/shell-command-usecases.md`。リンクではなく、初回に履歴ファイルが無いときだけコピーする（`scripts\windows\31_history_seed.bat`） |
 | `powershell/profile.ps1` | PowerShell プロファイル（starship / lsd / zoxide / Emacs キーバインド）。起動を軽くするため、ツール不在時の代替・`cd` 後の自動 `ll`・PSFzf は持たない。コマンド体系は `home/.config/shell/common.sh` と揃える（基本エイリアスのみ。`Ctrl+r`/`Ctrl+t` の fzf と `zfz` = `Alt+j`、`cdg` = `Alt+k` は3シェル共通。PSFzf は使わず自前ハンドラ） |
 | `obsidian/.obsidian/` | Obsidian の設定（テーマ、CSS スニペット、プラグイン `colored-tags`、`app.json` など）。`links.map` で `%WORKS_DIR%\.obsidian` へジャンクションを張る。`workspace.json`（端末ごとの状態）は追跡しない |
 | `office/` | Office のテンプレ（`.potx` `.xltx` `.dotm` `.thmx` など）、UI 設定（`.exportedUI`）、サンプル。配置は手動（リンクしない）: テンプレは `%APPDATA%\Microsoft\Templates` と `%APPDATA%\Microsoft\Excel\XLSTART`、UI は Office の「リボンのユーザー設定 → インポート」 |
@@ -114,9 +114,9 @@ dotfiles/
    - 設定 → 開発者向け で「開発者モード」をオンにする（管理者権限なしで symlink を作るため。必須。オフだと `30_link.bat` は `[ERR]` になる）
    - scoop と git を入れ、clone する（冒頭の「クイックスタート」の4行。このパス構成が前提。**最初から ghq の場所に clone する**ので、zip の取得や、dotfiles の二重取得・`30_link` のやり直しは要らない）。git は最初から scoop のもの1種類だけにする（winget の git は使わない。管理者権限が要らず、PATH の優先順位の問題も起きない）
      非公開の場合は、`git clone` で GitHub のサインイン（Git Credential Manager。scoop の git に同梱）が開く（公開の場合は出ない）。zip での取得は使わない（`.git` が無く、あとで ghq の場所と食い違う）。すでに winget の git が入っているPCは、一度だけ `winget uninstall --id Git.Git -e` で消す
-     Obsidian の Vault `C:\vault\works`（`WORKS_DIR`）は、この PC だけのローカルなディレクトリ（ローカルのリポジトリ。remote なし、または非公開）で、clone しない。作り方は、共有リポジトリ `workbase` の `workflow-kit` を参照する。`.obsidian` は `30_link.bat` が、`windows\obsidian\.obsidian` から `WORKS_DIR` へジャンクションで張る（`WORKS_DIR` が無ければ作る）。共有リポジトリ `workbase` は、`50_repos.bat` が `WORKS_DIR\resources` に clone する（ghq の管理外）。Office のテンプレと UI 設定は自動では張らない。初回に `windows\office` から手で配置する（配置先は上の `windows/` の表）。
+     Obsidian の Vault `$HOME\works`（`WORKS_DIR`）は、この PC だけのローカルなディレクトリ（ローカルのリポジトリ。remote なし、または非公開）で、clone しない。作り方は、共有リポジトリ `workbase` の `workflow-kit` を参照する。`.obsidian` は `30_link.bat` が、`windows\obsidian\.obsidian` から `WORKS_DIR` へジャンクションで張る（`WORKS_DIR` が無ければ作る）。共有リポジトリ `workbase` は、`50_repos.bat` が `WORKS_DIR\resources` に clone する（ghq の管理外）。Office のテンプレと UI 設定は自動では張らない。初回に `windows\office` から手で配置する（配置先は上の `windows/` の表）。
      Obsidian を最初に開く前に `30_link.bat` を実行する。先に Obsidian が実ディレクトリの `.obsidian` を作ると、`30_link.bat` が `[ERR]` で止まる（手で退避して再実行する）。
-1. `scripts\windows\10_env.bat`: `setx` で環境変数（`XDG_*`、`VAULT_HOME=C:\vault`、`GHQ_ROOT`、`WORKS_DIR` など）を設定し、ディレクトリを作る。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）
+1. `scripts\windows\10_env.bat`: `setx` で環境変数（`XDG_*`、`WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos`、`CERTS_DIR` など。`WORKS_DIR` と `CERTS_DIR` は `WSLENV` で WSL へ渡す）を設定し、ディレクトリを作る。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）
    - `scripts\windows\optional\capslock_to_ctrl.reg`（任意）: CapsLock を Ctrl にする。管理者権限が必要で、再起動後に有効。元に戻すときは `capslock_default.reg`
    - `scripts\windows\11_git_identity.bat`: `~\.gitconfig_local`（PC ごとの git の名前・メール）が無いときだけ、`user.name` / `user.email` を対話的に聞いて作る（`credential.helperselector.selected = manager` は `home\.gitconfig` に静的に持つので書かない。SSL バックエンドを schannel にするかも聞く: `y` で `http.sslBackend = schannel` と `http.sslVerify = true` を書き、`n`・空は何も書かず既定の OpenSSL のまま）。既にあれば触らない。**`30_link.bat` の前に**実行する（git が必要。手順 0 で入れた scoop の git でよい）。`git config --global` は使わない: リンク前は実ファイルの `~\.gitconfig` ができて `30_link.bat` が `[ERR]` になり、リンク後はリポジトリ内の `home\.gitconfig` を書き換えてしまうため。`~\.gitconfig` が `include` するので、読まれるのは `30_link.bat` の後。無効な入力は5回で `[ERR]`（入力が閉じていても無限ループしない）
 2. `scripts\windows\20_apps.bat [home]`: scoop と bucket を導入し、アプリを入れる（手順 0 で scoop を入れていれば、導入は skip する。git は先に入る）
@@ -134,7 +134,7 @@ dotfiles/
 
 ### WSL (Ubuntu 24.04) / Linux (apt 系)
 
-WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/vault/...` から参照する）。ネイティブ Linux は、OS を入れて、冒頭の「クイックスタート（ネイティブ Linux）」で `~/vault/repos/github.com/yuzucha16/dotfiles` に clone してから実行する（OS のインストール手順は works の `resources/cheatsheets/env/debian-family.md`）。`30_link.sh` は、置かれているリポジトリを自動で `--src` にするので、どちらでも同じ呼び方になる。Vault のトップ `WORKS_DIR` は、WSL では `/mnt/c/vault/works`（Windows 側と共有）、ネイティブ Linux では `~/vault/works`（`home/.profile` が既定値を設定する。`~/.config/profile.local` で上書きできる）。
+WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/Users/<Windows のユーザー名>/works/repos/...` から参照する）。ネイティブ Linux は、OS を入れて、冒頭の「クイックスタート（ネイティブ Linux）」で `~/works/repos/github.com/yuzucha16/dotfiles` に clone してから実行する（OS のインストール手順は works の `resources/cheatsheets/env/debian-family.md`）。`30_link.sh` は、置かれているリポジトリを自動で `--src` にするので、どちらでも同じ呼び方になる。Vault のトップ `WORKS_DIR` は、WSL では `/mnt/c/Users/<Windows のユーザー名>/works`（Windows 側と共有）、ネイティブ Linux では `~/works`（`home/.profile` が既定値を設定する。`~/.config/profile.local` で上書きできる）。
 
 1. `scripts/linux/10_dirs.sh`: XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/vault/{build,tools}` を作る
    - `scripts/linux/11_git_identity.sh`: `~/.gitconfig_local`（PC ごとの git の名前・メール）が無いときだけ、`user.name` / `user.email` を対話的に聞いて作る（Windows の `11_git_identity.bat` と同じ。既にあれば触らない）。**`30_link.sh` の前に**実行する（git が必要。ネイティブ Linux はクイックスタートで入っている。WSL は Ubuntu 標準の git か、`20_packages.sh` の後）。`git config --global` は使わない（理由は Windows 版と同じ。`~/.gitconfig` は `30_link.sh` が張る symlink）。`credential.helperselector`（Git Credential Manager）は Windows 版も書かず、`home/.gitconfig` に静的に持つ。無効な入力は5回で `[ERR]`
@@ -142,7 +142,7 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行す�
    - `scripts/linux/23_ja.sh`（ネイティブ Linux のみ。WSL では何もしない）: fcitx5 + Mozc、日本語フォントを入れる。Ubuntu 系は言語パックも入れる。入れたら再ログインして、Fcitx 5 設定で Mozc を追加する（手動）
    - `scripts/linux/24_fonts.sh`: PlemolJP NF の latest を `gh` で `~/download` へ取得する（WSL でも WSL 側の `~/download`）。インストールは手動。`gh auth login` は不要。1件失敗しても残りは続け、最後に `[ERROR]` と終了コード 1（Windows の `24_fonts.bat` と同じ）
 3. `scripts/linux/30_link.sh [link|unlink] [-n]`: stow で `home/` を `~` に展開する（Windows の `30_link.bat` と同じ引数）。リンク切れの旧 symlink は削除する。展開先に実ファイルがあると `[ERR]` を出して止まる（自動退避はしない。手で退避/削除して再実行）。終わったら `chsh -s /usr/bin/zsh`
-   - ネイティブ Linux のみ: `windows/obsidian/.obsidian` を `$WORKS_DIR/.obsidian`（`~/vault/works/.obsidian`）へ symlink する（親が無ければ作る。`unlink` で外れる）。実ディレクトリがあると `[ERR]` で止まる（Obsidian を先に開くと、実ディレクトリができる。手で退避して再実行）。WSL では何もしない（Windows 側の `30_link.bat` が張るジャンクションを `/mnt/c` 越しに共有する）
+   - ネイティブ Linux のみ: `windows/obsidian/.obsidian` を `$WORKS_DIR/.obsidian`（`~/works/.obsidian`）へ symlink する（親が無ければ作る。`unlink` で外れる）。実ディレクトリがあると `[ERR]` で止まる（Obsidian を先に開くと、実ディレクトリができる。手で退避して再実行）。WSL では何もしない（Windows 側の `30_link.bat` が張るジャンクションを `/mnt/c` 越しに共有する）
    - `scripts/linux/31_history_seed.sh [-n]`: `manifests/history.seed.sh.txt` を `~/.local/state/{zsh,bash}/history`（`XDG_STATE_HOME` があればその下）へコピーする。履歴が無い/空のときだけ行い、既存の履歴は上書きしない（`-n`: 確認のみ）。リンクではないので、以後はシェルが自由に追記する。**最初のシェルを開く前に**実行する
 4. `scripts/linux/50_repos.sh`: 共有リポジトリ `workbase` を、ネイティブ Linux では `$WORKS_DIR/resources` に `git clone` する（ghq の管理外。既にあれば skip。`WORKBASE_URL` で URL を変えられる）。WSL では、Windows 側の `50_repos.bat` が clone するので、無ければ `[WARN]` を出すだけ。そのあと、ghq で参照用リポジトリを取得する
 
@@ -187,14 +187,14 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行す�
 
 ## exmem との関係
 
-exmem（`C:\vault\works\resources\exmem`。共有リポジトリ `workbase` の一部）は、AIとの壁打ちで得たナレッジの置き場。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業の経緯・決定・次にやることは、このリポジトリの `docs/` に残す。書き込みの唯一の例外は、エージェントに「ナレッジ化して」と指示したとき、`exmem/inbox/` に再利用できる知識を1ファイル置くこと（手順と形式は共通機能 `works/resources/workflow-kit/knowledge-hook.md`）。
+exmem（`$HOME\works\resources\exmem`。共有リポジトリ `workbase` の一部）は、AIとの壁打ちで得たナレッジの置き場。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業の経緯・決定・次にやることは、このリポジトリの `docs/` に残す。書き込みの唯一の例外は、エージェントに「ナレッジ化して」と指示したとき、`exmem/inbox/` に再利用できる知識を1ファイル置くこと（手順と形式は共通機能 `works/resources/workflow-kit/knowledge-hook.md`）。
 
 - 参照するもの: 履歴の種の本文（`exmem/knowledge/shell-command-usecases.md`。種ファイルはその派生物）。
-- 手順書は `workbase` の `cheatsheets/env/`（`C:\vault\works\resources\cheatsheets\env\`）。
+- 手順書は `workbase` の `cheatsheets/env/`（`$HOME\works\resources\cheatsheets\env\`）。
 
 ## 履歴リセット (2026-10-02)
 
-大きなフォント・プラグインの blob を履歴から消すため、履歴を1コミットに作り直して強制 push した（40MB → 約1MB）。以前の履歴は `C:\vault\backup\dotfiles-before-rebuild-*.bundle`（このリポジトリを作業していたPC）に残してある。
+大きなフォント・プラグインの blob を履歴から消すため、履歴を1コミットに作り直して強制 push した（40MB → 約1MB）。以前の履歴は `$HOME\backup\dotfiles-before-rebuild-*.bundle`（このリポジトリを作業していたPC）に残してある。
 他のPCの clone は、未 push の変更が無いことを確認してから次を実行する。
 
 ```powershell
@@ -208,5 +208,5 @@ git gc --prune=now
 ## 既知の課題
 
 - Office のテンプレと UI 設定、`.obsidian` は、2026-10-03 に `notes` リポジトリへ移管したが、2026-10-05 に dotfiles（`windows/office/`、`windows/obsidian/.obsidian/`）へ戻した（Vault を PC ローカルのリポジトリと共有の `workbase` に分けたため。Office の配置は手動）。
-- Linux（WSL / ネイティブ）の `workbase` の clone（`50_repos.sh`）、`.obsidian` のリンク（`30_link.sh`、ネイティブのみ）、`WORKS_DIR`（`home/.profile`）は、2026-10-05 に対応した。WSL（Ubuntu 24.04）の実機で、一時ディレクトリと偽の HOME を使って35項目を試験した（ネイティブ Linux の分岐は、`PROC_VERSION_FILE` で差し替えて再現した。ネイティブ Linux の実機は未確認）。ワークスペース生成フックの既定の対象 `C:\vault\works` は Windows と WSL の標準の場所なので、ネイティブ Linux では対象を言葉で指定する（例: `~/vault/works`）。
-- `10_dirs.sh` が作る `~/vault` と Windows の `C:\vault` は別物（WSL からは `/mnt/c/vault` で見える）
+- Linux（WSL / ネイティブ）の `workbase` の clone（`50_repos.sh`）、`.obsidian` のリンク（`30_link.sh`、ネイティブのみ）、`WORKS_DIR`（`home/.profile`）は、2026-10-05 に対応した。WSL（Ubuntu 24.04）の実機で、一時ディレクトリと偽の HOME を使って35項目を試験した（ネイティブ Linux の分岐は、`PROC_VERSION_FILE` で差し替えて再現した。ネイティブ Linux の実機は未確認）。ワークスペース生成フックの既定の対象 `$HOME\works` は Windows と WSL の標準の場所なので、ネイティブ Linux では対象を言葉で指定する（例: `~/works`）。
+- `10_dirs.sh` が作る `~/vault`（WSL 自身の作業用。`GHQ_ROOT` の既定も `~/vault/repos`）と、Windows の `%USERPROFILE%\works` は別物（後者は WSL から `/mnt/c/Users/<Windows のユーザー名>/works` で見える。2026-10-06 に `C:\vault` から移した）
