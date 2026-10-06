@@ -25,7 +25,8 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - `git bundle` のバックアップの所在を確認する（見つからない）。必要なら保管場所を決める。
 - 古い WSL では `fdfind` → `fd` のリンクが無いので、`20_packages.sh` を再実行するか手でリンクを張る。
 
-- ネイティブ Linux の実機で、`30_link.sh`（`.obsidian` の symlink）と `50_repos.sh`（`workbase` の clone）、`WORKS_DIR` の既定値（`~/vault/works`。2026-10-06 に `NOTES_DIR` / `notes` から改名）を通して確認する。WSL では、一時ディレクトリで試験済み（2026-10-05）。ネイティブの分岐は、`PROC_VERSION_FILE` の差し替えで再現しただけ。
+- 実機の WSL で、新しいターミナルを開いて `10_env.bat` の実行後の状態を確認する（2026-10-06 時点）: `echo $WORKS_DIR $GHQ_ROOT`（`/mnt/c/Users/<名前>/works` と `~/works/repos`）、`cmd.exe /c echo %WSLENV%`（`WORKS_DIR/p` と `CERTS_DIR/p` が1回ずつ）。既存の WSL の `~/vault`（旧 `GHQ_ROOT`）は動かしていない。`mv ~/vault ~/works` で移すか決める。
+- ネイティブ Linux の実機で、`30_link.sh`（`.obsidian` の symlink）と `50_repos.sh`（`workbase` の clone）、`WORKS_DIR` の既定値（`~/works`。2026-10-06 に `~/vault/works` から変更）を通して確認する。WSL では、一時ディレクトリで試験済み（2026-10-05）。ネイティブの分岐は、`PROC_VERSION_FILE` の差し替えで再現しただけ。
 
 ## Open Questions
 
@@ -55,6 +56,13 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（Vault を `%USERPROFILE%\works` へ移した。Linux 側も `~/works` にそろえた）
+
+- Vault を `C:\vault\works` から `%USERPROFILE%\works` に、ghq の root を `%USERPROFILE%\works\repos` に移した（ユーザーの決定。判断は `docs/decisions.md`）。`10_env.bat`（`VAULT_HOME` を廃止、`WORKS_DIR` を `WSLENV` で WSL へ渡す）、`home/.profile`、`scripts/linux/lib.sh`・`30_link.sh`・`50_repos.sh`、`windows/startup/startup.bat`、`windows/terminal/settings.json`、`tests/`、`AGENTS.md`、`README.md` を直した（コミット `92fd142` `[env]`、`5d59374` `[docs]`）。
+- Linux 側も `~/works`、ghq の root を `~/works/repos` にそろえた（ユーザーの指示。`b6c26c9` `[linux]`）。WSL の `GHQ_ROOT` の既定は `~/works/repos`、`10_dirs.sh` は `~/works/{build,tools}`。試験は 51/51 合格（最初は 49/51。`ghq get` のコメントアウトに試験が追随していなかったため、試験を直した）。
+- Obsidian が書き換えた `windows/obsidian/.obsidian/plugins/colored-tags/data.json` を、`841672b` `[obsidian]` でコミットした。
+- `10_env.bat` の実機の再実行と、新しい WSL セッションでの確認は未実施（Next Actions）。
 
 ### 2026-10-06（`clang-format` と `gcc-arm-none-eabi` を、実機（WSL）に導入した）
 
