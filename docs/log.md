@@ -4,6 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- `転記待ち` が上限の 20 件に達している。exmem（`C:\vault\works\resources\exmem`）で「inboxを整理して」を実行し、`転記済` に進める案を承認する（2026-10-06 時点。メモは4つ、`exmem/inbox/` にある）。
 - `10_env.bat` を再実行して、`%USERPROFILE%\.certs` ができること、`CERTS_DIR` と `WSLENV`（`CERTS_DIR/p` が1回だけ）が更新されることを確認する。新しいターミナルと新しい WSL セッション（`wsl --shutdown` のあと）で、`$CERTS_DIR` が `/mnt/c/Users/<名前>/.certs` になり、`company-ca.crt` があれば `NODE_EXTRA_CA_CERTS` が設定されることを確認する。旧 `works\areas\dev-env\certs`（空）は、確認後に削除する（2026-10-06 時点）。
 - 履歴の種の `git config --global user.name` / `user.email`（`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` の各2行）を見直す。`~/.gitconfig` は `30_link` が張る symlink なので、リンク後に実行すると、リポジトリ内の `home/.gitconfig` が書き換わる。種の正本は exmem の `knowledge/shell-command-usecases.md` で、種ファイルは派生物なので、直すのは正本の統合のあと（種を直接編集しない。2026-10-06 時点）。
 - VC++ ランタイムの `[WARN]`（ランタイムが無いとき）の表示を確認する。新アカウントでは `[Installed]` 側しか出ず、`[WARN]` 側は実機で未確認（2026-10-06 時点。ランタイムが無い環境でだけ出る。判断基準は `docs/decisions.md` の「vcredist2022 は自動導入せず…」）。
@@ -55,6 +56,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（共通ルールに「終了処理して」を足した。`.obsidian` の決定を撤回済みにした）
+
+- kit の版 `2026-10-06.17`（「終了処理して」と「inboxを整理して」の新設。`workbase` の `93d2a41`）に合わせて、この `AGENTS.md` の共通ルールに `closing-hook.md` を足した。dotfiles は exmem 側の統合をしないので、`integrate-hook.md` は足さない。ユーザーの確認で、決定「`.obsidian` は `notes` に置く」（2026-10-04）を撤回済みにした（`docs/decisions.md`）。`転記待ち` は上限の 20 件なので、次の作業の終わりに、exmem で「inboxを整理して」を実行して減らす（Next Actions）。
 
 ### 2026-10-06（`docs/decisions.md` の棚卸しと「ナレッジ化して」）
 
