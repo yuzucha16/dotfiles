@@ -24,11 +24,11 @@ LINK="$DOTS/scripts/linux/30_link.sh"
 REPOS="$DOTS/scripts/linux/50_repos.sh"
 
 echo "== syntax / line endings"
-for f in lib.sh 30_link.sh 50_repos.sh; do
+for f in lib.sh 11_git_identity.sh 24_fonts.sh 30_link.sh 50_repos.sh; do
   check "bash -n $f" 'bash -n "$DOTS/scripts/linux/$f"'
 done
 check "sh -n .profile (POSIX sh: $(readlink -f /bin/sh))" '/bin/sh -n "$DOTS/home/.profile"'
-cr=$(cat "$DOTS/scripts/linux/lib.sh" "$LINK" "$REPOS" "$DOTS/home/.profile" | tr -cd '\r' | wc -c)
+cr=$(cat "$DOTS/scripts/linux/lib.sh" "$DOTS/scripts/linux/11_git_identity.sh" "$DOTS/scripts/linux/24_fonts.sh" "$LINK" "$REPOS" "$DOTS/home/.profile" | tr -cd '\r' | wc -c)
 check "no CR in the edited files" '[[ "$cr" == 0 ]]'
 
 echo "== .profile: WORKS_DIR"
@@ -126,6 +126,51 @@ if is_wsl && [[ -d /mnt/c/vault/works/resources/.git ]]; then
 else
   skip "real WSL check (needs WSL with /mnt/c/vault/works/resources)"
 fi
+
+echo "== 11_git_identity.sh (fake HOME; input from stdin)"
+GI="$DOTS/scripts/linux/11_git_identity.sh"
+gi() { # usage: gi <home> <stdin-text>; prints output, returns the script's rc
+  printf '%b' "$2" | HOME="$1" bash "$GI" 2>&1
+}
+H1="$T/gi1"; mkdir -p "$H1"
+out=$(gi "$H1" 'Taro Yamada\ntaro@example.com\n'); rc=$?
+check "create: rc=0, [DONE]" '[[ $rc -eq 0 && "$out" == *"[DONE] created"* ]]'
+check "create: user.name / user.email written" '[[ "$(git config --file "$H1/.gitconfig_local" user.name)" == "Taro Yamada" && "$(git config --file "$H1/.gitconfig_local" user.email)" == taro@example.com ]]'
+check "create: no credential.helperselector (Windows-only setting)" '! grep -q helperselector "$H1/.gitconfig_local"'
+H2="$T/gi2"; mkdir -p "$H2"; printf '[user]\n\tname = keep\n' > "$H2/.gitconfig_local"
+out=$(gi "$H2" 'x\nx@y.z\n'); rc=$?
+check "exists: [SKIP], rc=0, file unchanged" '[[ $rc -eq 0 && "$out" == *"[SKIP] already exists"* && "$(git config --file "$H2/.gitconfig_local" user.name)" == keep ]]'
+H3="$T/gi3"; mkdir -p "$H3"
+out=$(gi "$H3" '\nHanako\n\nhanako@example.com\n'); rc=$?
+check "empty name / email -> warns and asks again" '[[ $rc -eq 0 && "$out" == *"user.name must not be empty"* && "$out" == *"user.email must not be empty"* && "$(git config --file "$H3/.gitconfig_local" user.name)" == Hanako ]]'
+H4="$T/gi4"; mkdir -p "$H4"
+out=$(gi "$H4" 'Jiro\nnot-an-email\njiro@example.com\n'); rc=$?
+check "email without @ -> warns and asks again" '[[ $rc -eq 0 && "$out" == *"should contain"* && "$(git config --file "$H4/.gitconfig_local" user.email)" == jiro@example.com ]]'
+H5="$T/gi5"; mkdir -p "$H5"
+out=$(gi "$H5" 'A & B 100% $HOME\nab@example.com\n'); rc=$?
+check "special characters in the name are kept literally" '[[ "$(git config --file "$H5/.gitconfig_local" user.name)" == "A & B 100% \$HOME" ]]'
+H6="$T/gi6"; mkdir -p "$H6"
+out=$(HOME="$H6" bash "$GI" 2>&1 </dev/null); rc=$?
+check "closed stdin: gives up with [ERR] after 5 tries (rc=1), no file" '[[ $rc -eq 1 && "$out" == *"no valid input after 5 tries"* && ! -e "$H6/.gitconfig_local" ]]'
+H7="$T/gi7"; mkdir -p "$H7"
+out=$(printf 'x\nx@y.z\n' | HOME="$H7" PATH=/nonexistent /bin/bash "$GI" 2>&1); rc=$?
+check "no git: [ERR] (rc=1), no file" '[[ $rc -eq 1 && "$out" == *"git not found"* && ! -e "$H7/.gitconfig_local" ]]'
+
+echo "== 24_fonts.sh (fake gh, fake tree with a 2-font list, fake HOME)"
+FT="$T/ft"; mkdir -p "$FT/scripts/linux" "$FT/manifests" "$T/hf" "$T/bin2"
+cp "$DOTS/scripts/linux/24_fonts.sh" "$DOTS/scripts/linux/lib.sh" "$FT/scripts/linux/"
+printf 'a/one:one_v*.zip\nb/two:two_v*.zip\n' > "$FT/manifests/fonts.txt"
+# fake gh: records the call; fails when the repo is in $GH_FAIL
+printf '#!/bin/sh\necho "gh-stub $*" >> "$GH_LOG"\ncase " $* " in *" $GH_FAIL "*) exit 1;; esac\nexit 0\n' > "$T/bin2/gh"; chmod +x "$T/bin2/gh"
+GHL="$T/gh.log"; : > "$GHL"
+out=$(HOME="$T/hf" PATH="$T/bin2:$PATH" GH_LOG="$GHL" GH_FAIL="none/none" bash "$FT/scripts/linux/24_fonts.sh" 2>&1); rc=$?
+check "all ok: rc=0, both fonts requested, destination created" '[[ $rc -eq 0 && "$(grep -c gh-stub "$GHL")" == 2 && -d "$T/hf/download" && "$out" == *"Downloaded to"* ]]'
+: > "$GHL"
+out=$(HOME="$T/hf" PATH="$T/bin2:$PATH" GH_LOG="$GHL" GH_FAIL="a/one" bash "$FT/scripts/linux/24_fonts.sh" 2>&1); rc=$?
+check "first fails: continues with the second, [ERROR], rc=1, no 'Downloaded to'" '[[ $rc -eq 1 && "$(grep -c gh-stub "$GHL")" == 2 && "$out" == *"[ERROR] download failed: a/one"* && "$out" != *"Downloaded to"* ]]'
+mkdir -p "$T/bin3"; ln -sf "$(command -v dirname)" "$T/bin3/dirname"   # the script needs dirname (lib.sh), but not gh
+out=$(HOME="$T/hf" PATH="$T/bin3" GH_LOG="$GHL" /bin/bash "$FT/scripts/linux/24_fonts.sh" 2>&1); rc=$?
+check "no gh: [ERR] (rc=1)" '[[ $rc -eq 1 && "$out" == *"gh not found"* ]]'
 
 echo
 cd / || exit 1
