@@ -4,7 +4,6 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
-- workbase の手順書 `cheatsheets/env/win11.md` に、現在のスクリプトと食い違う古い記述が残っている（2026-10-06 時点）: 手順 6 の表の `21_vscode.bat` と `22_python.bat`（どちらも削除済み）、`24_fonts.bat [--dry-run]` と「`gh auth login` が必要」と「MoralerspaceHW」（`--dry-run` と前提チェックは削除、ログイン不要、Moralerspace は一覧から削除）、`31` 以外の `40` / `50` の説明。直すかはユーザーが決める。
 - 新しい Windows アカウントで `20_apps.bat` を実行し、Scoop の導入が通るか確認する（2026-10-06 の修正の実機確認）。あわせて、VC++ ランタイムの `[WARN]` / `[Installed]` の表示と、入れる基準（`docs/decisions.md`）が実用になるかも見る。まだ失敗するなら、表示される `Get-ExecutionPolicy -List` と、旧コマンドを手で実行した結果を `docs/decisions.md` の Gotchas に足して、原因を絞る。
 - Zed の最適化（2026-10-04）の後始末: Zed を再起動して、テーマ・Ctrl+Enter 送信・右のプロジェクトパネル・Markdown の見え方を確認する。Vim オフの試験は 2026-10-11 頃に続けるか判断する（戻し方は `settings.json` のコメント）。他のPCでは `30_link.bat` の前に、空の `%APPDATA%\zed\themes` を削除する。WSL で点滅を止めるのは `.bashrc` / `.zshrc`（反映は新しいシェルで確認）。OS 全体の点滅停止（`CursorBlinkRate=-1`）は必要なら検討する。
 - シェルの3シェル共通化（fzf とキーバインドの現仕様の表は `docs/decisions.md` の Facts）:
@@ -55,6 +54,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-06（workbase の手順書を現在のスクリプトに合わせた）
+
+- ユーザーの指示で、workbase の手順書 `cheatsheets/env/` の古い記述を、現在の dotfiles に合わせて直した。`win11.md`: 手順 6 の表から削除済みの `21_vscode.bat` と `22_python.bat` を外し、`24_fonts.bat` の行を現状（PlemolJP のみ、`gh` のログイン不要、`--dry-run` なし、ログと `pause`、失敗で終了コード 1）に、`20_apps.bat` の行に VC++ のオレンジ表示を、`31` の行にログと `pause` を足した。全体の流れの `10` → `11` → `20` → `30` と、動作確認の `code README.md`（VS Code は削除済み）、確認日（2026-10-06。5〜7 は実機で通した、ユーザー報告）も直した。`fonts.md`: Moralerspace を外し、`--dry-run` と `gh auth login` の記述を削除。`debian-family.md`: 削除済みの `21_vscode.sh` の行を削除。確認: `cheatsheets` 全体を Grep し、`21_vscode` / `22_python` / `MoralerspaceHW` / `24_fonts` の `--dry-run` の残りが無いこと（`gh auth login` は Linux の非公開リポジトリの手順 B にだけ残る）。変更は workbase 側（別コミット）。
 
 ### 2026-10-06（リポジトリの公開・非公開が未定なので、手順を両方併記）
 
