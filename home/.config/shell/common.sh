@@ -95,9 +95,10 @@ fi
 
 ##########
 # 社内プロキシ用 CA 証明書 (存在する環境のみ設定)
-# Windows の %CERTS_DIR% (= C:\vault\works\areas\dev-env\certs) を WSL から参照する
+# $CERTS_DIR (Windows 側の %CERTS_DIR% = %USERPROFILE%\.certs は、WSLENV の /p で WSL のパスに変換されて渡る)。
+# 未設定 (ネイティブ Linux など) は ~/.certs
 ##########
-_company_ca=/mnt/c/vault/works/areas/dev-env/certs/company-ca.crt
+_company_ca="${CERTS_DIR:-$HOME/.certs}/company-ca.crt"
 if [ -f "$_company_ca" ]; then
   export NODE_EXTRA_CA_CERTS="$_company_ca"
 fi
