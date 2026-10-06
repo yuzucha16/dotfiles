@@ -17,8 +17,8 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - 未 push のコミットを push する（Zed の最適化の `[zed]` `[shell]` は push 済み。残りは 2026-10-04 の `[docs]` 分と `terminal.shell` 削除の `[zed]`。整理分の内訳:`22_python` 削除、starship、Zed 拡張、VS Code 削除、Notepad++ の雛形方式、light テーマ削除）。starship と zed のコミットには、別件の削除が混ざっている（`docs/decisions.md` の Gotchas）。分け直すかは任意。
 - 古い Notepad++ のリンク切れ（`stylers.xml` `contextMenu.xml` `NppExec.ini`、`themes\Gruvbox light medium.xml`）と `~/vimfiles` の旧プラグイン（`:PlugClean`）を掃除する。実機に残る scoop の VS Code（`scoop uninstall vscode`、`scoop\persist\vscode` 内のリンク）も、不要なら手で消す。
 - `scripts/linux/30_link.sh` にある旧 `.vscode-server/extensions/extensions.txt` の掃除行を、消すか判断する。
-- 参照用に退避した他PCの生ヒストリ（`notes/resources/_local/ConsoleHost_history.txt`。Git 対象外）は、使い終わったら削除する。
-- 新しいPC（または VM）で `10` → `50` を通し実行し、手順書（`notes/resources/cheatsheets/env/`）どおり進むか確認する。MX Linux 25.3 と Win11 の「要確認」を潰す。
+- 参照用に退避した他PCの生ヒストリ（`works/resources/_local/ConsoleHost_history.txt`。Git 対象外）は、使い終わったら削除する。
+- 新しいPC（または VM）で `10` → `50` を通し実行し、手順書（`works/resources/cheatsheets/env/`）どおり進むか確認する。MX Linux 25.3 と Win11 の「要確認」を潰す。
 - `24_fonts.*` で実際にダウンロードしてフォントを入れる（`gh auth login` は不要）。`fonts.txt` の PlemolJP は `PlemolJP_NF_v*.zip` のまま。試用中の「Console NF」に当たる実際のアセット名はリリースで未確認なので、確かめて合わせる。1週間使って「Light で続ける / Text に上げる / HackGen に戻す」を決める（メインフォントは PlemolJP Console NF の Light を試用中。Zed・Windows Terminal・Notepad++ に反映済み）。
 - `30_link.sh` の最後に `chsh` 後の再ログインの案内を足す。`50_repos.sh` の前提（`source ~/.profile`、`ghq` が PATH にある）を整理する。`50_repos.bat` に取得したいリポジトリを足す。
 - `git bundle` のバックアップの所在を確認する（見つからない）。必要なら保管場所を決める。
@@ -51,7 +51,9 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
-### 2026-10-06（Vault のトップの rename に合わせた更新）
+### 2026-10-06（`vault\notes` → `vault\works` の rename 後の点検）
+
+- ユーザーが実機で `vault\notes` を `vault\works` に rename したあと、dotfiles への影響を点検した。結果は、デグレなし（確認: 2026-10-06）。ユーザー環境変数 `WORKS_DIR` / `CERTS_DIR` は新パス（旧 `NOTES_DIR` は無し）、`C:\vault\works\.obsidian` のジャンクションは dotfiles へ正しく張られている、`workbase`（`works\resources`）は `main...origin/main`、WSL から `/mnt/c/vault/works` の `.obsidian` と `exmem` が見える、`bash tests/linux/test_scripts.sh` は 36/36 合格（実 WSL の項目も通った）。`docs/` に残っていた現在のパス参照（`notes/resources/...` の4か所）を `works/resources/...` に直した。過去の経緯の記述（`.obsidian` を `notes` に置いた判断など）は、当時の呼称のまま残した。未確認: 会社PCの `company-ca.crt` の所在（このPCの `areas\dev-env\certs` は存在するが中身は未確認）、他のPCでの `10_env.bat` と `30_link.bat` の再実行。
 
 - Vault のトップが `notes` から `works` に変わるのに合わせて、`NOTES_DIR` を `WORKS_DIR` に、パスを `C:\vault\works` / `/mnt/c/vault/works` / `~/vault/works` に改めた（`AGENTS.md`、`README.md`、`links.map`、`10_env.bat`、`50_repos.bat`、`.profile`、`lib.sh`（`works_dir`）、`30_link.sh`、`50_repos.sh`、`tests/linux/test_scripts.sh`）。`CERTS_DIR` は `%WORKS_DIR%\areas\dev-env\certs` にし（`10_env.bat` はこのディレクトリを作らない）、`common.sh` の WSL 側の参照も合わせた。Linux のテストは 35/35 合格（実 WSL の項目は rename 前なので skip）。**実機の `setx` と rename は、ユーザーが行う**（手順は、トップの `docs/log.md`）。
 ### 2026-10-06
