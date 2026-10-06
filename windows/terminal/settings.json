@@ -51,7 +51,7 @@
                 "weight": "light"
             },
             "opacity": 100,
-            "startingDirectory": "%VAULT_HOME%"
+            "startingDirectory": "%WORKS_DIR%"
         },
         "list": 
         [
