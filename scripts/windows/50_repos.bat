@@ -6,14 +6,14 @@ rem ghq get yuzucha16/adv360-pro-zmk
 
 rem workbase (shared knowledge repo) is cloned straight into the vault, outside ghq:
 rem a ghq path would need a junction, and Grep/Glob/rg do not follow junctions.
-if not defined NOTES_DIR (
-  echo [ERR] NOTES_DIR is not set. Run 10_env.bat and open a new terminal.
+if not defined WORKS_DIR (
+  echo [ERR] WORKS_DIR is not set. Run 10_env.bat and open a new terminal.
   goto :END
 )
-if exist "%NOTES_DIR%\resources\.git" (
-  echo [SKIP] already cloned: %NOTES_DIR%\resources
+if exist "%WORKS_DIR%\resources\.git" (
+  echo [SKIP] already cloned: %WORKS_DIR%\resources
 ) else (
-  git clone https://github.com/yuzucha16/workbase "%NOTES_DIR%\resources"
+  git clone https://github.com/yuzucha16/workbase "%WORKS_DIR%\resources"
 )
 
 :END

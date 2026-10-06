@@ -14,17 +14,17 @@
 : "${GHQ_ROOT:=$HOME/vault/repos}"
 export XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME GHQ_ROOT
 
-# Vault top (a PC-local repo; the shared repo workbase is cloned into $NOTES_DIR/resources).
-# WSL shares Windows' C:\vault\notes through /mnt/c; native Linux uses ~/vault/notes.
+# Vault top (a PC-local repo; the shared repo workbase is cloned into $WORKS_DIR/resources).
+# WSL shares Windows' C:\vault\works through /mnt/c; native Linux uses ~/vault/works.
 # PROC_VERSION_FILE is only for tests.
-if [ -z "${NOTES_DIR:-}" ]; then
+if [ -z "${WORKS_DIR:-}" ]; then
   if grep -qi microsoft "${PROC_VERSION_FILE:-/proc/version}" 2>/dev/null; then
-    NOTES_DIR=/mnt/c/vault/notes
+    WORKS_DIR=/mnt/c/vault/works
   else
-    NOTES_DIR="$HOME/vault/notes"
+    WORKS_DIR="$HOME/vault/works"
   fi
 fi
-export NOTES_DIR
+export WORKS_DIR
 
 ##########
 # 2) PATH の整備（重複防止で冪等）

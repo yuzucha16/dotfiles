@@ -51,6 +51,9 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
+### 2026-10-06（Vault のトップの rename に合わせた更新）
+
+- Vault のトップが `notes` から `works` に変わるのに合わせて、`NOTES_DIR` を `WORKS_DIR` に、パスを `C:\vault\works` / `/mnt/c/vault/works` / `~/vault/works` に改めた（`AGENTS.md`、`README.md`、`links.map`、`10_env.bat`、`50_repos.bat`、`.profile`、`lib.sh`（`works_dir`）、`30_link.sh`、`50_repos.sh`、`tests/linux/test_scripts.sh`）。`CERTS_DIR` は `%WORKS_DIR%\areas\dev-env\certs` にし（`10_env.bat` はこのディレクトリを作らない）、`common.sh` の WSL 側の参照も合わせた。Linux のテストは 35/35 合格（実 WSL の項目は rename 前なので skip）。**実機の `setx` と rename は、ユーザーが行う**（手順は、トップの `docs/log.md`）。
 ### 2026-10-06
 
 - Scoop 導入の失敗と実行ポリシーの扱い、PowerShell の二重引用符で文書が壊れた件を「ナレッジ化して」で `exmem/inbox/2026-10-06-scoop-install-execution-policy.md` に残した（実機の新アカウントでの確認は未実施のため、Open Questions に残してある）。実行で出た改善1点（仮説の表記 `（仮説）` は完全一致で書く）を承認し、workflow-kit に反映した（版 `2026-10-06.7`）。変更は `workbase` 側で、dotfiles のコミット対象外。

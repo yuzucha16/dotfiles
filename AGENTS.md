@@ -4,7 +4,7 @@ dotfiles は、Windows 11 + WSL2 / Linux（apt 系）の作業環境を、複数
 
 ## 共通ルール
 
-共通ルールの置き場は `C:\vault\notes\resources\workflow-kit`（WSL: `/mnt/c/vault/notes/resources/workflow-kit`）。次の時機に、該当のファイルを読む。
+共通ルールの置き場は `C:\vault\works\resources\workflow-kit`（WSL: `/mnt/c/vault/works/resources/workflow-kit`）。次の時機に、該当のファイルを読む。
 
 - `docs-rules.md`: 作業を始める前と、`docs/` を更新するときに読む。`docs/` の運用。作業の終わりに `docs/log.md` と `docs/decisions.md` を更新する。
 - `knowledge-hook.md`: ユーザーが「ナレッジ化して」と言ったときに読み、実行する（言われたときだけ）。書き込みは `exmem/inbox/` の新規ファイルだけ。
@@ -20,7 +20,7 @@ dotfiles は、Windows 11 + WSL2 / Linux（apt 系）の作業環境を、複数
 ## このリポジトリ固有のルール
 
 - 構成やスクリプトの使い方は `README.md` が正本。`docs/` に同じ表を重複させない。
-- exmem は `C:\vault\notes\resources\exmem`（WSL: `/mnt/c/vault/notes/resources/exmem`）。共有リポジトリ `workbase`（`C:\vault\notes\resources` に clone）の一部で、dotfiles とは別リポジトリ。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業ログを exmem に残さない。書き込みの例外は「ナレッジ化して」だけ（`knowledge/` `contexts/` など inbox 以外は編集しない）。
+- exmem は `C:\vault\works\resources\exmem`（WSL: `/mnt/c/vault/works/resources/exmem`）。共有リポジトリ `workbase`（`C:\vault\works\resources` に clone）の一部で、dotfiles とは別リポジトリ。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業ログを exmem に残さない。書き込みの例外は「ナレッジ化して」だけ（`knowledge/` `contexts/` など inbox 以外は編集しない）。
 - 参照している正本: 履歴の種の本文は `exmem/knowledge/shell-command-usecases.md`。`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` はそこからの派生物なので、種ファイルを直接編集しない。
 - 「ナレッジ化して」で残さないもの（dotfiles 固有で他に使い回せない経緯）は、`docs/log.md` と `docs/decisions.md` に残す。
 - `scripts/linux/` や `home/.profile` を変えたら、`bash tests/linux/test_scripts.sh` を実行して、失敗が0であることを確認する（WSL で実行できる。観点は `README.md` の「スクリプトの試験」）。
