@@ -148,6 +148,15 @@ exmem（`C:\vault\works\resources\exmem`）は読み取り専用の参照先で�
 - 却下: `curl` / `Invoke-WebRequest` への置換（アセット名にバージョンが入り、glob が使えない）。
 - 未確認: 未ログインのレート制限（1回2件程度なら問題ないはずだが、推測）。
 
+### 初回の取得は winget の git で最終の場所に clone し、git は scoop に統一する。git の名前・メールは `11_git_identity.bat`（2026-10-06）
+
+- **経緯**: 運用が「dotfiles を zip で取得 → 各 bat を番号順に実行（`30_link` は zip の展開先に張る）→ `50_repos` で ghq 管理下に再取得 → `30_link` をもう一度」になっていて、取得もリンクも二重だった。原因は、最初の置き場所と ghq の場所（`GHQ_ROOT=C:\vault\repos`）が違うこと。README の手順 0（winget で git → 最終の場所に `git clone`）は、もともと二重にならない設計だった。
+- **決めたこと**（ユーザーの選択）: (1) 初回は winget の git で、最初から `C:\vault\repos\github.com\yuzucha16\dotfiles` に clone する。zip は使わない。(2) git の正本は scoop の git。`20_apps.bat` が、scoop の git が入ったあとで `winget list --id Git.Git -e` を見て、あれば確認（既定は消さない）のうえ `winget uninstall --id Git.Git -e` する。(3) git の名前・メールは新スクリプト `11_git_identity.bat`（10 の環境層の固有ツール。Windows のみ）が、`~\.gitconfig_local` が無いときだけ対話的に作る。(4) `50_repos.bat` は dotfiles を取得しない（ユーザーが足した `ghq get yuzucha16/dotfiles` は、元のコメント行に戻した）。
+- **根拠**: (1) 番号の入れ替えは難しい。`50_repos` は `ghq`（`20_apps` で入る）と `GHQ_ROOT`（`10_env`）に依存するので、`50` を `20` の前に出せない。置き場所をそろえれば順序は変えずに済む。(2) 機械全体（machine scope）の git はシステムの PATH にあり、scoop の shim があるユーザーの PATH より先に見つかる（Windows の PATH の解決順。この PC では winget の git は無く、確認できていない）。そのため残すと winget の git が使われる。scoop の git には GCM（`git-credential-manager.exe`）が同梱されている（確認: `scoop\apps\git\current\ucrt64\bin`、`git credential-manager --version` が 2.9.1）ので、`credential.helperselector = manager` は引き続き使える。(3) `git config --global` は使えない。`~\.gitconfig` はリポジトリ内の `home\.gitconfig` への symlink で、リンク前は実ファイルができて `30_link` が `[ERR]` になり、リンク後は repo を書き換える。`git config --file ~\.gitconfig_local` なら、どちらの時点でも安全で、引用符や `&` も `git config` が扱う。`~\.gitconfig_local` は `~\.gitconfig` の `include` 経由でしか読まれないので、clone 自体には効かない（`30_link` の後に有効）。
+- **却下案**: zip を最終の場所に展開して、あとで `.git` を付ける（`init` + `fetch` + `reset`。複雑で、zip との差分と改行の確認が要る。git を先に入れられない環境向けの代替として残してあるだけで、未実装）。`50_repos.bat` の先頭で `.gitconfig_local` を作る（`30_link` の後になるので、リンク前に作る目的に合わない）。`10_env.bat` の末尾（git が必須になる）。最初から scoop の git だけを使う（scoop の導入を `20_apps.bat` の外の1行コマンドで先に行う案。ユーザーが winget の git を選んだので採らなかった。winget の git の撤去が不要になる利点があった）。
+- **Gotchas（この作業で遭遇）**: (a) `set /p` は標準入力がパイプだと、2つ目以降の入力を取りこぼす（`(echo a& echo b) | cmd /c x.bat` で `B` が空。ファイルのリダイレクトなら読める。確認: 最小のバッチで再現）。実際のコンソールでは問題ない。試験は入力をファイルで渡す。(b) 空入力の再入力ループは、標準入力が閉じていると無限ループになる。5回で `[ERR]` にして止めた。(c) `.bat` から `.cmd`（偽の `gh`、`winget`）を `call` なしで呼ぶと制御が戻らない。実機は `.exe` の shim なので問題ないが、`call` を付けておく。
+- **未確認**: winget の git があるPCでの、実際の `winget uninstall`（UAC の有無、現在のターミナルの PATH の扱い。偽の `winget` での試験のみ）。`winget install Git.Git` が machine scope かどうか（`winget show` にスコープの記載が出なかった）。
+
 ### vcredist2022 は自動導入せず、不足時だけ警告する（2026-10-06）
 
 - **経緯**: `20_apps.bat` の `scoop install` で、lsd / ripgrep / bat / starship / windows-terminal / chatgpt が `suggests installing 'extras/vcredist2022'` と出る。`suggest` は任意の提案で、`depends`（必須）ではない（確認: 各 `buckets\*\bucket\<app>.json` の `suggest`、`depends` は空）。vcredist2022 は「Microsoft Visual C++ 2015-2022 再頒布可能パッケージ」で、MSVC でビルドしたアプリが動的リンクする `vcruntime140.dll` / `msvcp140.dll` を提供する。
