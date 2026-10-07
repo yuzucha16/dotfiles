@@ -27,6 +27,16 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】旧パス（`C:\vault\...`）の Claude Code のセッションを、`works` の構成に合わせて移行した（2026-10-07。ユーザーの決定と指示）
+
+- 決めたこと: jsonl の `cwd` を、現在の構成に対応するパスへ書き換えて、そのパスに対応する `~\.claude\projects\` のディレクトリに置いた（会話本文のパスは書き換えない）。対応表: `C:\vault\works` 配下 → `C:\Users\ck\works` 配下、`C:\vault\repos\...\dotfiles` → `C:\Users\ck\works\repos\github.com\yuzucha16\dotfiles`、旧 `notes` → `C:\Users\ck\works`、旧 `notes\.obsidian` → `...\dotfiles\windows\obsidian\.obsidian`（実体のパス）、旧 `notes\resources\exmem` と `areas_shared\exmem` と `cheatsheets` → `C:\Users\ck\works\resources\exmem`、`C:\vault_ee\...` は元のまま。あわせて `entrypoint` を `sdk-ts` から `cli` にした（`claude --resume` の一覧に出すため。1本で試してから全件）。Zed の `sidebar_threads` の `folder_paths` も、同じ `cwd` に更新した（Zed を終了して実行）。
+- 根拠: 再開は、起動したディレクトリに対応するディレクトリだけを探す。ユーザーが「できるだけ、現構造に `cwd` を一致させたい」と指示した。`.obsidian` は、`works\.obsidian` がジャンクションなので、起動して確実に開ける実体のパスにした（ユーザーの選択）。対応先が無いものを `exmem` に寄せたのは、ユーザーの指示（「寄せてください。だめならあきらめます」）。
+- 却下案: 旧パスのディレクトリを作り直す（現在の構成と一致しない）。毎回 ID 指定で再開する（一覧から選べない）。`works\.obsidian` を `cwd` にする（ジャンクションで、実体に解決される可能性がある。仮説）。
+- 確認済み（2026-10-07）: `claude --resume` の一覧に出る（works と dotfiles。ユーザーの報告）。ID 指定で開ける（`claude -p --resume <ID> --fork-session` が応答。ユーザーも ID 指定で閲覧）。Zed のスレッド履歴から開ける（ユーザーの報告）。
+- 未確認: `.obsidian` のスレッド（`vault_ee` の2本を含む）と `exmem` に寄せた11本を、実際に開いて確認したか。
+- 戻し方: `~\.claude\projects_backup_20261007`（作業前）、`projects_backup_20261007b`（`cwd` と `entrypoint` の書き換え前の途中）、`~\.claude\zed-fix\zed-db-backup-20261007-204037`（Zed の DB）。
+- 行き先: local（この PC の移行の対応表。一般化できる部分は、下の Gotchas の2項が `転記待ち`）
+
 ### 【この件】`.reg` と `.ahk` は、index は LF、作業ツリーは CRLF にする（`.gitattributes`。2026-10-07。ユーザーの決定）
 
 - 決めたこと: `.gitattributes` に `*.reg text eol=crlf` と `*.ahk text eol=crlf` を足した（`.bat` `*.cmd` と同じ形。コミット `cf4a54f`）。index にあった CRLF は `git add --renormalize` で LF にした（作業ツリーは CRLF のまま）。
@@ -310,6 +320,15 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - 【この件】`windows/terminal/settings.json` と draw.io の設定は小さく意図的なので、変更せず残した。 行き先: local（dotfiles の設定ファイルの扱い）
 
 ## Gotchas
+
+- **作業フォルダを移したあと、`claude --resume` の一覧に何も出ない**（2026-10-07。`No conversations found in this project`）。原因: 54本すべてが Agent SDK 経由（Zed の ACP。jsonl の `entrypoint` が `sdk-ts`）で、`claude --resume` の一覧と `--continue` の対象外（公式ドキュメント）。`cwd` の不一致とは別の原因。解決: `claude --resume <ID>` で開く。一覧に出すには `entrypoint` を `cli` に書き換える（バックアップを取ってから。1本で試して、一覧に出ることを確認した）。2026-10-06 の「コピーした履歴が再開できない」も、この原因だった可能性が高い（仮説）。
+  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-07-claude-code-resume-sdk-sessions.md）
+
+- **Zed で、旧パスのスレッドを開くと `failed to spawn command "…pwsh.exe" "-C" "…claude-agent-acp…index.js"` で失敗する**（2026-10-07）。原因: Zed のスレッド一覧（`%LOCALAPPDATA%\Zed\db\0-stable\db.sqlite` の `sidebar_threads.folder_paths`）が旧パスのままで、そのフォルダが存在しない（仮説。更新後に開けたことから推定）。解決: Zed を終了してから、`folder_paths` と `main_worktree_paths` を各セッションの `cwd` に更新する。Zed の中のエージェントからは「Zed を閉じた」と伝えられないので、終了を待って自動で実行するスクリプトを別プロセスで起動した（`~\.claude\zed-fix\fix_zed_threads.ps1`。Zed を閉じると生き残って実行された）。アーカイブ済みのスレッドも、履歴から開けば復元できる（`archived` は変えていない）。
+  - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-07-zed-thread-db-folder-paths.md）
+
+- **`claude` の起動のたびに、`Permission allow rule ... has a wildcard before the rest of the command` の警告が出る**（2026-10-07。`claude --resume` の出力で確認）。原因: `~\.claude\settings.json`（dotfiles の `home/.claude/settings.json` のリンクのはず。未確認）の許可ルール `Bash(git -C * status *)` などで、`*` が `git -C` の直後にあり、`-c` などのオプションを承認なしで通してしまうため（警告の文面）。解決: 未対応（ルールの意味が変わるので、ユーザーに確認してから直す。Next Actions）。
+  - 【この件】行き先: local（dotfiles の `home/.claude/settings.json` の許可ルール）
 
 - 状況: schannel の設定として `https.sslVerify true` を指定された（`[https] sslVerify = true`）
   - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/pc-setup-manuals.md）
