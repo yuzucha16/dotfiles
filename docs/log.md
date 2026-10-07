@@ -4,6 +4,8 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- Claude Code と Zed のスレッド復元（2026-10-07）の後始末: 数日使って問題が無ければ、バックアップ（`~\.claude\projects_backup_20261007`、`projects_backup_20261007b`、`~\.claude\zed-fix\zed-db-backup-*`）と、旧ディレクトリ `~\.claude\projects\C--vault-*` の重複を削除する。`.obsidian`（2本）、`vault_ee`（2本）、`exmem` に寄せた11本が実際に開けるかも確認する。Zed の Codex のスレッド（31件）が、旧パスで失敗するかを確認する。
+- `~\.claude\settings.json` の許可ルール `Bash(git -C * status *)` などが、`claude` の起動のたびに警告を出す（2026-10-07。`*` が `git -C` の直後にあるため）。`git -C <パス>` を許す形に直すかを、ユーザーに確認してから決める（dotfiles の `home/.claude/settings.json` がリンク元のはず。未確認）。
 - Windows Terminal を再起動して、削除した古い WSL プロファイルが `settings.json` に書き戻されないか確認する（2026-10-07。書き戻されたら `git diff` に出る）。出ないなら、他PCで WSL を入れ直したときも同じ手当て（古い `commandline` 付きのエントリを消す）が要る。
 - 他PCでは `git pull` のあと、`.reg` / `.ahk`（`.gitattributes` の変更）と Terminal の `settings.json`（改行の正規化）の `git status` が clean か確認する（2026-10-07。作業ツリーが LF のまま残っていると差分に見える場合は、`git add --renormalize` か取り直しが要る）。
 - `10_env.bat` を再実行して、`%USERPROFILE%\.certs` ができること、`CERTS_DIR` と `WSLENV`（`CERTS_DIR/p` が1回だけ）が更新されることを確認する。新しいターミナルと新しい WSL セッション（`wsl --shutdown` のあと）で、`$CERTS_DIR` が `/mnt/c/Users/<名前>/.certs` になり、`company-ca.crt` があれば `NODE_EXTRA_CA_CERTS` が設定されることを確認する。旧 `works\areas\dev-env\certs`（空）は、確認後に削除する（2026-10-06 時点）。
@@ -59,6 +61,16 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-07（Claude Code と Zed のスレッドを、`works` の構成で復元した）
+
+- Vault を `C:\vault\works` から `C:\Users\ck\works` へ移したあと、`--resume` で復元できなかったセッション（ユニーク56本。ユーザーの記憶は58本）を、ユーザーの依頼で復元した。Zed のスレッドも開けるようにした。リポジトリのファイルは変えていない（変更先は `~\.claude` と Zed のデータ）。
+- 原因は3つ。(1) 54本すべてが SDK 経由（`entrypoint: sdk-ts`）で、`claude --resume` の一覧の対象外（公式ドキュメント）。(2) jsonl の `cwd` と保存先ディレクトリが旧パスのまま。(3) Zed の `db.sqlite` の `sidebar_threads.folder_paths` が旧パスで、開くとエージェントの起動に失敗した（`failed to spawn command`）。
+- 直したこと（判断は `docs/decisions.md` の Decisions の「旧パス…のセッションを、`works` の構成に合わせて移行した」）: ① 旧ディレクトリだけにあった20本を、新しいディレクトリへコピーして `cwd` を書き換えた。② コピー済みの30本の `cwd` を書き換えた。③ `entrypoint` を `cli` にした（1本で一覧に出ることを確認してから全件）。④ Zed の `sidebar_threads` の47件の `folder_paths` を更新した（Zed 終了後に自動実行するスクリプト `~\.claude\zed-fix\`）。確認: `claude --resume` の一覧（works と dotfiles）、ID 指定、Zed のスレッド履歴で開けた（ユーザーの報告）。
+- 復元できなかったもの: Zed のスレッドのうち、ディスクにセッションが無い5件（9/26〜9/30。2件は ID の無い空のスレッド）。ディスクにあるのは56本で、ユーザーの記憶の58本との差は2本（行き先は不明）。
+- 落とし穴（`docs/decisions.md` の Gotchas の3項）: 一覧が空になる原因は `entrypoint`。Zed の中のエージェントは、Zed を閉じると止まるので、終了を待つスクリプトを別プロセスで起動した。`claude` の起動時に許可ルールの警告が出る（未対応。Next Actions）。
+- ナレッジ化: `exmem/inbox/` にメモ2本（`2026-10-07-claude-code-resume-sdk-sessions.md`、`2026-10-07-zed-thread-db-folder-paths.md`）。既存の `knowledge/claude-code-storage.md` の「原因不明・解決なし」の記述との食い違いを、メモの Open Questions に書いた。
+- 反省: 最初の実行で、削除を含む1つの PowerShell コマンドが、安全装置にブロックされた（何も実行されなかった。分けて再実行した）。
 
 ### 2026-10-07（Windows Terminal の `settings.json` の差分の解消。`.gitattributes` に `.reg` と `.ahk` を追加）
 
