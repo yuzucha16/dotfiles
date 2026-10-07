@@ -80,6 +80,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - ユーザーの決定で、`.gitattributes` に `*.reg text eol=crlf` と `*.ahk text eol=crlf` を足し、index を LF にした（`cf4a54f`。判断は `docs/decisions.md` の Decisions）。`windows/notepadpp/Gruvbox dark medium.xml` は、index が CRLF のまま未決（Open Questions）。
 - 反省: 最初の2コミット（`39930cc`、`3c49d9b`）を、`docs-rules.md` の「コミットの身元」に従わず、ユーザーの名義（`yuzucha16`）で作った。トレーラーも無い。`cf4a54f` からは `agent` 名義とトレーラー付き。履歴は書き換えていない（未 push のため、書き換えるかはユーザーの判断。`rebase` は事前確認が要る）。
 - 未確認: Terminal を再起動して、削除した WSL プロファイルが書き戻されないか。再インストールのたびに guid が変わる理由。
+- 「終了処理して」の改善2点をユーザーが承認し、workflow-kit を版 `2026-10-07.5` に上げた（変更は `workbase` 側で、dotfiles のコミット対象外）: コミットを分けるときは `git commit` にパスを指定しない、エージェントの身元とトレーラーは作業の途中のコミットにも適用し、終了処理で点検して報告する。`exmem/inbox/2026-10-07-gitattributes-leftover-crlf-index.md` を作った（コミット対象外）。
 
 ### 2026-10-06（Vault を `%USERPROFILE%\works` へ移した。Linux 側も `~/works` にそろえた）
 
