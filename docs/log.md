@@ -71,6 +71,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - 落とし穴（`docs/decisions.md` の Gotchas の3項）: 一覧が空になる原因は `entrypoint`。Zed の中のエージェントは、Zed を閉じると止まるので、終了を待つスクリプトを別プロセスで起動した。`claude` の起動時に許可ルールの警告が出る（未対応。Next Actions）。
 - ナレッジ化: `exmem/inbox/` にメモ2本（`2026-10-07-claude-code-resume-sdk-sessions.md`、`2026-10-07-zed-thread-db-folder-paths.md`）。既存の `knowledge/claude-code-storage.md` の「原因不明・解決なし」の記述との食い違いを、メモの Open Questions に書いた。
 - 反省: 最初の実行で、削除を含む1つの PowerShell コマンドが、安全装置にブロックされた（何も実行されなかった。分けて再実行した）。
+- workflow-kit の改善2点を反映した（ユーザーの承認。版 `2026-10-07.3`）: `closing-hook.md` の手順 2 に、変更先がリポジトリの外だけの作業では、開いた作業ディレクトリの `docs/` を対象にする、と足した。手順 3 に、親の `AGENTS.md` が定める終了処理の追加の手順（指標の記録など）を続けて行う、と足した。記録は kit の `improvements.md` と `README.md` の変更履歴。
 
 ### 2026-10-07（Windows Terminal の `settings.json` の差分の解消。`.gitattributes` に `.reg` と `.ahk` を追加）
 
