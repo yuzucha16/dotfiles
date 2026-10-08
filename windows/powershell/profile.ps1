@@ -50,6 +50,13 @@ if (Test-Path $caPath) {
 # Claude Code を API キー認証で起動する（`claude` は OAuth のまま）。設定は ~/.claude/api.settings.json
 function claude-api { claude --settings "$HOME\.claude\api.settings.json" @args }
 
+# Claude Code を Amazon Bedrock で起動する。設定はこの PC 専用の ~/.claude/bedrock.settings.json（claude-bedrock-setup.cmd で作る）
+function claude-bedrock {
+    $f = "$HOME\.claude\bedrock.settings.json"
+    if (-not (Test-Path $f)) { Write-Host "[ERR] $f がありません。先に claude-bedrock-setup.cmd を実行してください。"; return }
+    claude --settings $f @args
+}
+
 # Alias
 
 # ls を lsd に置き換え（bash/zsh の common.sh と同じ体系）
