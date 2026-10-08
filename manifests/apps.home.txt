@@ -15,3 +15,7 @@
 #doxygen
 #plantuml
 #graphviz
+
+# ai (moved from apps.txt; Claude Code itself is installed by scripts\windows\23_claude.bat)
+#claude
+#chatgpt
