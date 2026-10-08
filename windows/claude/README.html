@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code の API キー認証（個人用）</title>
+<style>
+  :root { --bg:#fff; --fg:#1f2328; --sub:#59636e; --line:#d1d9e0; --code:#f6f8fa; --accent:#0969da; --warn:#9a6700; --warnbg:#fff8c5; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0d1117; --fg:#e6edf3; --sub:#9198a1; --line:#3d444d; --code:#161b22; --accent:#4493f8; --warn:#d29922; --warnbg:#2d2200; }
+  }
+  body { background:var(--bg); color:var(--fg); font:16px/1.7 system-ui,"Yu Gothic UI","Meiryo",sans-serif; margin:0; }
+  main { max-width:920px; margin:0 auto; padding:24px 20px 80px; }
+  h1 { font-size:1.6rem; border-bottom:1px solid var(--line); padding-bottom:.4em; }
+  h2 { font-size:1.25rem; margin-top:2.2em; border-bottom:1px solid var(--line); padding-bottom:.3em; }
+  p, li { overflow-wrap:anywhere; }
+  code { background:var(--code); padding:.15em .4em; border-radius:4px; font:0.9em ui-monospace,Consolas,monospace; }
+  pre { background:var(--code); border:1px solid var(--line); border-radius:6px; padding:12px 14px; overflow:auto; position:relative; }
+  pre code { background:none; padding:0; }
+  button.copy { position:absolute; top:6px; right:6px; font-size:.75rem; padding:2px 8px; border:1px solid var(--line); border-radius:4px; background:var(--bg); color:var(--sub); cursor:pointer; }
+  table { border-collapse:collapse; width:100%; margin:1em 0; font-size:.93rem; }
+  th, td { border:1px solid var(--line); padding:6px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--code); }
+  .note { background:var(--warnbg); border-left:4px solid var(--warn); padding:8px 14px; margin:1em 0; border-radius:4px; }
+  ol.steps { list-style:none; padding-left:0; counter-reset:s; }
+  ol.steps > li { counter-increment:s; border:1px solid var(--line); border-radius:8px; padding:10px 14px 10px 14px; margin:12px 0; }
+  ol.steps > li > label { font-weight:600; cursor:pointer; }
+  ol.steps > li > label::before { content:counter(s) ". "; }
+  ol.steps > li:has(input:checked) { opacity:.55; }
+  ol.steps > li:has(input:checked) > label { text-decoration:line-through; }
+  .sub { color:var(--sub); font-size:.9rem; }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Claude Code の API キー認証（個人用）</h1>
+<p><code>claude</code> は OAuth（サブスク）のまま、<code>claude-api</code> だけ Anthropic の Console API キー（従量課金）で起動する。判断の根拠は <code>docs/decisions.md</code> の「Claude Code の API キー認証は…」。</p>
+<p class="sub">この HTML は <code>README.md</code>（同じフォルダ）を写した派生物。内容を直すときは <code>README.md</code> を先に直し、こちらも合わせる。</p>
+
+<h2>早見表</h2>
+<table>
+  <tr><th>やりたいこと</th><th>コマンド</th></tr>
+  <tr><td>OAuth で起動</td><td><code>claude</code></td></tr>
+  <tr><td>API キーで起動</td><td><code>claude-api</code></td></tr>
+  <tr><td>認証・モデルの確認</td><td>起動後に <code>/status</code></td></tr>
+  <tr><td>キーを保存・入れ替え</td><td><code>claude-api-key.cmd -Set</code></td></tr>
+  <tr><td>モデル ID の一覧</td><td>下の「<a href="#models">モデル ID を取得する</a>」</td></tr>
+  <tr><td>モデルの切替（セッション中）</td><td><code>/model</code></td></tr>
+  <tr><td>費用の目安（セッション）</td><td><code>/usage</code></td></tr>
+</table>
+
+<h2 id="steps">初回の手順（チェックしながら進める）</h2>
+<ol class="steps">
+  <li>
+    <input type="checkbox" id="s1"> <label for="s1">キーを作る</label>
+    <div>platform.claude.com の Console で、<strong>個人用の workspace を作り</strong>、その workspace で API キーを発行する。自動作成される「Claude Code」workspace ではキーを作れない。</div>
+  </li>
+  <li>
+    <input type="checkbox" id="s2"> <label for="s2">上限を決める</label>
+    <div>先に <a href="#limits">費用の上限</a> を設定する。個人用 workspace の月額 spend limit を決める。</div>
+  </li>
+  <li>
+    <input type="checkbox" id="s3"> <label for="s3">リンクを張る</label>
+    <div>Developer Mode が ON であることを確認し、dotfiles のルートで次を実行する。内容を確認してから本実行する。</div>
+<pre><code>scripts\windows\30_link.bat -n
+scripts\windows\30_link.bat</code></pre>
+    <div>実行したら<strong>新しいターミナル</strong>を開く（PATH とプロファイルの読み込みのため）。</div>
+  </li>
+  <li>
+    <input type="checkbox" id="s4"> <label for="s4">キーを保存する</label>
+<pre><code>claude-api-key.cmd -Set</code></pre>
+    <div>プロンプトにキーを貼る（コマンドラインには書かない）。<code>saved: ...\api-key.dpapi</code> と出れば成功。</div>
+  </li>
+  <li>
+    <input type="checkbox" id="s5"> <label for="s5">確認する</label>
+<pre><code>claude-api</code></pre>
+    <div>起動して <code>/status</code> を実行する。認証が API キーになっていること。別のターミナルで <code>claude</code> 単独で起動したとき、OAuth のままであること。</div>
+  </li>
+  <li>
+    <input type="checkbox" id="s6"> <label for="s6">モデルを決める</label>
+    <div>下の「<a href="#models">モデル ID を取得する</a>」で ID を調べ、<code>api.settings.json</code> の値を直す。</div>
+  </li>
+</ol>
+
+<h2 id="models">モデル ID を取得する</h2>
+<p>Anthropic 直接の <code>GET /v1/models</code> を使う（Bedrock の <code>aws bedrock list-inference-profiles</code> に相当）。</p>
+<pre><code>$key = (claude-api-key.cmd) | Select-Object -First 1
+$r = Invoke-RestMethod 'https://api.anthropic.com/v1/models?limit=100' -Headers @{ 'x-api-key' = $key; 'anthropic-version' = '2023-06-01' }
+$r.data | Select-Object id, display_name, max_input_tokens, max_tokens | Format-Table -AutoSize
+$key = $null</code></pre>
+<ul>
+  <li><code>id</code> を <code>api.settings.json</code> の <code>model</code> や <code>ANTHROPIC_DEFAULT_*_MODEL</code> に入れる。</li>
+  <li><code>max_input_tokens</code> がコンテキストの上限（入力）、<code>max_tokens</code> が1回の出力の上限。</li>
+  <li><code>limit=100</code> を付けないと、既定の件数（20）で切れる。</li>
+  <li>401 が返るときはキーが違う（動作確認では、ダミーのキーで 401 を確認済み）。</li>
+</ul>
+<table>
+  <tr><th><code>api.settings.json</code> の項目</th><th>意味</th></tr>
+  <tr><td><code>model</code></td><td>起動時のモデル（<code>sonnet</code> などの別名か ID）</td></tr>
+  <tr><td><code>ANTHROPIC_DEFAULT_OPUS_MODEL</code><br><code>_SONNET_MODEL</code> / <code>_HAIKU_MODEL</code></td><td>別名 <code>opus</code> <code>sonnet</code> <code>haiku</code> がどの ID を指すか</td></tr>
+</table>
+<p>優先順位は <code>--model</code>、<code>ANTHROPIC_MODEL</code>、<code>model</code> 設定の順。現在の値（2026-10-08 時点）: <code>model</code> は <code>sonnet</code>（= <code>claude-sonnet-5-5</code>。できるだけ安い Sonnet として決定）。<code>claude-opus-5-5</code> と <code>claude-haiku-4-5</code> のピン留めは暫定。</p>
+
+<h2 id="reading">一覧の見方と選び方</h2>
+<table>
+  <tr><th>列</th><th>意味</th></tr>
+  <tr><td><code>id</code></td><td>設定に書く名前。一覧の表示どおりに書くのが確実（日付つきの <code>claude-haiku-4-5-20251001</code> のような ID もそのまま）</td></tr>
+  <tr><td><code>display_name</code></td><td>人間向けの名前</td></tr>
+  <tr><td><code>max_input_tokens</code></td><td>1回に読ませられる量（コンテキスト）。1000000 は100万トークン、200000 は20万</td></tr>
+  <tr><td><code>max_tokens</code></td><td>1回の応答で出せる最大の量。128000 は12.8万トークン</td></tr>
+</table>
+<ul>
+  <li>名前の数字が大きいほど新しい世代。系統は、Fable が最上位で最高額、Opus が高性能、Sonnet が標準（性能と費用のバランス）、Haiku が軽量で安い。</li>
+  <li><strong>できるだけ安い Sonnet は Sonnet 5.5</strong>。Sonnet 5 と同額だが、キャッシュ読み出しが半額（$0.10 と $0.20）で新しい。Sonnet 4.6 は高い。</li>
+  <li>さらに節約するなら <code>/effort</code> で思考の量を下げる。Haiku 5.5 はさらに安いが、思考を切れない（出力として課金される）ので、1回の作業あたりの費用は実測してから判断する。</li>
+  <li>Opus と Haiku のピンは、<code>/model</code> で切り替えるときと、軽い処理に使われる（Haiku）ときの割り当て。使わないなら安全側（高額の Opus を避ける）に寄せる。</li>
+</ul>
+<table>
+  <tr><th>モデル</th><th>入力 / 出力（100万トークンあたり）</th></tr>
+  <tr><td>Haiku 5.5</td><td>$0.10 / $0.50（100k 超のプロンプトは $0.50 / $2.50）</td></tr>
+  <tr><td>Haiku 4.5</td><td>$1 / $5</td></tr>
+  <tr><td>Sonnet 5.5、Sonnet 5</td><td>$2 / $10</td></tr>
+  <tr><td>Sonnet 4.6</td><td>$3 / $15</td></tr>
+  <tr><td>Opus 5.5</td><td>$4 / $20</td></tr>
+  <tr><td>Opus 5、4.8、4.7、4.6、4.5</td><td>$5 / $25</td></tr>
+  <tr><td>Fable 5.1、5</td><td>$10 / $50</td></tr>
+</table>
+<p class="sub">2026-10-08 時点。</p>
+
+<h2 id="limits">費用の上限</h2>
+<p>従量課金なので、先に上限を決めてからキーを使う。</p>
+<ul>
+  <li><strong>workspace の spend limit</strong>（最優先）: Console で個人用 workspace に月額の上限を設定する。公式の説明は <a href="https://platform.claude.com/docs/en/build-with-claude/workspaces">workspaces</a> の「Workspace limits」。Console の画面の正確な位置は未確認。</li>
+  <li><strong>レート制限</strong>: 組織の利用ティアで決まる。Console の Limits ページで確認する。</li>
+  <li><strong>セッションの目安</strong>: <code>/usage</code> の費用はローカルでの推定で、請求ではない。正確な額は Console の Usage ページを見る。</li>
+  <li><strong>非対話実行（<code>claude -p</code>）の上限</strong>: CLI フラグ <code>--max-budget-usd</code> がある（<code>claude --help</code> か公式の cli-reference で確認する。未検証）。</li>
+  <li><strong>コストを抑える</strong>: 普段は Sonnet、難しい作業だけ Opus（<code>/model</code>）。区切りで <code>/clear</code>。</li>
+</ul>
+<table>
+  <tr><th>モデル</th><th>入力 / 100万トークン</th><th>出力 / 100万トークン</th></tr>
+  <tr><td>Opus 5.5</td><td>$4</td><td>$20</td></tr>
+  <tr><td>Sonnet 5.5</td><td>$2</td><td>$10</td></tr>
+  <tr><td>Haiku 4.5</td><td>$1</td><td>$5</td></tr>
+</table>
+<p class="sub">2026-10-08 時点。最新は <a href="https://platform.claude.com/docs/en/about-claude/pricing">pricing</a>。</p>
+
+<h2>仕組み</h2>
+<table>
+  <tr><th>ファイル</th><th>役割</th></tr>
+  <tr><td><code>api.settings.json</code></td><td><code>apiKeyHelper</code>（キーの取得コマンド）とモデルの環境変数。<code>%USERPROFILE%\.claude\</code> にリンクされる</td></tr>
+  <tr><td><code>claude-api-key.ps1</code> / <code>.cmd</code></td><td>暗号化したキーを復号して標準出力に返す。<code>%USERPROFILE%\.local\bin</code>（PATH 上）にリンクされる</td></tr>
+  <tr><td><code>windows/powershell/profile.ps1</code> の関数 <code>claude-api</code></td><td><code>claude --settings "$HOME\.claude\api.settings.json"</code> を実行する</td></tr>
+  <tr><td><code>%USERPROFILE%\.claude\api-key.dpapi</code></td><td>暗号化したキー本体。<strong>リポジトリの外。追跡しない</strong></td></tr>
+</table>
+<ul>
+  <li><code>apiKeyHelper</code> は認証の優先順位が OAuth より上。共通の <code>settings.json</code> に書くと OAuth に戻れないので、別ファイルにして <code>--settings</code> で読ませる。</li>
+  <li><code>ANTHROPIC_API_KEY</code> をユーザー環境変数に常設しない（<code>claude</code> も API キーになる）。</li>
+  <li>設定ファイルは <code>${VAR}</code> 展開ができない前提で、秘密は設定に書かない。</li>
+</ul>
+
+<h2>秘密情報の保管方法</h2>
+<p>DPAPI（Windows のユーザーに紐づく暗号化）で <code>api-key.dpapi</code> に保存する。追加のモジュールもパスワード入力も要らず、<code>apiKeyHelper</code>（非対話）から使える。</p>
+<ul>
+  <li>この Windows ユーザー + この PC でだけ復号できる。他の PC では保存し直す。</li>
+  <li>同じユーザーで動く他のプログラムは復号できる。強い分離が要るなら 1Password CLI（<code>op read</code>）に変える。</li>
+  <li>保管方法を変えるときは <code>claude-api-key.ps1</code> だけを差し替える（<code>api.settings.json</code> は変えない）。</li>
+  <li>キーを貼るのは <code>-Set</code> のプロンプトだけ。コマンドラインに書かない（履歴に残るため）。</li>
+</ul>
+<table>
+  <tr><th>方法</th><th>長所</th><th>短所</th></tr>
+  <tr><td><strong>DPAPI ファイル（採用）</strong></td><td>追加導入なし。非対話で動く</td><td>PC ごとに保存し直し。同じユーザーの他プログラムは復号できる</td></tr>
+  <tr><td>SecretManagement + SecretStore</td><td>標準的な方式</td><td>モジュールの導入が要る。既定の設定だとパスワードを聞かれ、非対話のヘルパーが失敗しうる（仮説）</td></tr>
+  <tr><td>資格情報マネージャー（<code>cmdkey</code>）</td><td>OS 標準</td><td><code>cmdkey</code> は保存だけで、読み出しに追加の手間がかかる</td></tr>
+  <tr><td>1Password CLI（<code>op</code>）</td><td>PC 間で共有でき、最も堅牢</td><td>アカウントと導入が要る（このPCには未導入）</td></tr>
+  <tr><td>環境変数に常設</td><td>簡単</td><td>平文になる。<code>claude</code> もキー認証になる</td></tr>
+</table>
+
+<h2>他の PC・運用</h2>
+<ul>
+  <li><strong>他の PC</strong>: <code>git pull</code> → <code>30_link.bat</code> → <code>claude-api-key.cmd -Set</code>（暗号化ファイルは PC ごと）。</li>
+  <li><strong>キーの入れ替え（ローテーション）</strong>: Console で新しいキーを作る → <code>claude-api-key.cmd -Set</code> で上書き → 古いキーを Console で削除する。</li>
+  <li><strong>キーを無効にしたい</strong>: Console でキーを削除し、<code>%USERPROFILE%\.claude\api-key.dpapi</code> を削除する。</li>
+  <li><strong>OAuth に戻したい</strong>: <code>claude</code> で起動する（何も戻す必要はない）。</li>
+</ul>
+
+<h2>うまくいかないとき</h2>
+<table>
+  <tr><th>症状</th><th>確認すること</th></tr>
+  <tr><td><code>Your apiKeyHelper script is failing</code></td><td><code>claude-api-key.cmd</code> を直接実行する。<code>no key file</code> ならキー未保存（<code>-Set</code>）。10秒を超える場合は警告が出る</td></tr>
+  <tr><td><code>claude-api</code> が見つからない</td><td>新しいターミナルを開く（プロファイルの読み込み）。<code>profile.ps1</code> のリンク先を確認する</td></tr>
+  <tr><td><code>claude-api-key.cmd</code> が見つからない</td><td><code>30_link.bat</code> 実行後に新しいターミナルを開く。<code>%USERPROFILE%\.local\bin</code> が PATH にあること</td></tr>
+  <tr><td>起動時に <code>claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set</code></td><td>想定どおりの警告で、失敗ではない。API キー認証では claude.ai のアカウントに紐づく機能（claude.ai の connectors など）が使えない。それらが要る作業は <code>claude</code>（OAuth）で行う。<code>/status</code> が <code>Auth token: apiKeyHelper</code> なら API キー認証で動いている（2026-10-08 に確認）</td></tr>
+  <tr><td><code>claude-api</code> なのに OAuth のまま</td><td><code>/status</code> の <code>Auth token</code> / <code>API key</code> を確認する。<code>Setting sources</code> に <code>Command line arguments</code> が出ていれば <code>--settings</code> は読まれている（2026-10-08 に確認）</td></tr>
+  <tr><td><code>claude</code> なのに API キーになる</td><td>環境変数 <code>ANTHROPIC_API_KEY</code> が残っていないか確認する（<code>$env:ANTHROPIC_API_KEY</code>）</td></tr>
+  <tr><td>401</td><td>キーが無効か、貼り間違い。<code>-Set</code> で入れ直す</td></tr>
+  <tr><td>モデルが見つからない（404 など）</td><td><code>GET /v1/models</code> の一覧にある ID か確認する。キーの workspace に制限が無いか確認する</td></tr>
+</table>
+
+</main>
+<script>
+document.querySelectorAll('pre').forEach(function (pre) {
+  var b = document.createElement('button');
+  b.className = 'copy'; b.type = 'button'; b.textContent = 'コピー';
+  b.addEventListener('click', function () {
+    var text = pre.querySelector('code').innerText;
+    var done = function () { b.textContent = 'コピーした'; setTimeout(function () { b.textContent = 'コピー'; }, 1500); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallback(text); done(); });
+    } else { fallback(text); done(); }
+  });
+  pre.appendChild(b);
+});
+function fallback(text) {
+  var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t);
+  t.select(); document.execCommand('copy'); document.body.removeChild(t);
+}
+</script>
+</body>
+</html>
