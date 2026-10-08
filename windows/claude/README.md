@@ -71,7 +71,7 @@ $key = $null
 - `limit=100` を付けないと、既定の件数（20）で切れる。
 - 401 が返るときはキーが違う（動作確認では、ダミーのキーで 401 を確認済み）。
 - `api.settings.json` の値の意味: `model` は起動時のモデル（`sonnet` などの別名か ID）。`ANTHROPIC_DEFAULT_OPUS_MODEL` / `_SONNET_MODEL` / `_HAIKU_MODEL` は、別名 `opus` `sonnet` `haiku` がどの ID を指すか。優先順位は `--model`、`ANTHROPIC_MODEL`、`model` 設定の順。
-- 現在の値（2026-10-08 時点）: `model` は `sonnet`（= `claude-sonnet-5-5`。できるだけ安い Sonnet として決定）。`claude-opus-5-5` と `claude-haiku-4-5` のピン留めは暫定。
+- 現在の値（2026-10-08 時点）: `model` は `sonnet`（= `claude-sonnet-5-5`。できるだけ安い Sonnet として決定）。`claude-opus-5-5` と `claude-haiku-4-5` のピン留めも、今のままで決定（2026-10-08）。
 
 ## 一覧の見方と選び方
 

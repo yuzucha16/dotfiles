@@ -4,7 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
-- Claude Code の API キー認証（2026-10-08 時点）: `claude-api` の起動と `/status` は確認済み（`Auth token: apiKeyHelper`。claude.ai connectors の警告は仕様どおり）。`claude` 単独の OAuth ログイン（Pro）と `GET /v1/models` の取得も確認済みで、`model` は Sonnet 5.5 に決定。残り: `api.settings.json` の Opus と Haiku のピン（暫定）を決める（Haiku を 5.5 にするか）。他PCでは、キーを保存し直す（暗号化ファイルは PC ごと）。
+- Claude Code の API キー認証（2026-10-08 時点）: `claude-api` の起動と `/status` は確認済み（`Auth token: apiKeyHelper`。claude.ai connectors の警告は仕様どおり）。`claude` 単独の OAuth ログイン（Pro）と `GET /v1/models` の取得も確認済みで、`model` は Sonnet 5.5 に決定。Opus と Haiku のピンも今のままで決定。他PCでは、キーを保存し直す（暗号化ファイルは PC ごと）。
 - Claude Code と Zed のスレッド復元（2026-10-07）の後始末: 数日使って問題が無ければ、バックアップ（`~\.claude\projects_backup_20261007`、`projects_backup_20261007b`、`~\.claude\zed-fix\zed-db-backup-*`）と、旧ディレクトリ `~\.claude\projects\C--vault-*` の重複を削除する。`.obsidian`（2本）、`vault_ee`（2本）、`exmem` に寄せた11本が実際に開けるかも確認する。Zed の Codex のスレッド（31件）が、旧パスで失敗するかを確認する。
 - `~\.claude\settings.json` の許可ルール `Bash(git -C * status *)` などが、`claude` の起動のたびに警告を出す（2026-10-07。`*` が `git -C` の直後にあるため）。`git -C <パス>` を許す形に直すかを、ユーザーに確認してから決める（dotfiles の `home/.claude/settings.json` がリンク元のはず。未確認）。
 - Windows Terminal を再起動して、削除した古い WSL プロファイルが `settings.json` に書き戻されないか確認する（2026-10-07。書き戻されたら `git diff` に出る）。出ないなら、他PCで WSL を入れ直したときも同じ手当て（古い `commandline` 付きのエントリを消す）が要る。
@@ -65,7 +65,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ### 2026-10-08（Claude Code の API キー認証を併用できるようにした）
 
-- ユーザーの指示で、`windows/claude/`（`api.settings.json`、`claude-api-key.ps1`、`claude-api-key.cmd`）を追加し、`links.map` に3行、`profile.ps1` に関数 `claude-api` を足した。ダミーのキーでヘルパーの復号と、キー無しのエラー終了を確認した。実リンクと実起動は未実施。判断は `docs/decisions.md` の「Claude Code の API キー認証は…」。
+- ユーザーの指示で、`windows/claude/`（`api.settings.json`、`claude-api-key.ps1`、`claude-api-key.cmd`）を追加し、`links.map` に3行、`profile.ps1` に関数 `claude-api` を足した。ダミーのキーでヘルパーの復号と、キー無しのエラー終了を確認した。その後、ユーザーの実機で `30_link.bat` → `claude-api-key.cmd -Set` → `claude-api` の起動と `/status` を確認し、`claude` 単独は OAuth（Pro）、モデルは Sonnet 5.5（Opus と Haiku のピンは現状維持）に決まった。判断は `docs/decisions.md` の「Claude Code の API キー認証は…」。
 
 ### 2026-10-08（AI エージェントの導入を整理。Claude Code は公式インストーラに一本化）
 

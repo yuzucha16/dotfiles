@@ -36,7 +36,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - 確認済み（2026-10-08、ユーザーの実機の `/status`）: `claude-api` が起動し、`Auth token` と `API key` が `apiKeyHelper`、`Setting sources` が `User settings, Command line arguments`（`--settings` がユーザー設定に重なる）、モデルが `sonnet (claude-sonnet-5-5)`（ピン留めが効く）。起動時に `claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set` の警告が出る（API キー認証では claude.ai のアカウントに紐づく機能が使えないため。仕様どおり）。
 - 確認済み（2026-10-08、ユーザーの報告）: `claude` 単独は claude.ai の Pro プランの OAuth でログインできた。`GET /v1/models` の一覧に、ピン留めした `claude-sonnet-5-5` `claude-opus-5-5` `claude-haiku-4-5-20251001`（日付つきの ID）と `claude-haiku-5-5` がある。
 - 追記の決定（2026-10-08、ユーザーの決定）: 既定のモデルは、できるだけ安い Sonnet（`claude-sonnet-5-5`。入力 $2・出力 $10、100万トークンあたり）にする。却下案: Sonnet 5（同額だがキャッシュ読み出しが倍）、Sonnet 4.6（$3 / $15 で高い）、Opus / Fable（高額）。
-- 未確認: Opus と Haiku のピンの値は暫定（`claude-haiku-5-5` の方がより安い。思考を切れない点と合わせて、決めていない）。
+- 追記の決定（2026-10-08、ユーザーの決定）: Opus と Haiku のピンは今のまま（`claude-opus-5-5`、`claude-haiku-4-5`）。根拠: ユーザーが「今のままでOK」と指示した。却下案: Haiku を `claude-haiku-5-5` にする（より安いが、思考を切れず、1回の作業あたりの費用が未実測）。
 - 行き先: local（一般化できる部分は inbox `2026-10-08-claude-code-auth-providers.md`）
 
 ### 【この件】旧パス（`C:\vault\...`）の Claude Code のセッションを、`works` の構成に合わせて移行した（2026-10-07。ユーザーの決定と指示）
