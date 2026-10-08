@@ -116,13 +116,14 @@ dotfiles/
      非公開の場合は、`git clone` で GitHub のサインイン（Git Credential Manager。scoop の git に同梱）が開く（公開の場合は出ない）。zip での取得は使わない（`.git` が無く、あとで ghq の場所と食い違う）。すでに winget の git が入っているPCは、一度だけ `winget uninstall --id Git.Git -e` で消す
      Obsidian の Vault `$HOME\works`（`WORKS_DIR`）は、この PC だけのローカルなディレクトリ（ローカルのリポジトリ。remote なし、または非公開）で、clone しない。作り方は、共有リポジトリ `workbase` の `workflow-kit` を参照する。`.obsidian` は `30_link.bat` が、`windows\obsidian\.obsidian` から `WORKS_DIR` へジャンクションで張る（`WORKS_DIR` が無ければ作る）。共有リポジトリ `workbase` は、`50_repos.bat` が `WORKS_DIR\resources` に clone する（ghq の管理外）。Office のテンプレと UI 設定は自動では張らない。初回に `windows\office` から手で配置する（配置先は上の `windows/` の表）。
      Obsidian を最初に開く前に `30_link.bat` を実行する。先に Obsidian が実ディレクトリの `.obsidian` を作ると、`30_link.bat` が `[ERR]` で止まる（手で退避して再実行する）。
-1. `scripts\windows\10_env.bat`: `setx` で環境変数（`XDG_*`、`WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos`、`CERTS_DIR` など。`WORKS_DIR` と `CERTS_DIR` は `WSLENV` で WSL へ渡す）を設定し、ディレクトリを作る。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）
+1. `scripts\windows\10_env.bat`: `setx` で環境変数（`XDG_*`、`WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos`、`CERTS_DIR` など。`WORKS_DIR` と `CERTS_DIR` は `WSLENV` で WSL へ渡す）を設定し、ディレクトリを作る。`XDG_BIN_HOME=%USERPROFILE%\.local\bin`（Claude Code の置き場）も設定し、ユーザー PATH に `%XDG_BIN_HOME%` を1回だけ足す。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）
    - `scripts\windows\optional\capslock_to_ctrl.reg`（任意）: CapsLock を Ctrl にする。管理者権限が必要で、再起動後に有効。元に戻すときは `capslock_default.reg`
    - `scripts\windows\11_git_identity.bat`: `~\.gitconfig_local`（PC ごとの git の名前・メール）が無いときだけ、`user.name` / `user.email` を対話的に聞いて作る（`credential.helperselector.selected = manager` は `home\.gitconfig` に静的に持つので書かない。SSL バックエンドを schannel にするかも聞く: `y` で `http.sslBackend = schannel` と `http.sslVerify = true` を書き、`n`・空は何も書かず既定の OpenSSL のまま）。既にあれば触らない。**`30_link.bat` の前に**実行する（git が必要。手順 0 で入れた scoop の git でよい）。`git config --global` は使わない: リンク前は実ファイルの `~\.gitconfig` ができて `30_link.bat` が `[ERR]` になり、リンク後はリポジトリ内の `home\.gitconfig` を書き換えてしまうため。`~\.gitconfig` が `include` するので、読まれるのは `30_link.bat` の後。無効な入力は5回で `[ERR]`（入力が閉じていても無限ループしない）
 2. `scripts\windows\20_apps.bat [home]`: scoop と bucket を導入し、アプリを入れる（手順 0 で scoop を入れていれば、導入は skip する。git は先に入る）
    - PC1: `20_apps.bat`（`apps.txt` のみ）
    - PC2: `20_apps.bat home`（`apps.txt` + `apps.home.txt`）
    - Notepad++ の `config.xml` が無い/空のときだけ、`windows\notepadpp\config.min.xml`（タブ幅 2、新規文書 LF、折り返し、スナップショットバックアップ、ダークテーマ、自動更新オフなど）をコピーする。既にあれば触らない。リンクではないので、以後はアプリが自由に書き換える。最小構成を適用し直したいときは `config.xml` を削除（または空に）して再実行する
+   - `scripts\windows\23_claude.bat`（任意）: Claude Code を公式インストーラ（`irm https://claude.ai/install.ps1 | iex`）で入れる。実行前に `y/N` を聞き、空・`n` なら何も入れない（無効な入力は5回で `[ERR]`）。scoop の `claude-code` は使わない（`apps.txt` から削除）
    - `scripts\windows\24_fonts.bat`: PlemolJP NF（`manifests\fonts.txt`）の latest を `gh` で `%USERPROFILE%\download` へ取得する。インストールは手動（展開して .ttf を右クリック → 現在のユーザーにインストール）。`gh auth login` は不要。出力は `tmp\24_fonts.log`（Git 対象外、実行のたびに上書き）にも残り、最後に `pause` で止まる。ダウンロードが1件でも失敗したら終了コード 1
 3. `scripts\windows\30_link.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る（ファイルは symlink、ディレクトリは junction。既存のリンクは張り直す）
    - `unlink`: リンクだけ削除する。`-n`: ドライラン
