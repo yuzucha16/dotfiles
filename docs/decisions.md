@@ -27,6 +27,14 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Claude Code の起動時に、OAuth / API キー / Bedrock を選ぶ関数を足した（`claude-pick`、`claude-oauth`。2026-10-08。ユーザーの依頼）
+
+- 決めたこと: `profile.ps1` に、`claude-oauth`（OAuth で起動。`ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`、`CLAUDE_CODE_USE_BEDROCK` / `_MANTLE` / `_VERTEX` / `_FOUNDRY` を、その起動の間だけ外し、終了後に戻す）と、`claude-pick`（fzf で `oauth` / `api` / `bedrock` を選んで起動。`claude-pick api --resume` のようにモードを先頭に書けば選択を省く）を足した。切り替えは起動単位で、セッション中の切替は求めない。
+- 根拠: ユーザーが「OAuth か API キー・Bedrock かを、起動時に選べないか。同じセッションで切り替わる必要はなく、プロセスは落としてよい」と依頼した。認証の優先順位は固定（クラウド、`ANTHROPIC_AUTH_TOKEN`、`ANTHROPIC_API_KEY`、`apiKeyHelper`、OAuth の順）で、設定では OAuth を上げられないので、起動のしかたで選ぶ。関数名と、fzf を使う方式は AI の選択（既存の `zfz` / `cdg` と同じ流儀）。
+- 却下案: 設定で OAuth を優先させる（優先順位が固定で不可）。1つの `claude` を環境変数で分岐させる（環境に変数が残ったときに誤爆する）。
+- 確認済み（2026-10-08）: 試験14項目（`tests/windows/test_claude_launchers.ps1`。偽の `claude` と `fzf`）がすべて通る。`SetEnvironmentVariable($n, $null, 'Process')` は変数を消さず空文字列で残すので、`Remove-Item Env:` を使う（実機の PowerShell 7 で確認）。
+- 未確認: 実機で `claude-pick` の fzf の見え方と、`claude-oauth` で `/status` が OAuth になること。
+- 行き先: local
 ### 【この件】Claude Code の Bedrock 利用は、PC ごとに生成する設定ファイル + `claude-bedrock-setup` + 関数 `claude-bedrock` にする（2026-10-08。ユーザーの依頼）
 
 - 決めたこと: `windows/claude/claude-bedrock-setup.ps1`（`.cmd` は PATH 上の入口）が、AWS CLI でプロファイル・リージョン・Anthropic の推論プロファイルの一覧を取り、対話（または引数）で選んだ値から `%USERPROFILE%\.claude\bedrock.settings.json`（この PC 専用。追跡しない。秘密は含まない）を作る。起動は `profile.ps1` の関数 `claude-bedrock`（`claude --settings` でそのファイルを読む）。`claude` は OAuth のまま。
