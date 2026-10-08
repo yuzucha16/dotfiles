@@ -62,6 +62,14 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
+### 2026-10-08（AI エージェントの導入を整理。Claude Code は公式インストーラに一本化）
+
+- ユーザーの指示で、`manifests/apps.txt` から `claude` / `claude-code` / `chatgpt` を削除し、`claude` と `chatgpt` は `apps.home.txt` にコメントアウトで移した。`apt.txt` の `universal-ctags` / `global` / `gcc-arm-none-eabi` は `apt.desktop.txt` に移した。
+- `scripts/windows/23_claude.bat` を新設した。`y/N`（既定 N、無効な入力は5回で `[ERR]`）で聞き、`y` なら `irm https://claude.ai/install.ps1 | iex` を実行する。README の手順 2 に追記。
+- `10_env.bat` に、`XDG_BIN_HOME=%USERPROFILE%\.local\bin` の設定（`setx`、ディレクトリ作成）と、ユーザー PATH へ `%XDG_BIN_HOME%` を1回だけ足す処理を追加した（ユーザーの指示。当初は実パスを直接足していたが、他の `XDG_*` と同じ流儀に直した。実パスの既存エントリも「ある」と見なす。`setx` は 1024 文字で切れ、`%VAR%` を展開するため、レジストリの生の値を `ExpandString` で書き戻す）。
+- 確認: `tests/windows/test_20_apps.ps1` は failures=0。`23_claude.bat` は空入力と `n` が `[SKIP]` になることを実行して確認。`10_env.bat` の PATH 処理は、このPCで既に登録済みの `[SKIP]` 側だけ確認した。
+- 未確認: `y` で実際にインストーラを走らせた動作、PATH が無い PC での `[OK]` 側、`tests/linux/test_scripts.sh`（`apt.txt` 変更後）の再実行。scoop で `claude` / `claude-code` を入れ済みの PC は、手で `scoop uninstall` しないと二重になる。
+
 ### 2026-10-07（Claude Code と Zed のスレッドを、`works` の構成で復元した）
 
 - Vault を `C:\vault\works` から `C:\Users\ck\works` へ移したあと、`--resume` で復元できなかったセッション（ユニーク56本。ユーザーの記憶は58本）を、ユーザーの依頼で復元した。Zed のスレッドも開けるようにした。リポジトリのファイルは変えていない（変更先は `~\.claude` と Zed のデータ）。
