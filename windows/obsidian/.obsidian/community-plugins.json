@@ -1,5 +1,7 @@
 [
   "colored-tags",
   "realclaudian",
-  "html-viewer"
+  "html-viewer",
+  "xlsx-viewer",
+  "obsidian-excel-to-markdown-table"
 ]
