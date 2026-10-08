@@ -12,6 +12,7 @@
   body { background:var(--bg); color:var(--fg); font:16px/1.7 system-ui,"Yu Gothic UI","Meiryo",sans-serif; margin:0; }
   main { max-width:920px; margin:0 auto; padding:24px 20px 80px; }
   h1 { font-size:1.6rem; border-bottom:1px solid var(--line); padding-bottom:.4em; }
+  h3 { font-size:1.05rem; margin-top:1.6em; }
   h2 { font-size:1.25rem; margin-top:2.2em; border-bottom:1px solid var(--line); padding-bottom:.3em; }
   p, li { overflow-wrap:anywhere; }
   code { background:var(--code); padding:.15em .4em; border-radius:4px; font:0.9em ui-monospace,Consolas,monospace; }
@@ -36,7 +37,7 @@
 <main>
 
 <h1>Claude Code の API キー認証（個人用）</h1>
-<p><code>claude</code> は OAuth（サブスク）のまま、<code>claude-api</code> だけ Anthropic の Console API キー（従量課金）で起動する。判断の根拠は <code>docs/decisions.md</code> の「Claude Code の API キー認証は…」。</p>
+<p><code>claude</code> は OAuth（サブスク）のまま、<code>claude-api</code> だけ Anthropic の Console API キー（従量課金）で起動する。Amazon Bedrock 経由は <code>claude-bedrock</code>（下の「<a href="#bedrock">Bedrock 版</a>」）。判断の根拠は <code>docs/decisions.md</code> の「Claude Code の API キー認証は…」。</p>
 <p class="sub">この HTML は <code>README.md</code>（同じフォルダ）を写した派生物。内容を直すときは <code>README.md</code> を先に直し、こちらも合わせる。</p>
 
 <h2>早見表</h2>
@@ -44,6 +45,7 @@
   <tr><th>やりたいこと</th><th>コマンド</th></tr>
   <tr><td>OAuth で起動</td><td><code>claude</code></td></tr>
   <tr><td>API キーで起動</td><td><code>claude-api</code></td></tr>
+  <tr><td>Bedrock の設定を作る・起動</td><td><code>claude-bedrock-setup.cmd</code>、<code>claude-bedrock</code>（下の「<a href="#bedrock">Bedrock 版</a>」）</td></tr>
   <tr><td>認証・モデルの確認</td><td>起動後に <code>/status</code></td></tr>
   <tr><td>キーを保存・入れ替え</td><td><code>claude-api-key.cmd -Set</code></td></tr>
   <tr><td>モデル ID の一覧</td><td>下の「<a href="#models">モデル ID を取得する</a>」</td></tr>
@@ -185,7 +187,61 @@ $key = $null</code></pre>
   <li><strong>OAuth に戻したい</strong>: <code>claude</code> で起動する（何も戻す必要はない）。</li>
 </ul>
 
-<h2>うまくいかないとき</h2>
+<h2 id="bedrock">Bedrock 版（AWS 経由）</h2>
+<p><code>claude-api</code> と同じ形（<code>claude</code> は OAuth のまま、<code>claude-bedrock</code> だけ Bedrock 経由）。ただし、プロファイル名・リージョン・モデル ID は環境ごとに違う値なので、設定ファイルは<strong>この PC 専用に生成</strong>し、リポジトリには置かない（<code>%USERPROFILE%\.claude\bedrock.settings.json</code>。秘密は含まない）。</p>
+<table>
+  <tr><th>やりたいこと</th><th>コマンド</th></tr>
+  <tr><td>設定を作る（対話）</td><td><code>claude-bedrock-setup.cmd</code>（<code>-DryRun</code> で書かずに内容だけ表示）</td></tr>
+  <tr><td>Bedrock で起動</td><td><code>claude-bedrock</code></td></tr>
+  <tr><td>確認</td><td>起動後に <code>/status</code>（プロバイダが Amazon Bedrock、リージョン、モデル）</td></tr>
+</table>
+
+<h3>前提（AWS 側。1アカウントにつき1回）</h3>
+<ol>
+  <li>AWS CLI v2 を入れる（例: <code>winget install Amazon.AWSCLI</code>）。SSO なら <code>aws configure sso</code> でプロファイルを作る。</li>
+  <li>Bedrock のコンソールで、Anthropic のモデルの use case form を提出する（モデルアクセス）。Opus 5.5・Sonnet 5.5・Haiku 5.5 は、アカウントごとの利用可否を Model access で確認する。</li>
+  <li>IAM 権限: <code>bedrock:InvokeModel</code>、<code>bedrock:InvokeModelWithResponseStream</code>、<code>bedrock:ListInferenceProfiles</code>、<code>bedrock:GetInferenceProfile</code>（と Marketplace の購読権限）。</li>
+  <li>認証は IAM Identity Center（SSO）が推奨。アクセスキーや <code>AWS_BEARER_TOKEN_BEDROCK</code> は設定ファイルに書かない（プロファイルか環境変数で渡す）。</li>
+</ol>
+
+<h3>手順</h3>
+<ol class="steps">
+  <li>
+    <input type="checkbox" id="b1"> <label for="b1">SSO ならログインする</label>
+<pre><code>aws sso login --profile &lt;プロファイル&gt;</code></pre>
+    <div>未ログインでも、スクリプトで SSO を選んでいれば実行される。</div>
+  </li>
+  <li>
+    <input type="checkbox" id="b2"> <label for="b2">設定を作る</label>
+<pre><code>claude-bedrock-setup.cmd</code></pre>
+    <div>順に答える: AWS プロファイル → SSO を使うか → リージョン → 接頭辞 → 一覧から Opus / Sonnet / Haiku に割り当てる推論プロファイル → セッションの既定モデル（既定は <code>sonnet</code>）。一覧は <code>aws bedrock list-inference-profiles</code> の結果（Anthropic のものだけ）。</div>
+  </li>
+  <li>
+    <input type="checkbox" id="b3"> <label for="b3">起動して確認する</label>
+<pre><code>claude-bedrock</code></pre>
+    <div><code>/status</code> で、プロバイダ・リージョン・モデルを確認する。</div>
+  </li>
+</ol>
+<ul>
+  <li><strong>接頭辞</strong>: 空欄なら Claude Code が地域から自動で選ぶ（<code>ap-*</code> は <code>apac.</code>）。日本国内に閉じたいときは <code>jp</code>（東京 <code>ap-northeast-1</code>、大阪 <code>ap-northeast-3</code> が対応）。地域固定のエンドポイントは Global に対して +10%。</li>
+  <li><strong>非対話</strong>（引数で全部指定。<code>none</code> はピン留めしない）: <code>claude-bedrock-setup.cmd -AwsProfile &lt;名前&gt; -Region ap-northeast-1 -Prefix jp -OpusId &lt;ID&gt; -SonnetId &lt;ID&gt; -HaikuId &lt;ID&gt; -Sso -DryRun</code>。全部の ID を指定すれば、AWS CLI は要らない。</li>
+  <li>ピン留めは3つとも決めておく。ピン留めしないと、別名は Claude Code の組み込みの既定に解決される。Opus だけをピン留めすると、バックグラウンド処理にも Opus が使われうる。</li>
+  <li><code>CLAUDE_CODE_USE_BEDROCK</code> を共通の <code>settings.json</code> に入れない（常に Bedrock 優先になり、OAuth に戻れない）。</li>
+  <li>Bedrock では、WebSearch、fast mode、<code>/logout</code> は使えない。</li>
+  <li>管理設定（managed settings）が配られている環境では、それが最優先で、<code>--settings</code> の値より強い。</li>
+  <li>試験: <code>pwsh -NoProfile -File tests/windows/test_claude_bedrock_setup.ps1</code>（偽の <code>aws</code> で、一覧の絞り込み、設定の組み立て、非対話の実行を試験）。<strong>実際の AWS での実行は未検証</strong>（このスクリプトを書いた PC に AWS CLI が無かった）。</li>
+</ul>
+<table>
+  <tr><th>症状</th><th>確認すること</th></tr>
+  <tr><td><code>AWS CLI (aws) が見つかりません</code></td><td>AWS CLI を入れて新しいターミナルを開く。または全部の ID を引数で渡す</td></tr>
+  <tr><td><code>AWS に認証できません</code></td><td><code>aws sso login --profile &lt;名前&gt;</code>。SSO を使わないなら資格情報（プロファイル）を設定する</td></tr>
+  <tr><td><code>Anthropic の推論プロファイルがありません</code></td><td>リージョンが違う、またはモデルアクセスが未申請</td></tr>
+  <tr><td>起動時に <code>on-demand throughput isn't supported</code></td><td>ピン留めのモデルを、モデル ID ではなく推論プロファイル ID にする（一覧から選べば正しい）</td></tr>
+  <tr><td>起動時に別のモデルへ切り替わる</td><td>ピン留めしたモデルがアカウントで使えない。一覧から選び直す</td></tr>
+  <tr><td><code>claude-bedrock</code> が見つからない</td><td>新しいターミナルを開く。<code>profile.ps1</code> のリンクを確認する</td></tr>
+  <tr><td><code>/status</code> が Bedrock でない</td><td><code>bedrock.settings.json</code> の内容と、<code>ANTHROPIC_API_KEY</code> などの環境変数の残りを確認する</td></tr>
+</table>
+<h2>うまくいかないとき（API キー版）</h2>
 <table>
   <tr><th>症状</th><th>確認すること</th></tr>
   <tr><td><code>Your apiKeyHelper script is failing</code></td><td><code>claude-api-key.cmd</code> を直接実行する。<code>no key file</code> ならキー未保存（<code>-Set</code>）。10秒を超える場合は警告が出る</td></tr>
