@@ -3,7 +3,7 @@
   "autoPairMarkdown": false,
   "tabSize": 2,
   "newFileLocation": "current",
-  "attachmentFolderPath": "./",
+  "attachmentFolderPath": "./assets",
   "showIndentGuide": false,
   "promptDelete": true,
   "rightToLeft": false,
