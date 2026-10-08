@@ -47,6 +47,9 @@ if (Test-Path $caPath) {
   $env:NODE_EXTRA_CA_CERTS = $caPath
 }
 
+# Claude Code を API キー認証で起動する（`claude` は OAuth のまま）。設定は ~/.claude/api.settings.json
+function claude-api { claude --settings "$HOME\.claude\api.settings.json" @args }
+
 # Alias
 
 # ls を lsd に置き換え（bash/zsh の common.sh と同じ体系）

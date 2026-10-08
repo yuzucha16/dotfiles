@@ -24,6 +24,10 @@ windows\powershell\profile.ps1|%USERPROFILE%\Documents\PowerShell\profile.ps1
 
 # Claude Code (user settings: permission base)
 home\.claude\settings.json|%USERPROFILE%\.claude\settings.json
+# Claude Code (API key auth, launched by `claude-api`; the key itself is not tracked)
+windows\claude\api.settings.json|%USERPROFILE%\.claude\api.settings.json
+windows\claude\claude-api-key.ps1|%USERPROFILE%\.local\bin\claude-api-key.ps1
+windows\claude\claude-api-key.cmd|%USERPROFILE%\.local\bin\claude-api-key.cmd
 
 # draw.io / Zed
 windows\drawio\config.json|%APPDATA%\draw.io\config.json
