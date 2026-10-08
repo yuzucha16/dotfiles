@@ -42,10 +42,5 @@ rnr
 # automation
 autohotkey
 
-# ai
-claude
-claude-code
-chatgpt
-
 # media
 rufus
