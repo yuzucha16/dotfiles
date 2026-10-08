@@ -2,6 +2,9 @@
 # Same format as apt.txt.
 
 gparted
+universal-ctags
+global
+gcc-arm-none-eabi  # Cortex-M 向けのフットプリントと libc 非依存の実測（2026-10-06。約 490MB。推奨の newlib も入る）
 
 # candidates (currently unused)
 #gufw
