@@ -57,6 +57,37 @@ function claude-bedrock {
     claude --settings $f @args
 }
 
+# Claude Code を OAuth（サブスク）で起動する。OAuth より優先される環境変数（API キー、Bedrock などの切替）を、この起動の間だけ外す
+function claude-oauth {
+    $names = 'ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'CLAUDE_CODE_USE_BEDROCK', 'CLAUDE_CODE_USE_MANTLE', 'CLAUDE_CODE_USE_VERTEX', 'CLAUDE_CODE_USE_FOUNDRY'
+    $saved = @{}
+    foreach ($n in $names) {
+        $saved[$n] = [Environment]::GetEnvironmentVariable($n, 'Process')
+        Remove-Item "Env:$n" -ErrorAction SilentlyContinue   # SetEnvironmentVariable($null) は空文字列で残るので使わない
+    }
+    try { claude @args }
+    finally {
+        foreach ($n in $names) {
+            if ($null -ne $saved[$n]) { Set-Item "Env:$n" $saved[$n] } else { Remove-Item "Env:$n" -ErrorAction SilentlyContinue }
+        }
+    }
+}
+
+# 起動する認証を選ぶ: claude-pick（fzf で選ぶ）/ claude-pick oauth|api|bedrock。残りの引数は claude に渡す（例: claude-pick api --resume）
+function claude-pick {
+    $mode = $args[0]
+    $rest = @($args | Select-Object -Skip 1)
+    if ($mode -notin 'oauth', 'api', 'bedrock') {
+        $rest = @($args)
+        $mode = 'oauth', 'api', 'bedrock' | fzf --prompt='claude> ' --height=20% --reverse
+    }
+    switch ($mode) {
+        'oauth'   { claude-oauth @rest }
+        'api'     { claude-api @rest }
+        'bedrock' { claude-bedrock @rest }
+    }
+}
+
 # Alias
 
 # ls を lsd に置き換え（bash/zsh の common.sh と同じ体系）
