@@ -8,7 +8,8 @@
 
 | やりたいこと | コマンド |
 |---|---|
-| OAuth で起動 | `claude` |
+| OAuth で起動 | `claude`（API キーや Bedrock の環境変数が残っていても確実に OAuth にするなら `claude-oauth`） |
+| 起動する認証を選ぶ | `claude-pick`（fzf で選ぶ）、`claude-pick oauth` / `api` / `bedrock`（下の「起動する認証を選ぶ」） |
 | API キーで起動 | `claude-api` |
 | Bedrock の設定を作る・起動 | `claude-bedrock-setup.cmd`、`claude-bedrock`（下の「Bedrock 版」） |
 | 認証・モデルの確認 | 起動後に `/status` |
@@ -47,6 +48,25 @@ DPAPI（Windows のユーザーに紐づく暗号化）で `api-key.dpapi` に�
 | 1Password CLI（`op`） | PC 間で共有でき、最も堅牢 | アカウントと導入が要る（このPCには未導入） |
 | 環境変数に常設 | 簡単 | 平文になる。`claude` もキー認証になる |
 
+## 起動する認証を選ぶ
+
+認証の優先順位は固定（クラウドプロバイダ、`ANTHROPIC_AUTH_TOKEN`、`ANTHROPIC_API_KEY`、`apiKeyHelper`、OAuth の順）で、設定で OAuth を上げることはできない。そのため、**起動のたびに、どの認証で起動するかを選ぶ**。切り替えは起動単位で、動いているセッションの中では切り替えない（終了して選び直す。同じディレクトリなら `claude --resume` で続きを選べる）。
+
+| コマンド | 認証 |
+|---|---|
+| `claude-pick` | fzf で `oauth` / `api` / `bedrock` を選んで起動する。`claude-pick api --resume` のように、モードを先頭に書けば選択を省ける。モードを省いた引数（`claude-pick --resume`）は、選んだあとの `claude` に渡す |
+| `claude-oauth` | OAuth（サブスク）で起動する。`ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`、`CLAUDE_CODE_USE_BEDROCK`（と `_MANTLE` `_VERTEX` `_FOUNDRY`）が環境に残っていても、その起動の間だけ外す（終了後に元へ戻す） |
+| `claude` | 環境に上の変数が無ければ OAuth。残っていると、その認証になる |
+| `claude-api` / `claude-bedrock` | それぞれ API キー / Bedrock |
+
+- OAuth のログイン情報（`.credentials.json`）は、`claude-api` や `claude-bedrock` を使っても消えない。`claude-oauth` で戻れる。
+- `claude` なのに OAuth にならないときの診断（値は出さず、名前と長さだけ見る）:
+  ```powershell
+  Get-ChildItem Env: | Where-Object Name -match '^(ANTHROPIC_|CLAUDE_CODE_USE_|CLAUDE_CODE_OAUTH|AWS_BEARER)' | ForEach-Object { '{0} (length {1})' -f $_.Name, $_.Value.Length }
+  ```
+  設定側は、ユーザー設定とプロジェクト設定に `apiKeyHelper`、`ANTHROPIC_API_KEY`、`CLAUDE_CODE_USE_*` が無いかを見る。
+- 管理設定（managed settings）でプロバイダやログイン方式が固定されている環境では、選べないことがある（管理側の設定が最優先）。
+- 試験: `pwsh -NoProfile -File tests/windows/test_claude_launchers.ps1`（偽の `claude` と `fzf`。環境変数の退避と復元、引数の受け渡し、選択を試験する）。
 ## 初回の手順
 
 1. **キーを作る**: platform.claude.com の Console で、個人用の workspace を作り、その workspace で API キーを発行する（自動作成される「Claude Code」workspace ではキーを作れない）。
@@ -115,7 +135,7 @@ $key = $null
 - 他の PC: `git pull` → `30_link.bat` → `claude-api-key.cmd -Set`（暗号化ファイルは PC ごと）。
 - キーの入れ替え（ローテーション）: Console で新しいキーを作る → `claude-api-key.cmd -Set` で上書き → 古いキーを Console で削除する。
 - キーを無効にしたい: Console でキーを削除し、`%USERPROFILE%\.claude\api-key.dpapi` を削除する。
-- OAuth に戻したい: `claude` で起動する（何も戻す必要はない）。
+- OAuth に戻したい: 終了して `claude-oauth`（または `claude`）で起動し直す（何も戻す必要はない）。
 
 ## Bedrock 版（AWS 経由）
 

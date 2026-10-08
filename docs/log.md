@@ -64,6 +64,9 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
+### 2026-10-08（起動する認証を選ぶ関数を追加した）
+
+- ユーザーの依頼で、`profile.ps1` に `claude-oauth` と `claude-pick` を追加し、`tests/windows/test_claude_launchers.ps1`（14項目、すべて通る）と、手順書の「起動する認証を選ぶ」の節を足した。判断は `docs/decisions.md` の「Claude Code の起動時に、OAuth / API キー / Bedrock を選ぶ関数…」。実機で未確認: `claude-pick` の fzf、`claude-oauth` 後の `/status`。
 ### 2026-10-08（Claude Code の Bedrock 利用のセットアップを追加した）
 
 - ユーザーの依頼で、`windows/claude/` に `claude-bedrock-setup.ps1` / `.cmd` を追加し、`links.map` に2行、`profile.ps1` に関数 `claude-bedrock`、`tests/windows/test_claude_bedrock_setup.ps1`（24項目、すべて通る）を足した。手順書（`windows/claude/README.md` と `.html`）に「Bedrock 版」を追加した。実際の AWS での実行は未確認（`aws` 未導入の PC）。判断は `docs/decisions.md` の「Claude Code の Bedrock 利用は…」。

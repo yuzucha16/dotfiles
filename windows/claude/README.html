@@ -43,7 +43,8 @@
 <h2>早見表</h2>
 <table>
   <tr><th>やりたいこと</th><th>コマンド</th></tr>
-  <tr><td>OAuth で起動</td><td><code>claude</code></td></tr>
+  <tr><td>OAuth で起動</td><td><code>claude</code>（API キーや Bedrock の環境変数が残っていても確実に OAuth にするなら <code>claude-oauth</code>）</td></tr>
+  <tr><td>起動する認証を選ぶ</td><td><code>claude-pick</code>（fzf で選ぶ）、<code>claude-pick oauth</code> / <code>api</code> / <code>bedrock</code>（下の「<a href="#pick">起動する認証を選ぶ</a>」）</td></tr>
   <tr><td>API キーで起動</td><td><code>claude-api</code></td></tr>
   <tr><td>Bedrock の設定を作る・起動</td><td><code>claude-bedrock-setup.cmd</code>、<code>claude-bedrock</code>（下の「<a href="#bedrock">Bedrock 版</a>」）</td></tr>
   <tr><td>認証・モデルの確認</td><td>起動後に <code>/status</code></td></tr>
@@ -53,6 +54,23 @@
   <tr><td>費用の目安（セッション）</td><td><code>/usage</code></td></tr>
 </table>
 
+<h2 id="pick">起動する認証を選ぶ</h2>
+<p>認証の優先順位は固定（クラウドプロバイダ、<code>ANTHROPIC_AUTH_TOKEN</code>、<code>ANTHROPIC_API_KEY</code>、<code>apiKeyHelper</code>、OAuth の順）で、設定で OAuth を上げることはできない。そのため、<strong>起動のたびに、どの認証で起動するかを選ぶ</strong>。切り替えは起動単位で、動いているセッションの中では切り替えない（終了して選び直す。同じディレクトリなら <code>claude --resume</code> で続きを選べる）。</p>
+<table>
+  <tr><th>コマンド</th><th>認証</th></tr>
+  <tr><td><code>claude-pick</code></td><td>fzf で <code>oauth</code> / <code>api</code> / <code>bedrock</code> を選んで起動する。<code>claude-pick api --resume</code> のように、モードを先頭に書けば選択を省ける。モードを省いた引数（<code>claude-pick --resume</code>）は、選んだあとの <code>claude</code> に渡す</td></tr>
+  <tr><td><code>claude-oauth</code></td><td>OAuth（サブスク）で起動する。<code>ANTHROPIC_API_KEY</code>、<code>ANTHROPIC_AUTH_TOKEN</code>、<code>CLAUDE_CODE_USE_BEDROCK</code>（と <code>_MANTLE</code> <code>_VERTEX</code> <code>_FOUNDRY</code>）が環境に残っていても、その起動の間だけ外す（終了後に元へ戻す）</td></tr>
+  <tr><td><code>claude</code></td><td>環境に上の変数が無ければ OAuth。残っていると、その認証になる</td></tr>
+  <tr><td><code>claude-api</code> / <code>claude-bedrock</code></td><td>それぞれ API キー / Bedrock</td></tr>
+</table>
+<ul>
+  <li>OAuth のログイン情報（<code>.credentials.json</code>）は、<code>claude-api</code> や <code>claude-bedrock</code> を使っても消えない。<code>claude-oauth</code> で戻れる。</li>
+  <li><code>claude</code> なのに OAuth にならないときの診断（値は出さず、名前と長さだけ見る）:
+<pre><code>Get-ChildItem Env: | Where-Object Name -match '^(ANTHROPIC_|CLAUDE_CODE_USE_|CLAUDE_CODE_OAUTH|AWS_BEARER)' | ForEach-Object { '{0} (length {1})' -f $_.Name, $_.Value.Length }</code></pre>
+  設定側は、ユーザー設定とプロジェクト設定に <code>apiKeyHelper</code>、<code>ANTHROPIC_API_KEY</code>、<code>CLAUDE_CODE_USE_*</code> が無いかを見る。</li>
+  <li>管理設定（managed settings）でプロバイダやログイン方式が固定されている環境では、選べないことがある（管理側の設定が最優先）。</li>
+  <li>試験: <code>pwsh -NoProfile -File tests/windows/test_claude_launchers.ps1</code>（偽の <code>claude</code> と <code>fzf</code>。環境変数の退避と復元、引数の受け渡し、選択を試験する）。</li>
+</ul>
 <h2 id="steps">初回の手順（チェックしながら進める）</h2>
 <ol class="steps">
   <li>
@@ -184,7 +202,7 @@ $key = $null</code></pre>
   <li><strong>他の PC</strong>: <code>git pull</code> → <code>30_link.bat</code> → <code>claude-api-key.cmd -Set</code>（暗号化ファイルは PC ごと）。</li>
   <li><strong>キーの入れ替え（ローテーション）</strong>: Console で新しいキーを作る → <code>claude-api-key.cmd -Set</code> で上書き → 古いキーを Console で削除する。</li>
   <li><strong>キーを無効にしたい</strong>: Console でキーを削除し、<code>%USERPROFILE%\.claude\api-key.dpapi</code> を削除する。</li>
-  <li><strong>OAuth に戻したい</strong>: <code>claude</code> で起動する（何も戻す必要はない）。</li>
+  <li><strong>OAuth に戻したい</strong>: 終了して <code>claude-oauth</code>（または <code>claude</code>）で起動し直す（何も戻す必要はない）。</li>
 </ul>
 
 <h2 id="bedrock">Bedrock 版（AWS 経由）</h2>
