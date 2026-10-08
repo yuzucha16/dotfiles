@@ -27,6 +27,18 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Claude Code の API キー認証は、別の設定ファイル + 起動関数 `claude-api` で併用する（2026-10-08。ユーザーの決定）
+
+- 決めたこと: OAuth の `claude` は共通の `home/.claude/settings.json` のまま。API キー認証は `windows/claude/api.settings.json`（`apiKeyHelper` とモデルの環境変数）を、関数 `claude-api`（`profile.ps1`）が `claude --settings` で読む。キーは `apiKeyHelper` の `claude-api-key.cmd` が、DPAPI で暗号化したファイル（`%USERPROFILE%\.claude\api-key.dpapi`、リポジトリ外）から復号して返す。`.cmd` と `.ps1` は PATH 上の `%USERPROFILE%\.local\bin` にリンクする（設定の `apiKeyHelper` を、シェルとユーザー名に依存しない1語にするため）。
+- 根拠: `apiKeyHelper` は認証の優先順位が OAuth より上なので、共通の設定に書くと OAuth に戻れない。設定ファイルに `${VAR}` 展開の記載が無く、秘密は設定に置けない。DPAPI は追加のモジュールもパスワード入力も要らず、`apiKeyHelper`（非対話）から使える。
+- 却下案: `CLAUDE_CONFIG_DIR` で分ける（設定が二重管理になる）。共通 `settings.json` に `apiKeyHelper`（OAuth に戻れない）。SecretManagement + SecretStore（モジュールの導入が要り、既定の認証設定だとパスワードを聞かれて非対話で失敗しうる。仮説）。`ANTHROPIC_API_KEY` をユーザー環境変数に常設（`claude` も API キーになる）。
+- 確認済み（2026-10-08）: ダミーのキーで `.ps1` / `.cmd` が復号して返し、キーファイルが無いと終了コード1で止まる。
+- 確認済み（2026-10-08、ユーザーの実機の `/status`）: `claude-api` が起動し、`Auth token` と `API key` が `apiKeyHelper`、`Setting sources` が `User settings, Command line arguments`（`--settings` がユーザー設定に重なる）、モデルが `sonnet (claude-sonnet-5-5)`（ピン留めが効く）。起動時に `claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set` の警告が出る（API キー認証では claude.ai のアカウントに紐づく機能が使えないため。仕様どおり）。
+- 確認済み（2026-10-08、ユーザーの報告）: `claude` 単独は claude.ai の Pro プランの OAuth でログインできた。`GET /v1/models` の一覧に、ピン留めした `claude-sonnet-5-5` `claude-opus-5-5` `claude-haiku-4-5-20251001`（日付つきの ID）と `claude-haiku-5-5` がある。
+- 追記の決定（2026-10-08、ユーザーの決定）: 既定のモデルは、できるだけ安い Sonnet（`claude-sonnet-5-5`。入力 $2・出力 $10、100万トークンあたり）にする。却下案: Sonnet 5（同額だがキャッシュ読み出しが倍）、Sonnet 4.6（$3 / $15 で高い）、Opus / Fable（高額）。
+- 未確認: Opus と Haiku のピンの値は暫定（`claude-haiku-5-5` の方がより安い。思考を切れない点と合わせて、決めていない）。
+- 行き先: local（一般化できる部分は inbox `2026-10-08-claude-code-auth-providers.md`）
+
 ### 【この件】旧パス（`C:\vault\...`）の Claude Code のセッションを、`works` の構成に合わせて移行した（2026-10-07。ユーザーの決定と指示）
 
 - 決めたこと: jsonl の `cwd` を、現在の構成に対応するパスへ書き換えて、そのパスに対応する `~\.claude\projects\` のディレクトリに置いた（会話本文のパスは書き換えない）。対応表: `C:\vault\works` 配下 → `C:\Users\ck\works` 配下、`C:\vault\repos\...\dotfiles` → `C:\Users\ck\works\repos\github.com\yuzucha16\dotfiles`、旧 `notes` → `C:\Users\ck\works`、旧 `notes\.obsidian` → `...\dotfiles\windows\obsidian\.obsidian`（実体のパス）、旧 `notes\resources\exmem` と `areas_shared\exmem` と `cheatsheets` → `C:\Users\ck\works\resources\exmem`、`C:\vault_ee\...` は元のまま。あわせて `entrypoint` を `sdk-ts` から `cli` にした（`claude --resume` の一覧に出すため。1本で試してから全件）。Zed の `sidebar_threads` の `folder_paths` も、同じ `cwd` に更新した（Zed を終了して実行）。
