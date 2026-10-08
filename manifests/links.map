@@ -28,6 +28,9 @@ home\.claude\settings.json|%USERPROFILE%\.claude\settings.json
 windows\claude\api.settings.json|%USERPROFILE%\.claude\api.settings.json
 windows\claude\claude-api-key.ps1|%USERPROFILE%\.local\bin\claude-api-key.ps1
 windows\claude\claude-api-key.cmd|%USERPROFILE%\.local\bin\claude-api-key.cmd
+# Claude Code (Amazon Bedrock; the settings file itself is generated per PC by claude-bedrock-setup, not tracked)
+windows\claude\claude-bedrock-setup.ps1|%USERPROFILE%\.local\bin\claude-bedrock-setup.ps1
+windows\claude\claude-bedrock-setup.cmd|%USERPROFILE%\.local\bin\claude-bedrock-setup.cmd
 
 # draw.io / Zed
 windows\drawio\config.json|%APPDATA%\draw.io\config.json

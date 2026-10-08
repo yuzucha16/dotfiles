@@ -4,6 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- Claude Code の Bedrock 版（2026-10-08 時点）: AWS CLI を入れた PC で `30_link.bat` を再実行（`links.map` に2行追加）し、`claude-bedrock-setup.cmd` で一覧の取得と設定の生成、`claude-bedrock` の起動と `/status` を実機で確認する。`aws bedrock list-inference-profiles` の出力の形が想定と違えば、`Get-InferenceProfileIds` と試験の偽の `aws` を直す。
 - Claude Code の API キー認証（2026-10-08 時点）: `claude-api` の起動と `/status` は確認済み（`Auth token: apiKeyHelper`。claude.ai connectors の警告は仕様どおり）。`claude` 単独の OAuth ログイン（Pro）と `GET /v1/models` の取得も確認済みで、`model` は Sonnet 5.5 に決定。Opus と Haiku のピンも今のままで決定。他PCでは、キーを保存し直す（暗号化ファイルは PC ごと）。
 - Claude Code と Zed のスレッド復元（2026-10-07）の後始末: 数日使って問題が無ければ、バックアップ（`~\.claude\projects_backup_20261007`、`projects_backup_20261007b`、`~\.claude\zed-fix\zed-db-backup-*`）と、旧ディレクトリ `~\.claude\projects\C--vault-*` の重複を削除する。`.obsidian`（2本）、`vault_ee`（2本）、`exmem` に寄せた11本が実際に開けるかも確認する。Zed の Codex のスレッド（31件）が、旧パスで失敗するかを確認する。
 - `~\.claude\settings.json` の許可ルール `Bash(git -C * status *)` などが、`claude` の起動のたびに警告を出す（2026-10-07。`*` が `git -C` の直後にあるため）。`git -C <パス>` を許す形に直すかを、ユーザーに確認してから決める（dotfiles の `home/.claude/settings.json` がリンク元のはず。未確認）。
@@ -63,6 +64,9 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
+### 2026-10-08（Claude Code の Bedrock 利用のセットアップを追加した）
+
+- ユーザーの依頼で、`windows/claude/` に `claude-bedrock-setup.ps1` / `.cmd` を追加し、`links.map` に2行、`profile.ps1` に関数 `claude-bedrock`、`tests/windows/test_claude_bedrock_setup.ps1`（24項目、すべて通る）を足した。手順書（`windows/claude/README.md` と `.html`）に「Bedrock 版」を追加した。実際の AWS での実行は未確認（`aws` 未導入の PC）。判断は `docs/decisions.md` の「Claude Code の Bedrock 利用は…」。
 ### 2026-10-08（Claude Code の API キー認証を併用できるようにした）
 
 - ユーザーの指示で、`windows/claude/`（`api.settings.json`、`claude-api-key.ps1`、`claude-api-key.cmd`）を追加し、`links.map` に3行、`profile.ps1` に関数 `claude-api` を足した。ダミーのキーでヘルパーの復号と、キー無しのエラー終了を確認した。その後、ユーザーの実機で `30_link.bat` → `claude-api-key.cmd -Set` → `claude-api` の起動と `/status` を確認し、`claude` 単独は OAuth（Pro）、モデルは Sonnet 5.5（Opus と Haiku のピンは現状維持）に決まった。判断は `docs/decisions.md` の「Claude Code の API キー認証は…」。

@@ -1,6 +1,6 @@
 # Claude Code の API キー認証（個人用）
 
-`claude` は OAuth（サブスク）のまま、`claude-api` だけ Anthropic の Console API キー（従量課金）で起動する。判断の根拠は `docs/decisions.md` の「Claude Code の API キー認証は…」。
+`claude` は OAuth（サブスク）のまま、`claude-api` だけ Anthropic の Console API キー（従量課金）で起動する。Amazon Bedrock 経由は `claude-bedrock`（下の「Bedrock 版」）。判断の根拠は `docs/decisions.md` の「Claude Code の API キー認証は…」。
 
 ブラウザで見るときは `README.html`（この md を写した派生物。手順のチェックボックスとコピーボタンつき）。内容を直すときは、この md を先に直し、HTML も合わせる。
 
@@ -10,6 +10,7 @@
 |---|---|
 | OAuth で起動 | `claude` |
 | API キーで起動 | `claude-api` |
+| Bedrock の設定を作る・起動 | `claude-bedrock-setup.cmd`、`claude-bedrock`（下の「Bedrock 版」） |
 | 認証・モデルの確認 | 起動後に `/status` |
 | キーを保存・入れ替え | `claude-api-key.cmd -Set` |
 | モデル ID の一覧 | 下の「モデル ID を取得する」 |
@@ -116,7 +117,47 @@ $key = $null
 - キーを無効にしたい: Console でキーを削除し、`%USERPROFILE%\.claude\api-key.dpapi` を削除する。
 - OAuth に戻したい: `claude` で起動する（何も戻す必要はない）。
 
-## うまくいかないとき
+## Bedrock 版（AWS 経由）
+
+`claude-api` と同じ形（`claude` は OAuth のまま、`claude-bedrock` だけ Bedrock 経由）。ただし、プロファイル名・リージョン・モデル ID は環境ごとに違う値なので、設定ファイルは**この PC 専用に生成**し、リポジトリには置かない（`%USERPROFILE%\.claude\bedrock.settings.json`。秘密は含まない）。
+
+| やりたいこと | コマンド |
+|---|---|
+| 設定を作る（対話） | `claude-bedrock-setup.cmd`（`-DryRun` で書かずに内容だけ表示） |
+| Bedrock で起動 | `claude-bedrock` |
+| 確認 | 起動後に `/status`（プロバイダが Amazon Bedrock、リージョン、モデル） |
+
+### 前提（AWS 側。1アカウントにつき1回）
+
+1. AWS CLI v2 を入れる（例: `winget install Amazon.AWSCLI`）。SSO なら `aws configure sso` でプロファイルを作る。
+2. Bedrock のコンソールで、Anthropic のモデルの use case form を提出する（モデルアクセス）。Opus 5.5・Sonnet 5.5・Haiku 5.5 は、アカウントごとの利用可否を Model access で確認する。
+3. IAM 権限: `bedrock:InvokeModel`、`bedrock:InvokeModelWithResponseStream`、`bedrock:ListInferenceProfiles`、`bedrock:GetInferenceProfile`（と Marketplace の購読権限）。
+4. 認証は IAM Identity Center（SSO）が推奨。アクセスキーや `AWS_BEARER_TOKEN_BEDROCK` は設定ファイルに書かない（プロファイルか環境変数で渡す）。
+
+### 手順
+
+1. SSO なら `aws sso login --profile <プロファイル>`（未ログインでも、スクリプトが SSO を選んでいれば実行する）。
+2. `claude-bedrock-setup.cmd` を実行し、順に答える: AWS プロファイル → SSO を使うか → リージョン → 接頭辞 → 一覧から Opus / Sonnet / Haiku に割り当てる推論プロファイル → セッションの既定モデル（既定は `sonnet`）。一覧は `aws bedrock list-inference-profiles` の結果（Anthropic のものだけ）。
+3. `claude-bedrock` で起動し、`/status` で確認する。
+
+- **接頭辞**: 空欄なら Claude Code が地域から自動で選ぶ（`ap-*` は `apac.`）。日本国内に閉じたいときは `jp`（東京 `ap-northeast-1`、大阪 `ap-northeast-3` が対応）。地域固定のエンドポイントは Global に対して +10%。
+- **非対話**（引数で全部指定。`none` はピン留めしない）: `claude-bedrock-setup.cmd -AwsProfile <名前> -Region ap-northeast-1 -Prefix jp -OpusId <ID> -SonnetId <ID> -HaikuId <ID> -Sso -DryRun`。全部の ID を指定すれば、AWS CLI は要らない。
+- ピン留めは3つとも決めておく。ピン留めしないと、別名は Claude Code の組み込みの既定に解決される。Opus だけをピン留めすると、バックグラウンド処理にも Opus が使われうる。
+- `CLAUDE_CODE_USE_BEDROCK` を共通の `settings.json` に入れない（常に Bedrock 優先になり、OAuth に戻れない）。
+- Bedrock では、WebSearch、fast mode、`/logout` は使えない。
+- 管理設定（managed settings）が配られている環境では、それが最優先で、`--settings` の値より強い。
+- 試験: `pwsh -NoProfile -File tests/windows/test_claude_bedrock_setup.ps1`（偽の `aws` で、一覧の絞り込み、設定の組み立て、非対話の実行を試験）。**実際の AWS での実行は未検証**（このスクリプトを書いた PC に AWS CLI が無かった）。
+
+| 症状 | 確認すること |
+|---|---|
+| `AWS CLI (aws) が見つかりません` | AWS CLI を入れて新しいターミナルを開く。または全部の ID を引数で渡す |
+| `AWS に認証できません` | `aws sso login --profile <名前>`。SSO を使わないなら資格情報（プロファイル）を設定する |
+| `Anthropic の推論プロファイルがありません` | リージョンが違う、またはモデルアクセスが未申請 |
+| 起動時に `on-demand throughput isn't supported` | ピン留めのモデルを、モデル ID ではなく推論プロファイル ID にする（一覧から選べば正しい） |
+| 起動時に別のモデルへ切り替わる | ピン留めしたモデルがアカウントで使えない。一覧から選び直す |
+| `claude-bedrock` が見つからない | 新しいターミナルを開く。`profile.ps1` のリンクを確認する |
+| `/status` が Bedrock でない | `bedrock.settings.json` の内容と、`ANTHROPIC_API_KEY` などの環境変数の残りを確認する |
+## うまくいかないとき（API キー版）
 
 | 症状 | 確認すること |
 |---|---|

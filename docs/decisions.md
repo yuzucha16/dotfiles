@@ -27,6 +27,14 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Claude Code の Bedrock 利用は、PC ごとに生成する設定ファイル + `claude-bedrock-setup` + 関数 `claude-bedrock` にする（2026-10-08。ユーザーの依頼）
+
+- 決めたこと: `windows/claude/claude-bedrock-setup.ps1`（`.cmd` は PATH 上の入口）が、AWS CLI でプロファイル・リージョン・Anthropic の推論プロファイルの一覧を取り、対話（または引数）で選んだ値から `%USERPROFILE%\.claude\bedrock.settings.json`（この PC 専用。追跡しない。秘密は含まない）を作る。起動は `profile.ps1` の関数 `claude-bedrock`（`claude --settings` でそのファイルを読む）。`claude` は OAuth のまま。
+- 根拠: ユーザーが「同じ要領で aws bedrock の導入もスクリプトにして dotfiles に入れて」と依頼した（方式の細部は AI の選択）。プロファイル名・リージョン・推論プロファイル ID は環境ごとに違い、実値を共有されうるリポジトリに持たせたくないため、固定のファイルではなく生成にした。接頭辞とピン留めは、一覧から選ぶので ID の写し間違いが起きない。
+- 却下案: 固定のテンプレートを dotfiles に置く（実値が持てず、手で直す手間が残る）。公式の `/setup-bedrock` ウィザード（共通の `~/.claude/settings.json` に書き込むため、dotfiles のリンク先を書き換え、OAuth の `claude` まで Bedrock 優先にしてしまう。書き込み先は公式ドキュメントで確認済み）。
+- 確認済み（2026-10-08）: 試験 24項目（`tests/windows/test_claude_bedrock_setup.ps1`。偽の `aws`、非対話の実行、既存ファイルの拒否、`-DryRun`、不正な接頭辞の拒否、選択の入力）がすべて通る。
+- 未確認: 実際の AWS での通し実行（`aws bedrock list-inference-profiles` の出力の形は AWS の仕様からの想定、`aws sso login`、Claude Code の Bedrock 起動と `/status`）。`aws` が未導入の PC で書いたため。対話の入力（`Read-Host`）は、偽の入力で選択の関数だけ試験した。
+- 行き先: local
 ### 【この件】Claude Code の API キー認証は、別の設定ファイル + 起動関数 `claude-api` で併用する（2026-10-08。ユーザーの決定）
 
 - 決めたこと: OAuth の `claude` は共通の `home/.claude/settings.json` のまま。API キー認証は `windows/claude/api.settings.json`（`apiKeyHelper` とモデルの環境変数）を、関数 `claude-api`（`profile.ps1`）が `claude --settings` で読む。キーは `apiKeyHelper` の `claude-api-key.cmd` が、DPAPI で暗号化したファイル（`%USERPROFILE%\.claude\api-key.dpapi`、リポジトリ外）から復号して返す。`.cmd` と `.ps1` は PATH 上の `%USERPROFILE%\.local\bin` にリンクする（設定の `apiKeyHelper` を、シェルとユーザー名に依存しない1語にするため）。
