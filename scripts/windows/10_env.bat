@@ -65,4 +65,15 @@ echo GHQ_ROOT          =%GHQ_ROOT%
 echo CERTS_DIR          =%CERTS_DIR%
 echo WORKS_DIR          =%WORKS_DIR%
 
+REM Reminder, printed last so it is not missed (orange, ANSI 256-color 208; ESC is captured with prompt $E to keep the source ASCII).
+REM Nothing is checked or created: a proxy CA bundle is only needed on some networks, and is put there by hand when it is.
+for /F "delims=" %%E in ('echo prompt $E^| cmd') do set "ESC=%%E"
+echo.
+echo %ESC%[38;5;208m================================================================%ESC%[0m
+echo %ESC%[38;5;208m[ACTION NEEDED if your network uses a proxy CA]%ESC%[0m
+echo %ESC%[38;5;208m  Put the CA bundle here:  %CERTS_DIR%\ca_bundle.crt%ESC%[0m
+echo %ESC%[38;5;208m  (25_awscli / 26_uv / 27_volta read it. Not needed? Ignore this.)%ESC%[0m
+echo %ESC%[38;5;208m================================================================%ESC%[0m
+echo.
+
 pause

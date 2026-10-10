@@ -4,13 +4,15 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- AWS CLI・uv・Volta のインストーラ（2026-10-10 時点。コミット済みなら push 済みか確認）: 実機で `25_awscli.bat` `26_uv.bat` `27_volta.bat` を実行し、各 `--version`、`python --version`、`node` / `npm` / `npx` の版、PATH の再読込、`awscli.amazonaws.com/v2/install.ps1` の URL を確認する。`ca_bundle.crt` を `%USERPROFILE%\.certs` に置いた PC で `y` を試し、`setx` の値を確認する。Windows の `python` が Microsoft Store のスタブに先に当たらないかも見る。`10_env.bat` の最後の案内（オレンジ）の表示は未確認（実行すると `setx` が動く）。
+- 会社 PC で git の schannel を確認する（2026-10-10）: `git -c http.sslBackend=schannel ls-remote https://github.com/yuzucha16/dotfiles HEAD`。`CRYPT_E_NO_REVOCATION_CHECK` が出たら、`~\.gitconfig_local` の `[http]` に `schannelCheckRevoke = false` を足す。
 - Claude Code の Bedrock 版（2026-10-08 時点）: AWS CLI を入れた PC で `30_link.bat` を再実行（`links.map` に2行追加）し、`claude-bedrock-setup.cmd` で一覧の取得と設定の生成、`claude-bedrock` の起動と `/status` を実機で確認する。`aws bedrock list-inference-profiles` の出力の形が想定と違えば、`Get-InferenceProfileIds` と試験の偽の `aws` を直す。
 - Claude Code の API キー認証（2026-10-08 時点）: `claude-api` の起動と `/status` は確認済み（`Auth token: apiKeyHelper`。claude.ai connectors の警告は仕様どおり）。`claude` 単独の OAuth ログイン（Pro）と `GET /v1/models` の取得も確認済みで、`model` は Sonnet 5.5 に決定。Opus と Haiku のピンも今のままで決定。他PCでは、キーを保存し直す（暗号化ファイルは PC ごと）。
 - Claude Code と Zed のスレッド復元（2026-10-07）の後始末: 数日使って問題が無ければ、バックアップ（`~\.claude\projects_backup_20261007`、`projects_backup_20261007b`、`~\.claude\zed-fix\zed-db-backup-*`）と、旧ディレクトリ `~\.claude\projects\C--vault-*` の重複を削除する。`.obsidian`（2本）、`vault_ee`（2本）、`exmem` に寄せた11本が実際に開けるかも確認する。Zed の Codex のスレッド（31件）が、旧パスで失敗するかを確認する。
 - `~\.claude\settings.json` の許可ルール `Bash(git -C * status *)` などが、`claude` の起動のたびに警告を出す（2026-10-07。`*` が `git -C` の直後にあるため）。`git -C <パス>` を許す形に直すかを、ユーザーに確認してから決める（dotfiles の `home/.claude/settings.json` がリンク元のはず。未確認）。
 - Windows Terminal を再起動して、削除した古い WSL プロファイルが `settings.json` に書き戻されないか確認する（2026-10-07。書き戻されたら `git diff` に出る）。出ないなら、他PCで WSL を入れ直したときも同じ手当て（古い `commandline` 付きのエントリを消す）が要る。
 - 他PCでは `git pull` のあと、`.reg` / `.ahk`（`.gitattributes` の変更）と Terminal の `settings.json`（改行の正規化）の `git status` が clean か確認する（2026-10-07。作業ツリーが LF のまま残っていると差分に見える場合は、`git add --renormalize` か取り直しが要る）。
-- `10_env.bat` を再実行して、`%USERPROFILE%\.certs` ができること、`CERTS_DIR` と `WSLENV`（`CERTS_DIR/p` が1回だけ）が更新されることを確認する。新しいターミナルと新しい WSL セッション（`wsl --shutdown` のあと）で、`$CERTS_DIR` が `/mnt/c/Users/<名前>/.certs` になり、`company-ca.crt` があれば `NODE_EXTRA_CA_CERTS` が設定されることを確認する。旧 `works\areas\dev-env\certs`（空）は、確認後に削除する（2026-10-06 時点）。
+- `10_env.bat` を再実行して、`%USERPROFILE%\.certs` ができること、`CERTS_DIR` と `WSLENV`（`CERTS_DIR/p` が1回だけ）が更新されることを確認する。新しいターミナルと新しい WSL セッション（`wsl --shutdown` のあと）で、`$CERTS_DIR` が `/mnt/c/Users/<名前>/.certs` になり、`ca_bundle.crt`（旧 `company-ca.crt`）があれば `NODE_EXTRA_CA_CERTS` が設定されることを確認する。旧 `works\areas\dev-env\certs`（空）は、確認後に削除する（2026-10-06 時点）。
 - 履歴の種の `git config --global user.name` / `user.email`（`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` の各2行）を見直す。`~/.gitconfig` は `30_link` が張る symlink なので、リンク後に実行すると、リポジトリ内の `home/.gitconfig` が書き換わる。種の正本は exmem の `knowledge/shell-command-usecases.md` で、種ファイルは派生物なので、直すのは正本の統合のあと（種を直接編集しない。2026-10-06 時点）。
 - VC++ ランタイムの `[WARN]`（ランタイムが無いとき）の表示を確認する。新アカウントでは `[Installed]` 側しか出ず、`[WARN]` 側は実機で未確認（2026-10-06 時点。ランタイムが無い環境でだけ出る。判断基準は `docs/decisions.md` の「vcredist2022 は自動導入せず…」）。
 - Zed の最適化（2026-10-04）の後始末: Zed を再起動して、テーマ・Ctrl+Enter 送信・右のプロジェクトパネル・Markdown の見え方を確認する。Vim オフの試験は 2026-10-11 頃に続けるか判断する（戻し方は `settings.json` のコメント）。他のPCでは `30_link.bat` の前に、空の `%APPDATA%\zed\themes` を削除する。WSL で点滅を止めるのは `.bashrc` / `.zshrc`（反映は新しいシェルで確認）。OS 全体の点滅停止（`CursorBlinkRate=-1`）は必要なら検討する。
@@ -63,6 +65,19 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-10（CA ファイル名を `ca_bundle.crt` に変更。git は schannel のまま）
+
+- ユーザーの指示で、`company-ca.crt` を `ca_bundle.crt` に改名した（スクリプト、`common.sh`、README、試験。日付つきの過去の記録は書き換えていない）。実機の `%USERPROFILE%\.certs` は空だったので、ファイルの改名は無し。
+- git の CA は、いったん `GIT_SSL_CAINFO` にしかけたが、バンドルの完全性を保証できず（git の既定の CA を置き換えるため）、ユーザーの決定で取りやめた。`12_git_ca.bat` は作って削除した。`11_git_identity.bat` の schannel の質問は元のまま（変更なし）。判断は `docs/decisions.md` の schannel の項。
+- 未確認: プロキシ下の schannel の失効確認（会社 PC で `git -c http.sslBackend=schannel ls-remote https://github.com/yuzucha16/dotfiles HEAD`）。
+### 2026-10-10（AWS CLI・uv・Volta のインストーラを追加した）
+
+- ユーザーの依頼で、`scripts/windows/` に `25_awscli.bat`（`y/N` で確認、入れたら `AWS_CA_BUNDLE`）、`26_uv.bat`（確認なし、`uv python install 3.13 --default` と `pin --global 3.13`、`python --version` を表示、先に SSL の `y/N`）、`27_volta.bat`（scoop、`volta install node@lts`、`node` `npm` `npx` の版を表示、先に SSL の `y/N`）を追加した。`10_env.bat` の最後に、CA バンドルを `%CERTS_DIR%` へ置く案内（オレンジ、英語）を足した。`profile.ps1` の `NODE_EXTRA_CA_CERTS` は削除し、`27_volta.bat` の `setx` に一本化した（ユーザーの決定。WSL の `common.sh` は残す）。
+- 決まったこと（ユーザーの承認）: LTS は `node@lts`。インストール直後は絶対パスを使わず、レジストリから PATH を読み直す。CA ファイルが無いときは `y` でも設定しない（`SSL_CERT_FILE` などは存在しないファイルだと HTTPS が全滅するため）。
+- 確認: `tests/windows/test_25_27_installers.ps1`（31項目）と `test_20_apps.ps1` が failures=0（偽の `setx` / インストーラ / `uv` / `volta` を使用。実環境の環境変数は不変）。`uv 0.11.32` に `python install --default` と `python pin --global` があることは実機で確認、`scoop` の `volta` は main バケット（2.0.2）にあることを確認。
+- 未確認: 実際に各インストーラを走らせた動作（`awscli.amazonaws.com/v2/install.ps1` の URL はユーザー指定のまま未検証）、会社プロキシ下での動作、レジストリからの PATH 再読込（実機）、Volta の開発者モード、`10_env.bat` のオレンジ表示（実行すると `setx` が動くため未実行）。Windows の `python` が Microsoft Store のスタブに先に当たらないか。
+- 落とし穴: `Write` で作った `.bat` は LF になり、ラベル（`:ASKYN`）が見つからなくなった。CRLF にして解消（`.gitattributes` は crlf）。偽の `.cmd` を試験で呼ぶには `call` が要る。
 
 ### 2026-10-08（起動する認証を選ぶ関数を追加した）
 

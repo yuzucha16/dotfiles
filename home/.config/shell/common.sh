@@ -98,11 +98,11 @@ fi
 # $CERTS_DIR (Windows 側の %CERTS_DIR% = %USERPROFILE%\.certs は、WSLENV の /p で WSL のパスに変換されて渡る)。
 # 未設定 (ネイティブ Linux など) は ~/.certs
 ##########
-_company_ca="${CERTS_DIR:-$HOME/.certs}/company-ca.crt"
-if [ -f "$_company_ca" ]; then
-  export NODE_EXTRA_CA_CERTS="$_company_ca"
+_ca_bundle="${CERTS_DIR:-$HOME/.certs}/ca_bundle.crt"
+if [ -f "$_ca_bundle" ]; then
+  export NODE_EXTRA_CA_CERTS="$_ca_bundle"
 fi
-unset _company_ca
+unset _ca_bundle
 
 ##########
 # Editor
