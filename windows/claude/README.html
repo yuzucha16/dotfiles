@@ -171,6 +171,7 @@ $key = $null</code></pre>
   <tr><th>ファイル</th><th>役割</th></tr>
   <tr><td><code>api.settings.json</code></td><td><code>apiKeyHelper</code>（キーの取得コマンド）とモデルの環境変数。<code>%USERPROFILE%\.claude\</code> にリンクされる</td></tr>
   <tr><td><code>claude-api-key.ps1</code> / <code>.cmd</code></td><td>暗号化したキーを復号して標準出力に返す。<code>%USERPROFILE%\.local\bin</code>（PATH 上）にリンクされる</td></tr>
+  <tr><td><code>claude-acp-api.ps1</code> / <code>.cmd</code></td><td>Zed の agent「Claude API」の起動用。キーを復号して <code>ANTHROPIC_API_KEY</code> に入れ、<code>claude-agent-acp</code> を起動する。空なら止める。同じく <code>.local\bin</code> にリンクされる。Zed の <code>args</code> に PowerShell のコードを直書きすると変数が空になるので、スクリプトに分けている</td></tr>
   <tr><td><code>windows/powershell/profile.ps1</code> の関数 <code>claude-api</code></td><td><code>claude --settings "$HOME\.claude\api.settings.json"</code> を実行する</td></tr>
   <tr><td><code>%USERPROFILE%\.claude\api-key.dpapi</code></td><td>暗号化したキー本体。<strong>リポジトリの外。追跡しない</strong></td></tr>
 </table>
