@@ -95,6 +95,32 @@ Check 'volta y, no CA file: [SKIP], no setx'          (($r.Out -match '\[SKIP\] 
 $r = Run-Case '27_volta.bat' @('x', 'x', 'x', 'x', 'x')
 Check 'volta invalid x5: [ERR], exit 1, nothing run'  (($r.Rc -eq 1) -and ($r.Calls -notmatch 'scoop install'))
 
+# ---------- pause と [ENV] ログ（全経路で pause して終わる） ----------
+$r = Run-Case '25_awscli.bat' @('y')
+Check 'aws y: [ENV] shows AWS_CA_BUNDLE value, then pause' (($r.Out -match 'AWS_CA_BUNDLE\s+=.*ca_bundle\.crt') -and ($r.Out -match 'Press any key'))
+$r = Run-Case '25_awscli.bat' @('y') $false
+Check 'aws no CA: [ENV] says [not set]'               ($r.Out -match 'AWS_CA_BUNDLE\s+=\[not set\]')
+$r = Run-Case '25_awscli.bat' @('n')
+Check 'aws n: SKIP with reason, pause'                (($r.Out -match '\[SKIP\] AWS CLI not installed \(answered n\)') -and ($r.Out -match 'Press any key'))
+$r = Run-Case '25_awscli.bat' @('y') $true $false $true
+Check 'aws installer fails: pause, exit 1'            (($r.Out -match 'Press any key') -and ($r.Rc -eq 1))
+$r = Run-Case '25_awscli.bat' @('x', 'x', 'x', 'x', 'x')
+Check 'aws invalid x5: pause, exit 1'                 (($r.Out -match 'Press any key') -and ($r.Rc -eq 1))
+$r = Run-Case '26_uv.bat' @('y')
+Check 'uv y: [ENV] shows both values, then pause'     (($r.Out -match 'UV_SYSTEM_CERTS\s+=true') -and ($r.Out -match 'SSL_CERT_FILE\s+=.*ca_bundle\.crt') -and ($r.Out -match 'Press any key'))
+$r = Run-Case '26_uv.bat' @('n')
+Check 'uv n: SKIP with reason, [ENV] not set, pause'  (($r.Out -match '\[SKIP\] SSL bundle not set \(answered n\)') -and ($r.Out -match 'UV_SYSTEM_CERTS\s+=\[not set\]') -and ($r.Out -match 'Press any key'))
+$r = Run-Case '26_uv.bat' @('n') $true $false $true
+Check 'uv installer fails: pause, exit 1'             (($r.Out -match 'Press any key') -and ($r.Rc -eq 1))
+$r = Run-Case '26_uv.bat' @('x', 'x', 'x', 'x', 'x')
+Check 'uv invalid x5: pause, exit 1'                  (($r.Out -match 'Press any key') -and ($r.Rc -eq 1))
+$r = Run-Case '27_volta.bat' @('y')
+Check 'volta y: [ENV] shows NODE_EXTRA_CA_CERTS, then pause' (($r.Out -match 'NODE_EXTRA_CA_CERTS=.*ca_bundle\.crt') -and ($r.Out -match 'Press any key'))
+$r = Run-Case '27_volta.bat' @('n')
+Check 'volta n: SKIP with reason, [ENV] not set, pause' (($r.Out -match '\[SKIP\] SSL bundle not set \(answered n\)') -and ($r.Out -match 'NODE_EXTRA_CA_CERTS=\[not set\]') -and ($r.Out -match 'Press any key'))
+$r = Run-Case '27_volta.bat' @('x', 'x', 'x', 'x', 'x')
+Check 'volta invalid x5: pause, exit 1'               (($r.Out -match 'Press any key') -and ($r.Rc -eq 1))
+
 # ---------- 共通の点検 ----------
 $p = Get-Content (Join-Path $repo 'windows\powershell\profile.ps1') -Raw
 Check 'profile.ps1 no longer sets NODE_EXTRA_CA_CERTS' ($p -notmatch 'env:NODE_EXTRA_CA_CERTS\s*=')

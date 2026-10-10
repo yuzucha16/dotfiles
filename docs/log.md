@@ -66,6 +66,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
+### 2026-10-10（25〜27 の出力を改善: pause、理由つき SKIP、[ENV] 表示）
+
+- ユーザーの指示で、`25_awscli.bat` `26_uv.bat` `27_volta.bat` を直した。(1) どの終了経路でも `pause` で止まる（終了を `:END` に集約し、`pause` の後に終了コードを返す）。(2) SSL バンドルを設定しない理由を `[SKIP]` で出す（`n` と答えた場合を追加。`CERTS_DIR` 未設定と `ca_bundle.crt` 無しは従来どおり、`AWS_CA_BUNDLE not set` を明記）。(3) 最後に `[ENV]` で、設定した環境変数の名前と値を表示（未設定は `[not set]`。Volta は `VOLTA_HOME` も表示）。試験 `tests/windows/test_25_27_installers.ps1` に pause・SKIP・`[ENV]` の確認を足し、全件 PASS（実機の `setx` は未実行）。3つの方針は exmem の inbox にメモ化した。
+
 ### 2026-10-10（CA ファイル名を `ca_bundle.crt` に変更。git は schannel のまま）
 
 - ユーザーの指示で、`company-ca.crt` を `ca_bundle.crt` に改名した（スクリプト、`common.sh`、README、試験。日付つきの過去の記録は書き換えていない）。実機の `%USERPROFILE%\.certs` は空だったので、ファイルの改名は無し。

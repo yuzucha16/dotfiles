@@ -21,12 +21,20 @@ if not defined SETX_EXE set "SETX_EXE=setx"
 set "PY_VER=3.13"
 
 REM --- SSL bundle question (before installing, so the installer and the Python download use it)
+set "RC=0"
+set "SHOW_UV_SYSTEM_CERTS="
+set "SHOW_SSL_CERT_FILE="
+
 call :ASKYN "Set the SSL bundle for uv (UV_SYSTEM_CERTS, SSL_CERT_FILE)?"
 if errorlevel 2 (
   echo [ERR] invalid answer 5 times. Nothing installed.
-  endlocal & exit /b 1
+  set "RC=1"
+  goto :END
 )
-if errorlevel 1 goto :INSTALL
+if errorlevel 1 (
+  echo [SKIP] SSL bundle not set ^(answered n^). Run this script again and answer y to set it.
+  goto :INSTALL
+)
 
 set "CA_FILE=%CERTS_DIR%\ca_bundle.crt"
 if not defined CERTS_DIR (
@@ -41,13 +49,16 @@ call "%SETX_EXE%" UV_SYSTEM_CERTS true >nul
 call "%SETX_EXE%" SSL_CERT_FILE "%CA_FILE%" >nul
 set "UV_SYSTEM_CERTS=true"
 set "SSL_CERT_FILE=%CA_FILE%"
-echo [OK] UV_SYSTEM_CERTS=true  SSL_CERT_FILE=%CA_FILE%
+set "SHOW_UV_SYSTEM_CERTS=true"
+set "SHOW_SSL_CERT_FILE=%CA_FILE%"
+echo [OK] UV_SYSTEM_CERTS and SSL_CERT_FILE set.
 
 :INSTALL
 call "%PS_EXE%" -NoProfile -ExecutionPolicy Bypass -Command "irm https://astral.sh/uv/install.ps1 | iex"
 if errorlevel 1 (
   echo [ERR] uv installer failed.
-  endlocal & exit /b 1
+  set "RC=1"
+  goto :END
 )
 
 REM Reload PATH from the registry (this run does not see what the installer just added). Current entries stay first.
@@ -56,25 +67,37 @@ where uv >nul 2>&1
 if errorlevel 1 (
   echo [WARN] uv not found on PATH yet. Open a NEW terminal and run:
   echo        uv python install %PY_VER% --default ^&^& uv python pin --global %PY_VER% ^&^& python --version
-  endlocal & exit /b 0
+  goto :END
 )
 
 call uv --version
 call uv python install %PY_VER% --default
 if errorlevel 1 (
   echo [ERR] uv python install failed.
-  endlocal & exit /b 1
+  set "RC=1"
+  goto :END
 )
 call uv python pin --global %PY_VER%
 if errorlevel 1 (
   echo [ERR] uv python pin --global failed.
-  endlocal & exit /b 1
+  set "RC=1"
+  goto :END
 )
 echo.
 echo [VERSION]
 call python --version
 if errorlevel 1 echo [WARN] python not found on PATH yet. Open a NEW terminal and run: python --version
-endlocal & exit /b 0
+
+:END
+echo.
+echo [ENV] set by this script ^(User scope, effective in a NEW terminal^)
+if defined SHOW_UV_SYSTEM_CERTS echo UV_SYSTEM_CERTS    =%SHOW_UV_SYSTEM_CERTS%
+if not defined SHOW_UV_SYSTEM_CERTS echo UV_SYSTEM_CERTS    =[not set]
+if defined SHOW_SSL_CERT_FILE echo SSL_CERT_FILE      =%SHOW_SSL_CERT_FILE%
+if not defined SHOW_SSL_CERT_FILE echo SSL_CERT_FILE      =[not set]
+echo.
+pause
+endlocal & exit /b %RC%
 
 :REFRESH_PATH
 for /f "usebackq delims=" %%P in (`%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -Command "$env:Path, [Environment]::GetEnvironmentVariable('Path','User'), [Environment]::GetEnvironmentVariable('Path','Machine') -join ';'"`) do set "PATH=%%P"

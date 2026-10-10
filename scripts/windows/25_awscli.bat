@@ -15,27 +15,32 @@ REM ======================================================
 if not defined PS_EXE set "PS_EXE=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
 if not defined SETX_EXE set "SETX_EXE=setx"
 
+set "RC=0"
+set "SHOW_AWS_CA_BUNDLE="
+
 call :ASKYN "Install AWS CLI v2 with the official installer?"
 if errorlevel 2 (
   echo [ERR] invalid answer 5 times. Nothing installed.
-  endlocal & exit /b 1
+  set "RC=1"
+  goto :END
 )
 if errorlevel 1 (
-  echo [SKIP] AWS CLI not installed.
-  endlocal & exit /b 0
+  echo [SKIP] AWS CLI not installed ^(answered n^). AWS_CA_BUNDLE not set.
+  goto :END
 )
 
 call "%PS_EXE%" -NoProfile -ExecutionPolicy Bypass -Command "irm https://awscli.amazonaws.com/v2/install.ps1 | iex"
 if errorlevel 1 (
-  echo [ERR] installer failed.
-  endlocal & exit /b 1
+  echo [ERR] installer failed. AWS_CA_BUNDLE not set.
+  set "RC=1"
+  goto :END
 )
 echo [OK] AWS CLI installed.
 
 REM SSL bundle (no question: it follows the install). Skipped when the file does not exist.
 set "CA_FILE=%CERTS_DIR%\ca_bundle.crt"
 if not defined CERTS_DIR (
-  echo [SKIP] CERTS_DIR is not set. Run 10_env.bat and open a new terminal, then set AWS_CA_BUNDLE by hand.
+  echo [SKIP] CERTS_DIR is not set. AWS_CA_BUNDLE not set. Run 10_env.bat, open a new terminal and run this script again.
   goto :DONE
 )
 if not exist "%CA_FILE%" (
@@ -43,11 +48,20 @@ if not exist "%CA_FILE%" (
   goto :DONE
 )
 call "%SETX_EXE%" AWS_CA_BUNDLE "%CA_FILE%" >nul
-echo [OK] AWS_CA_BUNDLE=%CA_FILE%
+set "SHOW_AWS_CA_BUNDLE=%CA_FILE%"
+echo [OK] AWS_CA_BUNDLE set.
 
 :DONE
 echo Open a NEW terminal, then check:  aws --version
-endlocal & exit /b 0
+
+:END
+echo.
+echo [ENV] set by this script ^(User scope, effective in a NEW terminal^)
+if defined SHOW_AWS_CA_BUNDLE echo AWS_CA_BUNDLE      =%SHOW_AWS_CA_BUNDLE%
+if not defined SHOW_AWS_CA_BUNDLE echo AWS_CA_BUNDLE      =[not set]
+echo.
+pause
+endlocal & exit /b %RC%
 
 REM :ASKYN "prompt"   exit 0 = yes, 1 = no (n or empty), 2 = invalid 5 times
 :ASKYN
