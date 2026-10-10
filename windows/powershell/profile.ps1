@@ -106,6 +106,9 @@ function l3 { ls --tree --depth 3 @args }
 function .. { Set-Location .. }
 function ... { Set-Location ..\.. }
 function b { Set-Location - }
+function wk { Set-Location $env:WORKS_DIR }
+function dof { Set-Location "$HOME\works\repos\github.com\yuzucha16\dotfiles" }
+function ~ { Set-Location $HOME }
 
 Set-Alias pd Push-Location
 Set-Alias po Pop-Location
