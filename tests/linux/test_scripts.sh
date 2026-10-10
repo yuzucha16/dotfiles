@@ -24,7 +24,7 @@ LINK="$DOTS/scripts/linux/30_link.sh"
 REPOS="$DOTS/scripts/linux/50_repos.sh"
 
 echo "== syntax / line endings"
-for f in lib.sh 11_git_identity.sh 24_fonts.sh 30_link.sh 50_repos.sh; do
+for f in lib.sh 11_git_identity.sh 24_fonts.sh 25_arm_gcc.sh 30_link.sh 50_repos.sh; do
   check "bash -n $f" 'bash -n "$DOTS/scripts/linux/$f"'
 done
 check "sh -n .profile (POSIX sh: $(readlink -f /bin/sh))" '/bin/sh -n "$DOTS/home/.profile"'
@@ -176,6 +176,37 @@ check "first fails: continues with the second, [ERROR], rc=1, no 'Downloaded to'
 mkdir -p "$T/bin3"; ln -sf "$(command -v dirname)" "$T/bin3/dirname"   # the script needs dirname (lib.sh), but not gh
 out=$(HOME="$T/hf" PATH="$T/bin3" GH_LOG="$GHL" /bin/bash "$FT/scripts/linux/24_fonts.sh" 2>&1); rc=$?
 check "no gh: [ERR] (rc=1)" '[[ $rc -eq 1 && "$out" == *"gh not found"* ]]'
+
+echo "== 25_arm_gcc.sh (fake sudo / apt, input from stdin)"
+AG="$DOTS/scripts/linux/25_arm_gcc.sh"
+mkdir -p "$T/bin4"
+printf '#!/bin/sh\necho "sudo-stub $*" >> "$SUDO_LOG"\nexit 0\n' > "$T/bin4/sudo"; chmod +x "$T/bin4/sudo"
+SL="$T/sudo.log"; : > "$SL"
+# Minimal PATH (fake sudo + head only), so a real arm-none-eabi-gcc on this machine is never seen
+ln -sf "$(command -v head)" "$T/bin4/head"
+CLEAN_PATH="$T/bin4"
+ag() { # usage: ag <stdin-text>; prints output, returns the script's rc
+  printf '%b' "$1" | PATH="$CLEAN_PATH" SUDO_LOG="$SL" /bin/bash "$AG" 2>&1
+}
+if true; then
+  out=$(ag 'y\n'); rc=$?
+  check "y: apt install runs (fake sudo), rc=0" '[[ $rc -eq 0 && "$(grep -c "install -y gcc-arm-none-eabi" "$SL")" == 1 ]]'
+  : > "$SL"
+  out=$(ag '\n'); rc=$?
+  check "empty: [SKIP], no install" '[[ $rc -eq 0 && "$out" == *"[SKIP]"* && ! -s "$SL" ]]'
+  out=$(ag 'n\n'); rc=$?
+  check "n: [SKIP], no install" '[[ $rc -eq 0 && "$out" == *"[SKIP]"* && ! -s "$SL" ]]'
+  out=$(PATH="$CLEAN_PATH" SUDO_LOG="$SL" /bin/bash "$AG" 2>&1 </dev/null); rc=$?
+  check "closed stdin: [SKIP], no install" '[[ $rc -eq 0 && "$out" == *"[SKIP]"* && ! -s "$SL" ]]'
+  out=$(ag 'x\nx\nx\nx\nx\n'); rc=$?
+  check "5 invalid answers: [ERR] (rc=1), no install" '[[ $rc -eq 1 && "$out" == *"no valid input after 5 tries"* && ! -s "$SL" ]]'
+  out=$(ag 'x\ny\n'); rc=$?
+  check "invalid then y: warns and installs" '[[ $rc -eq 0 && "$out" == *"[WARN]"* && "$(grep -c "install -y gcc-arm-none-eabi" "$SL")" == 1 ]]'
+fi
+printf '#!/bin/sh\necho "arm-none-eabi-gcc (stub) 1.0"\n' > "$T/bin4/arm-none-eabi-gcc"; chmod +x "$T/bin4/arm-none-eabi-gcc"
+: > "$SL"
+out=$(ag 'y\n'); rc=$?
+check "already installed: [SKIP], no prompt, no install" '[[ $rc -eq 0 && "$out" == *"[SKIP] already installed"* && ! -s "$SL" ]]'
 
 echo
 cd / || exit 1

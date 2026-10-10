@@ -4,7 +4,7 @@
 gparted
 universal-ctags
 global
-gcc-arm-none-eabi  # Cortex-M 向けのフットプリントと libc 非依存の実測（2026-10-06。約 490MB。推奨の newlib も入る）
+# gcc-arm-none-eabi (about 490MB) is not listed here: scripts/linux/25_arm_gcc.sh asks [y/N] and installs it only when needed.
 
 # candidates (currently unused)
 #gufw
