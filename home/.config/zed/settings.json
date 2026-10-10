@@ -19,6 +19,36 @@
       },
       "type": "registry"
     },
+    "Claude Bedrock": {
+      "type": "custom",
+      "command": "npx",
+      "args": ["-y", "@agentclientprotocol/claude-agent-acp"],
+      "default_config_options": {
+        "mode": "auto",
+        "model": "sonnet"
+      },
+      "env": {
+        "CLAUDE_CODE_USE_BEDROCK": "1",
+        "AWS_REGION": "ap-northeast-1",
+        "AWS_PROFILE": "default",
+        "ANTHROPIC_BEDROCK_REGION_PREFIX": "apac",
+        "ANTHROPIC_DEFAULT_OPUS_MODEL": "global.anthropic.claude-opus-5-5",
+        "ANTHROPIC_DEFAULT_SONNET_MODEL": "global.anthropic.claude-sonnet-5-5",
+        "ANTHROPIC_DEFAULT_HAIKU_MODEL": "global.anthropic.claude-haiku-5-5"
+      }
+    },
+    "Claude API": {
+      "type": "custom",
+      "command": "npx",
+      "args": ["-y", "@agentclientprotocol/claude-agent-acp"],
+      "default_config_options": {
+        "mode": "auto",
+        "model": "sonnet"
+      },
+      "env": {
+        "ANTHROPIC_API_KEY": "none"
+      }
+    },
     "codex-acp": {
       "type": "registry"
     }
