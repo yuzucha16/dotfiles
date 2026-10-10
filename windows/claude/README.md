@@ -24,6 +24,7 @@
 |---|---|
 | `api.settings.json` | `apiKeyHelper`（キーの取得コマンド）とモデルの環境変数。`%USERPROFILE%\.claude\` にリンクされる |
 | `claude-api-key.ps1` / `.cmd` | 暗号化したキーを復号して標準出力に返す。`%USERPROFILE%\.local\bin`（PATH 上）にリンクされる |
+| `claude-acp-api.ps1` / `.cmd` | Zed の agent「Claude API」の起動用。キーを復号して `ANTHROPIC_API_KEY` に入れ、`claude-agent-acp` を起動する。空なら止める。同じく `.local\bin` にリンクされる。Zed の `args` に PowerShell のコードを直書きすると変数が空になるので、スクリプトに分けている |
 | `windows/powershell/profile.ps1` の関数 `claude-api` | `claude --settings "$HOME\.claude\api.settings.json"` を実行する |
 | `%USERPROFILE%\.claude\api-key.dpapi` | 暗号化したキー本体。**リポジトリの外。追跡しない** |
 
