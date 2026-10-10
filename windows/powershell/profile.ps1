@@ -41,11 +41,7 @@ Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
 Set-PSReadLineKeyHandler -Key Ctrl+p -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Key Ctrl+n -Function HistorySearchForward
 
-# 社内プロキシ用 CA 証明書 (存在する環境のみ設定)
-$caPath = "$env:CERTS_DIR\company-ca.crt"
-if (Test-Path $caPath) {
-  $env:NODE_EXTRA_CA_CERTS = $caPath
-}
+# 社内プロキシ用 CA 証明書の環境変数は、27_volta.bat などが setx で永続化する（ここでは設定しない）
 
 # Claude Code を API キー認証で起動する（`claude` は OAuth のまま）。設定は ~/.claude/api.settings.json
 function claude-api { claude --settings "$HOME\.claude\api.settings.json" @args }

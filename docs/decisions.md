@@ -27,6 +27,24 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】AWS CLI・uv・Volta のインストーラ（`25_awscli.bat` `26_uv.bat` `27_volta.bat`）と、CA バンドルの扱い（2026-10-10。ユーザーの決定と指示）
+
+- **決めたこと**:
+  - CA ファイルは `%CERTS_DIR%\ca_bundle.crt`（旧 `company-ca.crt`）。環境変数は `setx` で永続化する（`AWS_CA_BUNDLE`、`UV_SYSTEM_CERTS` + `SSL_CERT_FILE`、`NODE_EXTRA_CA_CERTS`）。`NODE_EXTRA_CA_CERTS` は Node が Volta 前提なので `27_volta.bat` だけが設定し、`profile.ps1` の設定は削除した（WSL の `common.sh` は残す）。
+  - uv は `uv python install 3.13 --default` と `uv python pin --global 3.13`、続けて `python --version`。Volta は `volta install node@lts`、続けて `node` / `npm` / `npx` の `--version`。
+  - インストール直後は絶対パスを使わず、レジストリから PATH（Volta は `VOLTA_HOME` も）を読み直して呼ぶ。
+  - `ca_bundle.crt` が無い（または `CERTS_DIR` 未設定）ときは、`y` と答えても設定せず `[SKIP]`。
+  - `10_env.bat` の最後に、CA バンドルを `%CERTS_DIR%` へ置く案内（オレンジ、英語）を出す。何も作らず、確認もしない。
+  - git は schannel のまま（`11_git_identity.bat` の質問）。`GIT_SSL_CAINFO` は使わない。
+- **根拠**:
+  - `setx` は GUI アプリや他シェルにも効く。`profile.ps1` は対話的な pwsh だけ。
+  - `SSL_CERT_FILE` や `AWS_CA_BUNDLE` は、存在しないファイルを指すと HTTPS が全部失敗する（`NODE_EXTRA_CA_CERTS` は起動のたびに警告）。
+  - `GIT_SSL_CAINFO` は git の既定の CA 一覧を置き換え、会社 CA だけのバンドルでは完全性もプロキシの再署名も保証できない。schannel は Windows のストア（ブラウザと同じ）を見る。
+  - `git config --global` は symlink 越しにリポジトリの `home/.gitconfig` へ PC 固有のパスを書き込むので使わない（`.gitconfig_local` は管理外）。
+- **却下案**: `profile.ps1` で `NODE_EXTRA_CA_CERTS` を設定（対話的な pwsh 限定）。ファイルが無くても無条件に設定（上の根拠）。`node@latest`（Current を含むため `node@lts`）。`GIT_SSL_CAINFO` に会社 CA だけのバンドル（一度実装して取りやめた）。git 同梱の `ca-bundle.crt` に会社 CA を足した結合ファイル（git の更新のたびに作り直しが要る。未採用）。
+- **確認済み**（2026-10-10）: `tests/windows/test_25_27_installers.ps1`（偽の `setx` / インストーラ / `uv` / `volta`）、`test_11_git_identity.ps1`、`test_20_apps.ps1` が failures=0。`uv 0.11.32` に `python install --default` と `python pin --global` がある（実行）。`scoop search volta` で main バケットの 2.0.2。**未確認**: 実際のインストーラの実行、`awscli.amazonaws.com/v2/install.ps1` の URL、プロキシ下の動作、schannel の失効確認、`10_env.bat` のオレンジ表示。
+- **Gotcha**: `Write` で作った `.bat` は LF になり、ラベルが見つからなくなる（`The system cannot find the batch label specified`）。CRLF にする（`.gitattributes` は crlf）。偽の `.cmd` を試験で呼ぶには、`.bat` 側で `call` が要る。
+
 ### 【この件】Claude Code の起動時に、OAuth / API キー / Bedrock を選ぶ関数を足した（`claude-pick`、`claude-oauth`。2026-10-08。ユーザーの依頼）
 
 - 決めたこと: `profile.ps1` に、`claude-oauth`（OAuth で起動。`ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`、`CLAUDE_CODE_USE_BEDROCK` / `_MANTLE` / `_VERTEX` / `_FOUNDRY` を、その起動の間だけ外し、終了後に戻す）と、`claude-pick`（fzf で `oauth` / `api` / `bedrock` を選んで起動。`claude-pick api --resume` のようにモードを先頭に書けば選択を省く）を足した。切り替えは起動単位で、セッション中の切替は求めない。
@@ -246,7 +264,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ### 【汎用】git の SSL バックエンド（schannel）は PC ごとの選択として `.gitconfig_local` に、credential は固定値として `home/.gitconfig` に置く（2026-10-06）
 
-- **確認済み**（2026-10-06）: `pwsh tests/windows/test_11_git_identity.ps1` が failures=0（y / n / 空 / 不正 / 不正5回、`helperselector` を書かないこと）。実機の schannel での通信は未確認。
+- **2026-10-10**: 一度 schannel を廃止して `GIT_SSL_CAINFO`（会社 CA だけのバンドルを指す）にしかけたが、ユーザーが取りやめ、schannel の質問を元に戻した（ユーザーの決定）。理由: `GIT_SSL_CAINFO` は git の既定の CA 一覧を置き換え、バンドルが完全か、プロキシが全通信を再署名するかを保証できない（外れると git の HTTPS が全部失敗）。schannel は Windows のストアを見るので、ブラウザで通れば git も通る。弱点は失効確認（プロキシ下で `CRYPT_E_NO_REVOCATION_CHECK`）で、`http.schannelCheckRevoke=false` を `.gitconfig_local` に手で足して逃がす。`git config --global` を避ける理由は変わらない（symlink 越しにリポジトリへ PC 固有の値が入る）ので、設定は `.gitconfig_local`。
 - 行き先: 転記済（2026-10-06 → exmem/knowledge/pc-setup-manuals.md）
 
 ### 【この件】初回は scoop の git だけで最終の場所に clone する（winget の git は使わない）（2026-10-06。同日、下の「winget の git で…」の (1)(2) を撤回して置き換えた）
