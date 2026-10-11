@@ -50,6 +50,11 @@ body.theme-light {
   --tab-text-color-focused-active: var(--text-normal);
   /* window buttons (minimize / maximize / close) and the title text */
   --titlebar-text-color-focused: var(--text-normal);
+  /* active file in the explorer: orange instead of the theme's aqua */
+  --nav-item-color-active: var(--color-orange);
+}
+.nav-file-title.is-active .nav-file-title-content::before {
+  --icon-color: var(--color-orange);
 }
 
 .nav-folder-title-content::before {
