@@ -4,7 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
-- Claude 用の AWS profile `M1-trial` の実機の作成（2026-10-11。家・会社の各 PC。このPCも未実施）: `git pull` のあと、`aws configure sso`（または `aws configure --profile M1-trial`）で profile を作る。SSO なら `aws sso login --profile M1-trial`。`claude-bedrock-setup.cmd -AwsProfile M1-trial` で `settings-bedrock.json` を作り直し、`claude-bedrock` と Zed の `Claude Bedrock` の起動を確認する。`default` の profile を作っていた PC は、不要なら削除する。
+- Claude 用の AWS profile `n1-trial` の実機の作成（2026-10-11。家・会社の各 PC。このPCも未実施）: `git pull` のあと、`aws configure sso`（または `aws configure --profile n1-trial`）で profile を作る。SSO なら `aws sso login --profile n1-trial`。`claude-bedrock-setup.cmd -AwsProfile n1-trial` で `settings-bedrock.json` を作り直し、`claude-bedrock` と Zed の `Claude Bedrock` の起動を確認する。`default` の profile を作っていた PC は、不要なら削除する。
 - Claude Code の設定ファイルの改名（2026-10-11）に伴う実機の移行（家・会社の各 PC。このPCも未実施）: `git pull` → `30_link.bat` を再実行（`settings-api.json` のリンクができる）→ `%USERPROFILE%\.claude\` の旧 `api.settings.json`（リンク）を手で削除。暗号化済みのキーは `api-key.dpapi` を `settings-api-key.dpapi` に改名する（または `claude-api-key.cmd -Set` で保存し直す）。これをしないと `claude-api` が「キー無し」で止まる。Bedrock は `claude-bedrock-setup.cmd` を再実行して `settings-bedrock.json` を作り、旧 `bedrock.settings.json` を削除する。その後 `claude-api` と `claude-bedrock` の起動を確認する。
 - AWS CLI・uv・Volta のインストーラ（2026-10-10 時点。コミット済みなら push 済みか確認）: 実機で `25_awscli.bat` `26_uv.bat` `27_volta.bat` を実行し、各 `--version`、`python --version`、`node` / `npm` / `npx` の版、PATH の再読込、`awscli.amazonaws.com/v2/install.ps1` の URL を確認する。`ca_bundle.crt` を `%USERPROFILE%\.certs` に置いた PC で `y` を試し、`setx` の値を確認する。Windows の `python` が Microsoft Store のスタブに先に当たらないかも見る。`10_env.bat` の最後の案内（オレンジ）の表示は未確認（実行すると `setx` が動く）。
 - 会社 PC で git の schannel を確認する（2026-10-10）: `git -c http.sslBackend=schannel ls-remote https://github.com/yuzucha16/dotfiles HEAD`。`CRYPT_E_NO_REVOCATION_CHECK` が出たら、`~\.gitconfig_local` の `[http]` に `schannelCheckRevoke = false` を足す。
@@ -67,6 +67,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-11（Claude 用の AWS profile 名を `M1-trial` から `n1-trial` に変えた）
+
+- ユーザーの指示で、直前に決めた `M1-trial` を `n1-trial` に変えた（`home/.config/zed/settings.json` の `AWS_PROFILE`、Next Actions、`docs/decisions.md`）。ユーザーは、`M1` が部署名のエイリアスなので公開しても問題ないと確認した。下の項目の `M1-trial` は、変更前の名前として読み替える。profile 名は大文字と小文字を区別するので、実機では `n1-trial`（小文字）で作る。
 
 ### 2026-10-11（Claude 用の AWS profile 名を `M1-trial` にした）
 
