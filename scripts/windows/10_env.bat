@@ -30,7 +30,8 @@ REM Append each to WSLENV only once, then setx once (setx is not reflected in th
 set "WSLENV_NEW=%WSLENV%"
 echo ;%WSLENV_NEW%; | find "CERTS_DIR/p" >nul || ( if defined WSLENV_NEW ( set "WSLENV_NEW=%WSLENV_NEW%;CERTS_DIR/p" ) else ( set "WSLENV_NEW=CERTS_DIR/p" ) )
 echo ;%WSLENV_NEW%; | find "WORKS_DIR/p" >nul || ( if defined WSLENV_NEW ( set "WSLENV_NEW=%WSLENV_NEW%;WORKS_DIR/p" ) else ( set "WSLENV_NEW=WORKS_DIR/p" ) )
-if not "%WSLENV_NEW%"=="%WSLENV%" setx WSLENV "%WSLENV_NEW%"
+set "SHOW_WSLENV="
+if not "%WSLENV_NEW%"=="%WSLENV%" ( setx WSLENV "%WSLENV_NEW%" & set "SHOW_WSLENV=%WSLENV_NEW%" )
 
 REM Add %XDG_BIN_HOME% (Claude Code native installer puts claude.exe there) to the User PATH, only once.
 REM The PATH entry is the reference %XDG_BIN_HOME%, so the directory is defined in one place. An existing literal entry also counts.
@@ -52,7 +53,10 @@ REM GHQ_ROOT (%WORKS_DIR%\repos) is created here, which also creates WORKS_DIR a
 REM WORKS_DIR into a local repo (repos\ is in its .gitignore). The shared repo (workbase) is cloned into
 REM %WORKS_DIR%\resources by 50_repos.bat.
 
-REM Show values (note: setx results are NOT reflected in the current session)
+REM Show what this script set (User scope via setx). setx results are NOT reflected in the current session.
+REM WSLENV is shown only when this script changed it (SHOW_WSLENV); otherwise it already had both entries.
+echo.
+echo [ENV] set by this script ^(User scope, effective in a NEW terminal^)
 echo HOME               =%HOME%
 echo XDG_CONFIG_HOME    =%XDG_CONFIG_HOME%
 echo XDG_CACHE_HOME     =%XDG_CACHE_HOME%
@@ -64,7 +68,8 @@ echo SSH_DIR            =%SSH_DIR%
 echo GHQ_ROOT          =%GHQ_ROOT%
 echo CERTS_DIR          =%CERTS_DIR%
 echo WORKS_DIR          =%WORKS_DIR%
-
+if defined SHOW_WSLENV echo WSLENV             =%SHOW_WSLENV%
+if not defined SHOW_WSLENV echo WSLENV             =[unchanged] ^(already has CERTS_DIR/p and WORKS_DIR/p^)
 REM Reminder, printed last so it is not missed (orange, ANSI 256-color 208; ESC is captured with prompt $E to keep the source ASCII).
 REM Nothing is checked or created: a proxy CA bundle is only needed on some networks, and is put there by hand when it is.
 for /F "delims=" %%E in ('echo prompt $E^| cmd') do set "ESC=%%E"
