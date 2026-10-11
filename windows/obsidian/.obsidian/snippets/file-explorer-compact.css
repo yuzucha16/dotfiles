@@ -26,14 +26,21 @@ body {
 
 /* per-type colors: theme palette (--color-*), so they follow light/dark and the Gruvbox theme */
 .nav-file-title-content::before { --icon-color: var(--color-blue); }
-/* folders: open = theme yellow (orange-ish in Gruvbox), closed = same olive green as headings (material-gruvbox-bold.css) */
-.nav-folder-title-content { color: #A7B85A; }
-.nav-folder-title-content::before { --icon-color: #A7B85A; }
+/* folders: open = same olive green as headings (material-gruvbox-bold.css), closed = editor text color */
+.nav-folder-title-content { color: var(--text-normal); }
+.nav-folder-title-content::before { --icon-color: var(--text-normal); }
 .nav-folder:not(.is-collapsed) > .nav-folder-title > .nav-folder-title-content {
-  color: var(--color-yellow);
+  color: #A7B85A;
 }
 .nav-folder:not(.is-collapsed) > .nav-folder-title > .nav-folder-title-content::before {
-  --icon-color: var(--color-yellow);
+  --icon-color: #A7B85A;
+}
+/* folders containing the active file (all ancestors, open or not): orange, wins over the open-folder green */
+.nav-folder:has(.nav-file-title.is-active) > .nav-folder-title > .nav-folder-title-content {
+  color: var(--color-orange);
+}
+.nav-folder:has(.nav-file-title.is-active) > .nav-folder-title > .nav-folder-title-content::before {
+  --icon-color: var(--color-orange);
 }
 
 /* active tab: editor text color instead of the theme's red/yellow */
