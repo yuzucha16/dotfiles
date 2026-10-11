@@ -76,6 +76,7 @@ Zed では `home/.config/zed/settings.json` の `agent_servers` に、認証ご�
 
 - **接頭辞**: 空欄なら Claude Code が地域から自動で選ぶ（`ap-*` は `apac.`）。日本国内に閉じたいときは `jp`（東京 `ap-northeast-1`、大阪 `ap-northeast-3` が対応）。地域固定のエンドポイントは Global に対して +10%。
 - **非対話**（引数で全部指定。`none` はピン留めしない）: `claude-bedrock-setup.cmd -AwsProfile <名前> -Region ap-northeast-1 -Prefix jp -OpusId <ID> -SonnetId <ID> -HaikuId <ID> -Sso -DryRun`。全部の ID を指定すれば、AWS CLI は要らない。
+- **貼り付け用の派生物**: `settings-bedrock.json` と同じ場所に、`env` ブロックを `KEY=VALUE` の行にした `settings-bedrock.txt` も出す（毎回 `.json` と一緒に上書き）。**正は `.json`**。Obsidian の Claudian のスニペットのように、環境変数を文字列で貼る先へ、全文をそのままコピペする（`--settings` で読めないツール用。値の二重管理を、転記だけにする）。`.txt` を直接編集せず、直すときは `claude-bedrock-setup.cmd` を再実行する。
 - ピン留めは3つとも決めておく。ピン留めしないと、別名は Claude Code の組み込みの既定に解決される。Opus だけをピン留めすると、バックグラウンド処理にも Opus が使われうる。
 - `CLAUDE_CODE_USE_BEDROCK` を共通の `settings.json` に入れない（常に Bedrock 優先になり、OAuth に戻れない）。
 - Bedrock では、WebSearch、fast mode、`/logout` は使えない。

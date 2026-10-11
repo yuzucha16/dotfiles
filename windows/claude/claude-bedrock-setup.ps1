@@ -1,6 +1,7 @@
 # Claude Code を Amazon Bedrock で使うための、この PC 専用の設定ファイルを作る。
 # 実行: claude-bedrock-setup.cmd [-DryRun]   （引数なしなら対話。AWS CLI で推論プロファイルの一覧を取って選ぶ）
 # 作るもの: %USERPROFILE%\.claude\settings-bedrock.json（この PC 専用。リポジトリには置かない。秘密は含まない）
+#          と、その env ブロックを KEY=VALUE の行にした settings-bedrock.txt（派生物。正は .json。貼り付け用。毎回 .json と一緒に上書きする）
 # 起動: claude-bedrock（windows/powershell/profile.ps1 の関数。claude --settings でそのファイルを読む）
 # プロファイル名・リージョン・モデル ID は環境ごとに違う値なので、dotfiles には実値を持たず、このスクリプトで毎回その場で作る。
 # 認証情報（アクセスキー、AWS_BEARER_TOKEN_BEDROCK など）は書かない。SSO か AWS プロファイルを使う。
@@ -73,6 +74,12 @@ function New-BedrockSettings {
     if ($Model) { $s['model'] = $Model }
     $s['env'] = $envBlock
     $s
+}
+
+# env ブロックを KEY=VALUE の行にする（Claudian のスニペットなど、env を文字列で貼る先へ、そのままコピペする用）
+function ConvertTo-EnvText {
+    param($Settings)
+    (($Settings['env'].GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join "`n") + "`n"
 }
 
 # dot-source されたとき（試験）は、関数だけ定義して終わる
@@ -156,10 +163,14 @@ if (-not $PSBoundParameters.ContainsKey('Model')) {
 
 $settings = New-BedrockSettings -AwsProfile $AwsProfile -Region $Region -Prefix $Prefix -OpusId $opus -SonnetId $sonnet -HaikuId $haiku -Model $Model -Sso ([bool]$Sso)
 $json = $settings | ConvertTo-Json -Depth 5
+$envText = ConvertTo-EnvText $settings
+$envFile = [IO.Path]::ChangeExtension($OutFile, '.txt')
 
 if ($DryRun) {
     Write-Host "[DRY-RUN] 書き込み先: $OutFile"
     Write-Output $json
+    Write-Host "[DRY-RUN] 書き込み先（派生）: $envFile"
+    Write-Output $envText
     exit 0
 }
 
@@ -169,6 +180,8 @@ if ((Test-Path $OutFile) -and -not $Force) {
 }
 New-Item -ItemType Directory -Force (Split-Path $OutFile) | Out-Null
 [IO.File]::WriteAllText($OutFile, $json + "`n", (New-Object Text.UTF8Encoding $false))
+[IO.File]::WriteAllText($envFile, $envText, (New-Object Text.UTF8Encoding $false))
 Write-Host "[DONE] $OutFile"
+Write-Host "[DONE] $envFile（派生。正は .json。Claudian のスニペットなどに、全文をそのまま貼る）"
 Write-Host '次: claude-bedrock で起動し、/status でプロバイダ（Amazon Bedrock）・リージョン・モデルを確認する。'
 if ($Sso) { Write-Host "SSO の期限が切れたら: aws sso login$(if ($AwsProfile) { " --profile $AwsProfile" })" }
