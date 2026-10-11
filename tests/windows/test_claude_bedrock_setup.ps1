@@ -40,6 +40,8 @@ Check 'settings: env keys' (($s.env.Keys -join ',') -eq 'CLAUDE_CODE_USE_BEDROCK
 Check 'settings: sso refresh with profile' ($s.awsAuthRefresh -eq 'aws sso login --profile prof')
 $s = New-BedrockSettings -AwsProfile '' -Region 'r' -Prefix 'none' -OpusId $null -SonnetId $null -HaikuId $null -Model 'sonnet' -Sso $false
 Check 'settings: minimal (no profile/prefix/pins/refresh)' ((($s.env.Keys -join ',') -eq 'CLAUDE_CODE_USE_BEDROCK,AWS_REGION') -and -not $s.Contains('awsAuthRefresh'))
+$t = ConvertTo-EnvText (New-BedrockSettings -AwsProfile 'prof' -Region 'r' -Prefix 'jp' -OpusId 'o' -SonnetId 's' -HaikuId 'h' -Model 'sonnet' -Sso $true)
+Check 'envtext: KEY=VALUE lines, LF, only env' ($t -eq "CLAUDE_CODE_USE_BEDROCK=1`nAWS_REGION=r`nAWS_PROFILE=prof`nANTHROPIC_BEDROCK_REGION_PREFIX=jp`nANTHROPIC_DEFAULT_OPUS_MODEL=o`nANTHROPIC_DEFAULT_SONNET_MODEL=s`nANTHROPIC_DEFAULT_HAIKU_MODEL=h`n")
 
 # 対話の選択（偽の Read-Host）
 $script:answers = [System.Collections.Generic.Queue[string]]::new()
@@ -76,6 +78,8 @@ try {
   Check 'run: -Sso -> awsAuthRefresh'           ($j.awsAuthRefresh -eq 'aws sso login --profile work')
   Check 'run: model defaults to sonnet'         ($j.model -eq 'sonnet')
   Check 'run: warns when a pin is missing'      ($r.Out -match '\[WARN\]')
+  $txt = Join-Path $tmp 'sub\settings-bedrock.txt'
+  Check 'run: .txt derived, matches .json env'  ((Test-Path $txt) -and ((Get-Content $txt -Raw) -eq "CLAUDE_CODE_USE_BEDROCK=1`nAWS_REGION=ap-northeast-1`nAWS_PROFILE=work`nANTHROPIC_BEDROCK_REGION_PREFIX=jp`nANTHROPIC_DEFAULT_OPUS_MODEL=o-id`nANTHROPIC_DEFAULT_SONNET_MODEL=s-id`n"))
 
   $r = Run-Script ($full + '-Force')
   $j2 = Get-Content $out -Raw | ConvertFrom-Json
@@ -85,9 +89,9 @@ try {
   $r = Run-Script $full
   Check 'exists (non-interactive, no -Force): refuses' (($r.Rc -eq 1) -and ($r.Out -match '-Force') -and ((Get-Content $out -Raw) -eq $before))
 
-  Remove-Item $out -Force
+  Remove-Item $out, $txt -Force
   $r = Run-Script ($full + '-DryRun')
-  Check 'dry-run: prints JSON, writes nothing'  (($r.Rc -eq 0) -and ($r.Out -match 'CLAUDE_CODE_USE_BEDROCK') -and -not (Test-Path $out))
+  Check 'dry-run: prints JSON, writes nothing'  (($r.Rc -eq 0) -and ($r.Out -match 'CLAUDE_CODE_USE_BEDROCK') -and -not (Test-Path $out) -and -not (Test-Path $txt))
 
   $r = Run-Script @('-Region', 'ap-northeast-1', '-OutFile', $out) $true
   Check 'no aws and no pins: error, exit 1'     (($r.Rc -eq 1) -and ($r.Out -match 'AWS CLI') -and -not (Test-Path $out))

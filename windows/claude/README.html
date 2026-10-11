@@ -124,6 +124,7 @@
 <ul>
   <li><strong>接頭辞</strong>: 空欄なら Claude Code が地域から自動で選ぶ（<code>ap-*</code> は <code>apac.</code>）。日本国内に閉じたいときは <code>jp</code>（東京 <code>ap-northeast-1</code>、大阪 <code>ap-northeast-3</code> が対応）。地域固定のエンドポイントは Global に対して +10%。</li>
   <li><strong>非対話</strong>（引数で全部指定。<code>none</code> はピン留めしない）: <code>claude-bedrock-setup.cmd -AwsProfile &lt;名前&gt; -Region ap-northeast-1 -Prefix jp -OpusId &lt;ID&gt; -SonnetId &lt;ID&gt; -HaikuId &lt;ID&gt; -Sso -DryRun</code>。全部の ID を指定すれば、AWS CLI は要らない。</li>
+  <li><strong>貼り付け用の派生物</strong>: <code>settings-bedrock.json</code> と同じ場所に、<code>env</code> ブロックを <code>KEY=VALUE</code> の行にした <code>settings-bedrock.txt</code> も出す（毎回 <code>.json</code> と一緒に上書き）。<strong>正は <code>.json</code></strong>。Obsidian の Claudian のスニペットのように、環境変数を文字列で貼る先へ、全文をそのままコピペする（<code>--settings</code> で読めないツール用。値の二重管理を、転記だけにする）。<code>.txt</code> を直接編集せず、直すときは <code>claude-bedrock-setup.cmd</code> を再実行する。</li>
   <li>ピン留めは3つとも決めておく。ピン留めしないと、別名は Claude Code の組み込みの既定に解決される。Opus だけをピン留めすると、バックグラウンド処理にも Opus が使われうる。</li>
   <li><code>CLAUDE_CODE_USE_BEDROCK</code> を共通の <code>settings.json</code> に入れない（常に Bedrock 優先になり、OAuth に戻れない）。</li>
   <li>Bedrock では、WebSearch、fast mode、<code>/logout</code> は使えない。</li>
