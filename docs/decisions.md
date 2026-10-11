@@ -61,6 +61,13 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - 確認済み（2026-10-08）: 試験 24項目（`tests/windows/test_claude_bedrock_setup.ps1`。偽の `aws`、非対話の実行、既存ファイルの拒否、`-DryRun`、不正な接頭辞の拒否、選択の入力）がすべて通る。
 - 未確認: 実際の AWS での通し実行（`aws bedrock list-inference-profiles` の出力の形は AWS の仕様からの想定、`aws sso login`、Claude Code の Bedrock 起動と `/status`）。`aws` が未導入の PC で書いたため。対話の入力（`Read-Host`）は、偽の入力で選択の関数だけ試験した。
 - 行き先: local
+### 【この件】Claude Code の設定ファイル名を `settings-api.json` `settings-bedrock.json` `settings-api-key.dpapi` にした（2026-10-11。ユーザーの決定）
+
+- 決めたこと: 旧 `api.settings.json` → `settings-api.json`、旧 `bedrock.settings.json` → `settings-bedrock.json`、旧 `api-key.dpapi` → `settings-api-key.dpapi`。これより上の項目（2026-10-08）と `log.md` の履歴に出る旧名は、この改名の前の名前として読み替える。
+- 根拠: ユーザーが、`%USERPROFILE%\.claude\` で `settings.json` の隣に並ぶ名前にしたいと依頼した。`-`（0x2D）は `.`（0x2E）より前なので、`settings-*` は ASCII 順でも `settings.json` の直前に並ぶ。
+- 却下案: 履歴（旧名を含む過去の項目）の書き換え（ユーザーが「履歴でよい」と確認）。
+- 確認済み（2026-10-11）: 試験2本（`test_claude_launchers.ps1`、`test_claude_bedrock_setup.ps1`）が失敗0。実機の移行（再リンク、旧ファイルの削除）は未実施（`log.md` の Next Actions）。
+- 行き先: local
 ### 【この件】Claude Code の API キー認証は、別の設定ファイル + 起動関数 `claude-api` で併用する（2026-10-08。ユーザーの決定）
 
 - 決めたこと: OAuth の `claude` は共通の `home/.claude/settings.json` のまま。API キー認証は `windows/claude/api.settings.json`（`apiKeyHelper` とモデルの環境変数）を、関数 `claude-api`（`profile.ps1`）が `claude --settings` で読む。キーは `apiKeyHelper` の `claude-api-key.cmd` が、DPAPI で暗号化したファイル（`%USERPROFILE%\.claude\api-key.dpapi`、リポジトリ外）から復号して返す。`.cmd` と `.ps1` は PATH 上の `%USERPROFILE%\.local\bin` にリンクする（設定の `apiKeyHelper` を、シェルとユーザー名に依存しない1語にするため）。

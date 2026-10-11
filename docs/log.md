@@ -4,6 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- Claude Code の設定ファイルの改名（2026-10-11）に伴う実機の移行（家・会社の各 PC。このPCも未実施）: `git pull` → `30_link.bat` を再実行（`settings-api.json` のリンクができる）→ `%USERPROFILE%\.claude\` の旧 `api.settings.json`（リンク）を手で削除。暗号化済みのキーは `api-key.dpapi` を `settings-api-key.dpapi` に改名する（または `claude-api-key.cmd -Set` で保存し直す）。これをしないと `claude-api` が「キー無し」で止まる。Bedrock は `claude-bedrock-setup.cmd` を再実行して `settings-bedrock.json` を作り、旧 `bedrock.settings.json` を削除する。その後 `claude-api` と `claude-bedrock` の起動を確認する。
 - AWS CLI・uv・Volta のインストーラ（2026-10-10 時点。コミット済みなら push 済みか確認）: 実機で `25_awscli.bat` `26_uv.bat` `27_volta.bat` を実行し、各 `--version`、`python --version`、`node` / `npm` / `npx` の版、PATH の再読込、`awscli.amazonaws.com/v2/install.ps1` の URL を確認する。`ca_bundle.crt` を `%USERPROFILE%\.certs` に置いた PC で `y` を試し、`setx` の値を確認する。Windows の `python` が Microsoft Store のスタブに先に当たらないかも見る。`10_env.bat` の最後の案内（オレンジ）の表示は未確認（実行すると `setx` が動く）。
 - 会社 PC で git の schannel を確認する（2026-10-10）: `git -c http.sslBackend=schannel ls-remote https://github.com/yuzucha16/dotfiles HEAD`。`CRYPT_E_NO_REVOCATION_CHECK` が出たら、`~\.gitconfig_local` の `[http]` に `schannelCheckRevoke = false` を足す。
 - Claude Code の Bedrock 版（2026-10-08 時点）: AWS CLI を入れた PC で `30_link.bat` を再実行（`links.map` に2行追加）し、`claude-bedrock-setup.cmd` で一覧の取得と設定の生成、`claude-bedrock` の起動と `/status` を実機で確認する。`aws bedrock list-inference-profiles` の出力の形が想定と違えば、`Get-InferenceProfileIds` と試験の偽の `aws` を直す。
@@ -65,6 +66,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-11（Claude Code の設定ファイルの改名）
+
+- ユーザーの指示で、`windows/claude/api.settings.json` を `settings-api.json`、`%USERPROFILE%\.claude\bedrock.settings.json`（生成物）を `settings-bedrock.json`、`%USERPROFILE%\.claude\api-key.dpapi` を `settings-api-key.dpapi` に改名した（`.claude\` で `settings.json` の隣に並べるため）。`links.map`、`profile.ps1`（`claude-api` `claude-bedrock`）、`claude-bedrock-setup.ps1`、`claude-api-key.ps1`、README（md と html）、ルートの `README.md`、試験2本の参照を直した。試験 `test_claude_launchers.ps1` と `test_claude_bedrock_setup.ps1` は失敗0。コミットは `45e0668`（改名だけ）と `c0ebab6`（参照の更新）。過去の `log.md` と `decisions.md` の旧名は履歴として残した（ユーザーの確認）。判断は `docs/decisions.md` の「Claude Code の設定ファイル名を…」。実機の移行（`30_link.bat` の再実行、旧リンクと旧ファイルの削除）は Next Actions。
 
 ### 2026-10-10（25〜27 の出力を改善: pause、理由つき SKIP、[ENV] 表示）
 
