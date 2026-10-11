@@ -53,15 +53,15 @@ Remove-Item Env:CLAUDE_CODE_OAUTH_TOKEN
 # --- claude-api / claude-bedrock ---
 $script:calls = @()
 claude-api --model sonnet
-Check 'api: --settings api.settings.json, then arguments' (($script:calls[0].Args[0] -eq '--settings') -and ($script:calls[0].Args[1] -eq (Join-Path $fakeHome '.claude\api.settings.json')) -and (($script:calls[0].Args[2..3] -join ' ') -eq '--model sonnet'))
+Check 'api: --settings settings-api.json, then arguments' (($script:calls[0].Args[0] -eq '--settings') -and ($script:calls[0].Args[1] -eq (Join-Path $fakeHome '.claude\settings-api.json')) -and (($script:calls[0].Args[2..3] -join ' ') -eq '--model sonnet'))
 
 $script:calls = @()
 $msg = (claude-bedrock 6>&1) -join "`n"
 Check 'bedrock: no settings file -> message, claude not called' (($script:calls.Count -eq 0) -and ($msg -match 'claude-bedrock-setup'))
-Set-Content (Join-Path $fakeHome '.claude\bedrock.settings.json') '{}'
+Set-Content (Join-Path $fakeHome '.claude\settings-bedrock.json') '{}'
 $script:calls = @()
 claude-bedrock -p hi
-Check 'bedrock: with the file -> --settings then arguments' (($script:calls[0].Args[0] -eq '--settings') -and ($script:calls[0].Args[1] -like '*bedrock.settings.json') -and (($script:calls[0].Args[2..3] -join ' ') -eq '-p hi'))
+Check 'bedrock: with the file -> --settings then arguments' (($script:calls[0].Args[0] -eq '--settings') -and ($script:calls[0].Args[1] -like '*settings-bedrock.json') -and (($script:calls[0].Args[2..3] -join ' ') -eq '-p hi'))
 
 # --- claude-pick ---
 function claude-oauth { $script:picked = 'oauth:' + ($args -join ' ') }
