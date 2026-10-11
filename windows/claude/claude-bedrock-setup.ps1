@@ -1,6 +1,6 @@
 # Claude Code を Amazon Bedrock で使うための、この PC 専用の設定ファイルを作る。
 # 実行: claude-bedrock-setup.cmd [-DryRun]   （引数なしなら対話。AWS CLI で推論プロファイルの一覧を取って選ぶ）
-# 作るもの: %USERPROFILE%\.claude\bedrock.settings.json（この PC 専用。リポジトリには置かない。秘密は含まない）
+# 作るもの: %USERPROFILE%\.claude\settings-bedrock.json（この PC 専用。リポジトリには置かない。秘密は含まない）
 # 起動: claude-bedrock（windows/powershell/profile.ps1 の関数。claude --settings でそのファイルを読む）
 # プロファイル名・リージョン・モデル ID は環境ごとに違う値なので、dotfiles には実値を持たず、このスクリプトで毎回その場で作る。
 # 認証情報（アクセスキー、AWS_BEARER_TOKEN_BEDROCK など）は書かない。SSO か AWS プロファイルを使う。
@@ -14,7 +14,7 @@ param(
     [string]$HaikuId,
     [string]$Model,                                        # セッションの既定モデル（別名か ID）。省略 = sonnet
     [switch]$Sso,                                          # IAM Identity Center を使う（awsAuthRefresh を書く）
-    [string]$OutFile = (Join-Path $HOME '.claude\bedrock.settings.json'),
+    [string]$OutFile = (Join-Path $HOME '.claude\settings-bedrock.json'),
     [switch]$DryRun,                                       # 書かずに内容だけ表示する
     [switch]$Force                                         # 既存のファイルを確認なしで上書きする
 )

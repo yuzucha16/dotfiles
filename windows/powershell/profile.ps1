@@ -43,12 +43,12 @@ Set-PSReadLineKeyHandler -Key Ctrl+n -Function HistorySearchForward
 
 # 社内プロキシ用 CA 証明書の環境変数は、27_volta.bat などが setx で永続化する（ここでは設定しない）
 
-# Claude Code を API キー認証で起動する（`claude` は OAuth のまま）。設定は ~/.claude/api.settings.json
-function claude-api { claude --settings "$HOME\.claude\api.settings.json" @args }
+# Claude Code を API キー認証で起動する（`claude` は OAuth のまま）。設定は ~/.claude/settings-api.json
+function claude-api { claude --settings "$HOME\.claude\settings-api.json" @args }
 
-# Claude Code を Amazon Bedrock で起動する。設定はこの PC 専用の ~/.claude/bedrock.settings.json（claude-bedrock-setup.cmd で作る）
+# Claude Code を Amazon Bedrock で起動する。設定はこの PC 専用の ~/.claude/settings-bedrock.json（claude-bedrock-setup.cmd で作る）
 function claude-bedrock {
-    $f = "$HOME\.claude\bedrock.settings.json"
+    $f = "$HOME\.claude\settings-bedrock.json"
     if (-not (Test-Path $f)) { Write-Host "[ERR] $f がありません。先に claude-bedrock-setup.cmd を実行してください。"; return }
     claude --settings $f @args
 }

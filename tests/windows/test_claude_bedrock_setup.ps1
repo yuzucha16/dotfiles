@@ -65,7 +65,7 @@ function Run-Script($argList, $noAws = $false) {
 }
 $tmp = Join-Path ([IO.Path]::GetTempPath()) ("tbedrock-" + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Force $tmp | Out-Null
-$out = Join-Path $tmp 'sub\bedrock.settings.json'
+$out = Join-Path $tmp 'sub\settings-bedrock.json'
 $full = @('-AwsProfile', 'work', '-Region', 'ap-northeast-1', '-Prefix', 'jp', '-OpusId', 'o-id', '-SonnetId', 's-id', '-HaikuId', 'none', '-OutFile', $out)
 try {
   $r = Run-Script ($full + '-Sso')

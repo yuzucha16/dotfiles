@@ -53,7 +53,7 @@ Zed では `home/.config/zed/settings.json` の `agent_servers` に、認証ご�
 
 ## 1. Bedrock（AWS 経由）
 
-`claude-bedrock` だけ Bedrock 経由で起動する（`claude` は OAuth のまま）。ただし、プロファイル名・リージョン・モデル ID は環境ごとに違う値なので、設定ファイルは**この PC 専用に生成**し、リポジトリには置かない（`%USERPROFILE%\.claude\bedrock.settings.json`。秘密は含まない）。
+`claude-bedrock` だけ Bedrock 経由で起動する（`claude` は OAuth のまま）。ただし、プロファイル名・リージョン・モデル ID は環境ごとに違う値なので、設定ファイルは**この PC 専用に生成**し、リポジトリには置かない（`%USERPROFILE%\.claude\settings-bedrock.json`。秘密は含まない）。
 
 | やりたいこと | コマンド |
 |---|---|
@@ -96,7 +96,7 @@ Zed では `home/.config/zed/settings.json` の `agent_servers` に、認証ご�
 | 起動時に `on-demand throughput isn't supported` | ピン留めのモデルを、モデル ID ではなく推論プロファイル ID にする（一覧から選べば正しい） |
 | 起動時に別のモデルへ切り替わる | ピン留めしたモデルがアカウントで使えない。一覧から選び直す |
 | `claude-bedrock` が見つからない | 新しいターミナルを開く。`profile.ps1` のリンクを確認する |
-| `/status` が Bedrock でない | `bedrock.settings.json` の内容と、`ANTHROPIC_API_KEY` などの環境変数の残りを確認する |
+| `/status` が Bedrock でない | `settings-bedrock.json` の内容と、`ANTHROPIC_API_KEY` などの環境変数の残りを確認する |
 
 ## 2. API キー（Console・従量課金）
 
@@ -106,11 +106,11 @@ Zed では `home/.config/zed/settings.json` の `agent_servers` に、認証ご�
 
 | ファイル | 役割 |
 |---|---|
-| `api.settings.json` | `apiKeyHelper`（キーの取得コマンド）とモデルの環境変数。`%USERPROFILE%\.claude\` にリンクされる |
+| `settings-api.json` | `apiKeyHelper`（キーの取得コマンド）とモデルの環境変数。`%USERPROFILE%\.claude\` にリンクされる |
 | `claude-api-key.ps1` / `.cmd` | 暗号化したキーを復号して標準出力に返す。`%USERPROFILE%\.local\bin`（PATH 上）にリンクされる |
 | `claude-acp-api.ps1` / `.cmd` | Zed の agent「Claude API」の起動用。キーを復号して `ANTHROPIC_API_KEY` に入れ、`claude-agent-acp` を起動する。空なら止める。同じく `.local\bin` にリンクされる。Zed の `args` に PowerShell のコードを直書きすると変数が空になるので、スクリプトに分けている |
-| `windows/powershell/profile.ps1` の関数 `claude-api` | `claude --settings "$HOME\.claude\api.settings.json"` を実行する |
-| `%USERPROFILE%\.claude\api-key.dpapi` | 暗号化したキー本体。**リポジトリの外。追跡しない** |
+| `windows/powershell/profile.ps1` の関数 `claude-api` | `claude --settings "$HOME\.claude\settings-api.json"` を実行する |
+| `%USERPROFILE%\.claude\settings-api-key.dpapi` | 暗号化したキー本体。**リポジトリの外。追跡しない** |
 
 - `apiKeyHelper` は認証の優先順位が OAuth より上。共通の `settings.json` に書くと OAuth に戻れないので、別ファイルにして `--settings` で読ませる。
 - `ANTHROPIC_API_KEY` をユーザー環境変数に常設しない（`claude` も API キーになる）。
@@ -118,11 +118,11 @@ Zed では `home/.config/zed/settings.json` の `agent_servers` に、認証ご�
 
 ### 秘密情報の保管方法
 
-DPAPI（Windows のユーザーに紐づく暗号化）で `api-key.dpapi` に保存する。追加のモジュールもパスワード入力も要らず、`apiKeyHelper`（非対話）から使える。
+DPAPI（Windows のユーザーに紐づく暗号化）で `settings-api-key.dpapi` に保存する。追加のモジュールもパスワード入力も要らず、`apiKeyHelper`（非対話）から使える。
 
 - この Windows ユーザー + この PC でだけ復号できる。他の PC では保存し直す。
 - 同じユーザーで動く他のプログラムは復号できる。強い分離が要るなら 1Password CLI（`op read`）に変える。
-- 保管方法を変えるときは `claude-api-key.ps1` だけを差し替える（`api.settings.json` は変えない）。
+- 保管方法を変えるときは `claude-api-key.ps1` だけを差し替える（`settings-api.json` は変えない）。
 - キーを貼るのは `-Set` のプロンプトだけ。コマンドラインに書かない（履歴に残るため）。
 
 | 方法 | 長所 | 短所 |
@@ -138,9 +138,9 @@ DPAPI（Windows のユーザーに紐づく暗号化）で `api-key.dpapi` に�
 1. **キーを作る**: platform.claude.com の Console で、個人用の workspace を作り、その workspace で API キーを発行する（自動作成される「Claude Code」workspace ではキーを作れない）。
 2. **上限を決める**: 下の「費用の上限」を先に設定する。
 3. **リンクを張る**: `scripts\windows\30_link.bat -n` で内容を確認し、`scripts\windows\30_link.bat` を実行する（Developer Mode が ON であること）。新しいターミナルを開く。
-4. **キーを保存する**: `claude-api-key.cmd -Set` を実行し、プロンプトにキーを貼る。`saved: ...\api-key.dpapi` と出れば成功。
+4. **キーを保存する**: `claude-api-key.cmd -Set` を実行し、プロンプトにキーを貼る。`saved: ...\settings-api-key.dpapi` と出れば成功。
 5. **確認する**: `claude-api` を起動して `/status` を実行する。認証が API キーになっていること。`claude` 単独で起動したときは OAuth のままであること。
-6. **モデルを決める**: 下の「モデル ID を取得する」で ID を調べ、`api.settings.json` の値を直す。
+6. **モデルを決める**: 下の「モデル ID を取得する」で ID を調べ、`settings-api.json` の値を直す。
 
 ### Zed（Claude API）
 
@@ -161,11 +161,11 @@ $r.data | Select-Object id, display_name, max_input_tokens, max_tokens | Format-
 $key = $null
 ```
 
-- `id` を `api.settings.json` の `model` や `ANTHROPIC_DEFAULT_*_MODEL` に入れる。
+- `id` を `settings-api.json` の `model` や `ANTHROPIC_DEFAULT_*_MODEL` に入れる。
 - `max_input_tokens` がコンテキストの上限（入力）、`max_tokens` が1回の出力の上限。
 - `limit=100` を付けないと、既定の件数（20）で切れる。
 - 401 が返るときはキーが違う（動作確認では、ダミーのキーで 401 を確認済み）。
-- `api.settings.json` の値の意味: `model` は起動時のモデル（`sonnet` などの別名か ID）。`ANTHROPIC_DEFAULT_OPUS_MODEL` / `_SONNET_MODEL` / `_HAIKU_MODEL` は、別名 `opus` `sonnet` `haiku` がどの ID を指すか。優先順位は `--model`、`ANTHROPIC_MODEL`、`model` 設定の順。
+- `settings-api.json` の値の意味: `model` は起動時のモデル（`sonnet` などの別名か ID）。`ANTHROPIC_DEFAULT_OPUS_MODEL` / `_SONNET_MODEL` / `_HAIKU_MODEL` は、別名 `opus` `sonnet` `haiku` がどの ID を指すか。優先順位は `--model`、`ANTHROPIC_MODEL`、`model` 設定の順。
 - 現在の値（2026-10-08 時点）: `model` は `sonnet`（= `claude-sonnet-5-5`。できるだけ安い Sonnet として決定）。`claude-opus-5-5` と `claude-haiku-4-5` のピン留めも、今のままで決定（2026-10-08）。
 
 ### 一覧の見方と選び方
@@ -208,7 +208,7 @@ $key = $null
 
 - 他の PC: `git pull` → `30_link.bat` → `claude-api-key.cmd -Set`（暗号化ファイルは PC ごと）。
 - キーの入れ替え（ローテーション）: Console で新しいキーを作る → `claude-api-key.cmd -Set` で上書き → 古いキーを Console で削除する。
-- キーを無効にしたい: Console でキーを削除し、`%USERPROFILE%\.claude\api-key.dpapi` を削除する。
+- キーを無効にしたい: Console でキーを削除し、`%USERPROFILE%\.claude\settings-api-key.dpapi` を削除する。
 - OAuth に戻したい: 終了して `claude-oauth`（または `claude`）で起動し直す（何も戻す必要はない）。
 
 ### うまくいかないとき（API キー）
