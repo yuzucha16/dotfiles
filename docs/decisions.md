@@ -27,9 +27,9 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
-### 【この件】Claude 用の AWS profile 名を `M1-trial` にした（2026-10-11。ユーザーの決定）
+### 【この件】Claude 用の AWS profile 名を `n1-trial` にした（2026-10-11。ユーザーの決定。当初は `M1-trial` で、同日に変更）
 
-- 決めたこと: Claude Code（Bedrock）が使う AWS profile 名を `default` から `M1-trial` にする。命名の型は「部署名-開発案件」（ユーザーの方針）。リポジトリで変えたのは `home/.config/zed/settings.json` の `Claude Bedrock` の `AWS_PROFILE` だけ。`claude-bedrock-setup.ps1` は名前を持たず、`-AwsProfile` か対話で渡す。
+- 決めたこと: Claude Code（Bedrock）が使う AWS profile 名を `default` から `n1-trial` にする。命名の型は「部署名-開発案件」（ユーザーの方針）。リポジトリで変えたのは `home/.config/zed/settings.json` の `Claude Bedrock` の `AWS_PROFILE` だけ。`claude-bedrock-setup.ps1` は名前を持たず、`-AwsProfile` か対話で渡す。
 - 根拠: 今後 Claude 以外でも AWS を使う想定なので、`default` を空けて用途ごとに分ける。`AWS_PROFILE` を `setx` で全体に設定しない（設定すると分けた意味が薄れる）。
 - 却下案（AI の提案。ユーザーが別案を選んだ）: `claude-bedrock`（既存の関数名・ファイル名に合わせる案）。
 - 確認済み（2026-10-11）: このPCは `~\.aws` に `config` が無く、`AWS_*` の環境変数も、生成済みの `settings-bedrock.json` も無い（実行して確認）。コード中の `default` 指定は Zed の1か所だけ（grep）。
