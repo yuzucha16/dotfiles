@@ -27,10 +27,42 @@ uv tool update-shell
 uv python install <バージョン>
 uv python list
 uv python pin <バージョン>
+uv python install 3.13
+uv python pin 3.13
+uv init
+uv venv <ディレクトリ名>
+uv sync
+uv run python --version
+uv run <スクリプト名>.py
+uv pip list
+uv pip install pandas
+uv pip install django==4.2.0
+uv pip install -r requirements.txt
+uv remove pandas
 gh release download -R <owner名>/<repo名> -p "<ファイルパターン>" -D "$HOME\Downloads"
 setx <変数名> "<値>"
 code --list-extensions > extensions.txt
 Get-Content .\extensions.txt | ForEach-Object { code --install-extension $_ }
+irm https://astral.sh/uv/install.ps1 | iex
+irm https://claude.ai/install.ps1 | iex
+Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression
+$env:UV_SYSTEM_CERTS = "true"
+git clone <リポジトリURL> <クローン先パス>
+git config --global http.sslBackend schannel
+git config --show-origin --list
+git config --show-origin --get-all credential.helper
+git credential-manager version
+aws configure
+aws configure list-profiles
+aws sts get-caller-identity
+aws bedrock list-inference-profiles --region ap-northeast-1
+claude 
+claude --version
+claude --help
+claude-oauth
+claude-bedrock
+claude-api
+claude-pick
 scoop bucket add extras
 scoop search <名前>
 scoop info <名前>
@@ -46,7 +78,18 @@ cargo install --locked <クレート名>
 rustup update
 which <コマンド>
 where <コマンド>
-<コマンド> --version
+volta list
+volta which <コマンド>
+volta which npm
+volta run <コマンド>
+volta run node --version
+volta install node
+volta install node@latest
+volta install node@22
+volta install <パッケージ名>
+volta pin node@22
+volta pin npm@10
+volta uninstall <パッケージ名>
 git status
 git fetch
 git pull
@@ -90,3 +133,9 @@ Get-PSReadLineOption
 Get-PSReadLineOption | Select-Object EditMode, PredictionSource, PredictionViewStyle
 (Get-PSReadLineOption).HistorySavePath
 vim ~/.vimrc
+Measure-Command { pwsh -Command "exit" }
+Measure-Command { pwsh -NoProfile -Command "exit" }
+(Get-Command <コマンド>).Source
+Get-ChildItem Env: | Where-Object Name -match 'AWS_'
+Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU"
+Get-DnsClientCache | Where-Object Entry -match 'anthropic|bedrock|amazonaws'
