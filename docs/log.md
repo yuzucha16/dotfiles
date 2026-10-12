@@ -68,6 +68,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
+### 2026-10-12（Claudian のチャットの見出し・強調の色を、markdown ビューにそろえた）
+
+- ユーザーの依頼で、Obsidian の Claudian（AI エージェント）のチャットの見出しがオレンジ・赤、強調がオレンジで、markdown ビュー（見出しは緑）と違っていたのを直した。原因は、既存のスニペット `material-gruvbox-bold.css` が `.markdown-rendered` と `.cm-*` にしか効かず、チャット本文（`.claudian-message-content`）に当たっていなかったこと。同スニペットに `.theme-dark .claudian-message-content` の見出し h1〜h6（`#A7B85A`、`!important`）と強調 `strong` / `b`（テーマの `--bold-color`、`font-weight: 500`）を足した。ダークテーマ限定。確認: Obsidian を再起動して、左（Claudian）と右（markdown ビュー）の見出し・強調の色が一致した（ユーザーの報告とスクリーンショット）。再起動前は反映されず、原因は再起動の漏れだった。
+
 ### 2026-10-11（`claude-bedrock-setup` に、貼り付け用の `settings-bedrock.txt` の出力を足した）
 
 - ユーザーの依頼（Claudian のスニペットと `settings-bedrock.json` の値の二重管理を避けたい。正は `.json`、`.txt` は派生物）で、`claude-bedrock-setup.ps1` が `.json` と同じ場所に `settings-bedrock.txt` を書くようにした。中身は `env` ブロックの `KEY=VALUE` の行（LF、BOM なし、コメントなし）で、毎回 `.json` と一緒に上書きする。`-DryRun` は内容を表示するだけ。README（`.md` と `.html`）と試験（2件追加）も合わせた。確認: `pwsh -NoProfile -File tests/windows/test_claude_bedrock_setup.ps1` が 26 件 PASS（偽の `aws`。AWS 実機は未実行）。コミット `c66909c`。
