@@ -43,3 +43,5 @@ home\.config\zed\themes|%APPDATA%\zed\themes
 # Obsidian config (the vault root %WORKS_DIR% is a plain, PC-local directory/repo made by the workflow hook; it is not linked.
 # The shared repo "workbase" is cloned into %WORKS_DIR%\resources by 50_repos.bat, not linked.)
 windows\obsidian\.obsidian|%WORKS_DIR%\.obsidian
+# Claudian settings (file symlink; .claudian\sessions stays local and untracked)
+windows\obsidian\claudian-settings.json|%WORKS_DIR%\.claudian\claudian-settings.json
