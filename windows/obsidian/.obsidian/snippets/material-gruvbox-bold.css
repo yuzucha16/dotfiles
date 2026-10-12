@@ -30,3 +30,12 @@
 .theme-dark .inline-title {
   color: #A7B85A !important;
 }
+
+/* Claudian composer (input): same colors as the markdown view. Needs the cmMd patch in realclaudian/main.js */
+.theme-dark .claudian-composer-editor .cm-md-h {
+  color: #A7B85A !important;
+}
+.theme-dark .claudian-composer-editor .cm-md-strong {
+  color: var(--bold-color) !important;
+  font-weight: 500;
+}
