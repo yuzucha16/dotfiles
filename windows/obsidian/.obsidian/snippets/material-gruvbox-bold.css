@@ -6,6 +6,13 @@
   font-weight: 500;
 }
 
+/* Claudian chat: same bold color as the markdown view (theme --bold-color) */
+.theme-dark .claudian-message-content strong,
+.theme-dark .claudian-message-content b {
+  color: var(--bold-color) !important;
+  font-weight: 500;
+}
+
 /* Heading color: Olive Green */
 .theme-dark .markdown-rendered h1,
 .theme-dark .markdown-rendered h2,
@@ -13,6 +20,12 @@
 .theme-dark .markdown-rendered h4,
 .theme-dark .markdown-rendered h5,
 .theme-dark .markdown-rendered h6,
+.theme-dark .claudian-message-content h1,
+.theme-dark .claudian-message-content h2,
+.theme-dark .claudian-message-content h3,
+.theme-dark .claudian-message-content h4,
+.theme-dark .claudian-message-content h5,
+.theme-dark .claudian-message-content h6,
 .theme-dark .markdown-source-view.mod-cm6 .HyperMD-header,
 .theme-dark .inline-title {
   color: #A7B85A !important;
