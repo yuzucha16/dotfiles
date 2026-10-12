@@ -4,6 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- Claudian の入力欄パッチ（2026-10-12）の試用: 使って見た目・Enter の挙動（箇条書きの継続、空の項目で抜ける）に問題が無いか確認する。続けるなら、プラグインの更新で `main.js` が上書きされるため、パッチの当て直し手順を `docs/decisions.md` かこのファイルに残す。戻すなら、`windows/obsidian/.obsidian/plugins/realclaudian/main.js` `styles.css` を、パッチ前のコミットに `git checkout <パッチ前のコミット> -- <パス>` で戻す。
 - Claude 用の AWS profile `n1-trial` の実機の作成（2026-10-11。家・会社の各 PC。このPCも未実施）: `git pull` のあと、`aws configure sso`（または `aws configure --profile n1-trial`）で profile を作る。SSO なら `aws sso login --profile n1-trial`。`claude-bedrock-setup.cmd -AwsProfile n1-trial` で `settings-bedrock.json` を作り直し、`claude-bedrock` と Zed の `Claude Bedrock` の起動を確認する。`default` の profile を作っていた PC は、不要なら削除する。あわせて `settings-bedrock.txt` ができること、その全文を works の Claudian の Bedrock スニペット（`.claudian/claudian-settings.json`）へ貼れること（複数行の保存を含む）を確認する（2026-10-11 に出力を追加。AWS 実機では未実行）。
 - Claude Code の設定ファイルの改名（2026-10-11）に伴う実機の移行（家・会社の各 PC。このPCも未実施）: `git pull` → `30_link.bat` を再実行（`settings-api.json` のリンクができる）→ `%USERPROFILE%\.claude\` の旧 `api.settings.json`（リンク）を手で削除。暗号化済みのキーは `api-key.dpapi` を `settings-api-key.dpapi` に改名する（または `claude-api-key.cmd -Set` で保存し直す）。これをしないと `claude-api` が「キー無し」で止まる。Bedrock は `claude-bedrock-setup.cmd` を再実行して `settings-bedrock.json` を作り、旧 `bedrock.settings.json` を削除する。その後 `claude-api` と `claude-bedrock` の起動を確認する。
 - AWS CLI・uv・Volta のインストーラ（2026-10-10 時点。コミット済みなら push 済みか確認）: 実機で `25_awscli.bat` `26_uv.bat` `27_volta.bat` を実行し、各 `--version`、`python --version`、`node` / `npm` / `npx` の版、PATH の再読込、`awscli.amazonaws.com/v2/install.ps1` の URL を確認する。`ca_bundle.crt` を `%USERPROFILE%\.certs` に置いた PC で `y` を試し、`setx` の値を確認する。Windows の `python` が Microsoft Store のスタブに先に当たらないかも見る。`10_env.bat` の最後の案内（オレンジ）の表示は未確認（実行すると `setx` が動く）。
@@ -67,6 +68,10 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+
+### 2026-10-12（Claudian の入力欄に、Markdown の色付けと Enter の自動インデントを足した。試用）
+
+- ユーザーの依頼で、Obsidian の Claudian（v2.3.16）のチャット入力欄を、Zed のように見出しの色付け・自動インデントが効く状態にした。調査: 入力欄は textarea ではなく CodeMirror 6（`claudian-composer-editor`）で、Markdown 言語・ハイライト・インデント引き継ぎが未導入（`main.js` を grep して確認）。Obsidian は Markdown 言語を公開していないため、`windows/obsidian/.obsidian/plugins/realclaudian/main.js` の `EditorState.create` の extensions に、行ごとの正規表現による装飾（見出し、箇条書きの記号、インラインコード、`**強調**`、コードフェンス）と、Enter で箇条書き・インデントを引き継ぐコマンドを直接足した。`styles.css` に色のクラス、`snippets/material-gruvbox-bold.css` に見出し（`#A7B85A`）・強調（`--bold-color`）の色を足し、markdown ビューにそろえた。言語ごとのコードの色付けは、パーサーが無いので不可。確認: `node --check main.js` は通過。ユーザーが Obsidian で表示を見て、見出し・箇条書き・コードの色が付くことを確認した（スクリーンショット）。Enter の挙動は未確認。プラグインの更新で上書きされる。
 
 ### 2026-10-12（Claudian のチャットの見出し・強調の色を、markdown ビューにそろえた）
 
