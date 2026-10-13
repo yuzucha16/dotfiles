@@ -170,7 +170,7 @@
   "enableZenMode": true,
   "zenModePosition": null,
   "enableDualPane": true,
-  "dualPaneSide": "right",
+  "dualPaneSide": "left",
   "restoreTabsOnStartup": true,
   "skillsSynced": false,
   "sessionManagerOrganization": "list",
