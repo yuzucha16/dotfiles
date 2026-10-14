@@ -43,7 +43,8 @@
       "Bash(git -C * add *)",
       "Bash(git -C * commit *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Read(~/shared/**)"
     ]
   },
   "enabledPlugins": {
