@@ -69,6 +69,11 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Log
 
+### 2026-10-14（obsidian-skills と defuddle の自動導入を足した）
+
+- ユーザーの依頼で、`/plugin marketplace add kepano/obsidian-skills` と `/plugin install obsidian@obsidian-skills`、`npm install -g defuddle` を dotfiles の自動導入にした。`manifests/npm.txt` + `scripts/windows/28_npm_globals.bat`（`volta install`。Volta の shim 管理に載せるため `npm -g` は使わない）と、`manifests/claude-plugins.txt` + `scripts/windows/29_claude_plugins.bat`（`claude plugin marketplace add` / `install`）。ユーザーの選択: CLI 方式（settings.json の宣言は不採用）、Windows のみ（Linux/WSL は対象外）。
+- 確認: `claude plugin --help` で CLI を確認。`29` は誤って実環境の `claude` を呼び、`obsidian@obsidian-skills` が user スコープで実際に導入された（成功）。`28` は偽の `volta` で `volta install defuddle` の呼び出しを確認。実機の `volta install defuddle` は未実行。試験スクリプトは未追加。
+
 ### 2026-10-12（Claudian の入力欄に、Markdown の色付けと Enter の自動インデントを足した。試用）
 
 - ユーザーの依頼で、Obsidian の Claudian（v2.3.16）のチャット入力欄を、Zed のように見出しの色付け・自動インデントが効く状態にした。調査: 入力欄は textarea ではなく CodeMirror 6（`claudian-composer-editor`）で、Markdown 言語・ハイライト・インデント引き継ぎが未導入（`main.js` を grep して確認）。Obsidian は Markdown 言語を公開していないため、`windows/obsidian/.obsidian/plugins/realclaudian/main.js` の `EditorState.create` の extensions に、行ごとの正規表現による装飾（見出し、箇条書きの記号、インラインコード、`**強調**`、コードフェンス）と、Enter で箇条書き・インデントを引き継ぐコマンドを直接足した。`styles.css` に色のクラス、`snippets/material-gruvbox-bold.css` に見出し（`#A7B85A`）・強調（`--bold-color`）の色を足し、markdown ビューにそろえた。言語ごとのコードの色付けは、パーサーが無いので不可。確認: `node --check main.js` は通過。ユーザーが Obsidian で表示を見て、見出し・箇条書き・コードの色が付くことを確認した（スクリーンショット）。Enter の挙動は未確認。プラグインの更新で上書きされる。

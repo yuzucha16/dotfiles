@@ -1,0 +1,5 @@
+# global npm tools for 28_npm_globals.bat (installed with: volta install <name>)
+# One package per line. Lines starting with # and blank lines are ignored.
+
+# obsidian-skills (kepano) uses defuddle to extract web page content
+defuddle

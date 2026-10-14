@@ -1,0 +1,6 @@
+# Claude Code plugins for 29_claude_plugins.bat
+# Format: <marketplace source>|<plugin>@<marketplace name>
+# Runs: claude plugin marketplace add <source>  /  claude plugin install <plugin>@<marketplace>
+# Lines starting with # and blank lines are ignored.
+
+kepano/obsidian-skills|obsidian@obsidian-skills
