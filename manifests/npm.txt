@@ -3,3 +3,6 @@
 
 # obsidian-skills (kepano) uses defuddle to extract web page content
 defuddle
+
+# renders Markdown from templates and JSON (used by the knap skill)
+knap
