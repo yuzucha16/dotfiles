@@ -4,6 +4,8 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- obsidian-skills と defuddle / knap の他PCへの展開（2026-10-14。家・会社の各 PC）: `git pull` のあと、`27_volta.bat` → `28_npm_globals.bat` → `29_claude_plugins.bat` を実行する（23_claude と Volta が前提）。`knap --version` と `/skills` で6つが見えることを確認する。`knap` は試用で、不要なら `manifests/npm.txt` の2行を削除して `volta uninstall knap`。
+- 外部スキルを取り込む前に、配布元と `SKILL.md` を確認する運用にするか決める（2026-10-14。案の段階。決まれば `docs/decisions.md` の外部スキルの項に足す）。
 - Claudian の入力欄パッチ（2026-10-12）の試用: 使って見た目・Enter の挙動（箇条書きの継続、空の項目で抜ける）に問題が無いか確認する。続けるなら、プラグインの更新で `main.js` が上書きされるため、パッチの当て直し手順を `docs/decisions.md` かこのファイルに残す。戻すなら、`windows/obsidian/.obsidian/plugins/realclaudian/main.js` `styles.css` を、パッチ前のコミットに `git checkout <パッチ前のコミット> -- <パス>` で戻す。
 - Claude 用の AWS profile `n1-trial` の実機の作成（2026-10-11。家・会社の各 PC。このPCも未実施）: `git pull` のあと、`aws configure sso`（または `aws configure --profile n1-trial`）で profile を作る。SSO なら `aws sso login --profile n1-trial`。`claude-bedrock-setup.cmd -AwsProfile n1-trial` で `settings-bedrock.json` を作り直し、`claude-bedrock` と Zed の `Claude Bedrock` の起動を確認する。`default` の profile を作っていた PC は、不要なら削除する。あわせて `settings-bedrock.txt` ができること、その全文を works の Claudian の Bedrock スニペット（`.claudian/claudian-settings.json`）へ貼れること（複数行の保存を含む）を確認する（2026-10-11 に出力を追加。AWS 実機では未実行）。
 - Claude Code の設定ファイルの改名（2026-10-11）に伴う実機の移行（家・会社の各 PC。このPCも未実施）: `git pull` → `30_link.bat` を再実行（`settings-api.json` のリンクができる）→ `%USERPROFILE%\.claude\` の旧 `api.settings.json`（リンク）を手で削除。暗号化済みのキーは `api-key.dpapi` を `settings-api-key.dpapi` に改名する（または `claude-api-key.cmd -Set` で保存し直す）。これをしないと `claude-api` が「キー無し」で止まる。Bedrock は `claude-bedrock-setup.cmd` を再実行して `settings-bedrock.json` を作り、旧 `bedrock.settings.json` を削除する。その後 `claude-api` と `claude-bedrock` の起動を確認する。
@@ -72,7 +74,9 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 ### 2026-10-14（obsidian-skills と defuddle の自動導入を足した）
 
 - ユーザーの依頼で、`/plugin marketplace add kepano/obsidian-skills` と `/plugin install obsidian@obsidian-skills`、`npm install -g defuddle` を dotfiles の自動導入にした。`manifests/npm.txt` + `scripts/windows/28_npm_globals.bat`（`volta install`。Volta の shim 管理に載せるため `npm -g` は使わない）と、`manifests/claude-plugins.txt` + `scripts/windows/29_claude_plugins.bat`（`claude plugin marketplace add` / `install`）。ユーザーの選択: CLI 方式（settings.json の宣言は不採用）、Windows のみ（Linux/WSL は対象外）。
-- 確認: `claude plugin --help` で CLI を確認。`29` は誤って実環境の `claude` を呼び、`obsidian@obsidian-skills` が user スコープで実際に導入された（成功）。`28` は偽の `volta` で `volta install defuddle` の呼び出しを確認。実機の `volta install defuddle` は未実行。試験スクリプトは未追加。
+- 確認: `claude plugin --help` で CLI を確認。`29` は誤って実環境の `claude` を呼び、`obsidian@obsidian-skills` が user スコープで実際に導入された（成功）。`28` は偽の `volta` で `volta install defuddle` の呼び出しを確認。試験スクリプトは未追加。
+- ユーザーの実機の確認（報告）: `28_npm_globals.bat` と `29` の導入は正常完了。`/skills` に6つが `locked by plugin` で並び、Claudian でも `obsidian-markdown`、`defuddle` と `knap` の連携を使えた。ユーザーの指示で `knap` を `manifests/npm.txt` に足した（試用。コミット `23e995b`）。
+- 外部スキルの取り込み方（スキル本体は写さない、導入の宣言は `claude-plugins.txt`、使い分けは使う側の `AGENTS.md`）を `docs/decisions.md` に決定として書いた（`f48f89f`）。`works/AGENTS.md` にも Obsidian 作業用のスキルの1項目を足した（works 側のコミット `fa2bafc`）。
 
 ### 2026-10-12（Claudian の入力欄に、Markdown の色付けと Enter の自動インデントを足した。試用）
 
