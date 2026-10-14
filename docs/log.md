@@ -4,7 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
-- colored-tags の `data.json` を追跡から外す試用の判断（2026-10-14 から1週間。2026-10-21 頃）: 色の食い違いや不便が無ければ続ける。戻すなら `.gitignore` の行を消して `git add` する。他PCでは `git pull` の前に、`data.json` に未コミットの変更があれば退避する（追跡削除の pull で上書きの衝突になる）。pull 後もファイルは残る想定だが、消えたら Obsidian が作り直す。
+- colored-tags の `data.json` を追跡から外す試用の判断（2026-10-15 から1週間。2026-10-22 頃。判断は `docs/decisions.md` の先頭の項目）: 色の食い違いや不便が無ければ続ける。戻すなら `.gitignore` の行を消して `git add` する。他PCでは `git pull` の前に、`data.json` に未コミットの変更があれば退避する（追跡削除の pull で上書きの衝突になる）。pull 後もファイルは残る想定だが、消えたら Obsidian が作り直す。
 - obsidian-skills と defuddle / knap の他PCへの展開（2026-10-14。家・会社の各 PC）: `git pull` のあと、`27_volta.bat` → `28_npm_globals.bat` → `29_claude_plugins.bat` を実行する（23_claude と Volta が前提）。`knap --version` と `/skills` で6つが見えることを確認する。`knap` は試用で、不要なら `manifests/npm.txt` の2行を削除して `volta uninstall knap`。
 - 外部スキルを取り込む前に、配布元と `SKILL.md` を確認する運用にするか決める（2026-10-14。案の段階。決まれば `docs/decisions.md` の外部スキルの項に足す）。
 - Claudian の入力欄パッチ（2026-10-12）の試用: 使って見た目・Enter の挙動（箇条書きの継続、空の項目で抜ける）に問題が無いか確認する。続けるなら、プラグインの更新で `main.js` が上書きされるため、パッチの当て直し手順を `docs/decisions.md` かこのファイルに残す。戻すなら、`windows/obsidian/.obsidian/plugins/realclaudian/main.js` `styles.css` を、パッチ前のコミットに `git checkout <パッチ前のコミット> -- <パス>` で戻す。

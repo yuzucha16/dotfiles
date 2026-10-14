@@ -27,6 +27,13 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Obsidian の `colored-tags/data.json` を git の追跡から外す。1週間の試用（2026-10-15。ユーザーの決定）
+
+- 決めたこと: `.gitignore` に入れて追跡から外した（`8332027`）。色は PC ごとに独立になる。2026-10-22 頃に続けるか判断する（`docs/log.md` の Next Actions）。
+- 根拠: `data.json` はほぼ `knownTags`（タグ → パレット番号の台帳）で、プラグインがタグの増減に応じて自動で書き換える。番号は出現順に振られるので、複数 PC で衝突し、diff が頻発する。プラグインのソースは未確認（diff と `tagColors` が空であることからの推測）。タグが100個近く、色を固定しても覚えられず、固定する価値が低い。
+- 却下案: `tagColors` で色を明示（`knownTags` の diff は残る）、clean フィルタで `knownTags` を除く（仕組みが増える）、一方の PC だけでタグを足す運用（運用負担）。
+- 確認済み（2026-10-15、実機）: 追跡を外す pull は、`data.json` に未コミットの変更がある PC で modify/delete の衝突になった。この PC では rebase で、削除側を採用して解消した。ファイルは作業ツリーに残る。
+
 ### 【汎用】Windows Terminal の WSL 動的プロファイルを無効にし、`Ubuntu-24.04` だけ固定する。作成のたびに増えるディストリビューション（AI 作業部屋）へは、PowerShell の `room-sh <Area>` で入る（2026-10-14。ユーザーが承認）
 
 - 背景: 部屋のディストリビューションを作るたびに、Terminal の `settings.json`（dotfiles で追跡）に `"source": "Microsoft.WSL"` のプロファイルが自動で書き足され、差分が出る。
