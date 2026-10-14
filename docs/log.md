@@ -76,6 +76,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - ユーザーの依頼で、`/plugin marketplace add kepano/obsidian-skills` と `/plugin install obsidian@obsidian-skills`、`npm install -g defuddle` を dotfiles の自動導入にした。`manifests/npm.txt` + `scripts/windows/28_npm_globals.bat`（`volta install`。Volta の shim 管理に載せるため `npm -g` は使わない）と、`manifests/claude-plugins.txt` + `scripts/windows/29_claude_plugins.bat`（`claude plugin marketplace add` / `install`）。ユーザーの選択: CLI 方式（settings.json の宣言は不採用）、Windows のみ（Linux/WSL は対象外）。
 - 確認: `claude plugin --help` で CLI を確認。`29` は誤って実環境の `claude` を呼び、`obsidian@obsidian-skills` が user スコープで実際に導入された（成功）。`28` は偽の `volta` で `volta install defuddle` の呼び出しを確認。試験スクリプトは未追加。
 - ユーザーの実機の確認（報告）: `28_npm_globals.bat` と `29` の導入は正常完了。`/skills` に6つが `locked by plugin` で並び、Claudian でも `obsidian-markdown`、`defuddle` と `knap` の連携を使えた。ユーザーの指示で `knap` を `manifests/npm.txt` に足した（試用。コミット `23e995b`）。
+- 改善（ユーザーの承認「.batははまりやすいので改善案いれましょう」）: `29_claude_plugins.bat` が `PATH` の先頭に `~\.local\bin` を足していたため、偽の `claude` の試験で本物が呼ばれた。`claude` が PATH に無いときだけ末尾に足す形に直し、`tests/windows/test_28_29_installers.ps1`（5項目、failures=0）を追加した。`.bat` の点検の順序は `docs/decisions.md` の Gotchas。`test_20_apps.ps1` も failures=0（ASCII の確認を含む）。
 - 外部スキルの取り込み方（スキル本体は写さない、導入の宣言は `claude-plugins.txt`、使い分けは使う側の `AGENTS.md`）を `docs/decisions.md` に決定として書いた（`f48f89f`）。`works/AGENTS.md` にも Obsidian 作業用のスキルの1項目を足した（works 側のコミット `fa2bafc`）。
 
 ### 2026-10-12（Claudian の入力欄に、Markdown の色付けと Enter の自動インデントを足した。試用）
