@@ -8,6 +8,19 @@
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
   // ==== AI (claude-acp is the main entry point) ====
+  "wsl_connections": [
+    {
+      "distro_name": "ai-room-test",
+      "user": null,
+      "projects": [
+        {
+          "paths": [
+            "/mnt/room"
+          ]
+        }
+      ]
+    }
+  ],
   "edit_predictions": {
     "provider": "none"
   },
