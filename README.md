@@ -143,7 +143,7 @@ dotfiles/
 
 ### WSL (Ubuntu 24.04) / Linux (apt 系)
 
-WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/Users/<Windows のユーザー名>/works/repos/...` から参照する）。ネイティブ Linux は、OS を入れて、冒頭の「クイックスタート（ネイティブ Linux）」で `~/works/repos/github.com/yuzucha16/dotfiles` に clone してから実行する（OS のインストール手順は works の `resources/cheatsheets/env/debian-family.md`）。`30_link.sh` は、置かれているリポジトリを自動で `--src` にするので、どちらでも同じ呼び方になる。Vault のトップ `WORKS_DIR` は、WSL では `/mnt/c/Users/<Windows のユーザー名>/works`（Windows 側と共有）、ネイティブ Linux では `~/works`（`home/.profile` が既定値を設定する。`~/.config/profile.local` で上書きできる）。
+WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/Users/<Windows のユーザー名>/works/repos/...` から参照する）。ネイティブ Linux は、OS を入れて、冒頭の「クイックスタート（ネイティブ Linux）」で `~/works/repos/github.com/yuzucha16/dotfiles` に clone してから実行する（OS のインストール手順は works の `resources/guides/howto/debian-family.md`）。`30_link.sh` は、置かれているリポジトリを自動で `--src` にするので、どちらでも同じ呼び方になる。Vault のトップ `WORKS_DIR` は、WSL では `/mnt/c/Users/<Windows のユーザー名>/works`（Windows 側と共有）、ネイティブ Linux では `~/works`（`home/.profile` が既定値を設定する。`~/.config/profile.local` で上書きできる）。
 
 1. `scripts/linux/10_dirs.sh`: XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/works/{build,tools}` を作る
    - `scripts/linux/11_git_identity.sh`: `~/.gitconfig_local`（PC ごとの git の名前・メール）が無いときだけ、`user.name` / `user.email` を対話的に聞いて作る（Windows の `11_git_identity.bat` と同じ。既にあれば触らない）。**`30_link.sh` の前に**実行する（git が必要。ネイティブ Linux はクイックスタートで入っている。WSL は Ubuntu 標準の git か、`20_packages.sh` の後）。`git config --global` は使わない（理由は Windows 版と同じ。`~/.gitconfig` は `30_link.sh` が張る symlink）。`credential.helperselector`（Git Credential Manager）は Windows 版も書かず、`home/.gitconfig` に静的に持つ。無効な入力は5回で `[ERR]`
@@ -197,10 +197,10 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行す�
 
 ## exmem との関係
 
-exmem（`$HOME\works\resources\exmem`。共有リポジトリ `workbase` の一部）は、AIとの壁打ちで得たナレッジの置き場。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業の経緯・決定・次にやることは、このリポジトリの `docs/` に残す。書き込みの唯一の例外は、エージェントに「ナレッジ化して」と指示したとき、`exmem/inbox/` に再利用できる知識を1ファイル置くこと（手順と形式は共通機能 `works/resources/workflow-kit/knowledge-hook.md`）。
+exmem（`$HOME\works\resources\exmem`。共有リポジトリ `workbase` の一部）は、AIとの壁打ちで得たナレッジの置き場。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業の経緯・決定・次にやることは、このリポジトリの `docs/` に残す。書き込みの唯一の例外は、エージェントに「ナレッジ化して」と指示したとき、`exmem/inbox/` に再利用できる知識を1ファイル置くこと（手順と形式は共通機能 `works/resources/workflow-kit/stock-hook.md`）。
 
 - 参照するもの: 履歴の種の本文（`exmem/knowledge/shell-command-usecases.md`。種ファイルはその派生物）。
-- 手順書は `workbase` の `cheatsheets/env/`（`$HOME\works\resources\cheatsheets\env\`）。
+- 手順書は `workbase` の `guides/howto/`（`$HOME\works\resources\guides\howto\`）。
 
 ## 履歴リセット (2026-10-02)
 
