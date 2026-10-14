@@ -37,7 +37,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - 確認済み（2026-10-14、ユーザーの報告）: Claudian（Obsidian プラグイン）が `~\.claude` のユーザープラグインを読み、`obsidian-markdown`、`defuddle` と `knap` の連携を実際に使えた。Claude Code の `/skills` では6つが `locked by plugin`（プラグイン由来で、スキル単位では切り替えられない解釈。公式の説明は未確認）と表示され、プラグイン単位では `claude plugin disable|enable obsidian@obsidian-skills` で切り替える。`~NN tok` は名前と `description` の常時コスト（`claude plugin details` で、6つ合計は約 597 tok。本文は呼び出し時だけ約0.3k〜5k tok。いずれも見積もり）。
 - `knap` は試用で `manifests/npm.txt` に入れた（2026-10-14）。不要なら、2行削除して `volta uninstall knap`。
 - 未確認: 外部スキルの配布元と `SKILL.md` を取り込み前に確認する運用は、案の段階（今回は kepano 製であることを見たのみ）。
-- 行き先: 未（【汎用】。「ナレッジ化して」の対象）
+- → inbox/2026-10-14-claude-code-external-plugins
 
 ### 【この件】Claude 用の AWS profile 名を `n1-trial` にした（2026-10-11。ユーザーの決定。当初は `M1-trial` で、同日に変更）
 
