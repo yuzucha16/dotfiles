@@ -13,7 +13,8 @@
         "Windows.Terminal.SSH",
         "CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc",
         "Windows PowerShell",
-        "Windows.Terminal.VisualStudio"
+        "Windows.Terminal.VisualStudio",
+        "Microsoft.WSL"
     ],
     "keybindings": 
     [
@@ -67,22 +68,10 @@
                 "name": "CMD"
             },
             {
+                "commandline": "wsl.exe -d Ubuntu-24.04",
                 "guid": "{c83ff58d-7bca-52cc-8dfe-0983f365c60f}",
                 "hidden": false,
-                "name": "Ubuntu-24.04",
-                "source": "Microsoft.WSL"
-            },
-            {
-                "guid": "{0ad3c4de-f98e-5b0e-951b-3a407b9a66bb}",
-                "hidden": false,
-                "name": "ai-room-test",
-                "source": "Microsoft.WSL"
-            },
-            {
-                "guid": "{72017bcd-5da6-5f18-a3c8-3201a3f36565}",
-                "hidden": false,
-                "name": "room-office-admin",
-                "source": "Microsoft.WSL"
+                "name": "Ubuntu-24.04"
             }
         ]
     },

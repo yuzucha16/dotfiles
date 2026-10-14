@@ -84,6 +84,13 @@ function claude-pick {
     }
 }
 
+# AI 作業部屋（WSL の room-<Area>）の対話シェルに入る。例: room-sh office-admin
+# 部屋は増えるたびに Windows Terminal の設定が変わるので、タブには出さず、この関数で入る
+function room-sh {
+    param([Parameter(Mandatory)][string]$Area)
+    wsl.exe -d "room-$Area"
+}
+
 # Alias
 
 # ls を lsd に置き換え（bash/zsh の common.sh と同じ体系）
