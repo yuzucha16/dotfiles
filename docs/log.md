@@ -4,6 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 
 ## Next Actions
 
+- colored-tags の `data.json` を追跡から外す試用の判断（2026-10-14 から1週間。2026-10-21 頃）: 色の食い違いや不便が無ければ続ける。戻すなら `.gitignore` の行を消して `git add` する。他PCでは `git pull` の前に、`data.json` に未コミットの変更があれば退避する（追跡削除の pull で上書きの衝突になる）。pull 後もファイルは残る想定だが、消えたら Obsidian が作り直す。
 - obsidian-skills と defuddle / knap の他PCへの展開（2026-10-14。家・会社の各 PC）: `git pull` のあと、`27_volta.bat` → `28_npm_globals.bat` → `29_claude_plugins.bat` を実行する（23_claude と Volta が前提）。`knap --version` と `/skills` で6つが見えることを確認する。`knap` は試用で、不要なら `manifests/npm.txt` の2行を削除して `volta uninstall knap`。
 - 外部スキルを取り込む前に、配布元と `SKILL.md` を確認する運用にするか決める（2026-10-14。案の段階。決まれば `docs/decisions.md` の外部スキルの項に足す）。
 - Claudian の入力欄パッチ（2026-10-12）の試用: 使って見た目・Enter の挙動（箇条書きの継続、空の項目で抜ける）に問題が無いか確認する。続けるなら、プラグインの更新で `main.js` が上書きされるため、パッチの当て直し手順を `docs/decisions.md` かこのファイルに残す。戻すなら、`windows/obsidian/.obsidian/plugins/realclaudian/main.js` `styles.css` を、パッチ前のコミットに `git checkout <パッチ前のコミット> -- <パス>` で戻す。
@@ -76,6 +77,12 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - Terminal の `disabledProfileSources` に `Microsoft.WSL` を足し（旧方式の `Windows.Terminal.Wsl` は既にあったが、新しい WSL の方式は別名）、`Ubuntu-24.04` を固定プロファイル（`wsl.exe -d Ubuntu-24.04`、guid は同じ）にし、部屋の 2 件を削除した。`windows/powershell/profile.ps1` に `room-sh <Area>`（`wsl.exe -d room-<Area>`）を足した（`452067b`）。Terminal を閉じてから編集した。
 - 確認済み（ユーザーの実機）: Terminal のメニューが PowerShell・CMD・Ubuntu-24.04 になり、`Ctrl+Shift+3` で Ubuntu が開く。`settings.json` に差分が出ない。`room-sh office-admin` で部屋に入れる。判断は `docs/decisions.md` の先頭の項目。
 - 含めなかった差分: `colored-tags/data.json`（タグ `security` の色。Obsidian の自動更新）。
+
+### 2026-10-15（colored-tags の data.json を追跡から外した）
+
+- 原因: `data.json` の中身はほぼ `knownTags`（タグ → パレット番号の台帳）で、プラグインがタグの増減に応じて自動で書き換え、番号は出現順に振る。複数 PC で番号が衝突し、diff が頻発する。プラグインのソースは未確認（diff と `tagColors` が空であることからの推測）。
+- ユーザーの決定: タグが100個近く、色を固定しても覚えられず価値が低いので、`.gitignore` に入れて追跡から外す（案3）。1週間の試用。色は PC ごとに独立になる。案2（`tagColors` で固定）、案4（clean フィルタ）は見送り。
+
 ### 2026-10-14（obsidian-skills と defuddle の自動導入を足した）
 
 - ユーザーの依頼で、`/plugin marketplace add kepano/obsidian-skills` と `/plugin install obsidian@obsidian-skills`、`npm install -g defuddle` を dotfiles の自動導入にした。`manifests/npm.txt` + `scripts/windows/28_npm_globals.bat`（`volta install`。Volta の shim 管理に載せるため `npm -g` は使わない）と、`manifests/claude-plugins.txt` + `scripts/windows/29_claude_plugins.bat`（`claude plugin marketplace add` / `install`）。ユーザーの選択: CLI 方式（settings.json の宣言は不採用）、Windows のみ（Linux/WSL は対象外）。
