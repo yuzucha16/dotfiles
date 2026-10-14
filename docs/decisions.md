@@ -27,6 +27,15 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【汎用】Windows Terminal の WSL 動的プロファイルを無効にし、`Ubuntu-24.04` だけ固定する。作成のたびに増えるディストリビューション（AI 作業部屋）へは、PowerShell の `room-sh <Area>` で入る（2026-10-14。ユーザーが承認）
+
+- 背景: 部屋のディストリビューションを作るたびに、Terminal の `settings.json`（dotfiles で追跡）に `"source": "Microsoft.WSL"` のプロファイルが自動で書き足され、差分が出る。
+- 決めたこと: `disabledProfileSources` に `Microsoft.WSL` を足す。`Ubuntu-24.04` は固定プロファイルにする。部屋のプロファイルは削除し、`profile.ps1` の関数 `room-sh` で入る。
+- 根拠: ユーザーが「対話シェルの起動が楽であればよい」「毎回差分が出るのは困る」と述べ、提案を承認した。部屋が増えても設定を変えずに済む。
+- 却下案: 部屋ごとに固定プロファイルを足す（部屋を作るたびに設定が変わる）。現状維持（作成のたびに差分が出る）。
+- 確認済み（2026-10-14、ユーザーの実機）: メニューが PowerShell・CMD・Ubuntu-24.04 になり、開き直しても差分が出ない。`room-sh office-admin` で入れる。
+- 注意: Zed の `wsl_connections` は、Zed の画面から WSL に接続すると書き足される。避けられるかは未確認。
+- コミット: `b621cd1`、`452067b`。
 ### 【汎用】外部の Claude Code スキル（プラグイン）の取り込み方（2026-10-14。ユーザーの指示「knap、a,bの順」。obsidian-skills の導入が最初の例）
 
 - 決めたこと: (1) 導入の宣言は dotfiles の `manifests/claude-plugins.txt`（`<ソース>|<plugin>@<marketplace>`）を正本にし、`29_claude_plugins.bat` が `claude plugin marketplace add` / `install` で入れる（user スコープ）。依存する CLI は `manifests/npm.txt`（`28_npm_globals.bat`、`volta install`）。(2) スキル本体（`SKILL.md`）は dotfiles にも exmem にも写さない。(3) 「どの作業でどのスキルを使うか」は、使う側の作業ディレクトリの `AGENTS.md` に1〜2行だけ書く。共有側（kit、exmem）には、固有名を外した一般形だけを書く。

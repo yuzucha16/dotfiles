@@ -15,7 +15,7 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - Claude Code の API キー認証（2026-10-08 時点）: `claude-api` の起動と `/status` は確認済み（`Auth token: apiKeyHelper`。claude.ai connectors の警告は仕様どおり）。`claude` 単独の OAuth ログイン（Pro）と `GET /v1/models` の取得も確認済みで、`model` は Sonnet 5.5 に決定。Opus と Haiku のピンも今のままで決定。他PCでは、キーを保存し直す（暗号化ファイルは PC ごと）。
 - Claude Code と Zed のスレッド復元（2026-10-07）の後始末: 数日使って問題が無ければ、バックアップ（`~\.claude\projects_backup_20261007`、`projects_backup_20261007b`、`~\.claude\zed-fix\zed-db-backup-*`）と、旧ディレクトリ `~\.claude\projects\C--vault-*` の重複を削除する。`.obsidian`（2本）、`vault_ee`（2本）、`exmem` に寄せた11本が実際に開けるかも確認する。Zed の Codex のスレッド（31件）が、旧パスで失敗するかを確認する。
 - `~\.claude\settings.json` の許可ルール `Bash(git -C * status *)` などが、`claude` の起動のたびに警告を出す（2026-10-07。`*` が `git -C` の直後にあるため）。`git -C <パス>` を許す形に直すかを、ユーザーに確認してから決める（dotfiles の `home/.claude/settings.json` がリンク元のはず。未確認）。
-- Windows Terminal を再起動して、削除した古い WSL プロファイルが `settings.json` に書き戻されないか確認する（2026-10-07。書き戻されたら `git diff` に出る）。出ないなら、他PCで WSL を入れ直したときも同じ手当て（古い `commandline` 付きのエントリを消す）が要る。
+- Windows Terminal の WSL プロファイル（2026-10-14 に更新）: `disabledProfileSources` に `Microsoft.WSL` を足し、`Ubuntu-24.04` だけ固定プロファイルにした（`452067b`）。この PC では、Terminal を開き直しても差分は出なかった。他PCでは `git pull` のあと、Terminal を開いて、メニューが PowerShell・CMD・Ubuntu-24.04 になり、`settings.json` に差分が出ないことを確認する。WSL のディストリビューションを足しても、Terminal には出ない（AI 作業部屋へは `room-sh <Area>` で入る）。
 - 他PCでは `git pull` のあと、`.reg` / `.ahk`（`.gitattributes` の変更）と Terminal の `settings.json`（改行の正規化）の `git status` が clean か確認する（2026-10-07。作業ツリーが LF のまま残っていると差分に見える場合は、`git add --renormalize` か取り直しが要る）。
 - `10_env.bat` を再実行して、`%USERPROFILE%\.certs` ができること、`CERTS_DIR` と `WSLENV`（`CERTS_DIR/p` が1回だけ）が更新されることを確認する。新しいターミナルと新しい WSL セッション（`wsl --shutdown` のあと）で、`$CERTS_DIR` が `/mnt/c/Users/<名前>/.certs` になり、`ca_bundle.crt`（旧 `company-ca.crt`）があれば `NODE_EXTRA_CA_CERTS` が設定されることを確認する。旧 `works\areas\dev-env\certs`（空）は、確認後に削除する（2026-10-06 時点）。
 - 履歴の種の `git config --global user.name` / `user.email`（`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` の各2行）を見直す。`~/.gitconfig` は `30_link` が張る symlink なので、リンク後に実行すると、リポジトリ内の `home/.gitconfig` が書き換わる。種の正本は exmem の `knowledge/shell-command-usecases.md` で、種ファイルは派生物なので、直すのは正本の統合のあと（種を直接編集しない。2026-10-06 時点）。
@@ -70,7 +70,12 @@ dotfiles の現在状態と次にやること。作業の終わりに、Next Act
 - エージェントパネルのスレッドをタブにする設定は無い（`agent.threads_sidebar` は位置と自動表示のみ）。
 
 ## Log
+### 2026-10-14（AI 作業部屋のために、Zed の WSL 接続と Terminal のプロファイルを足し、Terminal は部屋を出さない形に直した）
 
+- AI 作業部屋（`resources` の `mobile-session/ai-workspace-boundary/`）の実機確認の途中で、Zed の `wsl_connections`（`ai-room-test`）と Windows Terminal の WSL プロファイル 2 件（`ai-room-test`、`room-office-admin`）が自動で書き足された。コミットした（`b621cd1`）あと、ユーザーが「部屋を作るたびに差分が出るのは困る。pwsh のプロファイルが選べなくなるのも困る。`Ubuntu-24.04` だけ残したい」と述べた。
+- Terminal の `disabledProfileSources` に `Microsoft.WSL` を足し（旧方式の `Windows.Terminal.Wsl` は既にあったが、新しい WSL の方式は別名）、`Ubuntu-24.04` を固定プロファイル（`wsl.exe -d Ubuntu-24.04`、guid は同じ）にし、部屋の 2 件を削除した。`windows/powershell/profile.ps1` に `room-sh <Area>`（`wsl.exe -d room-<Area>`）を足した（`452067b`）。Terminal を閉じてから編集した。
+- 確認済み（ユーザーの実機）: Terminal のメニューが PowerShell・CMD・Ubuntu-24.04 になり、`Ctrl+Shift+3` で Ubuntu が開く。`settings.json` に差分が出ない。`room-sh office-admin` で部屋に入れる。判断は `docs/decisions.md` の先頭の項目。
+- 含めなかった差分: `colored-tags/data.json`（タグ `security` の色。Obsidian の自動更新）。
 ### 2026-10-14（obsidian-skills と defuddle の自動導入を足した）
 
 - ユーザーの依頼で、`/plugin marketplace add kepano/obsidian-skills` と `/plugin install obsidian@obsidian-skills`、`npm install -g defuddle` を dotfiles の自動導入にした。`manifests/npm.txt` + `scripts/windows/28_npm_globals.bat`（`volta install`。Volta の shim 管理に載せるため `npm -g` は使わない）と、`manifests/claude-plugins.txt` + `scripts/windows/29_claude_plugins.bat`（`claude plugin marketplace add` / `install`）。ユーザーの選択: CLI 方式（settings.json の宣言は不採用）、Windows のみ（Linux/WSL は対象外）。
