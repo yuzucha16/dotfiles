@@ -28,7 +28,7 @@ endlocal & exit /b %RC%
 
 :MAIN
 set "LIST=%DOTS_DIR%\manifests\fonts.txt"
-set "DL_DIR=%USERPROFILE%\download"
+set "DL_DIR=%USERPROFILE%\Downloads"
 
 if not exist "%LIST%" (
   echo [ERROR] list not found: %LIST%
