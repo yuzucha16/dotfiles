@@ -49,7 +49,7 @@ dotfiles/
 ├── README.md
 ├── AGENTS.md       エージェント向けの入口（CLAUDE.md は @AGENTS.md だけ）
 ├── .gitignore
-├── docs/           作業ログ（log.md: 現在状態と次にやること）と判断の記録（decisions.md: 根拠・却下案・Gotchas）
+├── docs/           作業ログ（log.md: 現在状態と次にやること、log-history.md: 経緯）と判断の記録（decisions.md: 根拠・却下案・Gotchas）
 ├── scripts/
 │   ├── windows/    10〜50 のセットアップスクリプト（`optional/` は任意の .reg）
 │   └── linux/      10〜50 のセットアップスクリプト（WSL とネイティブ Linux 共通。違いは `lib.sh` の `is_wsl` などで分岐）
