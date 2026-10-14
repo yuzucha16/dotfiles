@@ -1,0 +1,270 @@
+# 作業ログの経緯（log-history）
+
+日付つきの Log（降順）。開始時には読まない。必要なときに検索する。現在状態は `docs/log.md`。
+
+## Log
+### 2026-10-14（AI 作業部屋のために、Zed の WSL 接続と Terminal のプロファイルを足し、Terminal は部屋を出さない形に直した）
+
+- AI 作業部屋（`resources` の `mobile-session/ai-workspace-boundary/`）の実機確認の途中で、Zed の `wsl_connections`（`ai-room-test`）と Windows Terminal の WSL プロファイル 2 件（`ai-room-test`、`room-office-admin`）が自動で書き足された。コミットした（`b621cd1`）あと、ユーザーが「部屋を作るたびに差分が出るのは困る。pwsh のプロファイルが選べなくなるのも困る。`Ubuntu-24.04` だけ残したい」と述べた。
+- Terminal の `disabledProfileSources` に `Microsoft.WSL` を足し（旧方式の `Windows.Terminal.Wsl` は既にあったが、新しい WSL の方式は別名）、`Ubuntu-24.04` を固定プロファイル（`wsl.exe -d Ubuntu-24.04`、guid は同じ）にし、部屋の 2 件を削除した。`windows/powershell/profile.ps1` に `room-sh <Area>`（`wsl.exe -d room-<Area>`）を足した（`452067b`）。Terminal を閉じてから編集した。
+- 確認済み（ユーザーの実機）: Terminal のメニューが PowerShell・CMD・Ubuntu-24.04 になり、`Ctrl+Shift+3` で Ubuntu が開く。`settings.json` に差分が出ない。`room-sh office-admin` で部屋に入れる。判断は `docs/decisions.md` の先頭の項目。
+- 含めなかった差分: `colored-tags/data.json`（タグ `security` の色。Obsidian の自動更新）。
+
+### 2026-10-15（colored-tags の data.json を追跡から外した）
+
+- 原因: `data.json` の中身はほぼ `knownTags`（タグ → パレット番号の台帳）で、プラグインがタグの増減に応じて自動で書き換え、番号は出現順に振る。複数 PC で番号が衝突し、diff が頻発する。プラグインのソースは未確認（diff と `tagColors` が空であることからの推測）。
+- ユーザーの決定: タグが100個近く、色を固定しても覚えられず価値が低いので、`.gitignore` に入れて追跡から外す（案3）。1週間の試用。色は PC ごとに独立になる。案2（`tagColors` で固定）、案4（clean フィルタ）は見送り。
+
+### 2026-10-14（obsidian-skills と defuddle の自動導入を足した）
+
+- ユーザーの依頼で、`/plugin marketplace add kepano/obsidian-skills` と `/plugin install obsidian@obsidian-skills`、`npm install -g defuddle` を dotfiles の自動導入にした。`manifests/npm.txt` + `scripts/windows/28_npm_globals.bat`（`volta install`。Volta の shim 管理に載せるため `npm -g` は使わない）と、`manifests/claude-plugins.txt` + `scripts/windows/29_claude_plugins.bat`（`claude plugin marketplace add` / `install`）。ユーザーの選択: CLI 方式（settings.json の宣言は不採用）、Windows のみ（Linux/WSL は対象外）。
+- 確認: `claude plugin --help` で CLI を確認。`29` は誤って実環境の `claude` を呼び、`obsidian@obsidian-skills` が user スコープで実際に導入された（成功）。`28` は偽の `volta` で `volta install defuddle` の呼び出しを確認。試験スクリプトは未追加。
+- ユーザーの実機の確認（報告）: `28_npm_globals.bat` と `29` の導入は正常完了。`/skills` に6つが `locked by plugin` で並び、Claudian でも `obsidian-markdown`、`defuddle` と `knap` の連携を使えた。ユーザーの指示で `knap` を `manifests/npm.txt` に足した（試用。コミット `23e995b`）。
+- 改善（ユーザーの承認「.batははまりやすいので改善案いれましょう」）: `29_claude_plugins.bat` が `PATH` の先頭に `~\.local\bin` を足していたため、偽の `claude` の試験で本物が呼ばれた。`claude` が PATH に無いときだけ末尾に足す形に直し、`tests/windows/test_28_29_installers.ps1`（5項目、failures=0）を追加した。`.bat` の点検の順序は `docs/decisions.md` の Gotchas。`test_20_apps.ps1` も failures=0（ASCII の確認を含む）。
+- `home/.claude/settings.json` に、`claude plugin install` が書いた `enabledPlugins` と `extraKnownMarketplaces` が入っていた（リンク先が dotfiles のため）。ユーザーの決定（A）で、CLI 方式と設定の宣言の併用にし、2キーをコミットした。`theme` の位置は元に戻した。判断は `docs/decisions.md` の外部スキルの項。
+- 外部スキルの取り込み方（スキル本体は写さない、導入の宣言は `claude-plugins.txt`、使い分けは使う側の `AGENTS.md`）を `docs/decisions.md` に決定として書いた（`f48f89f`）。`works/AGENTS.md` にも Obsidian 作業用のスキルの1項目を足した（works 側のコミット `fa2bafc`）。
+
+### 2026-10-12（Claudian の入力欄に、Markdown の色付けと Enter の自動インデントを足した。試用）
+
+- ユーザーの依頼で、Obsidian の Claudian（v2.3.16）のチャット入力欄を、Zed のように見出しの色付け・自動インデントが効く状態にした。調査: 入力欄は textarea ではなく CodeMirror 6（`claudian-composer-editor`）で、Markdown 言語・ハイライト・インデント引き継ぎが未導入（`main.js` を grep して確認）。Obsidian は Markdown 言語を公開していないため、`windows/obsidian/.obsidian/plugins/realclaudian/main.js` の `EditorState.create` の extensions に、行ごとの正規表現による装飾（見出し、箇条書きの記号、インラインコード、`**強調**`、コードフェンス）と、Enter で箇条書き・インデントを引き継ぐコマンドを直接足した。`styles.css` に色のクラス、`snippets/material-gruvbox-bold.css` に見出し（`#A7B85A`）・強調（`--bold-color`）の色を足し、markdown ビューにそろえた。言語ごとのコードの色付けは、パーサーが無いので不可。確認: `node --check main.js` は通過。ユーザーが Obsidian で表示を見て、見出し・箇条書き・コードの色が付くことを確認した（スクリーンショット）。Enter の挙動は未確認。プラグインの更新で上書きされる。
+
+### 2026-10-12（Claudian のチャットの見出し・強調の色を、markdown ビューにそろえた）
+
+- ユーザーの依頼で、Obsidian の Claudian（AI エージェント）のチャットの見出しがオレンジ・赤、強調がオレンジで、markdown ビュー（見出しは緑）と違っていたのを直した。原因は、既存のスニペット `material-gruvbox-bold.css` が `.markdown-rendered` と `.cm-*` にしか効かず、チャット本文（`.claudian-message-content`）に当たっていなかったこと。同スニペットに `.theme-dark .claudian-message-content` の見出し h1〜h6（`#A7B85A`、`!important`）と強調 `strong` / `b`（テーマの `--bold-color`、`font-weight: 500`）を足した。ダークテーマ限定。確認: Obsidian を再起動して、左（Claudian）と右（markdown ビュー）の見出し・強調の色が一致した（ユーザーの報告とスクリーンショット）。再起動前は反映されず、原因は再起動の漏れだった。
+
+### 2026-10-11（`claude-bedrock-setup` に、貼り付け用の `settings-bedrock.txt` の出力を足した）
+
+- ユーザーの依頼（Claudian のスニペットと `settings-bedrock.json` の値の二重管理を避けたい。正は `.json`、`.txt` は派生物）で、`claude-bedrock-setup.ps1` が `.json` と同じ場所に `settings-bedrock.txt` を書くようにした。中身は `env` ブロックの `KEY=VALUE` の行（LF、BOM なし、コメントなし）で、毎回 `.json` と一緒に上書きする。`-DryRun` は内容を表示するだけ。README（`.md` と `.html`）と試験（2件追加）も合わせた。確認: `pwsh -NoProfile -File tests/windows/test_claude_bedrock_setup.ps1` が 26 件 PASS（偽の `aws`。AWS 実機は未実行）。コミット `c66909c`。
+- 背景: works 側の Claudian は、`sharedEnvironmentVariables` を空にして OAuth（`.credentials.json`）を既定にし、Bedrock はスニペットで明示的に選ぶ形にした。スニペットは `--settings` を読めないため、`.txt` を人間が貼る。API キーは Claudian では使わない（複雑になるため。dotfiles の `claude-api` と `apiKeyHelper` で足りる）。
+
+### 2026-10-11（Claude 用の AWS profile 名を `M1-trial` から `n1-trial` に変えた）
+
+- ユーザーの指示で、直前に決めた `M1-trial` を `n1-trial` に変えた（`home/.config/zed/settings.json` の `AWS_PROFILE`、Next Actions、`docs/decisions.md`）。ユーザーは、`M1` が部署名のエイリアスなので公開しても問題ないと確認した。下の項目の `M1-trial` は、変更前の名前として読み替える。profile 名は大文字と小文字を区別するので、実機では `n1-trial`（小文字）で作る。
+
+### 2026-10-11（Claude 用の AWS profile 名を `M1-trial` にした）
+
+- ユーザーの指示で、Zed の `Claude Bedrock` の `AWS_PROFILE` を `default` から `M1-trial` に変えた（`home/.config/zed/settings.json`）。命名はユーザーの方針（部署名-開発案件）で、`default` を将来のほかの AWS 用に空けるため。事前の洗い出しで、コード中の `default` 指定はここだけ、このPCに `~\.aws\config` と生成済みの `settings-bedrock.json` は無いと確認した。試験の仮名（`prof`、`work`）と README のプレースホルダは変更不要。判断は `docs/decisions.md` の「Claude 用の AWS profile 名を `M1-trial` に…」。実機の profile 作成は Next Actions。
+
+### 2026-10-11（Claude Code の設定ファイルの改名）
+
+- ユーザーの指示で、`windows/claude/api.settings.json` を `settings-api.json`、`%USERPROFILE%\.claude\bedrock.settings.json`（生成物）を `settings-bedrock.json`、`%USERPROFILE%\.claude\api-key.dpapi` を `settings-api-key.dpapi` に改名した（`.claude\` で `settings.json` の隣に並べるため）。`links.map`、`profile.ps1`（`claude-api` `claude-bedrock`）、`claude-bedrock-setup.ps1`、`claude-api-key.ps1`、README（md と html）、ルートの `README.md`、試験2本の参照を直した。試験 `test_claude_launchers.ps1` と `test_claude_bedrock_setup.ps1` は失敗0。コミットは `45e0668`（改名だけ）と `c0ebab6`（参照の更新）。過去の `log.md` と `decisions.md` の旧名は履歴として残した（ユーザーの確認）。判断は `docs/decisions.md` の「Claude Code の設定ファイル名を…」。実機の移行（`30_link.bat` の再実行、旧リンクと旧ファイルの削除）は Next Actions。
+
+### 2026-10-10（25〜27 の出力を改善: pause、理由つき SKIP、[ENV] 表示）
+
+- ユーザーの指示で、`25_awscli.bat` `26_uv.bat` `27_volta.bat` を直した。(1) どの終了経路でも `pause` で止まる（終了を `:END` に集約し、`pause` の後に終了コードを返す）。(2) SSL バンドルを設定しない理由を `[SKIP]` で出す（`n` と答えた場合を追加。`CERTS_DIR` 未設定と `ca_bundle.crt` 無しは従来どおり、`AWS_CA_BUNDLE not set` を明記）。(3) 最後に `[ENV]` で、設定した環境変数の名前と値を表示（未設定は `[not set]`。Volta は `VOLTA_HOME` も表示）。試験 `tests/windows/test_25_27_installers.ps1` に pause・SKIP・`[ENV]` の確認を足し、全件 PASS（実機の `setx` は未実行）。3つの方針は exmem の inbox にメモ化した。
+
+### 2026-10-10（CA ファイル名を `ca_bundle.crt` に変更。git は schannel のまま）
+
+- ユーザーの指示で、`company-ca.crt` を `ca_bundle.crt` に改名した（スクリプト、`common.sh`、README、試験。日付つきの過去の記録は書き換えていない）。実機の `%USERPROFILE%\.certs` は空だったので、ファイルの改名は無し。
+- git の CA は、いったん `GIT_SSL_CAINFO` にしかけたが、バンドルの完全性を保証できず（git の既定の CA を置き換えるため）、ユーザーの決定で取りやめた。`12_git_ca.bat` は作って削除した。`11_git_identity.bat` の schannel の質問は元のまま（変更なし）。判断は `docs/decisions.md` の schannel の項。
+- 未確認: プロキシ下の schannel の失効確認（会社 PC で `git -c http.sslBackend=schannel ls-remote https://github.com/yuzucha16/dotfiles HEAD`）。
+### 2026-10-10（AWS CLI・uv・Volta のインストーラを追加した）
+
+- ユーザーの依頼で、`scripts/windows/` に `25_awscli.bat`（`y/N` で確認、入れたら `AWS_CA_BUNDLE`）、`26_uv.bat`（確認なし、`uv python install 3.13 --default` と `pin --global 3.13`、`python --version` を表示、先に SSL の `y/N`）、`27_volta.bat`（scoop、`volta install node@lts`、`node` `npm` `npx` の版を表示、先に SSL の `y/N`）を追加した。`10_env.bat` の最後に、CA バンドルを `%CERTS_DIR%` へ置く案内（オレンジ、英語）を足した。`profile.ps1` の `NODE_EXTRA_CA_CERTS` は削除し、`27_volta.bat` の `setx` に一本化した（ユーザーの決定。WSL の `common.sh` は残す）。
+- 決まったこと（ユーザーの承認）: LTS は `node@lts`。インストール直後は絶対パスを使わず、レジストリから PATH を読み直す。CA ファイルが無いときは `y` でも設定しない（`SSL_CERT_FILE` などは存在しないファイルだと HTTPS が全滅するため）。
+- 確認: `tests/windows/test_25_27_installers.ps1`（31項目）と `test_20_apps.ps1` が failures=0（偽の `setx` / インストーラ / `uv` / `volta` を使用。実環境の環境変数は不変）。`uv 0.11.32` に `python install --default` と `python pin --global` があることは実機で確認、`scoop` の `volta` は main バケット（2.0.2）にあることを確認。
+- 未確認: 実際に各インストーラを走らせた動作（`awscli.amazonaws.com/v2/install.ps1` の URL はユーザー指定のまま未検証）、会社プロキシ下での動作、レジストリからの PATH 再読込（実機）、Volta の開発者モード、`10_env.bat` のオレンジ表示（実行すると `setx` が動くため未実行）。Windows の `python` が Microsoft Store のスタブに先に当たらないか。
+- 落とし穴: `Write` で作った `.bat` は LF になり、ラベル（`:ASKYN`）が見つからなくなった。CRLF にして解消（`.gitattributes` は crlf）。偽の `.cmd` を試験で呼ぶには `call` が要る。
+
+### 2026-10-08（起動する認証を選ぶ関数を追加した）
+
+- ユーザーの依頼で、`profile.ps1` に `claude-oauth` と `claude-pick` を追加し、`tests/windows/test_claude_launchers.ps1`（14項目、すべて通る）と、手順書の「起動する認証を選ぶ」の節を足した。判断は `docs/decisions.md` の「Claude Code の起動時に、OAuth / API キー / Bedrock を選ぶ関数…」。実機で未確認: `claude-pick` の fzf、`claude-oauth` 後の `/status`。
+### 2026-10-08（Claude Code の Bedrock 利用のセットアップを追加した）
+
+- ユーザーの依頼で、`windows/claude/` に `claude-bedrock-setup.ps1` / `.cmd` を追加し、`links.map` に2行、`profile.ps1` に関数 `claude-bedrock`、`tests/windows/test_claude_bedrock_setup.ps1`（24項目、すべて通る）を足した。手順書（`windows/claude/README.md` と `.html`）に「Bedrock 版」を追加した。実際の AWS での実行は未確認（`aws` 未導入の PC）。判断は `docs/decisions.md` の「Claude Code の Bedrock 利用は…」。
+### 2026-10-08（Claude Code の API キー認証を併用できるようにした）
+
+- ユーザーの指示で、`windows/claude/`（`api.settings.json`、`claude-api-key.ps1`、`claude-api-key.cmd`）を追加し、`links.map` に3行、`profile.ps1` に関数 `claude-api` を足した。ダミーのキーでヘルパーの復号と、キー無しのエラー終了を確認した。その後、ユーザーの実機で `30_link.bat` → `claude-api-key.cmd -Set` → `claude-api` の起動と `/status` を確認し、`claude` 単独は OAuth（Pro）、モデルは Sonnet 5.5（Opus と Haiku のピンは現状維持）に決まった。判断は `docs/decisions.md` の「Claude Code の API キー認証は…」。
+
+### 2026-10-08（AI エージェントの導入を整理。Claude Code は公式インストーラに一本化）
+
+- ユーザーの指示で、`manifests/apps.txt` から `claude` / `claude-code` / `chatgpt` を削除し、`claude` と `chatgpt` は `apps.home.txt` にコメントアウトで移した。`apt.txt` の `universal-ctags` / `global` / `gcc-arm-none-eabi` は `apt.desktop.txt` に移した。
+- `scripts/windows/23_claude.bat` を新設した。`y/N`（既定 N、無効な入力は5回で `[ERR]`）で聞き、`y` なら `irm https://claude.ai/install.ps1 | iex` を実行する。README の手順 2 に追記。
+- `10_env.bat` に、`XDG_BIN_HOME=%USERPROFILE%\.local\bin` の設定（`setx`、ディレクトリ作成）と、ユーザー PATH へ `%XDG_BIN_HOME%` を1回だけ足す処理を追加した（ユーザーの指示。当初は実パスを直接足していたが、他の `XDG_*` と同じ流儀に直した。実パスの既存エントリも「ある」と見なす。`setx` は 1024 文字で切れ、`%VAR%` を展開するため、レジストリの生の値を `ExpandString` で書き戻す）。
+- 確認: `tests/windows/test_20_apps.ps1` は failures=0。`23_claude.bat` は空入力と `n` が `[SKIP]` になることを実行して確認。`10_env.bat` の PATH 処理は、このPCで既に登録済みの `[SKIP]` 側だけ確認した。
+- 未確認: `y` で実際にインストーラを走らせた動作、PATH が無い PC での `[OK]` 側、`tests/linux/test_scripts.sh`（`apt.txt` 変更後）の再実行。scoop で `claude` / `claude-code` を入れ済みの PC は、手で `scoop uninstall` しないと二重になる。
+
+### 2026-10-07（Claude Code と Zed のスレッドを、`works` の構成で復元した）
+
+- Vault を `C:\vault\works` から `C:\Users\ck\works` へ移したあと、`--resume` で復元できなかったセッション（ユニーク56本。ユーザーの記憶は58本）を、ユーザーの依頼で復元した。Zed のスレッドも開けるようにした。リポジトリのファイルは変えていない（変更先は `~\.claude` と Zed のデータ）。
+- 原因は3つ。(1) 54本すべてが SDK 経由（`entrypoint: sdk-ts`）で、`claude --resume` の一覧の対象外（公式ドキュメント）。(2) jsonl の `cwd` と保存先ディレクトリが旧パスのまま。(3) Zed の `db.sqlite` の `sidebar_threads.folder_paths` が旧パスで、開くとエージェントの起動に失敗した（`failed to spawn command`）。
+- 直したこと（判断は `docs/decisions.md` の Decisions の「旧パス…のセッションを、`works` の構成に合わせて移行した」）: ① 旧ディレクトリだけにあった20本を、新しいディレクトリへコピーして `cwd` を書き換えた。② コピー済みの30本の `cwd` を書き換えた。③ `entrypoint` を `cli` にした（1本で一覧に出ることを確認してから全件）。④ Zed の `sidebar_threads` の47件の `folder_paths` を更新した（Zed 終了後に自動実行するスクリプト `~\.claude\zed-fix\`）。確認: `claude --resume` の一覧（works と dotfiles）、ID 指定、Zed のスレッド履歴で開けた（ユーザーの報告）。
+- 復元できなかったもの: Zed のスレッドのうち、ディスクにセッションが無い5件（9/26〜9/30。2件は ID の無い空のスレッド）。ディスクにあるのは56本で、ユーザーの記憶の58本との差は2本（行き先は不明）。
+- 落とし穴（`docs/decisions.md` の Gotchas の3項）: 一覧が空になる原因は `entrypoint`。Zed の中のエージェントは、Zed を閉じると止まるので、終了を待つスクリプトを別プロセスで起動した。`claude` の起動時に許可ルールの警告が出る（未対応。Next Actions）。
+- ナレッジ化: `exmem/inbox/` にメモ2本（`2026-10-07-claude-code-resume-sdk-sessions.md`、`2026-10-07-zed-thread-db-folder-paths.md`）。既存の `knowledge/claude-code-storage.md` の「原因不明・解決なし」の記述との食い違いを、メモの Open Questions に書いた。
+- 反省: 最初の実行で、削除を含む1つの PowerShell コマンドが、安全装置にブロックされた（何も実行されなかった。分けて再実行した）。
+- workflow-kit の改善2点を反映した（ユーザーの承認。版 `2026-10-07.3`）: `closing-hook.md` の手順 2 に、変更先がリポジトリの外だけの作業では、開いた作業ディレクトリの `docs/` を対象にする、と足した。手順 3 に、親の `AGENTS.md` が定める終了処理の追加の手順（指標の記録など）を続けて行う、と足した。記録は kit の `improvements.md` と `README.md` の変更履歴。
+
+### 2026-10-07（Windows Terminal の `settings.json` の差分の解消。`.gitattributes` に `.reg` と `.ahk` を追加）
+
+- WSL を再インストールしたあとに `windows/terminal/settings.json` の差分（約200行）が出た件を、ユーザーの依頼で調べて直した。原因は2つ。(1) index が CRLF のまま残っていたため（`.gitattributes` は LF を正としているのに、`.bat` しか正規化していなかった）。(2) WSL の再インストールで、Terminal が同名の `Ubuntu-24.04` を新しい guid で追加したため。実質の差分は10行だけだった（`git diff --ignore-space-at-eol`）。
+- 直したこと（判断と落とし穴は `docs/decisions.md` の Gotchas の2項）: 改行だけを LF にそろえた（`39930cc`）。古い方の WSL プロファイル（`commandline: "wsl.exe -d Ubuntu-24.04"`、guid `963ff2f7…`）を削除した（`3c49d9b`。Terminal が並べ替えた `Terminal.FindText` も含む）。確認: JSON として読める、参照が無い（grep）、`wsl -l -v` で Ubuntu-24.04 は1つ。
+- ユーザーの決定で、`.gitattributes` に `*.reg text eol=crlf` と `*.ahk text eol=crlf` を足し、index を LF にした（`cf4a54f`。判断は `docs/decisions.md` の Decisions）。`windows/notepadpp/Gruvbox dark medium.xml` は、index が CRLF のまま未決（Open Questions）。
+- 反省: 最初の2コミット（`39930cc`、`3c49d9b`）を、`docs-rules.md` の「コミットの身元」に従わず、ユーザーの名義（`yuzucha16`）で作った。トレーラーも無い。`cf4a54f` からは `agent` 名義とトレーラー付き。履歴は書き換えていない（未 push のため、書き換えるかはユーザーの判断。`rebase` は事前確認が要る）。
+- 未確認: Terminal を再起動して、削除した WSL プロファイルが書き戻されないか。再インストールのたびに guid が変わる理由。
+- 「終了処理して」の改善2点をユーザーが承認し、workflow-kit を版 `2026-10-07.5` に上げた（変更は `workbase` 側で、dotfiles のコミット対象外）: コミットを分けるときは `git commit` にパスを指定しない、エージェントの身元とトレーラーは作業の途中のコミットにも適用し、終了処理で点検して報告する。`exmem/inbox/2026-10-07-gitattributes-leftover-crlf-index.md` を作った（コミット対象外）。
+
+### 2026-10-06（Vault を `%USERPROFILE%\works` へ移した。Linux 側も `~/works` にそろえた）
+
+- Vault を `C:\vault\works` から `%USERPROFILE%\works` に、ghq の root を `%USERPROFILE%\works\repos` に移した（ユーザーの決定。判断は `docs/decisions.md`）。`10_env.bat`（`VAULT_HOME` を廃止、`WORKS_DIR` を `WSLENV` で WSL へ渡す）、`home/.profile`、`scripts/linux/lib.sh`・`30_link.sh`・`50_repos.sh`、`windows/startup/startup.bat`、`windows/terminal/settings.json`、`tests/`、`AGENTS.md`、`README.md` を直した（コミット `92fd142` `[env]`、`5d59374` `[docs]`）。
+- Linux 側も `~/works`、ghq の root を `~/works/repos` にそろえた（ユーザーの指示。`b6c26c9` `[linux]`）。WSL の `GHQ_ROOT` の既定は `~/works/repos`、`10_dirs.sh` は `~/works/{build,tools}`。試験は 51/51 合格（最初は 49/51。`ghq get` のコメントアウトに試験が追随していなかったため、試験を直した）。
+- Obsidian が書き換えた `windows/obsidian/.obsidian/plugins/colored-tags/data.json` を、`841672b` `[obsidian]` でコミットした。
+- `10_env.bat` の実機の再実行と、新しい WSL セッションでの確認は未実施（Next Actions）。
+
+### 2026-10-06（`clang-format` と `gcc-arm-none-eabi` を、実機（WSL）に導入した）
+
+- ユーザーが、`manifests/apt.txt` に追記した 2 つ（`clang-format` 18.1.3、`gcc-arm-none-eabi` 13.2.1）を、WSL に導入した（ユーザーの報告。`arm-none-eabi-gcc --version` の出力で確認）。`works` の Project が、Cortex-M 向けのフットプリントと libc 非依存の実測に使った（Cortex-M0 で除算の補助関数への依存が出て、M0 を対象外にした。詳細は `works` の `archives/learn-c-pool-allocator/docs/`）。Next Actions の導入待ちの項目を消した。
+
+### 2026-10-06（`gcc-arm-none-eabi` を `manifests/apt.txt` に足した）
+
+- `works` の Project `learn-c-pool-allocator`（組込み向けの C の学習）で、Cortex-M 向けの `.text` `.data` `.bss` の実測と、libc 非依存の確認（ARM 向けのビルドで未定義シンボルが無いこと）を行うため、`manifests/apt.txt` の `# devel` に `gcc-arm-none-eabi` を追記した（ユーザーの承認）。確認: `apt-cache policy` で、Ubuntu 24.04 に `15:13.2.rel1-2`（GCC 13.2）がある。インストールサイズは約 490MB（`Installed-Size: 505199` KB）。`libnewlib-arm-none-eabi` が推奨で、`20_packages.sh` の `apt install -y` は推奨も入れる（今回は freestanding のビルドなので newlib は不要。必要なら `--no-install-recommends`）。実機への導入は、`sudo` にパスワードが要るため、ユーザーが行う。
+
+### 2026-10-06（`clang-format` を `manifests/apt.txt` に足した）
+
+- `works` の Project `learn-c-pool-allocator`（C の学習）で、コードリーディングのコストを抑えるために `clang-format` を使う（ユーザーの指示。一貫性のためではなく、読みやすさのため）。`manifests/apt.txt` の `# devel` に `clang-format` を追記した。`read_list` が行内コメントを除くことを確認した。`bash tests/linux/test_scripts.sh` は 50/50 合格（確認: 2026-10-06、WSL）。実機（WSL）への導入は、`sudo` にパスワードが要るため、ユーザーが `sudo apt install -y clang-format`（または `20_packages.sh`）で行う。`works` 側の詳細は、`projects/learn-c-pool-allocator/docs/dotfiles-additions.md`。
+
+### 2026-10-06（`転記待ち` 20 件を `転記済` に進めた。「inboxを整理して」の最初の実行。kit 版 `2026-10-06.18`）
+
+- この実行で出た改善2点（案の表の形、本文を外す範囲の目安）を、ユーザーが承認し、kit に反映した（版 `2026-10-06.18`、`workbase` の `9567c15`。dotfiles のコミット対象外）。
+
+- exmem の統合（`b70f0d4`。メモ4つを `knowledge/` の `dotfiles-shell-tuning.md`、`windows-cli-pitfalls.md`、`pc-setup-manuals.md`、`obsidian-vault.md` に統合）のあと、`docs/decisions.md` の `転記待ち` 20 件を、統合先の本文と照らして `転記済` に進めた（ユーザーの承認）。確認: 各項目の根拠と却下案が、統合先に写っていること（全件「突き合わせ済み」。「存在の確認のみ」は無し）。汎用の本文を外し、固有の文脈（Principles の「履歴に戻らない・ブランチを切らない」、起動時間のキャッシュ見送りと VS Code 拡張の削減、git の SSL の試験結果）は残した。統合先の Facts の多くは「再現は未実施」のまま。結果: `check-docs.ps1` が FAIL 0、WARN 0、`転記待ち` 0 件。
+
+### 2026-10-06（共通ルールに「終了処理して」を足した。`.obsidian` の決定を撤回済みにした）
+
+- kit の版 `2026-10-06.17`（「終了処理して」と「inboxを整理して」の新設。`workbase` の `93d2a41`）に合わせて、この `AGENTS.md` の共通ルールに `closing-hook.md` を足した。dotfiles は exmem 側の統合をしないので、`integrate-hook.md` は足さない。ユーザーの確認で、決定「`.obsidian` は `notes` に置く」（2026-10-04）を撤回済みにした（`docs/decisions.md`）。`転記待ち` は上限の 20 件なので、次の作業の終わりに、exmem で「inboxを整理して」を実行して減らす（Next Actions）。
+
+### 2026-10-06（`docs/decisions.md` の棚卸しと「ナレッジ化して」）
+
+- ユーザーの指示で、`check-docs.ps1` の FAIL 64 件（全項目に行き先が無い）を直した。65 項目にラベルと行き先を付けた（コミット `23857da` に混ざって入った。経緯は下の kit 版 `2026-10-06.16` の項目）。内訳: local 35、転記済 12（exmem に、同じ話題のノートがあることを、キーワード検索で確認したもの。根拠・却下案の全体の突き合わせは未実施）、未仕分けだった汎用項目 17（下の「ナレッジ化して」で転記待ちにした）。`.obsidian` を `notes` に置く決定（2026-10-04）は、2026-10-05 の構造変更で dotfiles に戻っている（works の `docs/log.md`）ので、撤回の扱いをユーザーに確認する（`local` の理由に書いた）。結果: FAIL 0、WARN 0（転記待ちは上限の 20 件）。
+- 「ナレッジ化して」を実行した（ユーザーの指示）。`exmem/inbox/` に3つのメモを作った（コミット対象外。点検スクリプト PASS 71、FAIL 0、WARN 0）: `2026-10-06-certs-location-wslenv-path.md`（置き場の変更と `WSLENV`）、`2026-10-06-windows-cli-pitfalls.md`（PowerShell・バッチ・git の落とし穴）、`2026-10-06-dotfiles-startup-and-tracking-tips.md`（起動時間、WSL、追跡方針）。対応する項目の行き先を `転記待ち` にした。
+
+### 2026-10-06（会社 CA 証明書の置き場を `%USERPROFILE%\.certs` に変更）
+
+- ユーザーの指示で、`CERTS_DIR` を `works\areas\dev-env\certs` から `%USERPROFILE%\.certs` へ移した。`scripts/windows/10_env.bat`（値、mkdir、`WSLENV` への `CERTS_DIR/p` の追加。重複して足さない）、`home/.config/shell/common.sh`（`${CERTS_DIR:-$HOME/.certs}`）、`README.md` を更新。判断は `docs/decisions.md`（【この件】会社 CA 証明書の置き場…）。構文と分岐は確認済み。`10_env.bat` の実行と WSL での `$CERTS_DIR` は未確認（Next Actions）。
+
+### 2026-10-06（11_git_identity.bat に schannel の質問を追加）
+
+- 「ナレッジ化して」の改善1点をユーザーが承認し、workflow-kit を版 `2026-10-06.16` に上げた（変更は `workbase` 側で、dotfiles のコミット対象外）: `docs-rules.md` の「コミットの前に確認する」①に、`git diff --cached --stat` の行数が自分の変更量と合うかの確認を足した。コミット `23857da` で、並行編集（ラベルと行き先の付与）の約40行が `docs/decisions.md` に混ざったため。ユーザーは、混ざったコミットはこのままでよいと判断した（履歴は書き換えない）。
+
+- 「ナレッジ化して」を実行し、`exmem/inbox/2026-10-06-git-ssl-backend-credential-placement.md` を作った（コミット対象外。点検スクリプト PASS 27、失敗0、警告0）。`docs/decisions.md` に決定と Gotcha（`https.sslVerify` は git に無いキー）を足し、行き先を `転記待ち` にした。
+
+- ユーザーの依頼で、`scripts/windows/11_git_identity.bat` に「SSL バックエンドを schannel にするか」の質問を足した。`y` で `.gitconfig_local` に `[http] sslBackend = schannel` と `sslVerify = true`（`[http]` 内。当初の `https.sslVerify` は git に無いキーなので `http.sslVerify` に直した） を書き、`n`・空は何も書かない（既定の OpenSSL）。y/n 以外は再入力で、5回で `[ERR]`。`tests/windows/test_11_git_identity.ps1` に6件を足し、failures=0（確認: 2026-10-06、`test_20_apps.ps1` も failures=0）。README の該当行も更新。`credential.helperselector.selected = manager` は、ユーザーの決定で `home/.gitconfig` に静的に持ち、スクリプトからは書かない（`11_git_identity.bat` から削除、試験は「書かない」に変更）。`home/.gitconfig` にあった未コミットの schannel 設定は、ユーザーが外した（確認: `Get-Content`。`helperselector` だけが残る）ので、`n` なら OpenSSL のまま。
+
+### 2026-10-06（works の docs の行き先の点検で、決定を転記）
+
+- works の docs/decisions.md の項目を、転記先と突き合わせる点検（kit の版 `2026-10-06.13` の仕組み）で、dotfiles の決定「Linux 側の試験スクリプトを `tests/linux/` に置く（2026-10-05）」が、works にだけ記録され、この docs/decisions.md に無いことが分かった。docs/decisions.md に項目を足した（ユーザーの承認。内容は、works にあった決めたこと・根拠・却下案・確認済み。コミット `fc23286`）。log.md の 2026-10-05 の記録（試験スクリプトの保存）とは対応している。
+
+### 2026-10-06（点検スクリプトの改善3点を反映）
+
+- ユーザーの承認で、点検スクリプトの改善3点を反映した（workflow-kit 版 `2026-10-06.12`。変更は `workbase` 側で、dotfiles のコミット対象外）。`tools/check-inbox.ps1`: 「なし」の後ろに文字があるときの専用 FAIL、複数のメモにまたがる重複の候補の WARN。`tools/find-knowledge.ps1`: `-Body` で本文も検索。直す前に一時ディレクトリで再現し、直した後に確認した。実装の誤り（長さで絞る正規表現が、バッククォートの対応をずらす）を、実メモの結果が事前の測定より1件少なかったことで見つけて直し、回帰試験を足した。実メモ4件の点検は失敗0。これは、2026-10-06.11 で足した「点検スクリプトの改善」の手順の、最初の実行。
+
+### 2026-10-06（「ナレッジ化して」の続き: 点検スクリプトのナレッジ化と、workflow-kit の改善）
+
+- ユーザーの指示で、点検スクリプト（`check-inbox.ps1`、`find-knowledge.ps1`）の設計・限界・育て方を `exmem/inbox/2026-10-06-inbox-check-script-design.md` に残した（コミット対象外）。既存の知識ノート `workflow-kit.md` には、版の記録として1行言及があるだけだった。あわせて、`vcredist2022` を自動導入しない決定は、ユーザーの承認で「現時点の決定」として Decisions に残した（`2026-10-06-scoop-suggest-vcredist-runtime.md`。解除するときは、現在形の記述を直し、日付つきの記録は書き換えずに「撤回済み」と理由を足す。時制の方針）。workflow-kit を版 `2026-10-06.11` に上げた（ユーザーの承認と指示。変更は `workbase` 側の `e3cfb82` で、dotfiles のコミット対象外）: 「なし」は見出しの直後に1語だけの行にする、分けた複数のメモに共通する事実・落とし穴は1つにだけ書く、依頼された実装は依頼を根拠に Decisions に書ける（依頼に無い選択は「提案」）、点検スクリプトの改善も、フックの改善と同じ承認制の手順で回す。
+
+### 2026-10-06（「ナレッジ化して」の実行）
+
+- 「ナレッジ化して」を実行し、3話題を `exmem/inbox/` に作った（コミット対象外）: `2026-10-06-windows-bat-scripting-pitfalls.md`（`.bat` の ASCII、`set /p` とパイプ、`%errorlevel%`、対話ループの上限、試験の番人）、`2026-10-06-fresh-pc-bootstrap-private-repo.md`（最終の場所への初回 clone、scoop だけの git、private の扱い、`git config --file`）、`2026-10-06-scoop-suggest-vcredist-runtime.md`（`suggest` と VC++ ランタイムの判断基準）。点検スクリプトは3件とも PASS（失敗0、警告0）。メモの中で、履歴の種（exmem の `knowledge/shell-command-usecases.md`）の `git config --global user.name` / `user.email` の行が、symlink の `~/.gitconfig` と食い違うことを「統合時の修正」に書いた。dotfiles 固有の経緯（Zed と Obsidian のフォント、Linux との対称化の範囲、手順書の更新）は、ナレッジ化せず `docs/` に残してある。
+
+### 2026-10-06（動作確認の Close）
+
+- ユーザーが新しい Windows アカウントで、`10` から `50` の Windows スクリプトを実機で通し、問題なしと報告した。`24_fonts.bat` は実際にダウンロードした。VC++ ランタイムの `[WARN]` は出なかった（`[Installed]` 側のみ。`[WARN]` 側は未確認のまま Next Actions に残した）。これを受けて、次の項目を Close（削除）した: 新アカウントでの `20_apps.bat` と Scoop 導入、`10_env.bat` / `20_apps.bat` / `50_repos.bat` の実機の通し実行、Windows の新PCでの通し実行と Win11 の「要確認」、`scoop install git` 直後の `git` 利用、`.bat` の文字化け修正の再実行、`11_git_identity.bat` の実機動作、`24_fonts.bat` の実ダウンロード（PlemolJP のアセット名 `PlemolJP_NF_v*.zip` が通る）、`~/.gitconfig_local` の設定確認（`11_git_identity` で置き換わった）、winget の git の `winget uninstall`（決定を撤回済み）。Windows の OOBE 回避（手順書の 1〜4）は、この確認に含まれず、手順書に「要確認」のまま。続けて、`31_history_seed.bat` も同じ新アカウントの実機で通し済みと確認した（Windows 側のみ。Linux の `31_history_seed.sh` は未確認のまま Next Actions に残した）。この後、ユーザーが「ナレッジ化して」を依頼する予定（`docs/` は更新済み）。
+
+### 2026-10-06（workbase の手順書を現在のスクリプトに合わせた）
+
+- ユーザーの指示で、workbase の手順書 `cheatsheets/env/` の古い記述を、現在の dotfiles に合わせて直した。`win11.md`: 手順 6 の表から削除済みの `21_vscode.bat` と `22_python.bat` を外し、`24_fonts.bat` の行を現状（PlemolJP のみ、`gh` のログイン不要、`--dry-run` なし、ログと `pause`、失敗で終了コード 1）に、`20_apps.bat` の行に VC++ のオレンジ表示を、`31` の行にログと `pause` を足した。全体の流れの `10` → `11` → `20` → `30` と、動作確認の `code README.md`（VS Code は削除済み）、確認日（2026-10-06。5〜7 は実機で通した、ユーザー報告）も直した。`fonts.md`: Moralerspace を外し、`--dry-run` と `gh auth login` の記述を削除。`debian-family.md`: 削除済みの `21_vscode.sh` の行を削除。確認: `cheatsheets` 全体を Grep し、`21_vscode` / `22_python` / `MoralerspaceHW` / `24_fonts` の `--dry-run` の残りが無いこと（`gh auth login` は Linux の非公開リポジトリの手順 B にだけ残る）。変更は workbase 側（別コミット）。
+
+### 2026-10-06（リポジトリの公開・非公開が未定なので、手順を両方併記）
+
+- ユーザーの判断で、リポジトリを公開にするか非公開にするかは未定のため、手順を両方書いた（運用が決まったら、使わない方を削除する。判断は `docs/decisions.md` の「リポジトリの公開・非公開は未定。両方の手順を併記した」）。dotfiles の `README.md`: Windows のクイックスタートに「非公開ならサインインが開く、公開なら出ない（4行は同じ）」を追記、Linux のクイックスタートを「A. 公開（git だけ）」「B. 非公開（`gh auth login` ほか）」にした。workbase の手順書（`cheatsheets/env/debian-family.md` の手順 7・8・10、`win11.md` の手順 5・6 と付録）も同じ方針で更新し、`11_git_identity` の案内も足した。`win11.md` の手順 5 は、winget の git を使わず scoop の4行にそろえた（dotfiles の README と矛盾していたため。同じ節の範囲）。`win11.md` には、ほかにも古い記述が残る（下の Next Actions）。変更は workbase 側（別リポジトリ）にもあり、そちらは別コミット。
+
+### 2026-10-06（Linux / WSL を Windows と対称にする）
+
+- ユーザーの指示で、今日 Windows 側に入れた変更を Linux / WSL にそろえた（判断と「対称にしないもの」の理由は `docs/decisions.md` の「Linux / WSL を Windows と対称にした」）。(1) `scripts/linux/11_git_identity.sh` を新設（`~/.gitconfig_local` を対話で作る）。(2) `24_fonts.sh` が、1件失敗しても続行し、最後に終了コード 1 にする。(3) README に「クイックスタート（ネイティブ Linux）」（`apt install git gh` → `gh auth login` → `gh auth setup-git` → `git clone`）と、Linux の手順 1 の `11`、試験の説明を追記。(4) `tests/linux/test_scripts.sh` に 14 項目を追加。確認: WSL（Ubuntu 24.04.4）で 50/50 合格、Windows 側の試験も合格（`test_20_apps.ps1` 28 件、`test_11_git_identity.ps1` 15 件）。未確認: 新しい Linux の実機での `gh auth login` から clone までの通し。workbase の手順書 `debian-family.md` の手順 7（「公開リポジトリ」）がリポジトリの private 化と食い違っている（dotfiles からは直していない）。
+
+### 2026-10-06（Windows の実機確認後の調整）
+
+- ユーザーが Windows の通し実行を実機で確認した（問題なし）。その中で出た3点を直した（判断は `docs/decisions.md` の「`scoop-completion` と Moralerspace を manifest から外した。`.bat` のコメントは全て英語にした」）。(1) `20_apps.bat` の冒頭の文字化け: 日本語コメントが cp932 のコンソールで壊れていたので、`10_env` / `20_apps` / `40_wsl_enable` のコメントを全て英語にし、`scripts/windows/*.bat` が ASCII であることの検査を `tests/windows/test_20_apps.ps1` に足した。(2) `scoop-completion` は未使用だったので `apps.txt` から削除（このPCの導入済み分は手で `scoop uninstall scoop-completion`）。(3) `fonts.txt` の Moralerspace を削除（README とコメントも更新）。確認: `test_20_apps.ps1` が failures=0（ASCII の検査8件を含む）、WSL の `tests/linux/test_scripts.sh` が 36/36 合格。続けて、Zed と Obsidian のフォントのフォールバックから `Moralerspace Neon HW` を外した（ユーザーの指示。Zed 3か所、Obsidian 3か所）。また `20_apps.bat` の VC++ ランタイムの表示（`[Installed]` / `[WARN]`）を、見落としを防ぐため、オレンジ（ANSI 256色の 208）にした。ESC は `prompt $E` で取得するので、ソースは ASCII のまま。`test_20_apps.ps1` が failures=0（色の検査2件を含む）。実機の表示は未確認（Windows Terminal / Win11 のコンソールは対応している想定）。
+
+### 2026-10-06（初回の git を scoop だけにする。winget の git を撤回）
+
+- ユーザーの判断（「理想は scoop で完結」）で、手順 0 の git を winget から scoop に変えた（判断は `docs/decisions.md` の「初回は scoop の git だけで最終の場所に clone する」。前項の winget 案は「撤回済み」として残した）。`20_apps.bat` の winget の git の撤去処理と試験7件を削除（直前のコミット `3f7e794` の前の状態に戻した）。README の手順 0 を scoop の4コマンドに書き換えた。確認: `pwsh tests/windows/test_20_apps.ps1` が failures=0。実機の新アカウントでの通し実行は未確認。リポジトリが private で、clone に GitHub のサインインが要ることも確認し、README に書いた。手順 1〜3 のスクリプト化は、リポジトリが private で clone 前にスクリプトを匿名で取得できない（raw URL は 404）ため、ユーザーの判断でスクリプトにせず、README の貼り付けブロックにした。4コマンドを README の冒頭「クイックスタート」に置き、手順 0 はそこを参照する（コマンドの重複を避けた）。却下案: ブラウザで Raw を保存して実行する `00_bootstrap.bat`（GitHub の Raw は LF で、`.bat` のラベルが壊れることがあるため、ラベルなしの書き方が要る。受け渡しの手間もある）。開発者モードは管理者権限が要るので自動化できない（symlink を試しに作れば有効か確認はできる）。
+
+### 2026-10-06（初回取得の見直し: 最終の場所に clone、git は scoop に統一、11_git_identity.bat）
+
+- 運用が「zip で取得 → 番号順に実行 → `50_repos` で ghq 管理下に再取得 → `30_link` をもう一度」で二重だったのを見直した（判断は `docs/decisions.md` の「初回の取得は winget の git で最終の場所に clone し、git は scoop に統一する」）。ユーザーの選択で、初回は winget の git で最初から `C:\vault\repos\github.com\yuzucha16\dotfiles` に clone し（README の手順 0 のとおり。zip は使わない）、git の正本は scoop。`50` を前に出す案は、`ghq` と `GHQ_ROOT` に依存するため採らず、置き場所をそろえた。
+- 追加・変更: (1) `scripts/windows/11_git_identity.bat` を新設。`~\.gitconfig_local` が無いときだけ、`user.name` / `user.email` を対話入力し、`git config --file` で作る（`--global` は `30_link` と衝突するので使わない）。無効な入力は5回で `[ERR]`。(2) `20_apps.bat` に、scoop の git のあとで winget の git を検出し、確認（既定は消さない）のうえ `winget uninstall --id Git.Git -e` する処理を足した（`WINGET_EXE` で差し替え可能）。(3) `50_repos.bat` のユーザーの変更 `ghq get yuzucha16/dotfiles` は、取得済みで不要になったので、元のコメント行（`rem ghq get yuzucha16/adv360-pro-zmk`）に戻した。(4) README の手順 0・1・2・5 を更新。
+- 確認: `pwsh tests/windows/test_20_apps.ps1`（winget の分岐 7 件を追加）と、新規の `tests/windows/test_11_git_identity.ps1`（15 件）が failures=0。偽の `USERPROFILE` と偽の `winget` だけを使い、実環境の `~\.gitconfig_local` は不変。実機で winget の git を入れた PC での通し実行は未確認。
+
+### 2026-10-06（24_fonts.bat の出力保存と pause、50_repos.bat の変更）
+
+- `24_fonts.bat` に、`31_history_seed.bat` と同じ方式（`:MAIN` の出力を `tmp\24_fonts.log` に記録、表示後に `pause`）を入れた。従来は末尾に `pause` が無く、ダブルクリックで結果が見えなかった。あわせて、`gh release download` の失敗を検出して `[ERROR]` を出し、1件でも失敗したら終了コード 1 にした（従来は失敗しても「Downloaded」と出ていた）。`gh` は `call gh` で呼ぶ。確認: 偽の `gh.cmd` と偽の `USERPROFILE` で、成功（rc=0）、失敗（rc=1、`[ERROR]` が2件）、`gh` なし（rc=1）を実行し期待どおり。実際のダウンロードは未実行。
+- ユーザーが `50_repos.bat` に加えた変更（コメントアウトされていた `ghq get yuzucha16/adv360-pro-zmk` を `ghq get yuzucha16/dotfiles` に置換）を、ユーザーの指示でコミットに含めた。内容は未検証（上の行のコメント「dotfiles itself is already cloned by hand」と食い違っている）。
+
+### 2026-10-06（31_history_seed.bat の出力保存と pause）
+
+- `31_history_seed.bat` をダブルクリックで実行すると、一瞬でウィンドウが閉じて結果が分からなかった（ユーザーの報告）。本体を `:MAIN` に分けて出力を `tmp\31_history_seed.log`（`.gitignore` 済み、実行のたびに上書き）へ記録し、画面に表示したあと `pause` で止まるようにした。終了コードは従来どおり（成功・SKIP・dry-run は 0、引数誤り・種なし・コピー失敗は 1）。確認: `-n`、不正な引数、偽の `APPDATA` での実コピーと2回目の SKIP を実行し、期待どおり（実環境の履歴 15,964 バイトは不変）。他の `.bat`（`30_link`、`24_fonts` など）にはログを足していない。`pause` の無い `24_fonts.bat` は未対応。
+
+### 2026-10-06（vcredist2022 の提案への対応）
+
+- `20_apps.bat` の `scoop install` で、lsd / ripgrep / bat / starship / windows-terminal / chatgpt が `extras/vcredist2022` を提案する件を調べた。`suggest`（任意）で必須ではなく、`extras/vcredist2022` のインストーラが UAC 昇格（`-RunAs`）を要するため、ユーザースコープのみの方針と衝突する。自動導入はせず、`20_apps.bat` に、VC++ 2015-2022 x64 ランタイムがレジストリに無いときだけ `[WARN]` と手動導入コマンドを出す確認を足した。入れる基準3点は `docs/decisions.md` の「vcredist2022 は自動導入せず、不足時だけ警告する」。確認: `pwsh tests/windows/test_20_apps.ps1` が failures=0（既存の試験。新しい警告の分岐の自動試験は未作成）、`reg query` の判定は「ある」「ない」の両方を実機で確認。`bat` の `less`・`vim` の `vimtutor` の提案は入れない判断（同じ項に記載）。
+
+### 2026-10-06（`vault\notes` → `vault\works` の rename 後の点検）
+
+- ユーザーが実機で `vault\notes` を `vault\works` に rename したあと、dotfiles への影響を点検した。結果は、デグレなし（確認: 2026-10-06）。ユーザー環境変数 `WORKS_DIR` / `CERTS_DIR` は新パス（旧 `NOTES_DIR` は無し）、`C:\vault\works\.obsidian` のジャンクションは dotfiles へ正しく張られている、`workbase`（`works\resources`）は `main...origin/main`、WSL から `/mnt/c/vault/works` の `.obsidian` と `exmem` が見える、`bash tests/linux/test_scripts.sh` は 36/36 合格（実 WSL の項目も通った）。`docs/` に残っていた現在のパス参照（`notes/resources/...` の4か所）を `works/resources/...` に直した。過去の経緯の記述（`.obsidian` を `notes` に置いた判断など）は、当時の呼称のまま残した。未確認: 会社PCの `company-ca.crt` の所在（このPCの `areas\dev-env\certs` は存在するが中身は未確認）、他のPCでの `10_env.bat` と `30_link.bat` の再実行。
+
+- Vault のトップが `notes` から `works` に変わるのに合わせて、`NOTES_DIR` を `WORKS_DIR` に、パスを `C:\vault\works` / `/mnt/c/vault/works` / `~/vault/works` に改めた（`AGENTS.md`、`README.md`、`links.map`、`10_env.bat`、`50_repos.bat`、`.profile`、`lib.sh`（`works_dir`）、`30_link.sh`、`50_repos.sh`、`tests/linux/test_scripts.sh`）。`CERTS_DIR` は `%WORKS_DIR%\areas\dev-env\certs` にし（`10_env.bat` はこのディレクトリを作らない）、`common.sh` の WSL 側の参照も合わせた。Linux のテストは 35/35 合格（実 WSL の項目は rename 前なので skip）。**実機の `setx` と rename は、ユーザーが行う**（手順は、トップの `docs/log.md`）。
+### 2026-10-06
+
+- Scoop 導入の失敗と実行ポリシーの扱い、PowerShell の二重引用符で文書が壊れた件を「ナレッジ化して」で `exmem/inbox/2026-10-06-scoop-install-execution-policy.md` に残した（実機の新アカウントでの確認は未実施のため、Open Questions に残してある）。実行で出た改善1点（仮説の表記 `（仮説）` は完全一致で書く）を承認し、workflow-kit に反映した（版 `2026-10-06.7`）。変更は `workbase` 側で、dotfiles のコミット対象外。
+
+- Windows 側の試験環境（`tests/windows/`）を「ナレッジ化して」で `exmem/inbox/2026-10-06-windows-bat-script-testing-dryrun.md` に残した（WSL 側の `shell-script-testing-wsl` と対称。Scoop の原因調査と実行ポリシーの判断は、実機確認後にナレッジ化する）。実行で出た改善1点（ファイル名の語数の数え方と `sources` の定形）を承認し、workflow-kit に反映した（版 `2026-10-06.6`）。変更は `workbase` 側で、dotfiles のコミット対象外。
+
+- 新しい Windows アカウントで、Scoop の導入が「アクセスが拒否されました。」で失敗した件を調べた（ユーザーの報告では `10_env.bat` だが、該当処理は `20_apps.bat`）。原因は特定できず（候補の検討と却下は `docs/decisions.md` の Gotchas）。実機で成功した手順（`Invoke-RestMethod | Invoke-Expression`）に合わせて `20_apps.bat` を直した。`powershell.exe` を完全パス（`PS_EXE`）で呼び、失敗時に `Get-ExecutionPolicy -List` を出す。実行ポリシーは、ユーザーの判断で、実効値が Restricted/AllSigned/Undefined のときだけ CurrentUser を RemoteSigned にし、変更の失敗は警告で続行する。あわせて、ネットワーク無し・実インストール無しの試験 `tests/windows/test_20_apps.ps1` を作り、18/18 合格（確認: 2026-10-06、終了コード0。実機のポリシーは不変）。新アカウントでの実機確認は未実施。
+- `main` が `origin/main` と分岐（各4コミット）したので、ユーザーの指示でローカルを `origin/main` の上に rebase した。衝突は `docs/log.md` の Log 節だけ（双方が新しい日付の節を足した）で、両方を残して日付の降順にした。順序は、ローカルが 2026-10-05 23:12〜23:27、リモートが 2026-10-06 08:18〜08:25（別PCと思われる）で、古い側を新しい側の上に載せた形（時系列に沿う。事後にユーザーへ確認）。ローカル4コミットのコミット日時は 2026-10-06 09:12 に変わった（author date は元のまま）。rebase 前は `7fe015f`（reflog から `git reset --hard 7fe015f` で戻せる）。反省: rebase 前に双方の日時を比べず、順序をユーザーに確認しなかった。以後は `AGENTS.md` のコミットの項のとおり事前に確認する。
+- 「ナレッジ化して」を実行した（`exmem/inbox/2026-10-06-git-rebase-chronology-check.md`。コミット対象外）。改善案を1点承認し、workflow-kit を版 `2026-10-06.4` に上げた: 手順 2 に「規則や置き場の選択も、ユーザーが明示または承認したなら Decisions に書く」を足した（変更は `workbase` 側、dotfiles のコミット対象外）。
+- 「inbox のメモはコミットしない」の範囲が曖昧で、報告が「`workbase` の変更全体を人に任せる」と読めた（ユーザーの指摘）。対象は、「ナレッジ化して」のフックが作ったメモのファイルだけで、ほかの変更はコミットしてよい。workflow-kit を版 `2026-10-06.5` に上げ、`docs-rules.md` と `knowledge-hook.md` に範囲と報告の書き方を明記した。`workbase` は3コミット（`69f5580` kit、`4293b86` exmem の統合、`ba83c3f` 手順書。agent 名義）に分けてコミットし、inbox のメモ8件は未追跡のまま残した。push は未実施（ユーザーが行う）。
+- `workbase`（`C:\vault\notes\resources`）の `git pull` が、未コミットの `exmem/knowledge/` の変更と衝突した。tracked の変更を stash → `git pull --ff-only` → `git stash pop` で戻し、衝突した3ファイル（`tags.md`、`workflow-kit.md`、`pc-setup-manuals.md`）は双方の内容を残して解消した。別PCが同じ inbox メモを `shell-script-testing-wsl.md` に統合済みだったため、こちらの重複ノート `wsl-shell-script-testing.md` は削除した（`sources` の1行は移した。リンクも更新）。stash は内容が作業ツリーに入っていることを確認して破棄した。`workbase` へのコミットはしていない（ユーザーが行う）。
+- rebase 後に WSL（Ubuntu 24.04）で `bash tests/linux/test_scripts.sh` を実行し、36/36 合格、失敗0を確認した（根拠: スクリプトの出力 `RESULT: 36/36 passed, failures=0`）。未 push（`origin/main` の先頭が祖先なので、通常の `git push` で足りる）。
+- clone 直後の大量の差分（64ファイル、約8,000行）の原因が改行コード（index は LF、作業ツリーは CRLF）と判明。`.gitattributes` を追加（`5af8dd1`）し、`.bat` 8本の index を LF に正規化（`7e9ae20`）。実質差分の4ファイルは破棄し、`git restore .` で作業ツリーを取り直した。`home/.gitconfig` の `[user]` は `~/.gitconfig_local` に移し済みのため破棄。詳細は `docs/decisions.md` の Gotchas。
+- 上の件の「ナレッジ化して」で出た改善2点を、workflow-kit に反映（版 `2026-10-06.3`）: 点検スクリプトの `<…>` 検出からインラインコードを除外、既存知識の検索用 `tools/find-knowledge.ps1` を追加。変更は `workbase` 側（dotfiles のコミット対象外）。
+
+### 2026-10-05
+
+- Linux 側の試験スクリプトを `tests/linux/test_scripts.sh` として保存した（ユーザーの承認。試験のたびに使い捨てていたものを、再利用できる形にした）。場所は自動判定、試験用のリポジトリは自前で作る（vault に依存しない）、WSL とネイティブの分岐は `PROC_VERSION_FILE` で強制、実環境を見る項目と `stow` が必要な項目は、無ければ skip する。WSL で36項目すべて合格（確認: 2026-10-05、終了コード0）。`README.md` に「スクリプトの試験」の節と `tests/` を、`AGENTS.md` に「`scripts/linux/` などを変えたら実行する」を足した。
+- Vault の構造変更（`notes` を PC ローカルのトップと、共有の `workbase` に分けた）に合わせて、Windows 側を更新した（コミット `cded219`）。`.obsidian`（15ファイル）と `office/` を `windows/` に戻し、`links.map` を `windows\obsidian\.obsidian|%NOTES_DIR%\.obsidian` に、`50_repos.bat` に `workbase` の `git clone`（`%NOTES_DIR%\resources`、ghq の管理外）を足した。ジャンクション越しのディレクトリを Grep / Glob / `rg` が辿らないため、ghq の位置からのリンクにしなかった。
+- Linux 側を対応した（ユーザーの指示）。`scripts/linux/lib.sh` に `notes_dir`（`NOTES_DIR` があればそれ、WSL は `/mnt/c/vault/notes`、ネイティブは `~/vault/notes`）、`clone_workbase`、`link_obsidian` を足し、`50_repos.sh`（ネイティブは `workbase` を `$NOTES_DIR/resources` に clone、WSL は Windows 側が clone するので確認のみ）、`30_link.sh`（ネイティブのみ `.obsidian` を symlink、WSL は Windows 側のジャンクションを共有）、`home/.profile`（`NOTES_DIR` の既定値）を変えた。確認: WSL（Ubuntu 24.04）の実機で、一時ディレクトリと偽の HOME を使い、35項目が合格（構文、`NOTES_DIR` の分岐3種、clone の4場面、`link_obsidian` の9場面、`30_link.sh` の通しの5場面、`50_repos.sh` の5場面）。実環境の `~` は変更していない。`~/.profile` は dotfiles への symlink なので、新しいログインシェルで `NOTES_DIR=/mnt/c/vault/notes` になり、`workbase` の clone が見えることも確認した。試験用に、`is_wsl` と `.profile` に環境変数 `PROC_VERSION_FILE`（`/proc/version` の差し替え）を足した。ネイティブ Linux の実機は未確認。
+
+### 2026-10-04
+
+- 「ナレッジ化して」（`exmem/inbox/2026-10-04-config-dir-placement-criteria.md`）で出た改善案2点を承認し、workflow-kit の `knowledge-hook.md` を直した: 同日の他メモと決定が食い違うときの書き方、`docs/` の更新済みの確認方法（`docs/log.md` の今日の項目で判定。`git status` の差分では判定できないので、提案の文言を変えた）。記録は `improvements.md`。
+- `.obsidian` を `notes` に置くか dotfiles に置くかの判断基準（6項目）を決め、`notes` に残すと決定した（判断は `docs/decisions.md` の「`.obsidian` は `notes` に置く」）。決め手は、Vault との連動、依存の向き（dotfiles → `notes` の片方向）、ジャンクションが要らないこと。基準6（粒度）は、置き場ではなく Claude を開く場所（`notes` のルート）で解決する。`notes` 側の撤去作業（`.obsidian/AGENTS.md` など）は、ユーザーが実施し、ファイルが無いことと `.obsidian` の `git status` が clean であることを確認した（根拠: `Get-ChildItem`、`git status`）。`notes/AGENTS.md` への「`.obsidian/` 単体で Claude を開かない」の追記は、不要とユーザーが判断した。`knowledge/obsidian-vault.md` に「設定」節の更新と置き場の決定を反映した（`notes` の `2893e74`）。
+- 「ナレッジ化して」（`exmem/inbox/2026-10-04-gh-release-download-without-login.md`）で出た改善案2点を承認し、workflow-kit の `knowledge-hook.md` を直した: 既存ノートとの食い違いは Open Questions に「統合時の修正」として書く、統合先の候補は狭い候補と広い候補を並べてよい（`improvements.md` に記録）。
+- `24_fonts.*` から `gh auth status` の前提チェックと `--dry-run` を削除した。未ログインで `gh release download` が成功することを実機で確認したため（判断は `docs/decisions.md` の「フォント取得」）。
+- `docs/` の運用と「ナレッジ化して」フックの本文を、共通機能 `notes/resources/workflow-kit/` へ移した。dotfiles の `AGENTS.md` は、共通ルールへの参照と dotfiles 固有のルール（exmem との関係、履歴の種の正本、コミット）だけに薄くした。目的は、同じ仕組みを他の作業ディレクトリでも使い、改善を1か所に集めること。戻すときは、このコミットを `git revert` する（旧 `AGENTS.md` の本文が戻る）。以後のフックの改善は、kit 側の `improvements.md` に残る。
+- 「ナレッジ化して」の4回目（Zed の最適化）で出た改善案のうち2点を承認し、`AGENTS.md` を直した: `claude-acp` の `mode: "plan"` 既定だと毎回プランモードで始まる旨を手順 1 に追記、「`docs/` が未更新なら先に更新してからナレッジ化する」という実行順序を手順の冒頭に追記。
+- Zed の設定を最適化した（判断は `docs/decisions.md` の「Zed の最適化」）。自作テーマ Material Gruvbox Dark、カーソル点滅を Zed・pwsh・bash・zsh で停止、AI の設定（Ctrl+Enter 送信、承認を Claude Code に一本化）、Markdown と Obsidian の併用設定、Vim を1週間オフ、`settings.json` / `keymap.json` の整理。コミットは `[zed]` と `[shell]` の2つ。`terminal.shell` の pwsh 明示は既存の決定に反するので削除した。ナレッジ化は `exmem/inbox/2026-10-04-zed-eye-strain-agent-settings.md` と `2026-10-04-terminal-cursor-blink-decscusr.md`。
+- Notepad++ の設定を把握し、整理した（判断は `docs/decisions.md` の「Notepad++ の設定整理」）。プラグイン全削除、`shortcuts.xml` / `contextMenu.xml` を管理外に、`%APPDATA%\Notepad++` の残骸を削除、`config.xml` の設定値（スナップショット、LF、折り返し、点滅なし、自動更新オフ）を決めた。Zed の `tab_size` も 2 にそろえた。`exmem/inbox/2026-10-04-notepadpp-settings-optimization.md` を作った。
+- 不要なものを整理した（判断は `docs/decisions.md` の「不要アプリの削除と Notepad++ config の雛形方式」）。
+  - 削除: `22_python.bat`、VS Code 一式（1コミット。revert で復活できる）、Gruvbox light、`32_notepadpp.*`。
+  - Notepad++ の `config.xml` は、最小構成の雛形 `config.min.xml` を `20_apps.bat` が初回だけコピーする方式にした（実機で動作確認済み）。
+  - starship の os アイコン後の余分なスペースを直した。Zed の `auto_install_extensions` に `git-firefly` `toml` `xml` を追加した。
+  - 「ナレッジ化して」で `exmem/inbox/2026-10-04-dotfiles-cleanup-notepadpp-config.md` を作った。
+- 「ナレッジ化して」の2回目（`exmem/inbox/2026-10-04-scoop-vs-unmanaged-apps.md`）で出た改善案3点を承認し、`AGENTS.md` を直した: プランモードの承認を拒否されたら書き込まず解除方法を案内する、統合先の確認に検索キーワードを添える、確認した事実に根拠を添える。
+- 「ナレッジ化して」の初回実行（`exmem/inbox/2026-10-04-repo-and-exmem-separation.md`）で出た改善案3点を承認し、`AGENTS.md` を直した: 形式に `tags` と `Principles` を追加（exmem の標準プロンプトと同じ形に）、教訓は Principles へ、1ファイル1テーマ（統合先が違う話題はファイルを分ける）。
+- 「ナレッジ化して」フックを `AGENTS.md` に定義し、続けて指示文を改善した（プランモードなら先に抜ける、知識の判定基準、既存ノートとの重複確認、単体で読める書き方、実行後の改善報告）。exmem への書き込みは `inbox/` の新規1ファイルだけ。
+- 作業ログの置き場を整理した。dotfiles は exmem を読み取り専用で参照するだけにし、経緯・決定・次にやることは `docs/` に持つ。exmem に書かれていた dotfiles の記録（`contexts/dotfiles/context.md`、`knowledge/dotfiles.md`）はここへ移し、exmem 側から削除した。
+- zfz/cdg を `Alt+j`/`Alt+k` で3シェル共通にした。zsh で ListView 相当の自作一覧を試し、zsh/bash の ListView 相当は作らず、fzf の `Ctrl+R`（履歴）・`Ctrl+T`（ファイル）に切り替えた（コミット・push 済み）。pwsh にも同じキーで fzf を入れ（`ListView` は残す。実機で動作確認済み）、bash の `.bashrc` 末尾の `cd ~` を削除した。
+- 両PCの履歴を分析してユースケースを整理し、「履歴の種」の方針を決めた。傾向と種の本文は exmem の `knowledge/shell-command-usecases.md`、種ファイルは dotfiles。zsh/bash 向けの種（`manifests/history.seed.sh.txt`）と配置スクリプト（`scripts/linux/31_history_seed.sh`）も作った。目的はコマンド履歴のベースを dotfiles 側で管理して、PC 移行時の調べ直しを減らすこと。
+
+### 2026-10-03
+
+- dotfiles の再編・複雑度削減・スクリプト命名・手順書・フォント導入・フォント選定の6件のメモを統合し、実物と照合した。
+  - 一致: `scripts/` と `manifests/` の構成、`links.map` の Notepad++ の追跡範囲、Zed のフォント設定、インストール済みフォント4種、`cheatsheets/env/` の3ファイル。
+  - 食い違い・未反映: `git bundle` のバックアップがメモのパスに無い。`.wslconfig` はこのPCに未リンク。`gh` は scoop に入っている。
+- Office テンプレと `.obsidian` を `notes` リポジトリへ移管した。
+- 手順書は `notes/resources/cheatsheets/env/`（`win11.md`、`debian-family.md`、`fonts.md`）。実機での通し確認は未実施。
+
+### 2026-10-02
+
+- `yuzucha16/dotfiles` を再編した。履歴を単一コミットに作り直し、`scripts/{windows,linux}/`・`manifests/`・`home/`（`~` の鏡）・`windows/`・`templates/` の構成にした。スクリプトは `NN_<内容>` の命名で、WSL とネイティブ Linux は `scripts/linux/` に1本化した。

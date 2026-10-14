@@ -10,7 +10,7 @@ dotfiles は、Windows 11 + WSL2 / Linux（apt 系）の作業環境を、複数
 
 ## 読む順番
 
-1. `docs/log.md`: 現在の状態と Next Actions。作業を再開するときの入口。
+1. `docs/log.md`: 現在の状態と Next Actions。作業を再開するときの入口。経緯（日付つきの Log）は `docs/log-history.md`（開始時に読まない。必要なとき検索する）。
 2. `README.md`: 構成、スクリプトの命名規則、セットアップ手順、日常の運用（How）。
 3. `docs/decisions.md`: 判断の根拠、却下案、Gotchas、実機で確認した事実（Why）。
 
