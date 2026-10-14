@@ -14,7 +14,9 @@ REM ======================================================
 set "LIST=%~dp0..\..\manifests\claude-plugins.txt"
 set "RC=0"
 
-if exist "%USERPROFILE%\.local\bin\claude.exe" set "PATH=%USERPROFILE%\.local\bin;%PATH%"
+REM Append (not prepend) the default install dir, so a claude already on PATH wins (tests rely on this).
+where claude >nul 2>&1
+if errorlevel 1 if exist "%USERPROFILE%\.local\bin\claude.exe" set "PATH=%PATH%;%USERPROFILE%\.local\bin"
 where claude >nul 2>&1
 if errorlevel 1 (
   echo [ERR] claude not found on PATH. Run 23_claude.bat first, then open a new terminal.

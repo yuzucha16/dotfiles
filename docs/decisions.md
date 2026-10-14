@@ -394,6 +394,9 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Gotchas
 
+- **`.bat` の試験で、スクリプトが `PATH` の先頭に本物のコマンドの場所を足すと、PATH の先頭に置いた偽物より先に本物が呼ばれる**（2026-10-14。`29_claude_plugins.bat` を偽の `claude` で試したところ、`%USERPROFILE%\.local\bin` を先頭に足す処理のせいで本物の `claude plugin install` が実行され、実環境に導入された）。解決: 既定の場所は、PATH に無いときだけ**末尾**に足す（`where` で先に探す）。試験は `tests/windows/test_28_29_installers.ps1`（偽の `volta` / `claude`、偽の `USERPROFILE`）。`.bat` を足すときは、(1) 偽物を置いた試験を先に書く、(2) スクリプトの `PATH` 操作が偽物を隠さないか確認する、(3) `.bat` は CRLF・ASCII（既存の規則。`Write` で作ると LF になるので変換する）、(4) `for /f` のコメント行は `eol=#` で除く、の順に点検する。
+  - 【この件】行き先: local（dotfiles の `.bat` の試験の作法）
+
 - **作業フォルダを移したあと、`claude --resume` の一覧に何も出ない**（2026-10-07。`No conversations found in this project`）。原因: 54本すべてが Agent SDK 経由（Zed の ACP。jsonl の `entrypoint` が `sdk-ts`）で、`claude --resume` の一覧と `--continue` の対象外（公式ドキュメント）。`cwd` の不一致とは別の原因。解決: `claude --resume <ID>` で開く。一覧に出すには `entrypoint` を `cli` に書き換える（バックアップを取ってから。1本で試して、一覧に出ることを確認した）。2026-10-06 の「コピーした履歴が再開できない」も、この原因だった可能性が高い（仮説）。
   - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-07-claude-code-resume-sdk-sessions.md）
 
