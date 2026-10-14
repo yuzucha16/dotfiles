@@ -27,6 +27,15 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【汎用】外部の Claude Code スキル（プラグイン）の取り込み方（2026-10-14。ユーザーの指示「knap、a,bの順」。obsidian-skills の導入が最初の例）
+
+- 決めたこと: (1) 導入の宣言は dotfiles の `manifests/claude-plugins.txt`（`<ソース>|<plugin>@<marketplace>`）を正本にし、`29_claude_plugins.bat` が `claude plugin marketplace add` / `install` で入れる（user スコープ）。依存する CLI は `manifests/npm.txt`（`28_npm_globals.bat`、`volta install`）。(2) スキル本体（`SKILL.md`）は dotfiles にも exmem にも写さない。(3) 「どの作業でどのスキルを使うか」は、使う側の作業ディレクトリの `AGENTS.md` に1〜2行だけ書く。共有側（kit、exmem）には、固有名を外した一般形だけを書く。
+- 根拠: スキルの更新はプラグインが持つので、写すと古くなる。kit の既存方針（スキルは薄いポインタにし、手順を二重にしない。`exmem/lessons/workflow-kit.md`）と同じ。Claude Code は `description` でスキルを自動検出するので、存在を教える手間は小さい。ただしスキルを見るのは Claude Code だけで、Codex など他のエージェントには届かない。
+- 却下案: `settings.json` の `extraKnownMarketplaces` / `enabledPlugins` で宣言する（ユーザーが CLI 方式を選択）。スキルを `home/.claude/skills/` にコピーして管理する（更新が追えなくなる）。
+- 確認済み（2026-10-14）: `claude plugin marketplace add` / `install` が動き、`obsidian@obsidian-skills` 1.0.1 が user スコープで入った。含まれるスキルは `defuddle` `json-canvas` `knap` `obsidian-bases` `obsidian-cli` `obsidian-markdown`（`~\.claude\plugins\cache` の `SKILL.md`）。`knap` は Markdown テンプレートの描画（Knap CLI。`npm install -g knap`、Node 20 以上）で、`defuddle` の出力をノートに整形する用途がある。
+- 未確認: Claudian（Obsidian プラグイン）が `~\.claude` のユーザープラグインを読むか。外部スキルの配布元と `SKILL.md` を取り込み前に確認する運用は、案の段階（今回は kepano 製であることを見たのみ）。
+- 行き先: 未（【汎用】。「ナレッジ化して」の対象）
+
 ### 【この件】Claude 用の AWS profile 名を `n1-trial` にした（2026-10-11。ユーザーの決定。当初は `M1-trial` で、同日に変更）
 
 - 決めたこと: Claude Code（Bedrock）が使う AWS profile 名を `default` から `n1-trial` にする。命名の型は「部署名-開発案件」（ユーザーの方針）。リポジトリで変えたのは `home/.config/zed/settings.json` の `Claude Bedrock` の `AWS_PROFILE` だけ。`claude-bedrock-setup.ps1` は名前を持たず、`-AwsProfile` か対話で渡す。
