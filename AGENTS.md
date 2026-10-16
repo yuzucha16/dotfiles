@@ -29,6 +29,6 @@ dotfiles は、Windows 11 + WSL2 / Linux（apt 系）の作業環境を、複数
 - メッセージは `[対象] 内容`（例: `[shell] ...`, `[scripts] ...`, `[docs] ...`）。
 - `git add` はパスを指定する（パスなしの `git add -A` と `git add .` は使わない。`tmp/` などを拾うため）。
 - コミット・push の前に、kit の `docs-rules.md` の「コミットと push」を、そのセッションで読んでいなければ読む（身元・トレーラー・機密の検索もそこに従う）。
-- push はユーザーが行う（許可リストなし）。禁止のコマンド（`--force` など）は、kit の `docs-rules.md` の「しないこと」に従う（`settings.json` の deny が機械的に止める。rebase は 2026-10-16 ユーザーの決定で禁止）。
+- push は、このリポジトリ（`yuzucha16/dotfiles`。公開）の `main` を、エージェントが行ってよい（2026-10-16 ユーザーの決定。公開のまま）。条件は kit の `docs-rules.md` の「push」（公開のため、機密の検索を広げる）。禁止のコマンド（`--force` など）は、kit の `docs-rules.md` の「しないこと」に従う（`settings.json` の deny が機械的に止める。rebase は 2026-10-16 ユーザーの決定で禁止）。
 - merge の前に、双方のコミット日時（`git log --format='%h %ad %s' --date=iso`）を比べ、どちらが新しいかをユーザーに伝えて、順序でよいか確認する。
 - リスクや制約が生まれる変更は、事前にユーザーへ確認する。
