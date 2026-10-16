@@ -4,22 +4,11 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 ## Next Actions
 
-- resources の `topics/dotfiles-boundary/` が、手順書3本を dotfiles の `docs/setup/` へ移す案を持つ（2026-10-16 時点で未着手。dotfiles に `docs/setup/` は無い）。進捗はそのトピックの `docs/log.md` が正本。
-
-他PCでは `git pull` のあと、`30_link.bat`（Linux/WSL は `30_link.sh`）を再実行してから、次を確認する。
-
 - 外部スキルを取り込む前に、配布元と `SKILL.md` を確認する運用にするか決める（案の段階）。
-- Claudian の入力欄パッチの試用（2026-10-12）: Enter の挙動と見た目を確認する。続けるなら、プラグイン更新で `main.js` が上書きされるため、当て直し手順を残す。
-- Claude Code の設定ファイル改名（2026-10-11）の移行: `30_link.bat` の再実行、旧 `api.settings.json` `bedrock.settings.json` の削除、`api-key.dpapi` を `settings-api-key.dpapi` に改名。`claude-api` と `claude-bedrock` の起動を確認する。
-- Claude 用の AWS profile `n1-trial` の作成と、`claude-bedrock-setup.cmd -AwsProfile n1-trial` の実行。`settings-bedrock.txt` の全文を Claudian の Bedrock スニペットへ貼れるかも確認する（Bedrock の実機は未確認）。
-- AWS CLI・uv・Volta のインストーラ（`25_awscli.bat` `26_uv.bat` `27_volta.bat`）を実機で確認する。`ca_bundle.crt` を置いた PC では `setx` の値も見る。
-- 会社 PC で git の schannel: `git -c http.sslBackend=schannel ls-remote https://github.com/yuzucha16/dotfiles HEAD`。`CRYPT_E_NO_REVOCATION_CHECK` が出たら `schannelCheckRevoke = false`。
-- Windows Terminal の WSL プロファイル（2026-10-14）: Terminal を開き、メニューが PowerShell・CMD・Ubuntu-24.04 で `settings.json` に差分が出ないことを確認する。
-- `.reg` / `.ahk` と Terminal の `settings.json` の `git status` が clean か確認する（`.gitattributes` の変更の後。差分が出たら `git add --renormalize`）。
+- resources の `topics/dotfiles-boundary/` が、手順書3本を dotfiles の `docs/setup/` へ移す案を持つ（2026-10-16 時点で未着手。dotfiles に `docs/setup/` は無い）。進捗はそのトピックの `docs/log.md` が正本。
 - 上に無い古い確認項目（スレッド復元の後始末、Zed 以外の実機確認、履歴の種、`10_env.bat` の再実行、VC++ ランタイムの `[WARN]`、Linux の通し実行など）は、`log-history.md` の 2026-10-16 の項にある。
 
 ## Open Questions
 
-- dotfiles のリポジトリの公開・非公開（未定。2026-10-06 時点は非公開）。決まったら、README のクイックスタートと、workbase の手順書 `win11.md`・`debian-family.md` の使わない方の記述を削除する。
 - `windows/notepadpp/Gruvbox dark medium.xml` の改行（index が CRLF）を LF にそろえるか。Notepad++ が保存時に CRLF へ書き直すかが未確認。
 - 古い Open Questions（`.wslconfig`、既定ブランチ、細かい設定の確認など）は、`log-history.md` の 2026-10-16 の項にある。
