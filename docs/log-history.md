@@ -3,6 +3,10 @@
 日付つきの Log（降順）。開始時には読まない。必要なときに検索する。現在状態は `docs/log.md`。
 
 ## Log
+### 2026-10-16（`docs/setup/` のリンク確認を完了とした）
+
+- `DESKTOP-C7JJ83A` で、`docs/setup/` の手順書間のリンクと、手順書が挙げるリポジトリ内のパス（`scripts/`、`manifests/`、`home/`、`windows/powershell/` の各ファイル）が実在することを確認した。`main` は `origin/main` と一致。https の外部リンクは開いていない。ユーザーが完了と確認し、`log.md` の項を消した。
+- 続けて、ユーザーが「dotfiles 側の課題」の未対応3件（`chsh` 後の再ログインの案内、`50_repos.sh` の前提、MX Linux 実機での `20_packages.sh` / `23_ja.sh` の確認）を完了と確認し、`log.md` の項を消した。
 ### 2026-10-16（手順書3本を workbase から `docs/setup/` へ移した）
 
 - `win11.md`・`debian-family.md`・`fonts-setup.md` を、workbase の `guides/howto/` から `docs/setup/` へ移した（dotfiles-boundary の決定。移動先と、書式規則も dotfiles へ移すことはユーザーの決定）。書式・文体の規則は `docs/setup/README.md` に移した。
