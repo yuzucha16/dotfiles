@@ -4,7 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 ## Next Actions
 
-- 未 push のコミットを push する（ユーザー。dotfiles は許可リスト外）: `cc20299` `71e326d` `000125e` `a404711` `293c0a3`。あわせて resources の `9c87f10` `2156d92` `2a35149` `3cdeeb1` `286d714`。
+- 未 push のコミットを push する（ユーザー。dotfiles は許可リスト外）: `cc20299` `71e326d` `000125e` `a404711` `293c0a3`。あわせて resources の `9c87f10` `2156d92` `2a35149` `3cdeeb1` `286d714`。追加（2026-10-16 の依存の整理）: dotfiles `3ed784e` `2ef40d4`、resources `6d8f427` `b50bab2`。
 - README を分割した（2026-10-16。34.8KB → 16KB）。詳細は `scripts/windows/README.md` `scripts/linux/README.md` `tests/README.md` `windows/README.md`。`windows/README.md` の末尾の空行を直す。resources の `topics/dotfiles-boundary/` の `docs/setup/` の案と、置き場の整合を確認する。
 
 他PCでは `git pull` のあと、`30_link.bat`（Linux/WSL は `30_link.sh`）を再実行してから、次を確認する。
