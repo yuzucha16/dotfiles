@@ -138,7 +138,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - 決めたこと: `.gitattributes` に `*.reg text eol=crlf` と `*.ahk text eol=crlf` を足した（`.bat` `*.cmd` と同じ形。コミット `cf4a54f`）。index にあった CRLF は `git add --renormalize` で LF にした（作業ツリーは CRLF のまま）。
 - 根拠: Windows 向けの形式なので、作業ツリーは CRLF が無難。index を LF にそろえると、git の設定（`autocrlf` など）に左右されない（上の `.bat` と同じ理由。Gotchas の2026-10-06の項）。`.reg` と `.ahk` の先頭バイトに BOM はなく、`.reg` は UTF-16 ではない（`ReadAllBytes` で確認。UTF-16 なら git が `text` 扱いしない可能性があった）。
 - 却下案: 全部 LF（`.reg` は Windows 標準の形式から外れる。`.ahk` は v1 や行継続の挙動に差が出るかを未確認で、リスクのほうが大きい）。
-- 未決: `windows/notepadpp/Gruvbox dark medium.xml`（index が CRLF、作業ツリーも CRLF）。XML なので LF でも読めるはずだが、Notepad++ が保存時に CRLF へ書き直すかが未確認なので、触っていない。`windows/office/*.exportedUI` は `-text`（改行を変換しない。バイナリ扱い）の指定が意図的に付いているので、そのまま。
+- `windows/notepadpp/Gruvbox dark medium.xml`: index を `git add --renormalize` で LF にそろえた（2026-10-16 ユーザーの決定。`config.min.xml` と同じ）。根拠: `* text=auto eol=lf` が効くので、Notepad++ が保存時に CRLF へ書き直しても、`git add` で LF に正規化され差分は出ない。XML はどちらの改行でも読める。Notepad++ の保存時の挙動は実機で確認していない（結論に影響しないため確認しない）。作業ツリーは CRLF のまま。`windows/office/*.exportedUI` は `-text`（改行を変換しない。バイナリ扱い）の指定が意図的に付いているので、そのまま。
 - 行き先: local（dotfiles の `.gitattributes` の規則）
 
 ### 【この件】Vault を `%USERPROFILE%\works`、ghq の root を `%USERPROFILE%\works\repos` に移し、Linux 側も `~/works`、`~/works/repos` にそろえる（2026-10-06。ユーザーの決定と指示）

@@ -9,4 +9,4 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 ## Open Questions
 
-- `windows/notepadpp/Gruvbox dark medium.xml` の改行（index が CRLF）を LF にそろえるか。Notepad++ が保存時に CRLF へ書き直すかが未確認。
+なし。
