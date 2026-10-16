@@ -27,6 +27,12 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】README を 16KB に縮め、詳細を下位の README に移す。読む順番は README → `docs/log.md`。rebase は禁止（2026-10-16。ユーザーの決定）
+
+- 決めたこと: README の目標は 16KB。スクリプト・試験・`windows/` の詳細は、原文のまま `scripts/windows/README.md` `scripts/linux/README.md` `tests/README.md` `windows/README.md` に移した（上段は表引き、下段に詳細。kit の `docs-rules.md` の階層化の規則）。`AGENTS.md` の読む順番は kit にそろえて README → `docs/log.md`（`decisions.md` と `log-history.md` は開始時に読まない）。rebase は禁止（merge は日時を比べてユーザーに確認）。
+- 根拠: README が 34.8KB で、開始時に読むと重かった。kit の読む順番（窓口 → `log.md`）に合わせるには、窓口を小さくする必要があった。rebase は kit の `docs-rules.md` が禁止している。
+- 却下案: log.md を先に読む順のまま、README を必要な節だけ読む（kit と順が逆になる）。
+
 ### 【この件】Obsidian の `colored-tags/data.json` を git の追跡から外す。1週間の試用（2026-10-15。ユーザーの決定）
 
 - 決めたこと: `.gitignore` に入れて追跡から外した（`8332027`）。色は PC ごとに独立になる。2026-10-22 頃に続けるか判断する（`docs/log.md` の Next Actions）。
