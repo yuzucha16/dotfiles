@@ -27,7 +27,7 @@ sudo apt install -y git
 git clone https://github.com/yuzucha16/dotfiles ~/works/repos/github.com/yuzucha16/dotfiles
 ```
 
-続きは「セットアップ手順」の「WSL / Linux」の手順 1（`10_dirs.sh`）から。SSH 鍵で取得してもよい（`git clone git@github.com:yuzucha16/dotfiles.git`。鍵の登録は手順書 `debian-family.md` の「SSH と GitHub」）。WSL は Windows 側の clone を使うので、このクイックスタートは不要（Windows 側のクイックスタートを済ませる）。
+続きは「セットアップ手順」の「WSL / Linux」の手順 1（`10_dirs.sh`）から。SSH 鍵で取得してもよい（`git clone git@github.com:yuzucha16/dotfiles.git`。鍵の登録は手順書 `docs/setup/debian-family.md` の「SSH と GitHub」）。WSL は Windows 側の clone を使うので、このクイックスタートは不要（Windows 側のクイックスタートを済ませる）。
 
 ## ディレクトリ
 
@@ -36,7 +36,7 @@ dotfiles/
 ├── README.md
 ├── AGENTS.md       エージェント向けの入口（CLAUDE.md は @AGENTS.md だけ）
 ├── .gitignore
-├── docs/           作業ログ（log.md: 現在状態と次にやること、log-history.md: 経緯）と判断の記録（decisions.md: 根拠・却下案・Gotchas）
+├── docs/           作業ログ（log.md: 現在状態と次にやること、log-history.md: 経緯）と判断の記録（decisions.md: 根拠・却下案・Gotchas）。setup/: セットアップ手順書
 ├── scripts/
 │   ├── windows/    10〜50 のセットアップスクリプト（`optional/` は任意の .reg）。仕様は `README.md`
 │   └── linux/      10〜50 のセットアップスクリプト（WSL とネイティブ Linux 共通。違いは `lib.sh` の `is_wsl` などで分岐）。仕様は `README.md`
@@ -98,7 +98,7 @@ dotfiles/
 
 ### WSL (Ubuntu 24.04) / Linux (apt 系)
 
-WSL は Ubuntu の初期ユーザー作成後、WSL 内で実行する（Windows 側の clone を `/mnt/c/Users/<Windows のユーザー名>/works/repos/...` から参照する）。ネイティブ Linux は、クイックスタートで clone してから実行する（OS の手順は `resources/guides/howto/debian-family.md`）。`WORKS_DIR` は、WSL では `/mnt/c/Users/<Windows のユーザー名>/works`（Windows 側と共有）、ネイティブでは `~/works`（`~/.config/profile.local` で上書きできる）。
+WSL は Ubuntu の初期ユーザー作成後、WSL 内で実行する（Windows 側の clone を `/mnt/c/Users/<Windows のユーザー名>/works/repos/...` から参照する）。ネイティブ Linux は、クイックスタートで clone してから実行する（OS の手順は `docs/setup/debian-family.md`）。`WORKS_DIR` は、WSL では `/mnt/c/Users/<Windows のユーザー名>/works`（Windows 側と共有）、ネイティブでは `~/works`（`~/.config/profile.local` で上書きできる）。
 
 1. `10_dirs.sh`: XDG ディレクトリなど。`11_git_identity.sh`: `~/.gitconfig_local`（`30_link.sh` の前）。
 2. `20_packages.sh [desktop]`: apt のパッケージ、starship、ghq。続けて必要なものを個別に: `23_ja.sh`（ネイティブのみ）、`24_fonts.sh`、`25_arm_gcc.sh`。
@@ -139,7 +139,7 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で実行する（Windows
 exmem（`$HOME\works\resources\exmem`。共有リポジトリ `workbase` の一部）は、AIとの壁打ちで得たナレッジの置き場。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業の経緯・決定・次にやることは、このリポジトリの `docs/` に残す。書き込みの唯一の例外は、エージェントに「ナレッジ化して」と指示したとき、`exmem/inbox/` に再利用できる知識を1ファイル置くこと（手順と形式は共通機能 `works/resources/workflow-kit/stock-hook.md`）。
 
 - 参照するもの: 履歴の種の本文（`exmem/lessons/shell-command-usecases.md`。種ファイルはその派生物）。
-- 手順書は `workbase` の `guides/howto/`（`$HOME\works\resources\guides\howto\`）。
+- 手順書は、このリポジトリの `docs/setup/`（`win11.md`、`debian-family.md`、`fonts-setup.md`）。2026-10-16 に `workbase` の `guides/howto/` から移した。
 
 ## 既知の課題
 
