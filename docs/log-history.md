@@ -3,6 +3,10 @@
 日付つきの Log（降順）。開始時には読まない。必要なときに検索する。現在状態は `docs/log.md`。
 
 ## Log
+### 2026-10-16（3 リポジトリの規則を揃えた。README を分割し、AGENTS.md を kit にそろえた）
+
+- works・resources・dotfiles の規則を揃える作業の一部。dotfiles の変更: README の旧名参照（`knowledge-hook.md` → `stock-hook.md`、`cheatsheets/env/` → `guides/howto/`。`cc20299`）。`AGENTS.md` に、コミット・push の前に `docs-rules.md` を読む導線、push の方針、rebase の禁止（ユーザーの決定。`71e326d`）。`docs-rules.md` を読む時機の統一（`000125e`）。`docs/log.md` を 17.9KB から 3.8KB に縮め、原文を下の項へ移した（`a404711`）。README を 34.8KB から 16KB に縮め、詳細を原文のまま下位の README に移し、履歴リセットは `decisions.md` の Facts に移した。`AGENTS.md` の読む順番を README → `docs/log.md` にそろえた（ユーザーの決定。`293c0a3`）。階層化の規則（上段は表引き、下段に詳細）は、kit の `docs-rules.md` に追加した。
+
 ### 2026-10-16（log.md を縮めるために、Next Actions と Open Questions の原文を移した）
 
 - `log.md` が 17.9KB（目安 4KB）になったため、下の原文を移した。`log.md` に残したのは、10-07 以降で実機確認が要る項を圧縮した版。移した時点で完了とみなした項: Claude Code の API キー認証（10-08）、Zed の最適化の後始末（10-04）。下は原文のまま（旧パス・旧名もそのまま）。

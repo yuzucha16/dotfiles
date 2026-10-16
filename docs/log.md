@@ -4,6 +4,9 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 ## Next Actions
 
+- 未 push のコミットを push する（ユーザー。dotfiles は許可リスト外）: `cc20299` `71e326d` `000125e` `a404711` `293c0a3`。あわせて resources の `9c87f10` `2156d92` `2a35149` `3cdeeb1` `286d714`。
+- README を分割した（2026-10-16。34.8KB → 16KB）。詳細は `scripts/windows/README.md` `scripts/linux/README.md` `tests/README.md` `windows/README.md`。`windows/README.md` の末尾の空行を直す。resources の `topics/dotfiles-boundary/` の `docs/setup/` の案と、置き場の整合を確認する。
+
 他PCでは `git pull` のあと、`30_link.bat`（Linux/WSL は `30_link.sh`）を再実行してから、次を確認する。
 
 - colored-tags の `data.json` を追跡から外す試用の判断（2026-10-22 頃。根拠は `decisions.md` の先頭の項）。他PCは `git pull` の前に `data.json` の未コミットの変更を退避する。
