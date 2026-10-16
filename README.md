@@ -151,7 +151,7 @@ WSL は Ubuntu の初期ユーザー作成後、WSL 内で実行する（Windows
 
 exmem（`$HOME\works\resources\exmem`。共有リポジトリ `workbase` の一部）は、AIとの壁打ちで得たナレッジの置き場。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業の経緯・決定・次にやることは、このリポジトリの `docs/` に残す。書き込みの唯一の例外は、エージェントに「ナレッジ化して」と指示したとき、`exmem/inbox/` に再利用できる知識を1ファイル置くこと（手順と形式は共通機能 `works/resources/workflow-kit/stock-hook.md`）。
 
-- 参照するもの: 履歴の種の本文（`exmem/knowledge/shell-command-usecases.md`。種ファイルはその派生物）。
+- 参照するもの: 履歴の種の本文（`exmem/lessons/shell-command-usecases.md`。種ファイルはその派生物）。
 - 手順書は `workbase` の `guides/howto/`（`$HOME\works\resources\guides\howto\`）。
 
 ## 既知の課題
