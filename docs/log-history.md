@@ -9,7 +9,7 @@
 - 続けて、ユーザーが「dotfiles 側の課題」の未対応3件（`chsh` 後の再ログインの案内、`50_repos.sh` の前提、MX Linux 実機での `20_packages.sh` / `23_ja.sh` の確認）を完了と確認し、`log.md` の項を消した。
 ### 2026-10-16（手順書3本を workbase から `docs/setup/` へ移した）
 
-- `win11.md`・`debian-family.md`・`fonts-setup.md` を、workbase の `guides/howto/` から `docs/setup/` へ移した（dotfiles-boundary の決定。移動先と、書式規則も dotfiles へ移すことはユーザーの決定）。書式・文体の規則は `docs/setup/README.md` に移した。
+- `win11.md`・`debian-family.md`・`fonts-setup.md` を、workbase の `guides/howto/` から `docs/setup/` へ移した（dotfiles-boundary の決定。移動先と、書式規則も dotfiles へ移すことはユーザーの決定）。書式・文体の規則は workbase の `guides/AGENTS.md` に1か所だけ残し（`guides/howto/` に dotfiles に依存しない手順書が残るため。ユーザーの決定）、`docs/setup/README.md` には dotfiles 固有の規則と参照だけを置いた。
 - 付録「dotfiles 側の課題」は削除した（同じリポジトリで直せるため）。「解消済み」は消し、未対応の3件を `log.md` の Next Actions へ移した。本文は、「dotfiles が正」の言い方を「このリポジトリが正」に、`fonts.md` を `fonts-setup.md` のリンクに直した。
 - README（ディレクトリの表、Linux の手順書の参照、「exmem との関係」の手順書の行）と `decisions.md` の手順書の参照を `docs/setup/` に直した。`decisions.md` の 2026-10-06 の経緯の項は履歴なので変えていない。
 ### 2026-10-16（dotfiles を公開で確定。実機確認の項目を完了として整理した）
