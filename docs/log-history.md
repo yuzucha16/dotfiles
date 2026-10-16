@@ -12,6 +12,7 @@
 - `win11.md`・`debian-family.md`・`fonts-setup.md` を、workbase の `guides/howto/` から `docs/setup/` へ移した（dotfiles-boundary の決定。移動先と、書式規則も dotfiles へ移すことはユーザーの決定）。書式・文体の規則は workbase の `guides/AGENTS.md` に1か所だけ残し（`guides/howto/` に dotfiles に依存しない手順書が残るため。ユーザーの決定）、`docs/setup/README.md` には dotfiles 固有の規則と参照だけを置いた。
 - 付録「dotfiles 側の課題」は削除した（同じリポジトリで直せるため）。「解消済み」は消し、未対応の3件を `log.md` の Next Actions へ移した。本文は、「dotfiles が正」の言い方を「このリポジトリが正」に、`fonts.md` を `fonts-setup.md` のリンクに直した。
 - README（ディレクトリの表、Linux の手順書の参照、「exmem との関係」の手順書の行）と `decisions.md` の手順書の参照を `docs/setup/` に直した。`decisions.md` の 2026-10-06 の経緯の項は履歴なので変えていない。
+- workbase 側（	opics/dotfiles-boundary/）は同日に完了して削除した。dotfiles に関わる変更: exmem の pc-setup-manuals.md にあった scripts/wsl → scripts/linux の改名の決定を decisions.md に移した（6973408）。exmem の pc-setup-manuals.md と zed-dotfiles.md は割り、ほか約19ノートの dotfiles の実物の写しは、dotfiles が正という指し先に置き換えた。履歴の種の正本は、割らずに exmem のまま（ユーザーの決定）。dotfiles → workbase の一方向の規則は、pp-config-placement.md とワークスペースのルートの AGENTS.md に書いた。
 ### 2026-10-16（dotfiles を公開で確定。実機確認の項目を完了として整理した）
 
 - ユーザーが完了と確認した項目を `log.md` から消した: 他PCでの確認（`30_link` の再実行ほか）、Claude Code の設定ファイル改名の移行、Bedrock（`n1-trial`、`claude-bedrock-setup`）、AWS CLI・uv・Volta のインストーラ、Windows Terminal の WSL プロファイル、`.reg` / `.ahk` の `git status`、Claudian の入力欄パッチの試用、会社 PC の git の schannel（他PCでの確認に含まれるものとして整理）。
