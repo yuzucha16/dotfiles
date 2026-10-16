@@ -305,6 +305,12 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - **確認済み**: WSL（Ubuntu 24.04.4）で `bash tests/linux/test_scripts.sh` が 50/50 合格（確認: 2026-10-06）。
 - 行き先: local（dotfiles の Linux と Windows の対称化）
 
+### 【この件】`scripts/wsl/` を `scripts/linux/` に改名して1本化した（2026-10-03。2026-10-16 に、exmem の `pc-setup-manuals.md` から移した）
+
+- **決めたこと**: WSL とネイティブ Linux で共通のスクリプトにする。違いは `lib.sh` の `is_wsl` などで分岐する。パッケージ一覧は `manifests/apt.txt`（共通）と `apt.desktop.txt`（ネイティブのみ）。日本語入力・フォントは `23_ja.sh` に分離（WSL では何もしない）。`30_link.sh` の `--src` の既定は、スクリプトの位置から自動判定する。
+- **根拠**: WSL 固有の差分は約3か所（1割強）で、手順書の「差分が3割を超えたら分ける」基準を下回る。Windows の `apps.txt` と対称にできる。
+- **却下案**: `wsl/` と `linux/` に分離（約240行が重複）、`linux/` を本体にして `wsl/` を薄いラッパーにする。
+- **確認したこと**（2026-10-05、WSL Ubuntu 24.04）: `scripts/linux/` の全 `.sh` の構文チェック、`23_ja.sh` が WSL で何もせず終了、`30_link.sh -n` が `--src` なしで正しいリポジトリを指す、`apt.txt` と `apt.desktop.txt` が19パッケージの配列にまとまる。`lib.sh` は当時4関数（`dots_dir` / `is_wsl` / `distro_is` / `read_list`）、その後 `notes_dir` / `clone_workbase` / `link_obsidian` / `distro_ids` が加わった。
 ### 【この件】`scoop-completion` と Moralerspace を manifest から外した。`.bat` のコメントは全て英語にした（2026-10-06）
 
 - **`scoop-completion`**: `apps.txt` から削除。PowerShell の補完は `profile.ps1` で使っていない（`scoop-completion` / `Import-Module` の参照なし。確認: Grep）。「`PSFzf` / `scoop-completion` を削除した」という前の決定（「シェル」の項）に、`apps.txt` の行だけが取り残されていた。このPCには導入済みなので、不要なら `scoop uninstall scoop-completion`（手動）。
