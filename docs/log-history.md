@@ -8,6 +8,7 @@
 - ユーザーが完了と確認した項目を `log.md` から消した: 他PCでの確認（`30_link` の再実行ほか）、Claude Code の設定ファイル改名の移行、Bedrock（`n1-trial`、`claude-bedrock-setup`）、AWS CLI・uv・Volta のインストーラ、Windows Terminal の WSL プロファイル、`.reg` / `.ahk` の `git status`、Claudian の入力欄パッチの試用、会社 PC の git の schannel（他PCでの確認に含まれるものとして整理）。
 - リポジトリの公開・非公開を、公開で確定（ユーザーの決定。`gh repo view` で PUBLIC を確認）。README のクイックスタート（Windows の注記、Linux の B と未確認の注記）と、workbase の手順書 `win11.md`（手順 5）・`debian-family.md`（手順 7 と手順 10 の注記）から、非公開向けの記述を削除した。`decisions.md` の該当項に確定を追記。
 - 残り: 外部スキルの取り込み前チェックの運用（案の段階）、`docs/setup/`（dotfiles-boundary が正本）。
+- 続けて、ユーザーが「上に無い古い確認項目」と「古い Open Questions」を完了と確認し、`log.md` のポインタを消した（原文はこの下の 2026-10-16 の項に残る）。`docs/setup/` の移動は別セッションで進める。
 
 ### 2026-10-16（log.md の Next Actions を実状に合わせて整理した）
 
