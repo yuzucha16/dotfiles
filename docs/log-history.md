@@ -9,6 +9,7 @@
 - リポジトリの公開・非公開を、公開で確定（ユーザーの決定。`gh repo view` で PUBLIC を確認）。README のクイックスタート（Windows の注記、Linux の B と未確認の注記）と、workbase の手順書 `win11.md`（手順 5）・`debian-family.md`（手順 7 と手順 10 の注記）から、非公開向けの記述を削除した。`decisions.md` の該当項に確定を追記。
 - 残り: 外部スキルの取り込み前チェックの運用（案の段階）、`docs/setup/`（dotfiles-boundary が正本）。
 - 続けて、ユーザーが「上に無い古い確認項目」と「古い Open Questions」を完了と確認し、`log.md` のポインタを消した（原文はこの下の 2026-10-16 の項に残る）。`docs/setup/` の移動は別セッションで進める。
+- `windows/notepadpp/Gruvbox dark medium.xml` の index を CRLF から LF にそろえた（`git add --renormalize`。ユーザーの決定。根拠は `decisions.md` の `.reg` / `.ahk` の改行の項）。Open Questions が空になった。
 
 ### 2026-10-16（log.md の Next Actions を実状に合わせて整理した）
 
