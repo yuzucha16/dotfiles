@@ -15,4 +15,3 @@ Windows 専用の設定の一覧（`links.map` からだけ参照される）。
 | `obsidian/claudian-settings.json` | Claudian（Obsidian プラグイン）の設定。`links.map` で `%WORKS_DIR%\.claudian\claudian-settings.json` へファイルの symlink を張る。`.claudian\sessions\`（端末ごとの会話履歴）は張らず、追跡しない |
 | `office/` | Office のテンプレ（`.potx` `.xltx` `.dotm` `.thmx` など）、UI 設定（`.exportedUI`）、サンプル。配置は手動（リンクしない）: テンプレは `%APPDATA%\Microsoft\Templates` と `%APPDATA%\Microsoft\Excel\XLSTART`、UI は Office の「リボンのユーザー設定 → インポート」 |
 | `autohotkey/` `notepadpp/` `drawio/` | 各アプリの設定（Notepad++ はテーマと `config.min.xml`（初回だけ `20_apps.bat` が `config.xml` として置く最小構成）のみ。アプリが書き換えるファイルは追跡しない） |
-

@@ -35,7 +35,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ### 【この件】Obsidian の `colored-tags/data.json` を git の追跡から外す。1週間の試用（2026-10-15。ユーザーの決定）
 
-- 決めたこと: `.gitignore` に入れて追跡から外した（`8332027`）。色は PC ごとに独立になる。2026-10-22 頃に続けるか判断する（`docs/log.md` の Next Actions）。
+- 決めたこと: `.gitignore` に入れて追跡から外した（`8332027`）。色は PC ごとに独立になる。試用は完了とした（2026-10-16 ユーザーの決定。追跡から外したまま続ける）。
 - 根拠: `data.json` はほぼ `knownTags`（タグ → パレット番号の台帳）で、プラグインがタグの増減に応じて自動で書き換える。番号は出現順に振られるので、複数 PC で衝突し、diff が頻発する。プラグインのソースは未確認（diff と `tagColors` が空であることからの推測）。タグが100個近く、色を固定しても覚えられず、固定する価値が低い。
 - 却下案: `tagColors` で色を明示（`knownTags` の diff は残る）、clean フィルタで `knownTags` を除く（仕組みが増える）、一方の PC だけでタグを足す運用（運用負担）。
 - 確認済み（2026-10-15、実機）: 追跡を外す pull は、`data.json` に未コミットの変更がある PC で modify/delete の衝突になった。この PC では rebase で、削除側を採用して解消した。ファイルは作業ツリーに残る。
@@ -198,7 +198,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 - bash/zsh の共通部は `home/.config/shell/common.sh`（正本は bash/zsh）。pwsh（`windows/powershell/profile.ps1`）と同じコマンド体系にそろえた: `ls`=lsd、`l`=`ls -l`、`lt`=`ls --tree --depth 2`、`cdg`、`zfz`（`Alt+j`。3シェル共通）、`z`、`b`、`..`、`pd`/`po`/`dl`。
 - 3か所（`profile.ps1` / `common.sh` / `.zshrc`・`.bashrc`）の同期義務が最大の複雑さだったため、次を削除した: `cd` 後の自動 `ll`（`/mnt/c` で 9p 経由が遅い）、`cdf`/`cdu`/`up`/`zlist`、`PSFzf`/`scoop-completion`、ツール不在時の代替（`fd`→`rg`→`find`、`bat`→`head`、`lsd` の分岐、`dircolors`）、zsh の `_correct`/`_approximate`。ツールは `apps.txt` と `20_packages.sh` で必ず入る前提。
-- 却下案: `cat`→`bat` などの標準コマンド置換エイリアス（ユーザーが「追加しない」と決定）。`PredictionViewStyle ListView` は重い可能性があるが見送り（のちに pwsh では残した。`docs/log.md` の Open Questions を参照）。
+- 却下案: `cat`→`bat` などの標準コマンド置換エイリアス（ユーザーが「追加しない」と決定）。`PredictionViewStyle ListView` は重い可能性があるとして見送ったが、**撤回済み**（2026-10-16 ユーザーの決定。pwsh では `profile.ps1` で設定している）。
 - XDG の export は `.profile` だけ。`.zshrc`/`.bashrc` は使う箇所のインライン既定値（`${XDG_STATE_HOME:-$HOME/.local/state}`）にした。`.zprofile` は `.profile` を読むだけ。`.profile` のローカル上書きは `~/.config/profile.local`。
 - git: `~/.config/git/config` は git が自動で読むので、`~/.gitconfig` の `include` は削除した。共通設定の `[user]` 仮値は残し、実際の名前・メールは `~/.gitconfig_local`（PCごと）。
 - PowerShell プロファイルのラッパー（`Microsoft.PowerShell_profile.ps1`）は削除。全ホスト共通の `profile.ps1` が自動で読まれる。
