@@ -15,8 +15,8 @@ windows/obsidian/.obsidian/workspace.json
 windows/obsidian/.obsidian/workspace-mobile.json
 windows/obsidian/.obsidian/plugins/colored-tags/data.json
 
-### Claude Code
-.claude/
+### Claude Code（端末ごとの許可設定だけ追跡しない）
+**/.claude/settings.local.json
 
 ### scratch
 tmp/
