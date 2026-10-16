@@ -10,9 +10,9 @@ dotfiles は、Windows 11 + WSL2 / Linux（apt 系）の作業環境を、複数
 
 ## 読む順番
 
-1. `docs/log.md`: 現在の状態と Next Actions。作業を再開するときの入口。経緯（日付つきの Log）は `docs/log-history.md`（開始時に読まない。必要なとき検索する）。
-2. `README.md`: 構成、スクリプトの命名規則、セットアップ手順、日常の運用（How）。
-3. `docs/decisions.md`: 判断の根拠、却下案、Gotchas、実機で確認した事実（Why）。
+1. `README.md`: 構成、スクリプトの命名規則、セットアップ手順の骨格、日常の運用（How）。16KB 目安なので、見出しの一覧を先に見て、必要な節だけ読んでもよい。詳細は下位の `README.md`（`scripts/windows/` `scripts/linux/` `tests/` `windows/`）。
+2. `docs/log.md`: 現在の状態と Next Actions。作業を再開するときの入口。開始時に読むのはここまで。
+3. `docs/decisions.md` と `docs/log-history.md` は、開始時に読まない。何かを決める・変える前に `decisions.md`（判断の根拠、却下案、Gotchas、実機で確認した事実。Why）を検索する。経緯（日付つきの Log）が要るときは `log-history.md` を検索する。
 
 ## このリポジトリ固有のルール
 
@@ -20,7 +20,7 @@ dotfiles は、Windows 11 + WSL2 / Linux（apt 系）の作業環境を、複数
 - exmem は `$HOME\works\resources\exmem`（WSL: `/mnt/c/Users/<Windows のユーザー名>/works/resources/exmem`）。共有リポジトリ `workbase`（`$HOME\works\resources` に clone）の一部で、dotfiles とは別リポジトリ。dotfiles は exmem を**基本は読み取り専用で参照するだけ**。作業ログを exmem に残さない。書き込みの例外は「ナレッジ化して」だけ（`knowledge/` `contexts/` など inbox 以外は編集しない）。
 - 参照している正本: 履歴の種の本文は `exmem/knowledge/shell-command-usecases.md`。`windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` はそこからの派生物なので、種ファイルを直接編集しない。
 - 「ナレッジ化して」で残さないもの（dotfiles 固有で他に使い回せない経緯）は、`docs/log.md` と `docs/decisions.md` に残す。
-- `scripts/linux/` や `home/.profile` を変えたら、`bash tests/linux/test_scripts.sh` を実行して、失敗が0であることを確認する（WSL で実行できる。観点は `README.md` の「スクリプトの試験」）。
+- `scripts/linux/` や `home/.profile` を変えたら、`bash tests/linux/test_scripts.sh` を実行して、失敗が0であることを確認する（WSL で実行できる。観点は `tests/README.md`）。
 
 ## コミット
 

@@ -51,12 +51,12 @@ dotfiles/
 ├── .gitignore
 ├── docs/           作業ログ（log.md: 現在状態と次にやること、log-history.md: 経緯）と判断の記録（decisions.md: 根拠・却下案・Gotchas）
 ├── scripts/
-│   ├── windows/    10〜50 のセットアップスクリプト（`optional/` は任意の .reg）
-│   └── linux/      10〜50 のセットアップスクリプト（WSL とネイティブ Linux 共通。違いは `lib.sh` の `is_wsl` などで分岐）
+│   ├── windows/    10〜50 のセットアップスクリプト（`optional/` は任意の .reg）。仕様は `README.md`
+│   └── linux/      10〜50 のセットアップスクリプト（WSL とネイティブ Linux 共通。違いは `lib.sh` の `is_wsl` などで分岐）。仕様は `README.md`
 ├── manifests/      スクリプトが読むリスト（apps / apt / links）
-├── tests/          スクリプトの試験（`tests/linux/test_scripts.sh`、`tests/windows/test_20_apps.ps1`、`tests/windows/test_claude_bedrock_setup.ps1`、`tests/windows/test_claude_launchers.ps1`、`tests/windows/test_25_27_installers.ps1`。下の「スクリプトの試験」）
+├── tests/          スクリプトの試験（一覧と観点は `README.md`。下の「スクリプトの試験」）
 ├── home/           ~ を鏡写しにした共有ツリー（WSL は stow、Windows は links.map でリンク）
-├── windows/        Windows 専用の設定（links.map からだけ参照される）
+├── windows/        Windows 専用の設定（links.map からだけ参照される。一覧は `README.md`）
 └── templates/      配置しない雛形（`claude/settings.sandbox.json` は、使い捨ての検証環境のプロジェクトで `.claude/settings.json` に手でコピーする。push / reset / clean / rm を許可する広い権限なので、通常のリポジトリには入れない）
 ```
 
@@ -75,19 +75,7 @@ dotfiles/
 
 ### `windows/`: Windows 専用
 
-| パス | 内容 |
-|---|---|
-| `terminal/settings.json` | Windows Terminal |
-| `startup/startup.bat` | スタートアップ。`subst V: %WORKS_DIR%` |
-| `wsl/.wslconfig` | WSL2 の全体設定（`%USERPROFILE%\.wslconfig` へリンク）。アイドル時にキャッシュのメモリをホストへ返す。`memory` などの上限は PC ごとに RAM が違うので書かない。反映は `wsl --shutdown` 後の再起動 |
-| `powershell/history.seed.txt` | PSReadLine の履歴の種（手で選んだ定型コマンド。個人値は `<…名>` に置換済みで、そのままでは実行されない）。正本は共有リポジトリ `workbase`（`$HOME\works\resources`）の `exmem/knowledge/shell-command-usecases.md`。リンクではなく、初回に履歴ファイルが無いときだけコピーする（`scripts\windows\31_history_seed.bat`） |
-| `claude/` | Claude Code の API キー認証用と、Amazon Bedrock 用（手順・保管方法・モデル ID の取得・費用の上限・Bedrock 版の手順は `windows/claude/README.md`）。起動する認証は `profile.ps1` の関数で選ぶ（`claude-pick`、`claude-oauth`、`claude-api`、`claude-bedrock`）。Bedrock 版は、`claude-bedrock-setup.ps1` / `.cmd`（AWS CLI で推論プロファイルの一覧を取り、この PC 専用の `%USERPROFILE%\.claude\settings-bedrock.json` を生成する）と、関数 `claude-bedrock`。実値は持たず、生成したファイルは追跡しない。`settings-api.json`（`apiKeyHelper` とモデルの環境変数。`claude-api` が `--settings` で読む）、`claude-api-key.ps1` / `.cmd`（DPAPI で暗号化したキーを復号して返す `apiKeyHelper`）。`claude` は OAuth のまま。キーは追跡しない（初回は `claude-api-key.cmd -Set` で保存。暗号化ファイルは `%USERPROFILE%\.claude\settings-api-key.dpapi`、この PC・このユーザーだけが復号できる） |
-| `powershell/profile.ps1` | PowerShell プロファイル（starship / lsd / zoxide / Emacs キーバインド）。起動を軽くするため、ツール不在時の代替・`cd` 後の自動 `ll`・PSFzf は持たない。コマンド体系は `home/.config/shell/common.sh` と揃える（基本エイリアスのみ。`Ctrl+r`/`Ctrl+t` の fzf と `zfz` = `Alt+j`、`cdg` = `Alt+k` は3シェル共通。PSFzf は使わず自前ハンドラ） |
-| `obsidian/.obsidian/` | Obsidian の設定（テーマ、CSS スニペット、プラグイン `colored-tags`、`app.json` など）。`links.map` で `%WORKS_DIR%\.obsidian` へジャンクションを張る。`workspace.json`（端末ごとの状態）は追跡しない |
-| `obsidian/claudian-settings.json` | Claudian（Obsidian プラグイン）の設定。`links.map` で `%WORKS_DIR%\.claudian\claudian-settings.json` へファイルの symlink を張る。`.claudian\sessions\`（端末ごとの会話履歴）は張らず、追跡しない |
-| `office/` | Office のテンプレ（`.potx` `.xltx` `.dotm` `.thmx` など）、UI 設定（`.exportedUI`）、サンプル。配置は手動（リンクしない）: テンプレは `%APPDATA%\Microsoft\Templates` と `%APPDATA%\Microsoft\Excel\XLSTART`、UI は Office の「リボンのユーザー設定 → インポート」 |
-| `autohotkey/` `notepadpp/` `drawio/` | 各アプリの設定（Notepad++ はテーマと `config.min.xml`（初回だけ `20_apps.bat` が `config.xml` として置く最小構成）のみ。アプリが書き換えるファイルは追跡しない） |
-
+`links.map` からだけ参照される。パスごとの内容（Terminal、WSL の設定、PowerShell のプロファイル、Claude Code の認証、Obsidian、Office、Notepad++ など）は `windows/README.md`。Claude Code の認証の手順は `windows/claude/README.md`。
 ### 新しい設定をどこに置くか
 
 1. WSL / Linux でも使う（`~` 以下に置けるもの）→ `home/` に、`~` からの相対パスで置く
@@ -110,65 +98,29 @@ dotfiles/
 
 ## セットアップ手順
 
+順序と要点だけを書く。各スクリプトの仕様（引数、入力、出力、失敗時の挙動）は `scripts/windows/README.md` と `scripts/linux/README.md`。
+
 ### Windows
 
-0. **事前準備（手動）**
-   - 設定 → 開発者向け で「開発者モード」をオンにする（管理者権限なしで symlink を作るため。必須。オフだと `30_link.bat` は `[ERR]` になる）
-   - scoop と git を入れ、clone する（冒頭の「クイックスタート」の4行。このパス構成が前提。**最初から ghq の場所に clone する**ので、zip の取得や、dotfiles の二重取得・`30_link` のやり直しは要らない）。git は最初から scoop のもの1種類だけにする（winget の git は使わない。管理者権限が要らず、PATH の優先順位の問題も起きない）
-     非公開の場合は、`git clone` で GitHub のサインイン（Git Credential Manager。scoop の git に同梱）が開く（公開の場合は出ない）。zip での取得は使わない（`.git` が無く、あとで ghq の場所と食い違う）。すでに winget の git が入っているPCは、一度だけ `winget uninstall --id Git.Git -e` で消す
-     Obsidian の Vault `$HOME\works`（`WORKS_DIR`）は、この PC だけのローカルなディレクトリ（ローカルのリポジトリ。remote なし、または非公開）で、clone しない。作り方は、共有リポジトリ `workbase` の `workflow-kit` を参照する。`.obsidian` は `30_link.bat` が、`windows\obsidian\.obsidian` から `WORKS_DIR` へジャンクションで張る（`WORKS_DIR` が無ければ作る）。共有リポジトリ `workbase` は、`50_repos.bat` が `WORKS_DIR\resources` に clone する（ghq の管理外）。Office のテンプレと UI 設定は自動では張らない。初回に `windows\office` から手で配置する（配置先は上の `windows/` の表）。
-     Obsidian を最初に開く前に `30_link.bat` を実行する。先に Obsidian が実ディレクトリの `.obsidian` を作ると、`30_link.bat` が `[ERR]` で止まる（手で退避して再実行する）。
-1. `scripts\windows\10_env.bat`: `setx` で環境変数（`XDG_*`、`WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos`、`CERTS_DIR` など。`WORKS_DIR` と `CERTS_DIR` は `WSLENV` で WSL へ渡す）を設定し、ディレクトリを作る。`XDG_BIN_HOME=%USERPROFILE%\.local\bin`（Claude Code の置き場）も設定し、ユーザー PATH に `%XDG_BIN_HOME%` を1回だけ足す。**実行後は新しいターミナルを開く**（現在のセッションには反映されない）
-   - `scripts\windows\optional\capslock_to_ctrl.reg`（任意）: CapsLock を Ctrl にする。管理者権限が必要で、再起動後に有効。元に戻すときは `capslock_default.reg`
-   - `scripts\windows\11_git_identity.bat`: `~\.gitconfig_local`（PC ごとの git の名前・メール）が無いときだけ、`user.name` / `user.email` を対話的に聞いて作る（`credential.helperselector.selected = manager` は `home\.gitconfig` に静的に持つので書かない。SSL バックエンドを schannel（Windows の証明書ストア。ブラウザと同じ）にするかも聞く: `y` で `http.sslBackend = schannel` と `http.sslVerify = true` を書き、`n`・空は何も書かず既定の OpenSSL のまま。プロキシ下で失効確認が失敗したら、`~\.gitconfig_local` の `[http]` に `schannelCheckRevoke = false` を手で足す。git の CA は環境変数では設定しない）。既にあれば触らない。**`30_link.bat` の前に**実行する（git が必要。手順 0 で入れた scoop の git でよい）。`git config --global` は使わない: リンク前は実ファイルの `~\.gitconfig` ができて `30_link.bat` が `[ERR]` になり、リンク後はリポジトリ内の `home\.gitconfig` を書き換えてしまうため。`~\.gitconfig` が `include` するので、読まれるのは `30_link.bat` の後。無効な入力は5回で `[ERR]`（入力が閉じていても無限ループしない）
-2. `scripts\windows\20_apps.bat [home]`: scoop と bucket を導入し、アプリを入れる（手順 0 で scoop を入れていれば、導入は skip する。git は先に入る）
-   - PC1: `20_apps.bat`（`apps.txt` のみ）
-   - PC2: `20_apps.bat home`（`apps.txt` + `apps.home.txt`）
-   - Notepad++ の `config.xml` が無い/空のときだけ、`windows\notepadpp\config.min.xml`（タブ幅 2、新規文書 LF、折り返し、スナップショットバックアップ、ダークテーマ、自動更新オフなど）をコピーする。既にあれば触らない。リンクではないので、以後はアプリが自由に書き換える。最小構成を適用し直したいときは `config.xml` を削除（または空に）して再実行する
-   - `scripts\windows\23_claude.bat`（任意）: Claude Code を公式インストーラ（`irm https://claude.ai/install.ps1 | iex`）で入れる。実行前に `y/N` を聞き、空・`n` なら何も入れない（無効な入力は5回で `[ERR]`）。scoop の `claude-code` は使わない（`apps.txt` から削除）
-   - `scripts\windows\26_uv.bat`: uv を公式インストーラ（`irm https://astral.sh/uv/install.ps1 | iex`）で入れ、`uv python install 3.13 --default` と `uv python pin --global 3.13` を実行し、`python --version` を表示する。入れるかは聞かない。**最初に** SSL バンドルを設定するか `y/N` で聞く（`y` で、`ca_bundle.crt` があるときだけ `UV_SYSTEM_CERTS=true` と `SSL_CERT_FILE` を `setx`）
-   - `scripts\windows\27_volta.bat`: `scoop install volta` → `volta install node@lts`（その時点の LTS を既定に固定）→ `node` / `npm` / `npx` の `--version` を表示する。入れるかは聞かない。**最初に** SSL バンドルを設定するか `y/N` で聞く（`y` で、`ca_bundle.crt` があるときだけ `NODE_EXTRA_CA_CERTS` を `setx`）。Node は Volta 前提で、`NODE_EXTRA_CA_CERTS` を設定するのはここだけ（`profile.ps1` では設定しない）。Windows の Volta は開発者モードが要る
-   - `scripts\windows\28_npm_globals.bat`: `manifests\npm.txt` の各行を `volta install <名前>` で入れる（現在は `defuddle`。obsidian-skills が使う）。入れるかは聞かない。1件失敗しても残りは続け、最後に終了コード 1。27 の後に実行する（Volta が要る）
-   - `scripts\windows\29_claude_plugins.bat`: `manifests\claude-plugins.txt` の各行（`<ソース>|<plugin>@<marketplace>`）について、`claude plugin marketplace add` と `claude plugin install` を実行する（現在は `kepano/obsidian-skills`）。入れるかは聞かない。23 の後に実行する（Claude Code が要る）
-   - `25_awscli.bat` `26_uv.bat` `27_volta.bat` の共通の出力: SSL バンドルを設定しないときは、理由つきの `[SKIP]`（`n` と答えた、`CERTS_DIR` 未設定、`ca_bundle.crt` が無い）を出す。最後に `[ENV]` で設定した環境変数の名前と値（設定しなかったものは `[not set]`）を表示し、どの経路でも `pause` で止まってから終わる（終了コードは `pause` の後に返す）
-   - 25〜27 は、直前に `10_env.bat` を実行済み（`CERTS_DIR` がある）前提。インストール直後は、レジストリから PATH を読み直して続きを実行する（見つからなければ、新しいターミナルで続ける案内を出して終了コード 0）。CA ファイルが無い場合は設定せず `[SKIP]`。`SSL_CERT_FILE` などは、存在しないファイルを指すと全 HTTPS が失敗するため、無条件には設定しない
-   - `scripts\windows\24_fonts.bat`: PlemolJP NF（`manifests\fonts.txt`）の latest を `gh` で `%USERPROFILE%\download` へ取得する。インストールは手動（展開して .ttf を右クリック → 現在のユーザーにインストール）。`gh auth login` は不要。出力は `tmp\24_fonts.log`（Git 対象外、実行のたびに上書き）にも残り、最後に `pause` で止まる。ダウンロードが1件でも失敗したら終了コード 1
-3. `scripts\windows\30_link.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る（ファイルは symlink、ディレクトリは junction。既存のリンクは張り直す）
-   - `unlink`: リンクだけ削除する。`-n`: ドライラン
-   - 配置先に実ファイル/実ディレクトリがあると `[ERR]` を出してそのエントリを飛ばし、最後に非ゼロで終了する。**自動退避はしない**。中身を確認して手で退避/削除し、再実行する
-   - `[ERR] mklink failed` は開発者モードがオフのときに出る
-   - `scripts\windows\31_history_seed.bat [-n]`: `windows\powershell\history.seed.txt` を PSReadLine の履歴ファイルへコピーする。履歴ファイルが無い/空のときだけ行い、既存の履歴は上書きしない（`-n`: 確認のみ）。リンクではないので、以後は PSReadLine が自由に追記する。**最初の pwsh を開く前に**実行する。出力は `tmp\31_history_seed.log`（Git 対象外、実行のたびに上書き）にも残り、最後に `pause` で止まる
-4. `scripts\windows\40_wsl_enable.bat`（WSL を使う場合）: 管理者権限で実行。WSL2 の機能を有効化する。**再起動後**、表示される `wsl --update` / `wsl --install -d Ubuntu-24.04` を手動で実行する
-5. `scripts\windows\50_repos.bat`: ghq で必要なリポジトリを取得する（dotfiles 自身は手順 0 で取得済みなので、ここでは取得しない）。共有リポジトリ `workbase` は、ghq でなく `git clone` で `%WORKS_DIR%\resources` に取得する（既にあれば skip。`WORKS_DIR` が未設定なら `[ERR]`）
+0. 事前準備（手動）: 「開発者モード」をオンにする（必須。オフだと `30_link.bat` が `[ERR]`）。クイックスタートの4行で scoop と git を入れ、ghq の場所に clone する。git は scoop の1種類だけ（winget の git は使わない）。Obsidian を最初に開く前に `30_link.bat` を実行する。
+1. `10_env.bat`: 環境変数（`WORKS_DIR` `GHQ_ROOT` `CERTS_DIR` など）とディレクトリ。**実行後は新しいターミナルを開く**。`11_git_identity.bat`: `~\.gitconfig_local` を作る（`30_link.bat` の前に実行する）。`optional/` に CapsLock を Ctrl にする `.reg`。
+2. `20_apps.bat [home]`: scoop とアプリ。PC1 は引数なし、PC2 は `home`。続けて必要なものを個別に: `23_claude`（Claude Code）、`24_fonts`、`25_awscli`、`26_uv`、`27_volta`（25〜27 は `10_env.bat` の後）、`28_npm_globals`（27 の後）、`29_claude_plugins`（23 の後）。
+3. `30_link.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る。配置先に実体があると `[ERR]` でそのエントリを飛ばす（**自動退避はしない**。手で退避して再実行）。`31_history_seed.bat`: PSReadLine の履歴の種（最初の pwsh の前に）。
+4. `40_wsl_enable.bat`（WSL を使う場合。管理者権限）: WSL2 を有効化。再起動後に `wsl --update` と `wsl --install -d Ubuntu-24.04`。
+5. `50_repos.bat`: ghq で参照用リポジトリを取得。共有リポジトリ `workbase` は `%WORKS_DIR%\resources` に `git clone`。
 
 ### WSL (Ubuntu 24.04) / Linux (apt 系)
 
-WSL は Ubuntu の初期ユーザー作成後、WSL 内で次を順に実行する（Windows 側の clone を `/mnt/c/Users/<Windows のユーザー名>/works/repos/...` から参照する）。ネイティブ Linux は、OS を入れて、冒頭の「クイックスタート（ネイティブ Linux）」で `~/works/repos/github.com/yuzucha16/dotfiles` に clone してから実行する（OS のインストール手順は works の `resources/guides/howto/debian-family.md`）。`30_link.sh` は、置かれているリポジトリを自動で `--src` にするので、どちらでも同じ呼び方になる。Vault のトップ `WORKS_DIR` は、WSL では `/mnt/c/Users/<Windows のユーザー名>/works`（Windows 側と共有）、ネイティブ Linux では `~/works`（`home/.profile` が既定値を設定する。`~/.config/profile.local` で上書きできる）。
+WSL は Ubuntu の初期ユーザー作成後、WSL 内で実行する（Windows 側の clone を `/mnt/c/Users/<Windows のユーザー名>/works/repos/...` から参照する）。ネイティブ Linux は、クイックスタートで clone してから実行する（OS の手順は `resources/guides/howto/debian-family.md`）。`WORKS_DIR` は、WSL では `/mnt/c/Users/<Windows のユーザー名>/works`（Windows 側と共有）、ネイティブでは `~/works`（`~/.config/profile.local` で上書きできる）。
 
-1. `scripts/linux/10_dirs.sh`: XDG ディレクトリ、`~/.local/bin`、`~/.ssh`、`~/works/{build,tools}` を作る
-   - `scripts/linux/11_git_identity.sh`: `~/.gitconfig_local`（PC ごとの git の名前・メール）が無いときだけ、`user.name` / `user.email` を対話的に聞いて作る（Windows の `11_git_identity.bat` と同じ。既にあれば触らない）。**`30_link.sh` の前に**実行する（git が必要。ネイティブ Linux はクイックスタートで入っている。WSL は Ubuntu 標準の git か、`20_packages.sh` の後）。`git config --global` は使わない（理由は Windows 版と同じ。`~/.gitconfig` は `30_link.sh` が張る symlink）。`credential.helperselector`（Git Credential Manager）は Windows 版も書かず、`home/.gitconfig` に静的に持つ。無効な入力は5回で `[ERR]`
-2. `scripts/linux/20_packages.sh [desktop]`: apt の更新、`manifests/apt.txt` のパッケージ（git / curl / wget / zsh と CLI ツール）の導入、starship、ghq（ビルド済みバイナリを `~/.local/bin` へ。Go は不要）の導入、`bat` / `fd` のリンク作成。ネイティブ Linux のデスクトップは `desktop` を付けて `apt.desktop.txt` も入れる。Docker や Go は入れない（下の「必要なときだけ入れるもの」）
-   - `scripts/linux/23_ja.sh`（ネイティブ Linux のみ。WSL では何もしない）: fcitx5 + Mozc、日本語フォントを入れる。Ubuntu 系は言語パックも入れる。入れたら再ログインして、Fcitx 5 設定で Mozc を追加する（手動）
-   - `scripts/linux/24_fonts.sh`: PlemolJP NF の latest を `gh` で `~/download` へ取得する（WSL でも WSL 側の `~/download`）。インストールは手動。`gh auth login` は不要。1件失敗しても残りは続け、最後に `[ERROR]` と終了コード 1（Windows の `24_fonts.bat` と同じ）
-   - `scripts/linux/25_arm_gcc.sh`: `gcc-arm-none-eabi`（約 490MB。推奨の newlib も入る）を `[y/N]` で確認してから apt で入れる。容量が大きいので、必要なときだけ実行する（`apt.txt` / `apt.desktop.txt` には載せない）。空入力・`n`・標準入力が閉じているときは `[SKIP]`、既に入っていても `[SKIP]`、無効な入力は5回で `[ERR]`
-3. `scripts/linux/30_link.sh [link|unlink] [-n]`: stow で `home/` を `~` に展開する（Windows の `30_link.bat` と同じ引数）。リンク切れの旧 symlink は削除する。展開先に実ファイルがあると `[ERR]` を出して止まる（自動退避はしない。手で退避/削除して再実行）。終わったら `chsh -s /usr/bin/zsh`
-   - ネイティブ Linux のみ: `windows/obsidian/.obsidian` を `$WORKS_DIR/.obsidian`（`~/works/.obsidian`）へ symlink する（親が無ければ作る。`unlink` で外れる）。実ディレクトリがあると `[ERR]` で止まる（Obsidian を先に開くと、実ディレクトリができる。手で退避して再実行）。WSL では何もしない（Windows 側の `30_link.bat` が張るジャンクションを `/mnt/c` 越しに共有する）
-   - `scripts/linux/31_history_seed.sh [-n]`: `manifests/history.seed.sh.txt` を `~/.local/state/{zsh,bash}/history`（`XDG_STATE_HOME` があればその下）へコピーする。履歴が無い/空のときだけ行い、既存の履歴は上書きしない（`-n`: 確認のみ）。リンクではないので、以後はシェルが自由に追記する。**最初のシェルを開く前に**実行する
-4. `scripts/linux/50_repos.sh`: 共有リポジトリ `workbase` を、ネイティブ Linux では `$WORKS_DIR/resources` に `git clone` する（ghq の管理外。既にあれば skip。`WORKBASE_URL` で URL を変えられる）。WSL では、Windows 側の `50_repos.bat` が clone するので、無ければ `[WARN]` を出すだけ。そのあと、ghq で参照用リポジトリを取得する
+1. `10_dirs.sh`: XDG ディレクトリなど。`11_git_identity.sh`: `~/.gitconfig_local`（`30_link.sh` の前）。
+2. `20_packages.sh [desktop]`: apt のパッケージ、starship、ghq。続けて必要なものを個別に: `23_ja.sh`（ネイティブのみ）、`24_fonts.sh`、`25_arm_gcc.sh`。
+3. `30_link.sh [link|unlink] [-n]`: stow で `home/` を `~` に展開（実体があると `[ERR]` で止まる）。終わったら `chsh -s /usr/bin/zsh`。`31_history_seed.sh`: 履歴の種（最初のシェルの前に）。
+4. `50_repos.sh`: `workbase` を `$WORKS_DIR/resources` に clone（WSL では Windows 側の `50_repos.bat` が行う）。ghq で参照用リポジトリを取得。
 
-### スクリプトの試験（WSL / Linux）
+### スクリプトの試験
 
-`bash tests/linux/test_scripts.sh` で、`scripts/linux/*.sh` と `home/.profile` を試験する（終了コード = 失敗数。60項目）。`scripts/linux/` や `home/.profile` を変えたら実行する。
-
-- 一時ディレクトリと偽の HOME だけを使い、実環境の `~` は変更しない。ネットワークも使わない（`ghq` は偽物、clone 元はローカルの bare リポジトリ）。
-- WSL とネイティブ Linux の分岐は、環境変数 `PROC_VERSION_FILE`（`/proc/version` の差し替え）で強制する。どちらの環境でも、両方の分岐を試験できる。実環境を見る項目は、WSL でないとき等は skip する。
-- 観点: 構文と改行コード、`WORKS_DIR` の分岐、`clone_workbase`（新規・skip・非空のディレクトリ・空のディレクトリ）、`link_obsidian`（dry-run・再リンク・unlink・実体があれば `[ERR]`・リンク切れ・元が無い）、`30_link.sh` の通し、`50_repos.sh`、`11_git_identity.sh`（新規・skip・空入力・`@` なし・特殊文字・入力が閉じている・git なし）、`24_fonts.sh`（偽の `gh` で、成功・1件失敗しても続行・`gh` なし）、`25_arm_gcc.sh`（偽の `sudo` で、y・空・n・入力が閉じている・無効5回・無効のあと y・導入済み）。`stow` が無いと、`30_link.sh` の通しは skip する。
-- 新しいスクリプトや関数を足したときは、同じ観点（新規作成、再実行、dry-run、元に戻す、実体があれば止まる）で項目を足す。
-
-### スクリプトの試験（Windows）
-
-`pwsh -NoProfile -File tests/windows/test_20_apps.ps1` で、`scripts/windows/20_apps.bat` の Scoop 導入の分岐と、VC++ ランタイム表示の色、`scripts/windows/*.bat` が ASCII だけであることを試験する（終了コード = 失敗数。28項目）。`pwsh -NoProfile -File tests/windows/test_11_git_identity.ps1` で、`11_git_identity.bat` を試験する（15項目。偽の `USERPROFILE` と、ファイルのリダイレクトで渡す入力を使う。`set /p` は標準入力がパイプだと2行目以降を取りこぼすため）。偽の `USERPROFILE`、環境変数 `PS_EXE` で差し替えた偽の powershell、偽の `scoop.cmd` だけを使い、ネットワークにも実環境の scoop にも触れない（観点: scoop が無く導入成功、導入失敗、scoop が既にある。バット内の PowerShell 部分は取り出して、実効ポリシー5種と、設定失敗時の続行を試験する）。実際の導入は、新しいアカウントか VM で確認する。`pwsh -NoProfile -File tests/windows/test_28_29_installers.ps1` で、`28_npm_globals.bat` と `29_claude_plugins.bat` を試験する（5項目。偽の `volta` / `claude` と偽の `USERPROFILE` だけを使い、実環境には触れない）。`pwsh -NoProfile -File tests/windows/test_claude_bedrock_setup.ps1` で、`windows/claude/claude-bedrock-setup.ps1` を試験する（24項目。偽の `aws` 関数と、PATH から `aws` を外した実行だけを使い、AWS にも実環境の `~/.claude` にも触れない）。`pwsh -NoProfile -File tests/windows/test_claude_launchers.ps1` で、`profile.ps1` の Claude Code 起動関数 4つを試験する（14項目。AST で関数だけ取り出し、偽の `claude` と `fzf` を使う）。
-
+`bash tests/linux/test_scripts.sh`（WSL / Linux。`scripts/linux/` や `home/.profile` を変えたら実行する。終了コード = 失敗数）、`pwsh -NoProfile -File tests/windows/test_*.ps1`（Windows）。観点と各ファイルの内容は `tests/README.md`。新しいスクリプトや関数を足したら、同じ観点（新規作成、再実行、dry-run、元に戻す、実体があれば止まる）で項目を足す。
 ### 必要なときだけ入れるもの（WSL・手動）
 
 - Docker Engine: `curl -fsSL https://get.docker.com | sudo sh` → `sudo usermod -aG docker $USER` → WSL に再ログイン
@@ -201,19 +153,6 @@ exmem（`$HOME\works\resources\exmem`。共有リポジトリ `workbase` の一�
 
 - 参照するもの: 履歴の種の本文（`exmem/knowledge/shell-command-usecases.md`。種ファイルはその派生物）。
 - 手順書は `workbase` の `guides/howto/`（`$HOME\works\resources\guides\howto\`）。
-
-## 履歴リセット (2026-10-02)
-
-大きなフォント・プラグインの blob を履歴から消すため、履歴を1コミットに作り直して強制 push した（40MB → 約1MB）。以前の履歴は `$HOME\backup\dotfiles-before-rebuild-*.bundle`（このリポジトリを作業していたPC）に残してある。
-他のPCの clone は、未 push の変更が無いことを確認してから次を実行する。
-
-```powershell
-git fetch origin
-git reset --hard origin/main
-git gc --prune=now
-```
-
-その後、通常どおり `30_link.bat`（Windows）/ `30_link.sh`（WSL）を再実行する。
 
 ## 既知の課題
 
