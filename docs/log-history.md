@@ -3,6 +3,12 @@
 日付つきの Log（降順）。開始時には読まない。必要なときに検索する。現在状態は `docs/log.md`。
 
 ## Log
+### 2026-10-16（log.md の Next Actions を実状に合わせて整理した）
+
+- 並行作業で済んでいた項目を `log.md` から消した: 未 push のコミットの一覧（rebase でハッシュが変わり一致しないため、ユーザーが完了と判断。旧一覧は `cc20299` `71e326d` `000125e` `a404711` `293c0a3` `3ed784e` `2ef40d4` と resources の7件）、colored-tags の `data.json` の試用（完了。追跡から外したまま続ける。期日の節も空になったので削除）、defuddle / knap の他PCへの展開（ユーザーが完了と確認）、`windows/README.md` の末尾の空行（削除）。
+- `ListView` の見送りを撤回（ユーザーの決定）。`decisions.md` のシェルの項に「撤回済み」と書き、`log.md` の Open Questions から消した。
+- `docs/setup/` の置き場の整合: dotfiles に `docs/setup/` は無く、resources の `topics/dotfiles-boundary/` の案は未着手（そのトピックの `docs/log.md` で 2026-10-15 時点）。確認の結果、食い違いは無く、進捗はトピック側が正本として `log.md` に1行の指し先だけ残した。
+
 ### 2026-10-16（exmem の旧名の参照を直した。works への依存の整理の一部）
 
 - `AGENTS.md` `README.md` `windows/README.md` `docs/decisions.md` の現在形の参照を、新名に直した（`knowledge/` → `lessons/`、廃止した `contexts/` を削除、`cheatsheets/env/` → `guides/howto/`、`knowledge-hook.md` → `stock-hook.md`）。`decisions.md` の `links.map` と `30_link` の順序の記述（`notes` `NOTES_DIR`）を現状に直した。日付つきの履歴は、`hooks.md` の読み替え規則に従い書き換えていない。コミット `3ed784e` `2ef40d4`。方針は works の `docs/decisions.md` の先頭の項。
