@@ -365,6 +365,19 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Facts
 
+### 【この件】履歴リセット（2026-10-02。README の「履歴リセット」を 2026-10-16 に移した）
+
+大きなフォント・プラグインの blob を履歴から消すため、履歴を1コミットに作り直して強制 push した（40MB → 約1MB）。以前の履歴は `$HOME\backup\dotfiles-before-rebuild-*.bundle`（このリポジトリを作業していたPC）に残してある。
+他のPCの clone は、未 push の変更が無いことを確認してから次を実行する。
+
+```powershell
+git fetch origin
+git reset --hard origin/main
+git gc --prune=now
+```
+
+その後、通常どおり `30_link.bat`（Windows）/ `30_link.sh`（WSL）を再実行する。
+
 ### fzf とキーバインドの現仕様
 
 2026-10-04 に実機の `bindkey` / `bind -X` / `Get-PSReadLineKeyHandler` と `profile.ps1`・`common.sh` で確認。決定の経緯は Decisions の「fzf は移動用に限定し…」「zsh/bash の Ctrl+R / Ctrl+T を…」。
