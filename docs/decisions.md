@@ -2,7 +2,7 @@
 
 構成・スクリプト命名・セットアップ手順（How）は `README.md` が正本。ここには、なぜそうしたか（Why）、却下案、遭遇した詰まり、実機で確認した事実を残す。現在の状態と次にやることは `docs/log.md`。
 
-exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、ここからは書き込まない。参照するときは `exmem/knowledge/<ファイル>.md` と書く。
+exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、ここからは書き込まない。参照するときは `exmem/lessons/<ファイル>.md` と書く。
 
 ## Principles
 
@@ -23,7 +23,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - Office テンプレと `.obsidian` は `notes` リポジトリへ移管済み。`links.map` に残るのは `..\notes|%NOTES_DIR%`（Vault）だけ。
 - スクリプト番号は、十の位が層、一の位が同じ層の固有ツール。10 刻みなのは後から差し込む余地のため。Windows と Linux で同じ番号は同じ役割で、無い側は欠番にする。OS 接頭辞（w / l）と英字の枝番は廃止した（OS はディレクトリで分かれる）。
 - 実行順は、Linux は「ディレクトリ → パッケージ」（ghq を `~/.local/bin` に置くため）。`notes` を先に clone してから `30_link`（`..\notes` をリンクするため）。
-- `manifests/` の一覧は、スクリプトと手順書（`works/resources/cheatsheets/env/`）で重複させない。`lib.sh` の `read_list` は行内の空白を全部消すので、2列の一覧は `:` 区切りにする（`fonts.txt` は `owner/repo:asset glob`）。
+- `manifests/` の一覧は、スクリプトと手順書（`works/resources/guides/howto/`）で重複させない。`lib.sh` の `read_list` は行内の空白を全部消すので、2列の一覧は `:` 区切りにする（`fonts.txt` は `owner/repo:asset glob`）。
 
 ## Decisions
 
@@ -232,7 +232,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 ### 【この件】PSReadLine 履歴の種を dotfiles で配る（2026-10-04）
 
 - 決めたこと: 手で選んだ定型コマンド（環境構築・パッケージ・git・設定編集）だけを `windows/powershell/history.seed.txt` に置き、初回に `scripts/windows/31_history_seed.bat` が履歴ファイルへコピーする。zsh/bash は `manifests/history.seed.sh.txt` を `scripts/linux/31_history_seed.sh` がコピーする（同じ方針）。個人・機密値は `<…名>` に置換し、そのままでは実行されない形にする。
-- 正本は exmem の `knowledge/shell-command-usecases.md`（種のコードブロック）。種ファイルはそこから連結して作る（派生物なので、種ファイルを直接編集しない）。傾向・判断基準・Gotchas もそこに書く。
+- 正本は exmem の `lessons/shell-command-usecases.md`（種のコードブロック）。種ファイルはそこから連結して作る（派生物なので、種ファイルを直接編集しない）。傾向・判断基準・Gotchas もそこに書く。
 - 根拠: PC 移行時に定型コマンドを調べ直す時間を減らす。生の履歴は会社名・ユーザー名・Webhook URL を含むので共有しない（`_local/` に退避）。
 - 却下案: 履歴全体を整形して共有する（秘匿・案件固有の流出リスクと量）。種ファイルへのシンボリックリンク（PSReadLine が追記して作業ツリーが汚れる）。上書きコピー（既存の履歴を壊す）。
 - スクリプト番号: `31`（層 30 の固有ツール枠）。Windows（`.bat`）と Linux（`.sh`）で同じ番号。
