@@ -23,7 +23,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - Office テンプレは自動では張らず、初回に `windows/office` から手で配置する。`.obsidian` は dotfiles が実体を持ち、`links.map` で `%WORKS_DIR%\.obsidian` へジャンクションを張る（Vault のトップ自体は `links.map` に無い）。
 - スクリプト番号は、十の位が層、一の位が同じ層の固有ツール。10 刻みなのは後から差し込む余地のため。Windows と Linux で同じ番号は同じ役割で、無い側は欠番にする。OS 接頭辞（w / l）と英字の枝番は廃止した（OS はディレクトリで分かれる）。
 - 実行順は、Linux は「ディレクトリ → パッケージ」（ghq を `~/.local/bin` に置くため）。`30_link` は、`WORKS_DIR` が無ければ作って `.obsidian` を張る（`WORKS_DIR` の clone には依存しない）。`workbase` の clone は `50_repos`。
-- `manifests/` の一覧は、スクリプトと手順書（`works/resources/guides/howto/`）で重複させない。`lib.sh` の `read_list` は行内の空白を全部消すので、2列の一覧は `:` 区切りにする（`fonts.txt` は `owner/repo:asset glob`）。
+- `manifests/` の一覧は、スクリプトと手順書（`docs/setup/`。2026-10-16 に `works/resources/guides/howto/` から移した）で重複させない。`lib.sh` の `read_list` は行内の空白を全部消すので、2列の一覧は `:` 区切りにする（`fonts.txt` は `owner/repo:asset glob`）。
 
 ## Decisions
 
