@@ -25,6 +25,8 @@ dotfiles は、Windows 11 + WSL2 / Linux（apt 系）の作業環境を、複数
 ## コミット
 
 - メッセージは `[対象] 内容`（例: `[shell] ...`, `[scripts] ...`, `[docs] ...`）。
-- `git add` はパスを指定する（`git add -A` は `tmp/` などを拾う）。
+- `git add` はパスを指定する（パスなしの `git add -A` と `git add .` は使わない。`tmp/` などを拾うため）。
+- コミット・push の前に、kit の `docs-rules.md` の「コミットと push」を、そのセッションで読んでいなければ読む（身元・トレーラー・機密の検索もそこに従う）。
+- push はユーザーが行う（許可リストなし）。`--force`、`--no-verify`、`--amend`、`reset --hard`、`rebase`、`git add -f` は使わない（2026-10-16 ユーザーの決定で rebase を禁止にした）。
+- merge の前に、双方のコミット日時（`git log --format='%h %ad %s' --date=iso`）を比べ、どちらが新しいかをユーザーに伝えて、順序でよいか確認する。
 - リスクや制約が生まれる変更は、事前にユーザーへ確認する。
-- rebase / merge の前に、双方のコミット日時（`git log --format='%h %ad %s' --date=iso`）を比べ、どちらが新しいかをユーザーに伝えて、順序でよいか確認する（rebase はコミットの日時と並びを書き換えるため）。
