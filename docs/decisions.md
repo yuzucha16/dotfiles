@@ -49,6 +49,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - 確認済み（2026-10-14、ユーザーの実機）: メニューが PowerShell・CMD・Ubuntu-24.04 になり、開き直しても差分が出ない。`room-sh office-admin` で入れる。
 - 注意: Zed の `wsl_connections` は、Zed の画面から WSL に接続すると書き足される。避けられるかは未確認。
 - コミット: `b621cd1`、`452067b`。
+- → inbox/2026-10-17-terminal-wsl-dynamic-profile-disable
 ### 【汎用】外部の Claude Code スキル（プラグイン）の取り込み方（2026-10-14。ユーザーの指示「knap、a,bの順」。obsidian-skills の導入が最初の例）
 
 - 決めたこと: (1) 導入の宣言は dotfiles の `manifests/claude-plugins.txt`（`<ソース>|<plugin>@<marketplace>`）を正本にし、`29_claude_plugins.bat` が `claude plugin marketplace add` / `install` で入れる（user スコープ）。依存する CLI は `manifests/npm.txt`（`28_npm_globals.bat`、`volta install`）。(2) スキル本体（`SKILL.md`）は dotfiles にも exmem にも写さない。(3) 「どの作業でどのスキルを使うか」は、使う側の作業ディレクトリの `AGENTS.md` に1〜2行だけ書く。共有側（kit、exmem）には、固有名を外した一般形だけを書く。
