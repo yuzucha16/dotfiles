@@ -27,6 +27,14 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【汎用】`WSLENV` の区切りは `:` にする（`;` では WSL に何も渡らない）（2026-10-18。ユーザーが承認）
+
+- 決めたこと: `10_env.bat` の `WSLENV` の判定と結合の区切りを `;` から `:` に変えた。以前の版が作った `;` 入りの値は `:` に直して `setx` する。`WSLENV` が未定義の PC でも、`CERTS_DIR/p:WORKS_DIR/p` になる。
+- 根拠（確認: 2026-10-18）: 同じ `WSLENV` の値で区切りだけを変えて、`wsl -d Ubuntu-24.04 -e bash -c 'printenv WORKS_DIR CERTS_DIR'` を比べた。`;` では何も出ず rc=1、`:` では `/mnt/c/Users/<名前>/works` と `.certs` が渡った。`WSLENV` を `:` に直し `wsl --shutdown` した後も、新しいプロセスで渡った。バッチの論理は、`WSLENV` が `;` 入り・未定義・別の変数のみ・すでに `:` の4通りで模擬して確認した。`tests/windows/test_25_27_installers.ps1` は failures=0。
+- 却下案: 区切りは `;` のままにして、WSL 側で `WORKS_DIR` を組み立て直す（WSL のユーザー名が Windows と違うので外れる）。
+- 未確認: 他の PC で `10_env.bat` を再実行したときの `WSLENV`。
+- → 知識: `exmem/lessons/obsidian-vault.md`（Facts）
+
 ### 【この件】README を 16KB に縮め、詳細を下位の README に移す。読む順番は README → `docs/log.md`。rebase は禁止（2026-10-16。ユーザーの決定）
 
 - 決めたこと: README の目標は 16KB。スクリプト・試験・`windows/` の詳細は、原文のまま `scripts/windows/README.md` `scripts/linux/README.md` `tests/README.md` `windows/README.md` に移した（上段は表引き、下段に詳細。kit の `docs-rules.md` の階層化の規則）。`AGENTS.md` の読む順番は kit にそろえて README → `docs/log.md`（`decisions.md` と `log-history.md` は開始時に読まない）。rebase は禁止（merge は日時を比べてユーザーに確認）。

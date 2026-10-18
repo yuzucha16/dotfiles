@@ -27,9 +27,11 @@ setx WORKS_DIR "%WORKS_DIR%"
 
 REM Pass CERTS_DIR and WORKS_DIR to WSL (/p converts the path; the WSL user name can differ from the Windows one).
 REM Append each to WSLENV only once, then setx once (setx is not reflected in this session, so build the value first).
-set "WSLENV_NEW=%WSLENV%"
-echo ;%WSLENV_NEW%; | find "CERTS_DIR/p" >nul || ( if defined WSLENV_NEW ( set "WSLENV_NEW=%WSLENV_NEW%;CERTS_DIR/p" ) else ( set "WSLENV_NEW=CERTS_DIR/p" ) )
-echo ;%WSLENV_NEW%; | find "WORKS_DIR/p" >nul || ( if defined WSLENV_NEW ( set "WSLENV_NEW=%WSLENV_NEW%;WORKS_DIR/p" ) else ( set "WSLENV_NEW=WORKS_DIR/p" ) )
+REM The WSLENV separator is ":" (a ";" makes WSL ignore every entry). A ";" left by an older version of this script is converted to ":".
+set "WSLENV_NEW="
+if defined WSLENV set "WSLENV_NEW=%WSLENV:;=:%"
+echo :%WSLENV_NEW%: | find ":CERTS_DIR/p:" >nul || ( if defined WSLENV_NEW ( set "WSLENV_NEW=%WSLENV_NEW%:CERTS_DIR/p" ) else ( set "WSLENV_NEW=CERTS_DIR/p" ) )
+echo :%WSLENV_NEW%: | find ":WORKS_DIR/p:" >nul || ( if defined WSLENV_NEW ( set "WSLENV_NEW=%WSLENV_NEW%:WORKS_DIR/p" ) else ( set "WSLENV_NEW=WORKS_DIR/p" ) )
 set "SHOW_WSLENV="
 if not "%WSLENV_NEW%"=="%WSLENV%" ( setx WSLENV "%WSLENV_NEW%" & set "SHOW_WSLENV=%WSLENV_NEW%" )
 
