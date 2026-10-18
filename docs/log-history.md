@@ -3,6 +3,10 @@
 日付つきの Log（降順）。開始時には読まない。必要なときに検索する。現在状態は `docs/log.md`。
 
 ## Log
+### 2026-10-18（WSL へ `WORKS_DIR` と `CERTS_DIR` が渡らない原因を直した）
+
+- 2026-10-06 から未特定だった原因は、`WSLENV` の区切りが `;` だったこと。`scripts/windows/10_env.bat` を `:` に直し、この PC の User の `WSLENV` を `CERTS_DIR/p:WORKS_DIR/p` にした。`wsl --shutdown` の後、`printenv WORKS_DIR CERTS_DIR` が rc=0 で両方を返した。判断は `docs/decisions.md`（【汎用】`WSLENV` の区切りは `:`）。他の PC は `10_env.bat` の再実行で直る（未確認）。同日のログインシェルで `GHQ_ROOT` は空だった（未調査）。
+
 ### 2026-10-16（`docs/setup/` のリンク確認を完了とした）
 
 - `DESKTOP-C7JJ83A` で、`docs/setup/` の手順書間のリンクと、手順書が挙げるリポジトリ内のパス（`scripts/`、`manifests/`、`home/`、`windows/powershell/` の各ファイル）が実在することを確認した。`main` は `origin/main` と一致。https の外部リンクは開いていない。ユーザーが完了と確認し、`log.md` の項を消した。
