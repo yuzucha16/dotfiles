@@ -103,6 +103,12 @@
       "Bash(git -C * add*--force*)"
     ]
   },
+  "hooks": { 
+    "Stop": [ { 
+      "hooks": [ { 
+        "type": "command", "command": "python %USERPROFILE%/.claude/hooks/stop-record.py" } ] 
+    } ] 
+  },
   "enabledPlugins": {
     "obsidian@obsidian-skills": true
   },
