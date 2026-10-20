@@ -4,6 +4,7 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 ## Next Actions
 
+- pwsh の starship 設定を、この PC で有効にする: `scripts\windows\30_link.bat` を実行して `~/.config/starship-pwsh.toml` のリンクを作り、Windows Terminal の新しいタブで待ち時間とブランチ名の表示を確認する（元の PC では約 2,200ms から約 230ms）。
 - 外部スキルを取り込む前に、配布元と `SKILL.md` を確認する運用にするか決める（案の段階）。
 
 ## Open Questions

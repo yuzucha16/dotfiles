@@ -27,6 +27,14 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】pwsh だけ starship の git 系モジュールを外し、ブランチ名は `.git/HEAD` の直読みで出す（2026-10-20。ユーザーの依頼と決定）
+
+- 決めたこと: pwsh だけ別の starship 設定（`windows/powershell/starship.toml`。`~/.config/starship-pwsh.toml` にリンク）にし、`git_branch` / `git_status` を外す。ブランチ名は `profile.ps1` の `Invoke-Starship-PreCommand` が `.git/HEAD` を読んで環境変数 `PS_GIT_BRANCH` に入れ、`[env_var.PS_GIT_BRANCH]` で表示する（worktree / submodule の `.git` ファイル、detached HEAD に対応）。`directory` の `truncate_to_repo` は false（true だとリポジトリ探索が約 1.2 秒）。bash / zsh は共通の `home/.config/starship.toml` のまま。
+- 根拠（別の PC での計測。ユーザーの報告）: 会社 PC はプロセス生成そのものが遅く（`cmd /c exit` が約 165ms、`git --version` が約 540ms。Defender のほか、ファイルとプロセスを監視するフィルタドライバが3系統。管理者権限が要る除外設定には手を出していない）、starship が git を調べるとプロンプト1回がリポジトリ内で約 2,200ms（directory 1,360ms、git_status 610ms）。対策後は約 230ms（-90%）。
+- 却下案: 保護ソフトの除外設定（管理者権限が要る）。共通の `starship.toml` から git 系を外す（WSL の bash / zsh は遅くないので、表示を減らす理由が無い）。
+- 弱点: 変更の有無の印（`git_status`）が pwsh では出ない。共通の `starship.toml` を変えたときは、派生側にも反映する（`windows/powershell/starship.toml` の冒頭に差分3点を書いた）。
+- 確認済み: 元の PC の計測（Claude Code の子プロセス内）。この PC では `profile.ps1` の構文エラー0件のみ（`Parser::ParseFile`）。
+- 未確認: Windows Terminal 内での計測値。この PC での体感と `30_link.bat` によるリンク作成。`bash tests/linux/test_scripts.sh` は対象外（`scripts/linux/` と `home/.profile` は変えていない）。
 ### 【この件】組織の LLM ゲートウェイ（OIDC サインイン）への接続を足した（`claude-gateway`、`claude-pick gateway`、Zed の「Claude Gateway」。AWS SSO は取り消し。2026-10-20。ユーザーの依頼と決定）
 
 - 決めたこと: 貸与された接続先は、AWS の IAM Identity Center でも、Anthropic の Claude apps gateway（`/login`）でもなく、**汎用の LLM ゲートウェイ + Entra ID の OIDC**（Claude Desktop の「Configure Third-Party Inference」で、Gateway、Credential kind = Interactive sign-in、スコープ空、ID トークン、ブラウザ、クライアント ID、リダイレクトポート、推論モデルの一覧を設定する構成）だった。先に足した AWS SSO（`bedrock-sso`、`fb99d58`）は `84e4471` で取り消した。Claude Code には OIDC のサインインが無いので、`apiKeyHelper` でトークンを渡す構成にした: `claude-gateway-setup.cmd`（ベース URL・発行者 URL・クライアント ID・スコープ・トークン種別・リダイレクトポート・モデル ID を**プロンプトで入力**し、`%USERPROFILE%\.claude-gateway\` に `gateway.json` と `settings.json` を書く）、`claude-gateway-token.ps1` / `.cmd`（`apiKeyHelper`。`-Login` でブラウザの認可コード + PKCE のサインイン。トークンは DPAPI で暗号化して `token.dpapi` に保管。期限が切れていればリフレッシュトークンで無音更新し、標準出力にはトークンだけを返す）、関数 `claude-gateway`（`CLAUDE_CONFIG_DIR` を分けて起動）、`claude-pick gateway`、Zed の `Claude Gateway`（起動は `claude-acp-gateway.ps1` / `.cmd`）。
