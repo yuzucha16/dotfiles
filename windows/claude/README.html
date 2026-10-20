@@ -374,6 +374,8 @@ $key = $null</code></pre>
   </li>
 </ol>
 <ul>
+  <li><strong>ベース URL は <code>ANTHROPIC_BASE_URL</code> と同じもの</strong>（Desktop の「Gateway base URL」と同じ値を、<code>settings.json</code> の <code>env</code> に書く）。</li>
+  <li><strong><code>pause</code> は入口によって違う。</strong><code>scripts\windows\*.bat</code>（番号つきのセットアップ）は、ダブルクリックでも結果が見えるよう最後に <code>pause</code> する。ここの <code>.cmd</code> は、<code>claude-gateway-setup.cmd</code> だけが <code>pause</code> する（対話専用）。<code>claude-gateway-token.cmd</code> は <strong><code>-Login</code> のときだけ</strong> <code>pause</code> し、<code>apiKeyHelper</code> として呼ばれるときは入れない（標準出力にトークンだけを返す必要があり、<code>pause</code> を入れると待ち続けて出力も壊れる。試験で確認）。Zed の起動用 <code>claude-acp-gateway.cmd</code> も入れない。</li>
   <li><strong>URL とクライアント ID は dotfiles に置かない。</strong>組織を特定できる値なので、プロンプトで入力し、この PC のファイルにだけ書く。</li>
   <li><strong>トークンの更新は自動。</strong>ID トークンは約1時間で切れるが、<code>apiKeyHelper</code> が呼ばれるたびに期限を見て、切れていれば保管したリフレッシュトークンで無音で更新する（<code>offline_access</code> を含む既定のスコープのとき）。更新できなければ <code>-Login</code> を促して失敗する。</li>
   <li><strong>設定の場所を <code>~/.claude</code> と分ける。</strong><code>apiKeyHelper</code> を共通の <code>settings.json</code> に入れると、<code>claude</code> が常にその認証になり OAuth に戻れない。<code>claude-gateway</code> は <code>CLAUDE_CONFIG_DIR</code> を <code>~/.claude-gateway</code> にして起動するので混ざらない。その代わり、<code>~/.claude</code> の共通設定（permissions、hooks、<code>CLAUDE.md</code> など）はこの起動には効かない。必要になったら <code>~/.claude-gateway</code> に足す。</li>
@@ -387,11 +389,11 @@ $key = $null</code></pre>
 <p><code>agent_servers</code> の <code>Claude Gateway</code> は、<code>command</code> に <code>claude-acp-gateway.cmd</code> だけを書く。<code>claude-acp-gateway.ps1</code> が、設定とトークンがあることを確かめ（無ければ止まる。止めないと、アダプタが <code>~/.claude</code> の OAuth で黙って動く）、<code>CLAUDE_CONFIG_DIR</code> を <code>~/.claude-gateway</code> にして <code>claude-agent-acp</code> を起動する。</p>
 <ul>
   <li>前提: <code>30_link.bat</code> 実行済み、<code>claude-gateway-setup.cmd</code> と <code>claude-gateway-token.cmd -Login</code> が済んでいること。</li>
-  <li><strong>未検証</strong>: ACP アダプタが <code>~/.claude-gateway\settings.json</code> の <code>apiKeyHelper</code> を読み、1時間後もトークンを更新できるか。読まない場合、起動時のトークンのまま約1時間で切れる。その場合は Zed を再起動する。</li>
+  <li>接続は確認済み（2026-10-20、実機。CLI と Zed の両方）。<strong>未確認</strong>: Zed で、サインインから約1時間後（ID トークンの期限後）にトークンが自動更新されるか。更新されない場合は Zed を再起動する。</li>
 </ul>
 
 <h3>試験</h3>
-<p><code>pwsh -NoProfile -File tests/windows/test_claude_gateway_token.ps1</code>（PKCE・JWT・保管の関数、ローカルの偽の IdP での取得と更新）、<code>test_claude_gateway_setup.ps1</code>（設定の生成、Zed の起動用）、<code>test_claude_launchers.ps1</code>（<code>claude-gateway</code>）。<strong>未検証</strong>: 実際の IdP でのブラウザサインイン（<code>-Login</code>）、実際のゲートウェイでの動作、ゲートウェイが Claude Code のリクエスト（<code>Authorization: Bearer</code> と <code>x-api-key</code> の両方にトークン）を受けること、Zed での動作。</p>
+<p><code>pwsh -NoProfile -File tests/windows/test_claude_gateway_token.ps1</code>（PKCE・JWT・保管の関数、ローカルの偽の IdP での取得と更新）、<code>test_claude_gateway_setup.ps1</code>（設定の生成、Zed の起動用）、<code>test_claude_launchers.ps1</code>（<code>claude-gateway</code>）。実際の IdP でのブラウザサインイン（<code>-Login</code>）と、実際のゲートウェイへの接続は、実機で確認済み（2026-10-20。CLI の <code>claude-gateway</code> と Zed の「Claude Gateway」）。<strong>未確認</strong>: 約1時間後の自動更新（無音更新の実機）。</p>
 
 <h3>うまくいかないとき（ゲートウェイ）</h3>
 <table>

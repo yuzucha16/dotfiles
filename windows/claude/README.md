@@ -283,6 +283,8 @@ Claude Desktop の「Configure Third-Party Inference」の画面を開いて、�
 3. `claude-gateway-token.cmd -Login` を実行する。ブラウザが開くので、会社のアカウントでサインインする。トークンが DPAPI で暗号化して保管される（`saved: …\token.dpapi`）。
 4. `claude-gateway` で起動する（`claude-pick gateway` でもよい）。`/status` で、`Anthropic base URL` がゲートウェイ、`Auth token` が `apiKeyHelper` であることを確認する。
 
+- **ベース URL は `ANTHROPIC_BASE_URL` と同じもの**（Desktop の「Gateway base URL」と同じ値を、`settings.json` の `env` に書く）。
+- **`pause` は入口によって違う。** `scripts\windows\*.bat`（番号つきのセットアップ）は、ダブルクリックでも結果が見えるよう最後に `pause` する。ここの `.cmd` は、`claude-gateway-setup.cmd` だけが `pause` する（対話専用）。`claude-gateway-token.cmd` は **`-Login` のときだけ** `pause` し、`apiKeyHelper` として呼ばれるときは入れない（標準出力にトークンだけを返す必要があり、`pause` を入れると待ち続けて出力も壊れる。試験で確認）。Zed の起動用 `claude-acp-gateway.cmd` も入れない。
 - **URL とクライアント ID は dotfiles に置かない。** 組織を特定できる値なので、プロンプトで入力し、この PC のファイルにだけ書く。
 - **トークンの更新は自動。** ID トークンは約1時間で切れるが、`apiKeyHelper` が呼ばれるたびに期限を見て、切れていれば保管したリフレッシュトークンで無音で更新する（`offline_access` を含む既定のスコープのとき）。更新できなければ `-Login` を促して失敗する。
 - **設定の場所を `~/.claude` と分ける。** `apiKeyHelper` を共通の `settings.json` に入れると、`claude` が常にその認証になり OAuth に戻れない。`claude-gateway` は `CLAUDE_CONFIG_DIR` を `~/.claude-gateway` にして起動するので、OAuth の `claude` と混ざらない。その代わり、`~/.claude` の共通設定（permissions、hooks、`CLAUDE.md` など）はこの起動には効かない。必要になったら `~/.claude-gateway` に足す。
@@ -296,11 +298,11 @@ Claude Desktop の「Configure Third-Party Inference」の画面を開いて、�
 `agent_servers` の `Claude Gateway` は、`command` に `claude-acp-gateway.cmd` だけを書く。`claude-acp-gateway.ps1` が、設定とトークンがあることを確かめ（無ければ止まる。止めないと、アダプタが `~/.claude` の OAuth で黙って動く）、`CLAUDE_CONFIG_DIR` を `~/.claude-gateway` にして `claude-agent-acp` を起動する。
 
 - 前提: `30_link.bat` 実行済み、`claude-gateway-setup.cmd` と `claude-gateway-token.cmd -Login` が済んでいること。
-- **未検証**: ACP アダプタが `~/.claude-gateway\settings.json` の `apiKeyHelper` を読み、1時間後もトークンを更新できるか。読まない場合、起動時のトークンのまま約1時間で切れる。その場合は Zed を再起動する。
+- 接続は確認済み（2026-10-20、実機。CLI と Zed の両方）。**未確認**: Zed で、サインインから約1時間後（ID トークンの期限後）にトークンが自動更新されるか。更新されない場合は Zed を再起動する。
 
 ### 試験
 
-`pwsh -NoProfile -File tests/windows/test_claude_gateway_token.ps1`（PKCE・JWT・保管の関数、ローカルの偽の IdP での取得と更新）、`test_claude_gateway_setup.ps1`（設定の生成、Zed の起動用）、`test_claude_launchers.ps1`（`claude-gateway`）。**未検証**: 実際の IdP でのブラウザサインイン（`-Login`）、実際のゲートウェイでの動作、ゲートウェイが Claude Code のリクエスト（`Authorization: Bearer` と `x-api-key` の両方にトークン）を受けること、Zed での動作。
+`pwsh -NoProfile -File tests/windows/test_claude_gateway_token.ps1`（PKCE・JWT・保管の関数、ローカルの偽の IdP での取得と更新）、`test_claude_gateway_setup.ps1`（設定の生成、Zed の起動用）、`test_claude_launchers.ps1`（`claude-gateway`）。実際の IdP でのブラウザサインイン（`-Login`）と、実際のゲートウェイへの接続は、実機で確認済み（2026-10-20。CLI の `claude-gateway` と Zed の「Claude Gateway」）。**未確認**: 約1時間後の自動更新（無音更新の実機）。
 
 ### うまくいかないとき（ゲートウェイ）
 
