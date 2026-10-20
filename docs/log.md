@@ -7,7 +7,6 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 - 外部スキルを取り込む前に、配布元と `SKILL.md` を確認する運用にするか決める（案の段階）。
 - `claude-gateway` と Zed の「Claude Gateway」で、サインインの約1時間後に `apiKeyHelper` の無音更新が働くかを確認する（2026-10-20 時点。接続自体は両方で確認済み）。
 - 他の PC で、`30_link.bat` を実行して `claude-gateway-*` / `claude-acp-gateway` のリンクを張り、`claude-gateway-setup.cmd` → `claude-gateway-token.cmd -Login` を行う（PC ごとの設定と暗号化したトークンは追跡しない）。
-- ローカルのコミット（`8a180be` ほか4件）を push する（`origin/main` との差と公開向けの検索は、push の直前に確認する）。
 
 ## Open Questions
 
