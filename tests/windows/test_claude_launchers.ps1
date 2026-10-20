@@ -14,8 +14,8 @@ New-Item -ItemType Directory -Force (Join-Path $fakeHome '.claude') | Out-Null
 
 # 関数を取り出して定義する。$HOME は偽のディレクトリ（$fakeHome）に置き換える（$HOME は書き換えられないため）
 $ast = [System.Management.Automation.Language.Parser]::ParseFile($profilePath, [ref]$null, [ref]$null)
-$defs = $ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -in 'claude-api', 'claude-bedrock', 'claude-bedrock-sso', 'claude-oauth', 'claude-pick' }, $true)
-Check 'profile defines the 5 launcher functions' ($defs.Count -eq 5)
+$defs = $ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -in 'claude-api', 'claude-bedrock', 'claude-oauth', 'claude-pick' }, $true)
+Check 'profile defines the 4 launcher functions' ($defs.Count -eq 4)
 foreach ($d in $defs) { Invoke-Expression ($d.Extent.Text.Replace('$HOME', '$fakeHome')) }
 
 # 偽の claude: 受け取った引数と、認証に関わる環境変数の見え方を記録する
@@ -63,25 +63,14 @@ $script:calls = @()
 claude-bedrock -p hi
 Check 'bedrock: with the file -> --settings then arguments' (($script:calls[0].Args[0] -eq '--settings') -and ($script:calls[0].Args[1] -like '*settings-bedrock.json') -and (($script:calls[0].Args[2..3] -join ' ') -eq '-p hi'))
 
-$script:calls = @()
-$msg = (claude-bedrock-sso 6>&1) -join "`n"
-Check 'bedrock-sso: no settings file -> message with -Sso, claude not called' (($script:calls.Count -eq 0) -and ($msg -match 'claude-bedrock-setup.*-Sso'))
-Set-Content (Join-Path $fakeHome '.claude\settings-bedrock-sso.json') '{}'
-$script:calls = @()
-claude-bedrock-sso -p hi
-Check 'bedrock-sso: with the file -> --settings settings-bedrock-sso.json, then arguments' (($script:calls[0].Args[0] -eq '--settings') -and ($script:calls[0].Args[1] -like '*settings-bedrock-sso.json') -and (($script:calls[0].Args[2..3] -join ' ') -eq '-p hi'))
-
 # --- claude-pick ---
 function claude-oauth { $script:picked = 'oauth:' + ($args -join ' ') }
 function claude-api { $script:picked = 'api:' + ($args -join ' ') }
 function claude-bedrock { $script:picked = 'bedrock:' + ($args -join ' ') }
-function claude-bedrock-sso { $script:picked = 'bedrock-sso:' + ($args -join ' ') }
 claude-pick api --resume
 Check 'pick: mode as the first argument, rest passed on' ($script:picked -eq 'api:--resume')
 claude-pick bedrock
 Check 'pick: bedrock'                                     ($script:picked -eq 'bedrock:')
-claude-pick bedrock-sso --resume
-Check 'pick: bedrock-sso is not swallowed by bedrock'     ($script:picked -eq 'bedrock-sso:--resume')
 function fzf { 'oauth' }
 claude-pick -p hi
 Check 'pick: no mode -> fzf choice, all arguments passed on' ($script:picked -eq 'oauth:-p hi')
