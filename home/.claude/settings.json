@@ -106,7 +106,7 @@
   "hooks": { 
     "Stop": [ { 
       "hooks": [ { 
-        "type": "command", "command": "python %USERPROFILE%/.claude/hooks/stop-record.py" } ] 
+        "type": "command", "command": "python \"$HOME/.claude/hooks/stop-record.py\"" } ] 
     } ] 
   },
   "enabledPlugins": {
