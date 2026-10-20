@@ -50,6 +50,16 @@
         "ANTHROPIC_DEFAULT_HAIKU_MODEL": "global.anthropic.claude-haiku-5-5"
       }
     },
+    // Organization's Claude apps gateway (SSO sign-in). windows/claude/claude-acp-gateway.ps1 points CLAUDE_CONFIG_DIR at ~/.claude-gateway
+    // (made by claude-gateway-setup.cmd; the gateway URL lives there, not in this file). First sign-in: run `claude-gateway` and /login.
+    "Claude Gateway": {
+      "type": "custom",
+      "command": "claude-acp-gateway.cmd",
+      "default_config_options": {
+        "mode": "auto",
+        "model": "sonnet"
+      }
+    },
     // The key is decrypted at launch (DPAPI) by windows/claude/claude-acp-api.ps1 (linked into ~/.local/bin), so it never lands in this file.
     // Inline PowerShell in args did not work (variables came out empty under Zed), hence the script.
     "Claude API": {

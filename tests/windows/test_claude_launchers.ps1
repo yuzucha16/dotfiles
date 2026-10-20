@@ -14,8 +14,8 @@ New-Item -ItemType Directory -Force (Join-Path $fakeHome '.claude') | Out-Null
 
 # 関数を取り出して定義する。$HOME は偽のディレクトリ（$fakeHome）に置き換える（$HOME は書き換えられないため）
 $ast = [System.Management.Automation.Language.Parser]::ParseFile($profilePath, [ref]$null, [ref]$null)
-$defs = $ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -in 'claude-api', 'claude-bedrock', 'claude-oauth', 'claude-pick' }, $true)
-Check 'profile defines the 4 launcher functions' ($defs.Count -eq 4)
+$defs = $ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -in 'claude-api', 'claude-bedrock', 'claude-gateway', 'claude-oauth', 'claude-pick' }, $true)
+Check 'profile defines the 5 launcher functions' ($defs.Count -eq 5)
 foreach ($d in $defs) { Invoke-Expression ($d.Extent.Text.Replace('$HOME', '$fakeHome')) }
 
 # 偽の claude: 受け取った引数と、認証に関わる環境変数の見え方を記録する
@@ -63,14 +63,36 @@ $script:calls = @()
 claude-bedrock -p hi
 Check 'bedrock: with the file -> --settings then arguments' (($script:calls[0].Args[0] -eq '--settings') -and ($script:calls[0].Args[1] -like '*settings-bedrock.json') -and (($script:calls[0].Args[2..3] -join ' ') -eq '-p hi'))
 
+# --- claude-gateway ---
+function claude { $script:calls += [pscustomobject]@{ Args = @($args); Dir = $env:CLAUDE_CONFIG_DIR; Key = $env:ANTHROPIC_API_KEY } }
+$script:calls = @()
+$msg = (claude-gateway 6>&1) -join "`n"
+Check 'gateway: no settings -> message, claude not called' (($script:calls.Count -eq 0) -and ($msg -match 'claude-gateway-setup'))
+New-Item -ItemType Directory -Force (Join-Path $fakeHome '.claude-gateway') | Out-Null
+Set-Content (Join-Path $fakeHome '.claude-gateway\settings.json') '{}'
+$env:ANTHROPIC_API_KEY = 'k'
+$script:calls = @()
+claude-gateway -p hi
+$c = $script:calls[0]
+Check 'gateway: CLAUDE_CONFIG_DIR points at ~/.claude-gateway during the run' ($c.Dir -eq (Join-Path $fakeHome '.claude-gateway'))
+Check 'gateway: arguments passed, competing API key hidden'                 ((($c.Args -join ' ') -eq '-p hi') -and -not $c.Key)
+Check 'gateway: CLAUDE_CONFIG_DIR and the API key are restored afterwards'  (($null -eq [Environment]::GetEnvironmentVariable('CLAUDE_CONFIG_DIR', 'Process')) -and ($env:ANTHROPIC_API_KEY -eq 'k'))
+$env:CLAUDE_CONFIG_DIR = 'prev'
+claude-gateway
+Check 'gateway: a previous CLAUDE_CONFIG_DIR is restored' ($env:CLAUDE_CONFIG_DIR -eq 'prev')
+Remove-Item Env:CLAUDE_CONFIG_DIR, Env:ANTHROPIC_API_KEY
+
 # --- claude-pick ---
 function claude-oauth { $script:picked = 'oauth:' + ($args -join ' ') }
 function claude-api { $script:picked = 'api:' + ($args -join ' ') }
 function claude-bedrock { $script:picked = 'bedrock:' + ($args -join ' ') }
+function claude-gateway { $script:picked = 'gateway:' + ($args -join ' ') }
 claude-pick api --resume
 Check 'pick: mode as the first argument, rest passed on' ($script:picked -eq 'api:--resume')
 claude-pick bedrock
 Check 'pick: bedrock'                                     ($script:picked -eq 'bedrock:')
+claude-pick gateway --resume
+Check 'pick: gateway'                                     ($script:picked -eq 'gateway:--resume')
 function fzf { 'oauth' }
 claude-pick -p hi
 Check 'pick: no mode -> fzf choice, all arguments passed on' ($script:picked -eq 'oauth:-p hi')

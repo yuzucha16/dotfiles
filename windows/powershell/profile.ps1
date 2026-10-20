@@ -69,18 +69,32 @@ function claude-oauth {
     }
 }
 
-# 起動する認証を選ぶ: claude-pick（fzf で選ぶ）/ claude-pick oauth|api|bedrock。残りの引数は claude に渡す（例: claude-pick api --resume）
+# Claude Code を組織の Claude apps gateway（SSO サインイン）で起動する。設定の場所を ~/.claude-gateway に分けて起動する
+# （ゲートウェイのサインインは OAuth のログインの代わりになり1つしか使えないため、~/.claude と分ける）。
+# 設定は claude-gateway-setup.cmd で作る。初回は /login → Cloud gateway。環境に残った認証の変数は claude-oauth と同じく外す
+function claude-gateway {
+    $dir = "$HOME\.claude-gateway"
+    if (-not (Test-Path "$dir\settings.json")) { Write-Host "[ERR] $dir\settings.json がありません。先に claude-gateway-setup.cmd を実行してください。"; return }
+    $saved = [Environment]::GetEnvironmentVariable('CLAUDE_CONFIG_DIR', 'Process')
+    $env:CLAUDE_CONFIG_DIR = $dir
+    try { claude-oauth @args }
+    finally { if ($null -ne $saved) { $env:CLAUDE_CONFIG_DIR = $saved } else { Remove-Item Env:CLAUDE_CONFIG_DIR -ErrorAction SilentlyContinue } }
+}
+
+# 起動する認証を選ぶ: claude-pick（fzf で選ぶ）/ claude-pick oauth|api|bedrock|gateway。残りの引数は claude に渡す（例: claude-pick api --resume）
 function claude-pick {
+    $modes = 'oauth', 'api', 'bedrock', 'gateway'
     $mode = $args[0]
     $rest = @($args | Select-Object -Skip 1)
-    if ($mode -notin 'oauth', 'api', 'bedrock') {
+    if ($mode -notin $modes) {
         $rest = @($args)
-        $mode = 'oauth', 'api', 'bedrock' | fzf --prompt='claude> ' --height=20% --reverse
+        $mode = $modes | fzf --prompt='claude> ' --height=20% --reverse
     }
     switch ($mode) {
         'oauth'   { claude-oauth @rest }
         'api'     { claude-api @rest }
         'bedrock' { claude-bedrock @rest }
+        'gateway' { claude-gateway @rest }
     }
 }
 

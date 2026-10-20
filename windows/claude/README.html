@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Claude Code の認証（Bedrock / API キー / OAuth。個人用）</title>
+<title>Claude Code の認証（Bedrock / API キー / OAuth / ゲートウェイ）</title>
 <style>
   :root { --bg:#fff; --fg:#1f2328; --sub:#59636e; --line:#d1d9e0; --code:#f6f8fa; --accent:#0969da; --warn:#9a6700; --warnbg:#fff8c5; }
   @media (prefers-color-scheme: dark) {
@@ -37,22 +37,24 @@
 <main>
 
 
-<h1>Claude Code の認証（Bedrock / API キー / OAuth。個人用）</h1>
-<p>Claude Code と Zed の agent を、3つの認証で使い分ける。章は Bedrock → API キー → OAuth の順。</p>
+<h1>Claude Code の認証（Bedrock / API キー / OAuth / ゲートウェイ）</h1>
+<p>Claude Code と Zed の agent を、4つの認証で使い分ける。章は Bedrock → API キー → OAuth → ゲートウェイの順。</p>
 <table>
   <tr><th>章</th><th>認証</th><th>起動</th><th>課金</th></tr>
   <tr><td><a href="#bedrock">1. Bedrock</a></td><td>Amazon Bedrock（AWS 経由）</td><td><code>claude-bedrock</code></td><td>AWS の従量課金</td></tr>
   <tr><td><a href="#api">2. API キー</a></td><td>Anthropic の Console API キー</td><td><code>claude-api</code></td><td>従量課金</td></tr>
   <tr><td><a href="#oauth">3. OAuth</a></td><td>サブスク（Pro など）</td><td><code>claude</code> / <code>claude-oauth</code></td><td>定額</td></tr>
+  <tr><td><a href="#gateway">4. ゲートウェイ</a></td><td>組織の Claude apps gateway（会社アカウントの SSO）</td><td><code>claude-gateway</code></td><td>組織の契約（ゲートウェイの上流）</td></tr>
 </table>
-<p><code>claude</code> は OAuth のまま、<code>claude-api</code> と <code>claude-bedrock</code> だけ別の認証で起動する。判断の根拠は <code>docs/decisions.md</code> の「Claude Code の API キー認証は…」。</p>
+<p><code>claude</code> は OAuth のまま、<code>claude-api</code> と <code>claude-bedrock</code> と <code>claude-gateway</code> だけ別の認証で起動する。判断の根拠は <code>docs/decisions.md</code> の「Claude Code の API キー認証は…」。</p>
 <p class="sub">この HTML は <code>README.md</code>（同じフォルダ）を写した派生物。内容を直すときは <code>README.md</code> を先に直し、こちらも合わせる。</p>
 
 <h2>早見表</h2>
 <table>
   <tr><th>やりたいこと</th><th>コマンド</th></tr>
-  <tr><td>起動する認証を選ぶ</td><td><code>claude-pick</code>（fzf で選ぶ）、<code>claude-pick oauth</code> / <code>api</code> / <code>bedrock</code>（下の「<a href="#pick">起動する認証を選ぶ</a>」）</td></tr>
+  <tr><td>起動する認証を選ぶ</td><td><code>claude-pick</code>（fzf で選ぶ）、<code>claude-pick oauth</code> / <code>api</code> / <code>bedrock</code> / <code>gateway</code>（下の「<a href="#pick">起動する認証を選ぶ</a>」）</td></tr>
   <tr><td>Bedrock の設定を作る・起動</td><td><code>claude-bedrock-setup.cmd</code>、<code>claude-bedrock</code>（<a href="#bedrock">第1章</a>）</td></tr>
+  <tr><td>ゲートウェイの設定を作る・起動</td><td><code>claude-gateway-setup.cmd</code>、<code>claude-gateway</code>（<a href="#gateway">第4章</a>）</td></tr>
   <tr><td>API キーで起動</td><td><code>claude-api</code>（<a href="#api">第2章</a>）</td></tr>
   <tr><td>キーを保存・入れ替え</td><td><code>claude-api-key.cmd -Set</code>（第2章）</td></tr>
   <tr><td>OAuth で起動</td><td><code>claude</code>（環境変数が残っていても確実に OAuth にするなら <code>claude-oauth</code>。<a href="#oauth">第3章</a>）</td></tr>
@@ -65,8 +67,9 @@
 <p>認証の優先順位は固定（クラウドプロバイダ、<code>ANTHROPIC_AUTH_TOKEN</code>、<code>ANTHROPIC_API_KEY</code>、<code>apiKeyHelper</code>、OAuth の順）で、設定で OAuth を上げることはできない。そのため、<strong>起動のたびに、どの認証で起動するかを選ぶ</strong>。切り替えは起動単位で、動いているセッションの中では切り替えない（終了して選び直す。同じディレクトリなら <code>claude --resume</code> で続きを選べる）。</p>
 <table>
   <tr><th>コマンド</th><th>認証</th></tr>
-  <tr><td><code>claude-pick</code></td><td>fzf で <code>oauth</code> / <code>api</code> / <code>bedrock</code> を選んで起動する。<code>claude-pick api --resume</code> のように、モードを先頭に書けば選択を省ける。モードを省いた引数（<code>claude-pick --resume</code>）は、選んだあとの <code>claude</code> に渡す</td></tr>
+  <tr><td><code>claude-pick</code></td><td>fzf で <code>oauth</code> / <code>api</code> / <code>bedrock</code> / <code>gateway</code> を選んで起動する。<code>claude-pick api --resume</code> のように、モードを先頭に書けば選択を省ける。モードを省いた引数（<code>claude-pick --resume</code>）は、選んだあとの <code>claude</code> に渡す</td></tr>
   <tr><td><code>claude-bedrock</code></td><td>Bedrock</td></tr>
+  <tr><td><code>claude-gateway</code></td><td>組織の Claude apps gateway（設定の場所を <code>~/.claude-gateway</code> に分けて起動。環境に残った認証の変数は外す）</td></tr>
   <tr><td><code>claude-api</code></td><td>API キー</td></tr>
   <tr><td><code>claude-oauth</code></td><td>OAuth（サブスク）。環境に残った変数を、その起動の間だけ外す</td></tr>
   <tr><td><code>claude</code></td><td>環境に認証の変数が無ければ OAuth。残っていると、その認証になる</td></tr>
@@ -82,6 +85,7 @@
 <table>
   <tr><th>agent</th><th>認証</th><th>備考</th></tr>
   <tr><td><code>Claude Bedrock</code></td><td>Bedrock</td><td><code>env</code> に <code>CLAUDE_CODE_USE_BEDROCK</code> とリージョン・モデルを書く（第1章）</td></tr>
+  <tr><td><code>Claude Gateway</code></td><td>ゲートウェイ</td><td>起動は <code>claude-acp-gateway.cmd</code>（第4章）</td></tr>
   <tr><td><code>Claude API</code></td><td>API キー</td><td>起動は <code>claude-acp-api.cmd</code>（第2章）</td></tr>
   <tr><td><code>claude-acp</code></td><td>OAuth</td><td>レジストリ版。主な入口（第3章）</td></tr>
 </table>
@@ -333,6 +337,58 @@ $key = $null</code></pre>
 <p>設定側は、ユーザー設定とプロジェクト設定に <code>apiKeyHelper</code>、<code>ANTHROPIC_API_KEY</code>、<code>CLAUDE_CODE_USE_*</code> が無いかを見る。</p>
 
 </main>
+<h2 id="gateway">4. ゲートウェイ（組織の Claude apps gateway）</h2>
+<p>組織が自前で立てた Claude apps gateway を使う。会社アカウント（IdP。Microsoft ドメインなら Entra ID など）でブラウザ SSO し、上流（Bedrock など）の資格情報はゲートウェイ側が持つ。<strong>AWS のプロファイルもモデル ID のピン留めも要らない</strong>（<code>aws sso</code> は使わない）。クライアントに要るのは<strong>ゲートウェイの URL だけ</strong>。組織から案内される「発行者 URL」は IdP をゲートウェイ管理者が設定するための値で、ここでは使わない。</p>
+<ol class="steps">
+  <li>
+    <input type="checkbox" id="g1"> <label for="g1">設定を作る（URL をプロンプトで入力）</label>
+<pre><code>claude-gateway-setup.cmd</code></pre>
+    <div><code>-DryRun</code> で書かずに内容だけ表示。<code>-Url</code> で非対話。</div>
+  </li>
+  <li>
+    <input type="checkbox" id="g2"> <label for="g2">起動する</label>
+<pre><code>claude-gateway</code></pre>
+    <div><code>claude-pick gateway</code> でもよい。</div>
+  </li>
+  <li>
+    <input type="checkbox" id="g3"> <label for="g3">初回のログイン</label>
+    <div>起動後に <code>/login</code> → <strong>Cloud gateway</strong> で Enter → ブラウザで会社アカウントを承認。初回は TLS 証明書の指紋（先頭16文字）の確認が出るので、管理者が案内した値と照合する。</div>
+  </li>
+  <li>
+    <input type="checkbox" id="g4"> <label for="g4">確認する</label>
+    <div><code>/status</code> で、ゲートウェイ経由になっていることを確認する。</div>
+  </li>
+</ol>
+<ul>
+  <li><strong>URL は dotfiles に置かない。</strong>組織を特定できる値なので、<code>claude-gateway-setup.cmd</code> のプロンプトで入力し、この PC の <code>%USERPROFILE%\.claude-gateway\settings.json</code>（<code>forceLoginMethod: "gateway"</code> と <code>forceLoginGatewayUrl</code>。追跡しない）に書く。</li>
+  <li><strong>設定の場所を <code>~/.claude</code> と分ける。</strong>ゲートウェイのサインインは Claude for Teams / Enterprise のログイン（OAuth）の代わりになり、1つしか使えない。<code>claude-gateway</code> は <code>CLAUDE_CONFIG_DIR</code> を <code>~/.claude-gateway</code> にして起動するので、OAuth の <code>claude</code> とログイン情報が混ざらない。その代わり、<code>~/.claude</code> の共通設定（permissions、hooks、<code>CLAUDE.md</code> など）はこの起動には効かない。必要になったら <code>~/.claude-gateway</code> に足す。</li>
+  <li><strong>ログインは初回だけ手動。</strong>セッションはゲートウェイが期限前に自動で更新する。更新に失敗したとき（IdP 側で無効にされたなど）は、再度 <code>/login</code> を求められる。</li>
+  <li>要件: Claude Code v2.1.295 以降（ユーザー設定に <code>forceLoginMethod</code> / <code>forceLoginGatewayUrl</code> を置く方式）。管理設定（managed settings）が配られている PC では、ユーザー設定のゲートウェイ指定は無視される（管理側の設定が最優先）。</li>
+  <li>環境に <code>CLAUDE_CODE_USE_BEDROCK</code> や <code>ANTHROPIC_API_KEY</code> が残っていると、クラウドや API キーが優先される。<code>claude-gateway</code> は <code>claude-oauth</code> と同じく、その起動の間だけ外す。</li>
+  <li>ゲートウェイの上流が Bedrock でも、WebSearch などの制約は上流の都合による。<code>claude.ai</code> のアカウントに紐づく機能（connectors など）は使えない。</li>
+  <li>モデルはゲートウェイの許可リスト（<code>availableModels</code>）の範囲で <code>/model</code> から選ぶ。</li>
+</ul>
+
+<h3>Zed（Claude Gateway）</h3>
+<p><code>agent_servers</code> の <code>Claude Gateway</code> は、<code>command</code> に <code>claude-acp-gateway.cmd</code> だけを書く。<code>claude-acp-gateway.ps1</code> が <code>CLAUDE_CONFIG_DIR</code> を <code>~/.claude-gateway</code> にして <code>claude-agent-acp</code> を起動する（Zed の <code>env</code> に絶対パス＝ユーザー名を書かないため）。設定が無ければ止まる（止めないと、アダプタが <code>~/.claude</code> の OAuth で黙って動く）。</p>
+<ul>
+  <li>前提: <code>30_link.bat</code> 実行済み、<code>claude-gateway-setup.cmd</code> で設定を作り、<code>claude-gateway</code> で一度ログイン済みであること。ログイン情報は <code>~/.claude-gateway</code> にあり、CLI と Zed で共有される。</li>
+  <li><strong>未検証</strong>: Zed の ACP アダプタが、ゲートウェイのログイン情報を使って動くか（<code>/login</code> は CLI の機能）。動かない場合は、Zed ではなく CLI を使う。</li>
+</ul>
+
+<h3>試験</h3>
+<p><code>pwsh -NoProfile -File tests/windows/test_claude_gateway_setup.ps1</code>（URL の検証、設定の生成、非対話の実行、Zed 起動用の <code>CLAUDE_CONFIG_DIR</code> と終了コード。偽の <code>npx.cmd</code>）、<code>test_claude_launchers.ps1</code>（<code>claude-gateway</code> の環境変数の設定と復元、<code>claude-pick gateway</code>）。<strong>実際のゲートウェイでのログインは未検証</strong>（<code>/login</code> の動作、<code>CLAUDE_CONFIG_DIR</code> の分離で <code>forceLoginGatewayUrl</code> が読まれること、Zed での動作）。</p>
+
+<h3>うまくいかないとき（ゲートウェイ）</h3>
+<table>
+  <tr><th>症状</th><th>確認すること</th></tr>
+  <tr><td><code>claude-gateway</code> が <code>settings.json がありません</code></td><td><code>claude-gateway-setup.cmd</code> を実行する</td></tr>
+  <tr><td><code>/login</code> に Cloud gateway の画面が出ない</td><td><code>%USERPROFILE%\.claude-gateway\settings.json</code> の 2 つのキーと、<code>claude --version</code>（v2.1.295 以降）を確認する。管理設定が配られていると、ユーザー設定のゲートウェイ指定は無視される</td></tr>
+  <tr><td><code>Administrator policy requires a Cloud gateway sign-in</code></td><td>管理設定側がゲートウェイ必須。URL を組織の案内と合わせる</td></tr>
+  <tr><td>接続時に証明書の指紋の確認が出る</td><td>初回は正常。管理者が案内した指紋（先頭16文字）と照合する。変わっていたら管理者に確認する</td></tr>
+  <tr><td>HTTPS プロキシ経由で接続できない</td><td>ゲートウェイのホストを <code>NO_PROXY</code> に足す（指紋の固定がプロキシ経由だと働かない）</td></tr>
+  <tr><td>Zed の「Claude Gateway」が <code>no gateway settings</code> で終了する</td><td><code>claude-gateway-setup.cmd</code> を実行し、<code>claude-gateway</code> で一度ログインする</td></tr>
+</table>
 <script>
 document.querySelectorAll('pre').forEach(function (pre) {
   var b = document.createElement('button');
