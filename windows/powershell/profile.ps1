@@ -7,6 +7,30 @@ if ([Console]::IsOutputRedirected -or [Console]::IsInputRedirected) { return }
 # 方針: 起動を軽く保つ。ツール (starship/lsd/fzf/fd/zoxide/ghq) は apps.txt で入る前提で、
 # 不在時の代替は持たない。コマンド体系は bash/zsh の common.sh と揃えること（基本エイリアスのみ）。
 
+# Scoop の shim は、実体を起動する前にもう1プロセスを起動する（この PC では1回約 170ms）。
+# 実体のあるディレクトリを PATH の先頭に足して、git / lsd / fzf などの shim を迂回する
+$scoopApps = "$HOME\scoop\apps"
+foreach ($d in 'git\current\cmd', 'lsd\current', 'fzf\current', 'fd\current', 'ripgrep\current', 'bat\current', 'zoxide\current', 'gh\current\bin', 'ghq\current') {
+    $p = "$scoopApps\$d"
+    if ((Test-Path $p) -and ($env:PATH -notlike "*$p*")) { $env:PATH = "$p;$env:PATH" }
+}
+
+# starship / zoxide の `init` は、起動のたびに外部コマンドを呼ぶ（この PC では合計約 0.8 秒）。
+# 出力を %LOCALAPPDATA%\pwsh-init-cache に保存して使い回す。本体 exe（と設定）の更新日時が変わったら作り直す
+function Get-InitCacheFile {
+    param([string]$Name, [string[]]$Deps, [scriptblock]$Generate)
+    $dir = "$env:LOCALAPPDATA\pwsh-init-cache"
+    $key = ($Deps | ForEach-Object { if (Test-Path $_) { (Get-Item $_).LastWriteTimeUtc.Ticks } else { 0 } }) -join '-'
+    $file = "$dir\$Name-$key.ps1"
+    if (-not (Test-Path $file)) {
+        $text = & $Generate
+        New-Item -ItemType Directory $dir -Force | Out-Null
+        Remove-Item "$dir\$Name-*.ps1" -ErrorAction SilentlyContinue
+        [System.IO.File]::WriteAllText($file, $text, [System.Text.UTF8Encoding]::new($true))
+    }
+    $file
+}
+
 # For starship
 # pwsh 専用の設定を使う（git_branch / git_status を持たない）。starship が git を調べると、プロセス生成が遅い PC では
 # 1回のプロンプトが約 2.2 秒かかる（計測: docs/decisions.md）。ブランチ名は下の Invoke-Starship-PreCommand が出す
@@ -36,8 +60,16 @@ function Invoke-Starship-PreCommand {
                          elseif ($text.Length -ge 7) { $text.Substring(0, 7) }   # detached HEAD
 }
 
-# `init powershell` は starship をもう一度呼ぶスタブを返すので、完全版を直接取り込む（約 70ms 速い）
-Invoke-Expression (& starship init powershell --print-full-init | Out-String)
+# `init powershell` は starship をもう一度呼ぶスタブを返すので、完全版を直接取り込む（約 70ms 速い）。
+# 完全版は、継続プロンプトを得るために starship をもう1回呼ぶので、その結果を文字列に置き換える
+# （起動のたびに呼ばないため。見つからなければ置き換えず、元のまま動く）。
+# 関数を現在のスコープに定義する必要があるので、関数の中ではなく、ここで dot-source する
+. (Get-InitCacheFile 'starship' @((Get-Command starship).Source, $(if ($env:STARSHIP_CONFIG) { $env:STARSHIP_CONFIG } else { "$HOME\.config\starship.toml" })) {
+    $text = & starship init powershell --print-full-init | Out-String
+    $cont = (& starship prompt --continuation | Out-String).TrimEnd("`r", "`n").Replace("'", "''")
+    $re = [regex]'(?s)Set-PSReadLineOption -ContinuationPrompt \(\s*Invoke-Native -Executable ''[^'']*'' -Arguments @\(\s*"prompt",\s*"--continuation"\s*\)\s*\)'
+    $re.Replace($text, { "Set-PSReadLineOption -ContinuationPrompt '$cont'" })
+})
 
 # Emacs キーバインド
 Set-PSReadLineOption -EditMode Emacs
@@ -162,7 +194,7 @@ Set-Alias po Pop-Location
 function dl { Get-Location -Stack }
 
 # zoxide (z / zi)
-Invoke-Expression (& { (zoxide init powershell --cmd z | Out-String) })
+. (Get-InitCacheFile 'zoxide' @((Get-Command zoxide).Source) { zoxide init powershell --cmd z | Out-String })
 
 # zoxide DB を fzf で選んでジャンプ (Alt+j)
 function zfz {

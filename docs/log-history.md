@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-10-20 続き3（pwsh の起動を短くする変更を `profile.ps1` に足した）
+
+- Windows Terminal の新しいタブの起動が遅い（pwsh 本体が約 2,200ms で減らせず、プロファイルが約 1,500ms）ため、別の PC で作られた `profile.ps1` の追加の差分（画像で受け取った）を適用した。内容: Scoop の shim の迂回（PATH の先頭に実体のディレクトリ）、starship / zoxide の init 出力のキャッシュ（`%LOCALAPPDATA%\pwsh-init-cache`）、starship の継続プロンプトの固定文字列化。先の starship の切り替え（続き2）の上に、組み合わせて適用した（差分は切り替え前の `profile.ps1` が基準）。
+- 結果（元の PC の計測。この PC では未計測）: プロファイル読み込みが約 1,520ms から約 740〜860ms（-45〜50%）。この PC では、構文エラー0件、正規表現の一致、`tests/windows/test_claude_launchers.ps1` 失敗0を確認した。起動時間と実ターミナルでの動作は未確認。判断は `decisions.md`「pwsh の起動を短くする」。
+
 ### 2026-10-20 続き2（pwsh のプロンプトが約 2.2 秒かかる問題に、pwsh 専用の starship 設定を入れた）
 
 - Windows Terminal + PowerShell 7 で、プロンプト1回が約 2,200ms（directory 1,360ms、git_status 610ms）かかっていた。原因は starship が git を調べるときのプロセス生成の遅さ（`cmd /c exit` が約 165ms、`git --version` が約 540ms。会社 PC に Defender のほか、ファイルとプロセスを監視するフィルタドライバがある）。別の PC で調査・修正された差分（画像で受け取った）を、この PC に同じように適用した。
