@@ -106,7 +106,7 @@
   "hooks": { 
     "Stop": [ { 
       "hooks": [ { 
-        "type": "command", "command": "python \"$HOME/.claude/hooks/stop-record.py\"" } ] 
+        "type": "command", "shell": "powershell", "command": "python \"$HOME/.claude/hooks/stop-record.py\"" } ]
     } ] 
   },
   "enabledPlugins": {
