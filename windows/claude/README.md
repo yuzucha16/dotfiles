@@ -284,7 +284,7 @@ Claude Desktop の「Configure Third-Party Inference」の画面を開いて、�
 4. `claude-gateway` で起動する（`claude-pick gateway` でもよい）。`/status` で、`Anthropic base URL` がゲートウェイ、`Auth token` が `apiKeyHelper` であることを確認する。
 
 - **ベース URL は `ANTHROPIC_BASE_URL` と同じもの**（Desktop の「Gateway base URL」と同じ値を、`settings.json` の `env` に書く）。
-- **`pause` は入口によって違う。** `scripts\windows\*.bat`（番号つきのセットアップ）は、ダブルクリックでも結果が見えるよう最後に `pause` する。ここの `.cmd` は、`claude-gateway-setup.cmd` だけが `pause` する（対話専用）。`claude-gateway-token.cmd` は **`-Login` のときだけ** `pause` し、`apiKeyHelper` として呼ばれるときは入れない（標準出力にトークンだけを返す必要があり、`pause` を入れると待ち続けて出力も壊れる。試験で確認）。Zed の起動用 `claude-acp-gateway.cmd` も入れない。
+- **`pause` は入口によって違う。** `scripts\windows\*.bat`（番号つきのセットアップ）は、ダブルクリックでも結果が見えるよう最後に `pause` する。ここの `.cmd` は、`claude-gateway-setup.cmd` と `claude-bedrock-setup.cmd` だけが `pause` する（対話専用）。`claude-gateway-token.cmd` は **`-Login` のときだけ** `pause` し、`apiKeyHelper` として呼ばれるときは入れない（標準出力にトークンだけを返す必要があり、`pause` を入れると待ち続けて出力も壊れる。試験で確認）。Zed の起動用 `claude-acp-gateway.cmd` も入れない。
 - **URL とクライアント ID は dotfiles に置かない。** 組織を特定できる値なので、プロンプトで入力し、この PC のファイルにだけ書く。
 - **トークンの更新は自動。** ID トークンは約1時間で切れるが、`apiKeyHelper` が呼ばれるたびに期限を見て、切れていれば保管したリフレッシュトークンで無音で更新する（`offline_access` を含む既定のスコープのとき）。更新できなければ `-Login` を促して失敗する。
 - **設定の場所を `~/.claude` と分ける。** `apiKeyHelper` を共通の `settings.json` に入れると、`claude` が常にその認証になり OAuth に戻れない。`claude-gateway` は `CLAUDE_CONFIG_DIR` を `~/.claude-gateway` にして起動するので、OAuth の `claude` と混ざらない。その代わり、`~/.claude` の共通設定（permissions、hooks、`CLAUDE.md` など）はこの起動には効かない。必要になったら `~/.claude-gateway` に足す。

@@ -3,6 +3,12 @@
 日付つきの Log（降順）。開始時には読まない。必要なときに検索する。現在状態は `docs/log.md`。
 
 ## Log
+### 2026-10-20 続き（`pause` の範囲を承認。SSO の件を閉じた。他の PC の展開を完了）
+
+- ユーザーが `.cmd` の `pause` の範囲を承認した。もとの依頼は「`setup` 系の bat 全般」で、理由は「失敗したときにログを見落とすため」。対話専用の入口だけに入れ、`apiKeyHelper` として呼ばれる経路（`claude-gateway-token.cmd` の `-Login` 以外）と Zed の起動用（`claude-acp-gateway.cmd`）には入れない。これに合わせて `claude-bedrock-setup.cmd`（対話の setup なのに `pause` が無かった）にも、`claude-gateway-setup.cmd` と同じ形で `pause`（終了コードは保つ）を足した。
+- SSO の件は、ユーザーが閉じた。依頼の取り違え（接続先は SSO でなくゲートウェイ）が原因で、AWS SSO の追加は `84e4471` で取り消し済み。SSO に関する Next Actions と Open Questions は消した。`claude-bedrock-setup.ps1` にもともとある `-Sso` と試験は、ゲートウェイの依頼とは別の既存機能なので残した（外す指示は無い）。
+- 他の PC での展開（`30_link.bat`、`claude-gateway-setup.cmd`、`claude-gateway-token.cmd -Login`）は、ユーザーが完了と報告した。
+
 ### 2026-10-20（Claude Code と Zed を、組織の OIDC ゲートウェイにつないだ。AWS SSO と Claude apps gateway の案は取り消した）
 
 - ユーザーの依頼は「Zed の ACP エージェントと、`claude-pick` を使う Claude Code に、SSO の接続を足す」。接続先の種類が分からないまま進め、2回作り直した。(1) AWS の IAM Identity Center（`bedrock-sso`、`fb99d58`）。案内の URL が `awsapps.com/start` ではなく、AWS SSO でないと分かり、`84e4471` で取り消した。(2) Anthropic の Claude apps gateway（`/login` の Cloud gateway、`9fc2aaf`）。ゲートウェイの名前解決の結果が公開アドレスで、`gateway hosts must be on your organization's private network` で拒否された。(3) 汎用の LLM ゲートウェイ + Entra ID の OIDC（Claude Desktop の「Configure Third-Party Inference」と同じ構成）だった。
