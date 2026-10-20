@@ -7,7 +7,7 @@ Claude Code と Zed の agent を、4つの認証で使い分ける。章は Bed
 | 1. Bedrock | Amazon Bedrock（AWS 経由）     | `claude-bedrock`          | AWS の従量課金 |
 | 2. API キー  | Anthropic の Console API キー | `claude-api`              | 従量課金      |
 | 3. OAuth   | サブスク（Pro など）               | `claude` / `claude-oauth` | 定額        |
-| 4. ゲートウェイ | 組織の Claude apps gateway（会社アカウントの SSO） | `claude-gateway` | 組織の契約（ゲートウェイの上流） |
+| 4. ゲートウェイ | 組織の LLM ゲートウェイ（Entra ID などの OIDC サインイン） | `claude-gateway` | 組織の契約（ゲートウェイの上流） |
 
 `claude` は OAuth のまま、`claude-api` と `claude-bedrock` と `claude-gateway` だけ別の認証で起動する。判断の根拠は `docs/decisions.md` の「Claude Code の API キー認証は…」。
 
@@ -35,7 +35,7 @@ Claude Code と Zed の agent を、4つの認証で使い分ける。章は Bed
 |---|---|
 | `claude-pick` | fzf で `oauth` / `api` / `bedrock` / `gateway` を選んで起動する。`claude-pick api --resume` のように、モードを先頭に書けば選択を省ける。モードを省いた引数（`claude-pick --resume`）は、選んだあとの `claude` に渡す |
 | `claude-bedrock` | Bedrock |
-| `claude-gateway` | 組織の Claude apps gateway（設定の場所を `~/.claude-gateway` に分けて起動。環境に残った認証の変数は外す） |
+| `claude-gateway` | 組織の LLM ゲートウェイ（設定の場所を `~/.claude-gateway` に分けて起動。環境に残った認証の変数は外す） |
 | `claude-api` | API キー |
 | `claude-oauth` | OAuth（サブスク）。環境に残った変数を、その起動の間だけ外す |
 | `claude` | 環境に認証の変数が無ければ OAuth。残っていると、その認証になる |
@@ -260,43 +260,57 @@ Get-ChildItem Env: | Where-Object Name -match '^(ANTHROPIC_|CLAUDE_CODE_USE_|CLA
 
 設定側は、ユーザー設定とプロジェクト設定に `apiKeyHelper`、`ANTHROPIC_API_KEY`、`CLAUDE_CODE_USE_*` が無いかを見る。
 
-## 4. ゲートウェイ（組織の Claude apps gateway）
+## 4. ゲートウェイ（組織の LLM ゲートウェイ + OIDC）
 
-組織が自前で立てた Claude apps gateway を使う。会社アカウント（IdP。Microsoft ドメインなら Entra ID など）でブラウザ SSO し、上流（Bedrock など）の資格情報はゲートウェイ側が持つ。**AWS のプロファイルもモデル ID のピン留めも要らない**（`aws sso` は使わない）。クライアントに要るのは**ゲートウェイの URL だけ**。組織から案内される「発行者 URL」は IdP をゲートウェイ管理者が設定するための値で、ここでは使わない。
+組織が立てた LLM ゲートウェイ（Anthropic の Messages API の形式）を使う。Bedrock など上流の資格情報はゲートウェイ側が持ち、開発者は Entra ID などの IdP でサインインして、**取得した ID トークンを `Authorization: Bearer` で送る**。Claude Desktop の「Configure Third-Party Inference」（Gateway、Credential kind = Interactive sign-in）と同じ接続先・同じ IdP の設定を、Claude Code に移す。AWS のプロファイルは使わない（`aws sso` は不要）。
 
-| やりたいこと | コマンド |
+Claude Code には OIDC のサインイン機能が無いので、**`apiKeyHelper` がトークンを返す**構成にする。
+
+| ファイル | 役割 |
 |---|---|
-| 設定を作る（URL をプロンプトで入力） | `claude-gateway-setup.cmd`（`-DryRun` で書かずに内容だけ表示。`-Url` で非対話） |
-| 起動 | `claude-gateway`（`claude-pick gateway`） |
-| 初回のログイン | 起動後に `/login` → **Cloud gateway** で Enter → ブラウザで会社アカウントを承認 |
-| 確認 | 起動後に `/status` |
+| `claude-gateway-setup.ps1` / `.cmd` | 設定をプロンプトで入力して生成する。`~/.local/bin` にリンク |
+| `claude-gateway-token.ps1` / `.cmd` | `apiKeyHelper`。トークンを標準出力に返す。`-Login` でブラウザにサインイン。同じく `~/.local/bin` にリンク |
+| `%USERPROFILE%\.claude-gateway\gateway.json` | `issuer` / `clientId` / `scopes` / `redirectPort` / `tokenType`。**リポジトリの外。追跡しない** |
+| `%USERPROFILE%\.claude-gateway\settings.json` | `apiKeyHelper`、`ANTHROPIC_BASE_URL`、モデル ID の割り当て。**追跡しない** |
+| `%USERPROFILE%\.claude-gateway\token.dpapi` | トークン（リフレッシュトークンを含む）。DPAPI で暗号化。**追跡しない** |
 
-- **URL は dotfiles に置かない。** 組織を特定できる値なので、`claude-gateway-setup.cmd` のプロンプトで入力し、この PC の `%USERPROFILE%\.claude-gateway\settings.json`（`forceLoginMethod: "gateway"` と `forceLoginGatewayUrl`。追跡しない）に書く。
-- **設定の場所を `~/.claude` と分ける。** ゲートウェイのサインインは Claude for Teams / Enterprise のログイン（OAuth）の代わりになり、1つしか使えない。`claude-gateway` は `CLAUDE_CONFIG_DIR` を `~/.claude-gateway` にして起動するので、OAuth の `claude` とログイン情報が混ざらない。その代わり、`~/.claude` の共通設定（permissions、hooks、`CLAUDE.md` など）はこの起動には効かない。必要になったら `~/.claude-gateway` に足す。
-- **ログインは初回だけ手動。** セッションはゲートウェイが期限前に自動で更新する。更新に失敗したとき（IdP 側で無効にされたなど）は、再度 `/login` を求められる。初回の接続では、ゲートウェイの TLS 証明書の指紋（先頭16文字）の確認が出る。管理者が案内した値と照合する。
-- 要件: Claude Code v2.1.295 以降（ユーザー設定に `forceLoginMethod` / `forceLoginGatewayUrl` を置く方式）。管理設定（managed settings）が配られている PC では、ユーザー設定のゲートウェイ指定は無視される（管理側の設定が最優先）。
-- 環境に `CLAUDE_CODE_USE_BEDROCK` や `ANTHROPIC_API_KEY` が残っていると、クラウドや API キーが優先される。`claude-gateway` は `claude-oauth` と同じく、その起動の間だけ外す。
-- ゲートウェイの上流が Bedrock でも、WebSearch などの制約は上流の都合による。`claude.ai` のアカウントに紐づく機能（connectors など）は使えない。
-- モデルはゲートウェイの許可リスト（`availableModels`）の範囲で `/model` から選ぶ。
+### 手順（初回）
+
+Claude Desktop の「Configure Third-Party Inference」の画面を開いて、値を見ながら入力する。
+
+1. `scripts\windows\30_link.bat` を実行する（スクリプトを `~/.local/bin` にリンク。新しいターミナルを開く）。
+2. `claude-gateway-setup.cmd` を実行し、順に答える: ゲートウェイのベース URL → 発行者 URL（Issuer URL）→ クライアント ID（Client ID）→ スコープ（空欄 = 既定）→ トークン種別（既定 `id_token`）→ リダイレクトポート（空欄 = 固定しない）→ opus / sonnet / haiku に割り当てるモデル ID → 既定モデル。モデル ID は、Desktop の「推論モデルの一覧」と同じものを使う。`-DryRun` で書かずに内容だけ表示。
+3. `claude-gateway-token.cmd -Login` を実行する。ブラウザが開くので、会社のアカウントでサインインする。トークンが DPAPI で暗号化して保管される（`saved: …\token.dpapi`）。
+4. `claude-gateway` で起動する（`claude-pick gateway` でもよい）。`/status` で、`Anthropic base URL` がゲートウェイ、`Auth token` が `apiKeyHelper` であることを確認する。
+
+- **URL とクライアント ID は dotfiles に置かない。** 組織を特定できる値なので、プロンプトで入力し、この PC のファイルにだけ書く。
+- **トークンの更新は自動。** ID トークンは約1時間で切れるが、`apiKeyHelper` が呼ばれるたびに期限を見て、切れていれば保管したリフレッシュトークンで無音で更新する（`offline_access` を含む既定のスコープのとき）。更新できなければ `-Login` を促して失敗する。
+- **設定の場所を `~/.claude` と分ける。** `apiKeyHelper` を共通の `settings.json` に入れると、`claude` が常にその認証になり OAuth に戻れない。`claude-gateway` は `CLAUDE_CONFIG_DIR` を `~/.claude-gateway` にして起動するので、OAuth の `claude` と混ざらない。その代わり、`~/.claude` の共通設定（permissions、hooks、`CLAUDE.md` など）はこの起動には効かない。必要になったら `~/.claude-gateway` に足す。
+- **クライアント ID は Desktop と同じ値を使う。** IdP（Entra なら「アプリの登録」）に登録された、公開クライアントのアプリの ID。リダイレクト URI は `http://127.0.0.1/callback`（loopback。Entra はポートを問わない）。ブラウザのサインインはこのスクリプトが同じ形（認可コード + PKCE）で行うので、新しい登録は要らない見込み。登録の中身は IdP の管理者のもので、利用者が触る必要は無い。
+- **トークン種別**: 既定は ID トークン（`id_token`）。ゲートウェイが API スコープ付きのアクセストークンを求める構成なら `access_token` とスコープを指定する。Desktop の設定に合わせる。
+- 環境に `CLAUDE_CODE_USE_BEDROCK` や `ANTHROPIC_API_KEY` が残っていると、そちらが優先される。`claude-gateway` は `claude-oauth` と同じく、その起動の間だけ外す。
+- モデルはゲートウェイが提供する ID だけ使える。`/v1/models` を持つゲートウェイは `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`（設定済み）で自動検出される。
 
 ### Zed（Claude Gateway）
 
-`agent_servers` の `Claude Gateway` は、`command` に `claude-acp-gateway.cmd` だけを書く。`claude-acp-gateway.ps1` が `CLAUDE_CONFIG_DIR` を `~/.claude-gateway` にして `claude-agent-acp` を起動する（Zed の `env` に絶対パス＝ユーザー名を書かないため）。設定が無ければ止まる（止めないと、アダプタが `~/.claude` の OAuth で黙って動く）。
+`agent_servers` の `Claude Gateway` は、`command` に `claude-acp-gateway.cmd` だけを書く。`claude-acp-gateway.ps1` が、設定とトークンがあることを確かめ（無ければ止まる。止めないと、アダプタが `~/.claude` の OAuth で黙って動く）、`CLAUDE_CONFIG_DIR` を `~/.claude-gateway` にして `claude-agent-acp` を起動する。
 
-- 前提: `30_link.bat` 実行済み、`claude-gateway-setup.cmd` で設定を作り、`claude-gateway` で一度ログイン済みであること。ログイン情報は `~/.claude-gateway` にあり、CLI と Zed で共有される。
-- **未検証**: Zed の ACP アダプタが、ゲートウェイのログイン情報を使って動くか（`/login` は CLI の機能）。動かない場合は、Zed ではなく CLI を使う。
+- 前提: `30_link.bat` 実行済み、`claude-gateway-setup.cmd` と `claude-gateway-token.cmd -Login` が済んでいること。
+- **未検証**: ACP アダプタが `~/.claude-gateway\settings.json` の `apiKeyHelper` を読み、1時間後もトークンを更新できるか。読まない場合、起動時のトークンのまま約1時間で切れる。その場合は Zed を再起動する。
 
 ### 試験
 
-`pwsh -NoProfile -File tests/windows/test_claude_gateway_setup.ps1`（URL の検証、設定の生成、非対話の実行、Zed 起動用の `CLAUDE_CONFIG_DIR` と終了コード。偽の `npx.cmd`）、`test_claude_launchers.ps1`（`claude-gateway` の環境変数の設定と復元、`claude-pick gateway`）。**実際のゲートウェイでのログインは未検証**（`/login` の動作、`CLAUDE_CONFIG_DIR` の分離で `forceLoginGatewayUrl` が読まれること、Zed での動作）。
+`pwsh -NoProfile -File tests/windows/test_claude_gateway_token.ps1`（PKCE・JWT・保管の関数、ローカルの偽の IdP での取得と更新）、`test_claude_gateway_setup.ps1`（設定の生成、Zed の起動用）、`test_claude_launchers.ps1`（`claude-gateway`）。**未検証**: 実際の IdP でのブラウザサインイン（`-Login`）、実際のゲートウェイでの動作、ゲートウェイが Claude Code のリクエスト（`Authorization: Bearer` と `x-api-key` の両方にトークン）を受けること、Zed での動作。
 
 ### うまくいかないとき（ゲートウェイ）
 
 | 症状 | 確認すること |
 |---|---|
-| `claude-gateway` が `settings.json がありません` | `claude-gateway-setup.cmd` を実行する |
-| `/login` に Cloud gateway の画面が出ない | `%USERPROFILE%\.claude-gateway\settings.json` の 2 つのキーと、`claude --version`（v2.1.295 以降）を確認する。管理設定が配られていると、ユーザー設定のゲートウェイ指定は無視される |
-| `Administrator policy requires a Cloud gateway sign-in` | 管理設定側がゲートウェイ必須。URL を組織の案内と合わせる |
-| 接続時に証明書の指紋の確認が出る | 初回は正常。管理者が案内した指紋（先頭16文字）と照合する。変わっていたら管理者に確認する |
-| HTTPS プロキシ経由で接続できない | ゲートウェイのホストを `NO_PROXY` に足す（指紋の固定がプロキシ経由だと働かない） |
-| Zed の「Claude Gateway」が `no gateway settings` で終了する | `claude-gateway-setup.cmd` を実行し、`claude-gateway` で一度ログインする |
+| `claude-gateway` が `settings.json がありません` / `未サインインです` | `claude-gateway-setup.cmd` と `claude-gateway-token.cmd -Login` を実行する |
+| `Your apiKeyHelper script is failing` | `claude-gateway-token.cmd` を直接実行する。`not signed in` や `expired` なら `-Login`。更新に失敗するなら、スコープに `offline_access` があるか確認する |
+| `-Login` で `AADSTS50011`（リダイレクト URI の不一致） | IdP のアプリ登録のリダイレクト URI が `http://127.0.0.1/callback` か。固定ポートが必要な IdP なら `redirectPort` を設定する。IdP の管理者に確認する |
+| `-Login` で `AADSTS65001`（同意が必要） | `access_token` モードで API の権限が付与されていない。管理者に確認する |
+| `401` | トークン種別（ID / アクセス）とスコープが、Desktop の設定と同じか。ゲートウェイが期待する `aud`（クライアント ID）か |
+| `404` / モデルが見つからない | `claude-gateway-setup.cmd` で割り当てたモデル ID が、ゲートウェイの一覧と同じか |
+| 接続できない（`ENOTFOUND` / タイムアウト） | VPN・プロキシ。社外へプロキシ経由なら `HTTPS_PROXY` が要る場合がある（Claude Code は環境変数のプロキシを使う） |
+| Zed の「Claude Gateway」が `gateway token is not available` で終了する | `claude-gateway-token.cmd -Login` を実行する |
