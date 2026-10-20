@@ -19,6 +19,7 @@ param(
     [string]$HaikuId,
     [string]$Model,                                        # セッションの既定モデル（別名か ID）。空 = Claude Code の既定
     [string]$ConfigDir = (Join-Path $HOME '.claude-gateway'),
+    [string]$SharedFrom = (Join-Path $HOME '.claude\settings.json'),  # 共通設定の写し元（permissions、hooks など）。空 = 写さない
     [switch]$DryRun,                                       # 書かずに内容だけ表示する
     [switch]$Force                                         # 既存のファイルを確認なしで上書きする
 )
@@ -53,6 +54,17 @@ function New-GatewaySettings {
     if ($Model) { $s['model'] = $Model }
     $s['env'] = $e
     $s
+}
+
+# 共通の ~/.claude/settings.json から、ゲートウェイでも効かせたい項目だけを写す（settings は ConfigDir ごとに独立していて、合成されないため）。
+# apiKeyHelper / env / model などの認証・接続の項目は写さない（ゲートウェイ側の値を守る）。写しは作成時点のもの（共通設定を変えたら再実行する）
+$SharedKeys = 'theme', 'permissions', 'hooks', 'enabledPlugins', 'extraKnownMarketplaces'
+function Merge-SharedSettings {
+    param($Settings, [string]$From)
+    if (-not $From -or -not (Test-Path $From)) { return $Settings }
+    try { $shared = Get-Content $From -Raw | ConvertFrom-Json -AsHashtable } catch { return $Settings }
+    foreach ($k in $SharedKeys) { if ($shared.ContainsKey($k) -and -not $Settings.Contains($k)) { $Settings[$k] = $shared[$k] } }
+    $Settings
 }
 
 # dot-source されたとき（試験）は、関数だけ定義して終わる
@@ -97,7 +109,7 @@ if (-not $ClientId.Trim()) { Stop-Setup 'クライアント ID が空です。' 
 $cfgFile = Join-Path $ConfigDir 'gateway.json'
 $setFile = Join-Path $ConfigDir 'settings.json'
 $cfgJson = (New-GatewayConfig $iss $ClientId.Trim() $Scopes.Trim() $TokenType $RedirectPort) | ConvertTo-Json
-$setJson = (New-GatewaySettings $base "$OpusId".Trim() "$SonnetId".Trim() "$HaikuId".Trim() "$Model".Trim()) | ConvertTo-Json -Depth 5
+$setJson = (Merge-SharedSettings (New-GatewaySettings $base "$OpusId".Trim() "$SonnetId".Trim() "$HaikuId".Trim() "$Model".Trim()) $SharedFrom) | ConvertTo-Json -Depth 10
 if (-not ("$OpusId$SonnetId$HaikuId".Trim())) { Write-Host '[WARN] モデル ID を1つも割り当てていません。ゲートウェイが /v1/models を持たないと、モデルが見つからないことがあります（Desktop の「推論モデルの一覧」と同じ ID を指定する）。' }
 
 if ($DryRun) {

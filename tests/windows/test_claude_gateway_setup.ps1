@@ -30,6 +30,13 @@ $s = New-GatewaySettings 'https://gw.example.com' '' '' '' ''
 Check 'settings: apiKeyHelper and base URL, no pins' (($s.apiKeyHelper -eq 'claude-gateway-token.cmd') -and ($s.env.ANTHROPIC_BASE_URL -eq 'https://gw.example.com') -and -not $s.env.Contains('ANTHROPIC_DEFAULT_SONNET_MODEL') -and -not $s.Contains('model'))
 $s = New-GatewaySettings 'https://gw.example.com' 'o-id' 's-id' 'h-id' 'sonnet'
 Check 'settings: model pins and default model'   (($s.env.ANTHROPIC_DEFAULT_OPUS_MODEL -eq 'o-id') -and ($s.env.ANTHROPIC_DEFAULT_SONNET_MODEL -eq 's-id') -and ($s.env.ANTHROPIC_DEFAULT_HAIKU_MODEL -eq 'h-id') -and ($s.model -eq 'sonnet'))
+$sh = Join-Path ([IO.Path]::GetTempPath()) ("tshared-" + [guid]::NewGuid().ToString('N') + '.json')
+Set-Content $sh '{"theme":"dark","permissions":{"allow":["Read(x)"]},"hooks":{"Stop":[]},"apiKeyHelper":"evil","env":{"ANTHROPIC_BASE_URL":"https://other"},"model":"opus"}'
+$m = Merge-SharedSettings (New-GatewaySettings 'https://gw.example.com' '' '' '' '') $sh
+Check 'shared: theme/permissions/hooks copied'   (($m.theme -eq 'dark') -and ($m.permissions.allow[0] -eq 'Read(x)') -and $m.Contains('hooks'))
+Check 'shared: apiKeyHelper/env/model not overridden' (($m.apiKeyHelper -eq 'claude-gateway-token.cmd') -and ($m.env.ANTHROPIC_BASE_URL -eq 'https://gw.example.com') -and -not $m.Contains('model'))
+Check 'shared: missing file leaves settings as is' ((Merge-SharedSettings (New-GatewaySettings 'https://gw.example.com' '' '' '' '') 'Z:\nope.json').Count -eq 2)
+Remove-Item $sh
 
 # --- スクリプトの実行（標準入力は空 = 非対話） ---
 function Run-Script($argList) {

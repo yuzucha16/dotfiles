@@ -279,7 +279,7 @@ Claude Code には OIDC のサインイン機能が無いので、**`apiKeyHelpe
 Claude Desktop の「Configure Third-Party Inference」の画面を開いて、値を見ながら入力する。
 
 1. `scripts\windows\30_link.bat` を実行する（スクリプトを `~/.local/bin` にリンク。新しいターミナルを開く）。
-2. `claude-gateway-setup.cmd` を実行し、順に答える: ゲートウェイのベース URL → 発行者 URL（Issuer URL）→ クライアント ID（Client ID）→ スコープ（空欄 = 既定）→ トークン種別（既定 `id_token`）→ リダイレクトポート（空欄 = 固定しない）→ opus / sonnet / haiku に割り当てるモデル ID → 既定モデル。モデル ID は、Desktop の「推論モデルの一覧」と同じものを使う。`-DryRun` で書かずに内容だけ表示。
+2. `claude-gateway-setup.cmd` を実行し、順に答える: ゲートウェイのベース URL → 発行者 URL（Issuer URL）→ クライアント ID（Client ID）→ スコープ（空欄 = 既定）→ トークン種別（既定 `id_token`）→ リダイレクトポート（空欄 = 固定しない）→ opus / sonnet / haiku に割り当てるモデル ID → 既定モデル。モデル ID は、Desktop の「推論モデルの一覧」と同じものを使う。`-DryRun` で書かずに内容だけ表示。共通の `~/.claude/settings.json` から `theme`、`permissions`、`hooks`、`enabledPlugins`、`extraKnownMarketplaces` を `settings.json` に写す（作成時点の写し。共通設定を変えたら `-Force` で再実行。`apiKeyHelper`、`env`、`model` は写さない。`-SharedFrom ''` で写さない）。`skills` と `CLAUDE.md` は写さない。
 3. `claude-gateway-token.cmd -Login` を実行する。ブラウザが開くので、会社のアカウントでサインインする。トークンが DPAPI で暗号化して保管される（`saved: …\token.dpapi`）。
 4. `claude-gateway` で起動する（`claude-pick gateway` でもよい）。`/status` で、`Anthropic base URL` がゲートウェイ、`Auth token` が `apiKeyHelper` であることを確認する。
 
