@@ -8,6 +8,34 @@ if ([Console]::IsOutputRedirected -or [Console]::IsInputRedirected) { return }
 # 不在時の代替は持たない。コマンド体系は bash/zsh の common.sh と揃えること（基本エイリアスのみ）。
 
 # For starship
+# pwsh 専用の設定を使う（git_branch / git_status を持たない）。starship が git を調べると、プロセス生成が遅い PC では
+# 1回のプロンプトが約 2.2 秒かかる（計測: docs/decisions.md）。ブランチ名は下の Invoke-Starship-PreCommand が出す
+if (Test-Path "$HOME\.config\starship-pwsh.toml") { $env:STARSHIP_CONFIG = "$HOME\.config\starship-pwsh.toml" }
+
+# プロンプトの直前に starship が呼ぶ。.git/HEAD を直接読んで、ブランチ名を PS_GIT_BRANCH に入れる（プロセスを起動しない）。
+# 表示は starship-pwsh.toml の [env_var.PS_GIT_BRANCH]。リポジトリの外では空にする（空だとモジュールは出ない）
+function Invoke-Starship-PreCommand {
+    $env:PS_GIT_BRANCH = $null
+    if ($PWD.Provider.Name -ne 'FileSystem') { return }
+    $dir = $PWD.ProviderPath
+    while ($dir) {
+        $git = [System.IO.Path]::Combine($dir, '.git')
+        if ([System.IO.Directory]::Exists($git)) { $head = [System.IO.Path]::Combine($git, 'HEAD'); break }
+        if ([System.IO.File]::Exists($git)) {
+            # worktree / submodule: .git ファイルの "gitdir: <path>" が実体
+            $line = [System.IO.File]::ReadAllText($git).Trim()
+            if ($line -notmatch '^gitdir:\s*(.+)$') { return }
+            $head = [System.IO.Path]::Combine([System.IO.Path]::GetFullPath($Matches[1], $dir), 'HEAD')
+            break
+        }
+        $dir = [System.IO.Path]::GetDirectoryName($dir)
+    }
+    if (-not $head -or -not [System.IO.File]::Exists($head)) { return }
+    $text = [System.IO.File]::ReadAllText($head).Trim()
+    $env:PS_GIT_BRANCH = if ($text -match '^ref:\s*refs/heads/(.+)$') { $Matches[1] }
+                         elseif ($text.Length -ge 7) { $text.Substring(0, 7) }   # detached HEAD
+}
+
 # `init powershell` は starship をもう一度呼ぶスタブを返すので、完全版を直接取り込む（約 70ms 速い）
 Invoke-Expression (& starship init powershell --print-full-init | Out-String)
 

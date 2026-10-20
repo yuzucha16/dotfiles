@@ -1,0 +1,94 @@
+# =========================
+# Starship（PowerShell 専用。home/.config/starship.toml からの派生）
+# 差分は次の3点だけ。それ以外を変えたときは、共通の starship.toml と揃えること。
+#   1. git_branch / git_status を外した。Windows は、プロセス生成が遅い（会社PCの保護ソフトの介入）ため、
+#      starship の git 取得が1回のプロンプトで約1.8秒かかる。ブランチ名は profile.ps1 の
+#      Invoke-Starship-PreCommand が .git/HEAD を直接読み、環境変数 PS_GIT_BRANCH 経由で表示する（プロセス生成なし）。
+#   2. directory の truncate_to_repo を false にした（true だと、リポジトリ探索で約1.2秒かかる）。
+#   3. 変更の有無の印（git_status）は出ない。
+# =========================
+add_newline = true
+command_timeout = 500
+scan_timeout = 10
+
+# 1行目: OS / ユーザ@ホスト(SSH時) / ディレクトリ / Git / 言語 / シェル / 実行時間 / ステータス
+# 2行目: 入力記号
+format = """
+$os$username$hostname$directory${env_var.PS_GIT_BRANCH}$c$python$shell$cmd_duration$status
+$character"""
+
+[character]
+success_symbol = '[❯](bold green)'
+error_symbol = '[❯](bold red)'
+vimcmd_symbol = '[❮](bold yellow)'
+
+[directory]
+truncation_length = 2
+truncate_to_repo = false
+style = "cyan"
+format = "[$path]($style) "
+read_only = " "
+
+# ---- Git（ブランチ名だけ。profile.ps1 が PS_GIT_BRANCH に入れる。記号込みの文字列を入れる） ----
+[env_var.PS_GIT_BRANCH]
+variable = "PS_GIT_BRANCH"
+format = "[$env_value](purple) "
+
+# ---- 言語（条件を満たすときだけ表示。バージョンは出さない） ----
+[c]
+symbol = " "         # Nerd Font (なくてもOK)
+format = "[$symbol]($style) "
+style = "bright-blue"
+detect_extensions = ["c", "h", "cpp", "cxx", "cc", "hpp", "hh", "ipp"]
+detect_files = ["CMakeLists.txt", "Makefile"]
+
+# Python（venv 名のみ）
+[python]
+symbol = "🐍 "
+format = "[$symbol($virtualenv)]($style) "
+style = "blue"
+detect_files = ["pyproject.toml", "requirements.txt", "setup.py"]
+
+# 現在のシェルを薄く表示
+[shell]
+disabled = false
+bash_indicator = "bash"
+zsh_indicator = "zsh"
+powershell_indicator = "pwsh"
+unknown_indicator = "sh"
+format = "[$indicator]($style) "
+style = "dimmed"
+
+# ---- 遅い時だけ実行時間を表示 ----
+[cmd_duration]
+min_time = 2000
+format = "took [$duration]($style) "
+style = "dimmed italic white"
+
+# ---- ステータス（失敗時だけ） ----
+[status]
+disabled = false
+recognize_signal_code = true
+format = "[$symbol$status]($style) "
+map_symbol = true
+style = "bold red"
+pipestatus = false
+
+[os]
+disabled = false
+format = "[$symbol]($style)"
+style = "dimmed"
+[os.symbols]
+Ubuntu = "󰕈 "
+Linux  = ""
+Windows = ""
+
+[hostname]
+ssh_only = true
+format = "[@$hostname](dimmed purple) "
+
+[username]
+show_always = false
+style_user = "bold white"
+style_root = "bold red"
+format = "[$user]($style)"

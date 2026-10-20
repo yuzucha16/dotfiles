@@ -3,7 +3,12 @@
 日付つきの Log（降順）。開始時には読まない。必要なときに検索する。現在状態は `docs/log.md`。
 
 ## Log
-### 2026-10-20 続き（`pause` の範囲を承認。SSO の件を閉じた。他の PC の展開を完了）
+
+### 2026-10-20 続き2（pwsh のプロンプトが約 2.2 秒かかる問題に、pwsh 専用の starship 設定を入れた）
+
+- Windows Terminal + PowerShell 7 で、プロンプト1回が約 2,200ms（directory 1,360ms、git_status 610ms）かかっていた。原因は starship が git を調べるときのプロセス生成の遅さ（`cmd /c exit` が約 165ms、`git --version` が約 540ms。会社 PC に Defender のほか、ファイルとプロセスを監視するフィルタドライバがある）。別の PC で調査・修正された差分（画像で受け取った）を、この PC に同じように適用した。
+- 内容: `windows/powershell/starship.toml`（pwsh 専用。`git_branch` / `git_status` を外し、`directory` の `truncate_to_repo` を false にし、`env_var.PS_GIT_BRANCH` を表示）、`windows/powershell/profile.ps1`（`STARSHIP_CONFIG` を切り替え、`Invoke-Starship-PreCommand` が `.git/HEAD` を直接読んでブランチ名を出す）、`manifests/links.map`（`~/.config/starship-pwsh.toml` へのリンク。差分には無く、この PC で補った）、`windows/README.md`。
+- 結果（元の PC での計測。この PC では未計測）: 約 2,200ms から約 230ms（-90%）。計測は Claude Code の子プロセス内で、Windows Terminal 内の値は未測定。この PC では、プロファイルの構文エラー0件だけ確認した。リンクの作成（`30_link.bat`）と、新しいタブでの体感は未確認。判断は `decisions.md`「pwsh だけ starship の git 系モジュールを外す」。 の範囲を承認。SSO の件を閉じた。他の PC の展開を完了）
 
 - ユーザーが `.cmd` の `pause` の範囲を承認した。もとの依頼は「`setup` 系の bat 全般」で、理由は「失敗したときにログを見落とすため」。対話専用の入口だけに入れ、`apiKeyHelper` として呼ばれる経路（`claude-gateway-token.cmd` の `-Login` 以外）と Zed の起動用（`claude-acp-gateway.cmd`）には入れない。これに合わせて `claude-bedrock-setup.cmd`（対話の setup なのに `pause` が無かった）にも、`claude-gateway-setup.cmd` と同じ形で `pause`（終了コードは保つ）を足した。
 - SSO の件は、ユーザーが閉じた。依頼の取り違え（接続先は SSO でなくゲートウェイ）が原因で、AWS SSO の追加は `84e4471` で取り消し済み。SSO に関する Next Actions と Open Questions は消した。`claude-bedrock-setup.ps1` にもともとある `-Sso` と試験は、ゲートウェイの依頼とは別の既存機能なので残した（外す指示は無い）。

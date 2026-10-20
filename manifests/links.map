@@ -20,6 +20,7 @@ home\.gitconfig|%USERPROFILE%\.gitconfig
 home\.gitignore_global|%USERPROFILE%\.gitignore_global
 home\.config\starship.toml|%USERPROFILE%\.config\starship.toml
 home\.vimrc|%USERPROFILE%\.vimrc
+windows\powershell\starship.toml|%USERPROFILE%\.config\starship-pwsh.toml
 windows\powershell\profile.ps1|%USERPROFILE%\Documents\PowerShell\profile.ps1
 
 # Claude Code (user settings: permission base)
