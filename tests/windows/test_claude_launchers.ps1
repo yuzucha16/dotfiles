@@ -70,6 +70,10 @@ $msg = (claude-gateway 6>&1) -join "`n"
 Check 'gateway: no settings -> message, claude not called' (($script:calls.Count -eq 0) -and ($msg -match 'claude-gateway-setup'))
 New-Item -ItemType Directory -Force (Join-Path $fakeHome '.claude-gateway') | Out-Null
 Set-Content (Join-Path $fakeHome '.claude-gateway\settings.json') '{}'
+$script:calls = @()
+$msg = (claude-gateway 6>&1) -join "`n"
+Check 'gateway: not signed in -> -Login hint, claude not called' (($script:calls.Count -eq 0) -and ($msg -match 'claude-gateway-token.*-Login'))
+Set-Content (Join-Path $fakeHome '.claude-gateway\token.dpapi') 'x'
 $env:ANTHROPIC_API_KEY = 'k'
 $script:calls = @()
 claude-gateway -p hi

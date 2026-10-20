@@ -69,12 +69,13 @@ function claude-oauth {
     }
 }
 
-# Claude Code を組織の Claude apps gateway（SSO サインイン）で起動する。設定の場所を ~/.claude-gateway に分けて起動する
-# （ゲートウェイのサインインは OAuth のログインの代わりになり1つしか使えないため、~/.claude と分ける）。
-# 設定は claude-gateway-setup.cmd で作る。初回は /login → Cloud gateway。環境に残った認証の変数は claude-oauth と同じく外す
+# Claude Code を組織の LLM ゲートウェイ（Entra ID などの OIDC で認証）で起動する。設定の場所を ~/.claude-gateway に分けて起動する
+# （apiKeyHelper を共通の ~/.claude に入れると OAuth に戻れなくなるため分ける）。
+# 設定は claude-gateway-setup.cmd で作り、初回は claude-gateway-token.cmd -Login でサインインする。環境に残った認証の変数は claude-oauth と同じく外す
 function claude-gateway {
     $dir = "$HOME\.claude-gateway"
     if (-not (Test-Path "$dir\settings.json")) { Write-Host "[ERR] $dir\settings.json がありません。先に claude-gateway-setup.cmd を実行してください。"; return }
+    if (-not (Test-Path "$dir\token.dpapi")) { Write-Host "[ERR] 未サインインです。先に claude-gateway-token.cmd -Login を実行してください。"; return }
     $saved = [Environment]::GetEnvironmentVariable('CLAUDE_CONFIG_DIR', 'Process')
     $env:CLAUDE_CONFIG_DIR = $dir
     try { claude-oauth @args }

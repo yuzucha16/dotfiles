@@ -50,8 +50,8 @@
         "ANTHROPIC_DEFAULT_HAIKU_MODEL": "global.anthropic.claude-haiku-5-5"
       }
     },
-    // Organization's Claude apps gateway (SSO sign-in). windows/claude/claude-acp-gateway.ps1 points CLAUDE_CONFIG_DIR at ~/.claude-gateway
-    // (made by claude-gateway-setup.cmd; the gateway URL lives there, not in this file). First sign-in: run `claude-gateway` and /login.
+    // Organization's LLM gateway (OIDC sign-in). windows/claude/claude-acp-gateway.ps1 points CLAUDE_CONFIG_DIR at ~/.claude-gateway
+    // (made by claude-gateway-setup.cmd; the gateway URL and client ID live there, not in this file). First sign-in: claude-gateway-token.cmd -Login.
     "Claude Gateway": {
       "type": "custom",
       "command": "claude-acp-gateway.cmd",
