@@ -53,6 +53,14 @@ function claude-bedrock {
     claude --settings $f @args
 }
 
+# Claude Code を Amazon Bedrock（IAM Identity Center = SSO の profile）で起動する。設定はこの PC 専用の ~/.claude/settings-bedrock-sso.json
+# 作り方: claude-bedrock-setup.cmd -Sso -AwsProfile db-trial -OutFile $HOME\.claude\settings-bedrock-sso.json（awsAuthRefresh が入るので、期限切れは起動中に aws sso login が走る）
+function claude-bedrock-sso {
+    $f = "$HOME\.claude\settings-bedrock-sso.json"
+    if (-not (Test-Path $f)) { Write-Host "[ERR] $f がありません。先に claude-bedrock-setup.cmd -Sso -OutFile $f を実行してください。"; return }
+    claude --settings $f @args
+}
+
 # Claude Code を OAuth（サブスク）で起動する。OAuth より優先される環境変数（API キー、Bedrock などの切替）を、この起動の間だけ外す
 function claude-oauth {
     $names = 'ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'CLAUDE_CODE_USE_BEDROCK', 'CLAUDE_CODE_USE_MANTLE', 'CLAUDE_CODE_USE_VERTEX', 'CLAUDE_CODE_USE_FOUNDRY'
@@ -69,18 +77,20 @@ function claude-oauth {
     }
 }
 
-# 起動する認証を選ぶ: claude-pick（fzf で選ぶ）/ claude-pick oauth|api|bedrock。残りの引数は claude に渡す（例: claude-pick api --resume）
+# 起動する認証を選ぶ: claude-pick（fzf で選ぶ）/ claude-pick oauth|api|bedrock|bedrock-sso。残りの引数は claude に渡す（例: claude-pick api --resume）
 function claude-pick {
+    $modes = 'oauth', 'api', 'bedrock', 'bedrock-sso'
     $mode = $args[0]
     $rest = @($args | Select-Object -Skip 1)
-    if ($mode -notin 'oauth', 'api', 'bedrock') {
+    if ($mode -notin $modes) {
         $rest = @($args)
-        $mode = 'oauth', 'api', 'bedrock' | fzf --prompt='claude> ' --height=20% --reverse
+        $mode = $modes | fzf --prompt='claude> ' --height=20% --reverse
     }
     switch ($mode) {
-        'oauth'   { claude-oauth @rest }
-        'api'     { claude-api @rest }
-        'bedrock' { claude-bedrock @rest }
+        'oauth'       { claude-oauth @rest }
+        'api'         { claude-api @rest }
+        'bedrock'     { claude-bedrock @rest }
+        'bedrock-sso' { claude-bedrock-sso @rest }
     }
 }
 
