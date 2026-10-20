@@ -1,14 +1,15 @@
-# Claude Code の認証（Bedrock / API キー / OAuth。個人用）
+# Claude Code の認証（Bedrock / API キー / OAuth / ゲートウェイ）
 
-Claude Code と Zed の agent を、3つの認証で使い分ける。章は Bedrock → API キー → OAuth の順。
+Claude Code と Zed の agent を、4つの認証で使い分ける。章は Bedrock → API キー → OAuth → ゲートウェイの順。
 
 | 章          | 認証                         | 起動                        | 課金        |
 | ---------- | -------------------------- | ------------------------- | --------- |
 | 1. Bedrock | Amazon Bedrock（AWS 経由）     | `claude-bedrock`          | AWS の従量課金 |
 | 2. API キー  | Anthropic の Console API キー | `claude-api`              | 従量課金      |
 | 3. OAuth   | サブスク（Pro など）               | `claude` / `claude-oauth` | 定額        |
+| 4. ゲートウェイ | 組織の Claude apps gateway（会社アカウントの SSO） | `claude-gateway` | 組織の契約（ゲートウェイの上流） |
 
-`claude` は OAuth のまま、`claude-api` と `claude-bedrock` だけ別の認証で起動する。判断の根拠は `docs/decisions.md` の「Claude Code の API キー認証は…」。
+`claude` は OAuth のまま、`claude-api` と `claude-bedrock` と `claude-gateway` だけ別の認証で起動する。判断の根拠は `docs/decisions.md` の「Claude Code の API キー認証は…」。
 
 ブラウザで見るときは `README.html`（この md を写した派生物。手順のチェックボックスとコピーボタンつき）。内容を直すときは、この md を先に直し、HTML も合わせる。
 
@@ -16,8 +17,9 @@ Claude Code と Zed の agent を、3つの認証で使い分ける。章は Bed
 
 | やりたいこと | コマンド |
 |---|---|
-| 起動する認証を選ぶ | `claude-pick`（fzf で選ぶ）、`claude-pick oauth` / `api` / `bedrock`（下の「起動する認証を選ぶ」） |
+| 起動する認証を選ぶ | `claude-pick`（fzf で選ぶ）、`claude-pick oauth` / `api` / `bedrock` / `gateway`（下の「起動する認証を選ぶ」） |
 | Bedrock の設定を作る・起動 | `claude-bedrock-setup.cmd`、`claude-bedrock`（第1章） |
+| ゲートウェイの設定を作る・起動 | `claude-gateway-setup.cmd`、`claude-gateway`（第4章） |
 | API キーで起動 | `claude-api`（第2章） |
 | キーを保存・入れ替え | `claude-api-key.cmd -Set`（第2章） |
 | OAuth で起動 | `claude`（環境変数が残っていても確実に OAuth にするなら `claude-oauth`。第3章） |
@@ -31,8 +33,9 @@ Claude Code と Zed の agent を、3つの認証で使い分ける。章は Bed
 
 | コマンド | 認証 |
 |---|---|
-| `claude-pick` | fzf で `oauth` / `api` / `bedrock` を選んで起動する。`claude-pick api --resume` のように、モードを先頭に書けば選択を省ける。モードを省いた引数（`claude-pick --resume`）は、選んだあとの `claude` に渡す |
+| `claude-pick` | fzf で `oauth` / `api` / `bedrock` / `gateway` を選んで起動する。`claude-pick api --resume` のように、モードを先頭に書けば選択を省ける。モードを省いた引数（`claude-pick --resume`）は、選んだあとの `claude` に渡す |
 | `claude-bedrock` | Bedrock |
+| `claude-gateway` | 組織の Claude apps gateway（設定の場所を `~/.claude-gateway` に分けて起動。環境に残った認証の変数は外す） |
 | `claude-api` | API キー |
 | `claude-oauth` | OAuth（サブスク）。環境に残った変数を、その起動の間だけ外す |
 | `claude` | 環境に認証の変数が無ければ OAuth。残っていると、その認証になる |
@@ -48,6 +51,7 @@ Zed では `home/.config/zed/settings.json` の `agent_servers` に、認証ご�
 | agent | 認証 | 備考 |
 |---|---|---|
 | `Claude Bedrock` | Bedrock | `env` に `CLAUDE_CODE_USE_BEDROCK` とリージョン・モデルを書く（第1章） |
+| `Claude Gateway` | ゲートウェイ | 起動は `claude-acp-gateway.cmd`（第4章） |
 | `Claude API` | API キー | 起動は `claude-acp-api.cmd`（第2章） |
 | `claude-acp` | OAuth | レジストリ版。主な入口（第3章） |
 
@@ -255,3 +259,44 @@ Get-ChildItem Env: | Where-Object Name -match '^(ANTHROPIC_|CLAUDE_CODE_USE_|CLA
 ```
 
 設定側は、ユーザー設定とプロジェクト設定に `apiKeyHelper`、`ANTHROPIC_API_KEY`、`CLAUDE_CODE_USE_*` が無いかを見る。
+
+## 4. ゲートウェイ（組織の Claude apps gateway）
+
+組織が自前で立てた Claude apps gateway を使う。会社アカウント（IdP。Microsoft ドメインなら Entra ID など）でブラウザ SSO し、上流（Bedrock など）の資格情報はゲートウェイ側が持つ。**AWS のプロファイルもモデル ID のピン留めも要らない**（`aws sso` は使わない）。クライアントに要るのは**ゲートウェイの URL だけ**。組織から案内される「発行者 URL」は IdP をゲートウェイ管理者が設定するための値で、ここでは使わない。
+
+| やりたいこと | コマンド |
+|---|---|
+| 設定を作る（URL をプロンプトで入力） | `claude-gateway-setup.cmd`（`-DryRun` で書かずに内容だけ表示。`-Url` で非対話） |
+| 起動 | `claude-gateway`（`claude-pick gateway`） |
+| 初回のログイン | 起動後に `/login` → **Cloud gateway** で Enter → ブラウザで会社アカウントを承認 |
+| 確認 | 起動後に `/status` |
+
+- **URL は dotfiles に置かない。** 組織を特定できる値なので、`claude-gateway-setup.cmd` のプロンプトで入力し、この PC の `%USERPROFILE%\.claude-gateway\settings.json`（`forceLoginMethod: "gateway"` と `forceLoginGatewayUrl`。追跡しない）に書く。
+- **設定の場所を `~/.claude` と分ける。** ゲートウェイのサインインは Claude for Teams / Enterprise のログイン（OAuth）の代わりになり、1つしか使えない。`claude-gateway` は `CLAUDE_CONFIG_DIR` を `~/.claude-gateway` にして起動するので、OAuth の `claude` とログイン情報が混ざらない。その代わり、`~/.claude` の共通設定（permissions、hooks、`CLAUDE.md` など）はこの起動には効かない。必要になったら `~/.claude-gateway` に足す。
+- **ログインは初回だけ手動。** セッションはゲートウェイが期限前に自動で更新する。更新に失敗したとき（IdP 側で無効にされたなど）は、再度 `/login` を求められる。初回の接続では、ゲートウェイの TLS 証明書の指紋（先頭16文字）の確認が出る。管理者が案内した値と照合する。
+- 要件: Claude Code v2.1.295 以降（ユーザー設定に `forceLoginMethod` / `forceLoginGatewayUrl` を置く方式）。管理設定（managed settings）が配られている PC では、ユーザー設定のゲートウェイ指定は無視される（管理側の設定が最優先）。
+- 環境に `CLAUDE_CODE_USE_BEDROCK` や `ANTHROPIC_API_KEY` が残っていると、クラウドや API キーが優先される。`claude-gateway` は `claude-oauth` と同じく、その起動の間だけ外す。
+- ゲートウェイの上流が Bedrock でも、WebSearch などの制約は上流の都合による。`claude.ai` のアカウントに紐づく機能（connectors など）は使えない。
+- モデルはゲートウェイの許可リスト（`availableModels`）の範囲で `/model` から選ぶ。
+
+### Zed（Claude Gateway）
+
+`agent_servers` の `Claude Gateway` は、`command` に `claude-acp-gateway.cmd` だけを書く。`claude-acp-gateway.ps1` が `CLAUDE_CONFIG_DIR` を `~/.claude-gateway` にして `claude-agent-acp` を起動する（Zed の `env` に絶対パス＝ユーザー名を書かないため）。設定が無ければ止まる（止めないと、アダプタが `~/.claude` の OAuth で黙って動く）。
+
+- 前提: `30_link.bat` 実行済み、`claude-gateway-setup.cmd` で設定を作り、`claude-gateway` で一度ログイン済みであること。ログイン情報は `~/.claude-gateway` にあり、CLI と Zed で共有される。
+- **未検証**: Zed の ACP アダプタが、ゲートウェイのログイン情報を使って動くか（`/login` は CLI の機能）。動かない場合は、Zed ではなく CLI を使う。
+
+### 試験
+
+`pwsh -NoProfile -File tests/windows/test_claude_gateway_setup.ps1`（URL の検証、設定の生成、非対話の実行、Zed 起動用の `CLAUDE_CONFIG_DIR` と終了コード。偽の `npx.cmd`）、`test_claude_launchers.ps1`（`claude-gateway` の環境変数の設定と復元、`claude-pick gateway`）。**実際のゲートウェイでのログインは未検証**（`/login` の動作、`CLAUDE_CONFIG_DIR` の分離で `forceLoginGatewayUrl` が読まれること、Zed での動作）。
+
+### うまくいかないとき（ゲートウェイ）
+
+| 症状 | 確認すること |
+|---|---|
+| `claude-gateway` が `settings.json がありません` | `claude-gateway-setup.cmd` を実行する |
+| `/login` に Cloud gateway の画面が出ない | `%USERPROFILE%\.claude-gateway\settings.json` の 2 つのキーと、`claude --version`（v2.1.295 以降）を確認する。管理設定が配られていると、ユーザー設定のゲートウェイ指定は無視される |
+| `Administrator policy requires a Cloud gateway sign-in` | 管理設定側がゲートウェイ必須。URL を組織の案内と合わせる |
+| 接続時に証明書の指紋の確認が出る | 初回は正常。管理者が案内した指紋（先頭16文字）と照合する。変わっていたら管理者に確認する |
+| HTTPS プロキシ経由で接続できない | ゲートウェイのホストを `NO_PROXY` に足す（指紋の固定がプロキシ経由だと働かない） |
+| Zed の「Claude Gateway」が `no gateway settings` で終了する | `claude-gateway-setup.cmd` を実行し、`claude-gateway` で一度ログインする |

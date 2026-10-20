@@ -33,6 +33,11 @@ windows\claude\claude-acp-api.cmd|%USERPROFILE%\.local\bin\claude-acp-api.cmd
 # Claude Code (Amazon Bedrock; the settings file itself is generated per PC by claude-bedrock-setup, not tracked)
 windows\claude\claude-bedrock-setup.ps1|%USERPROFILE%\.local\bin\claude-bedrock-setup.ps1
 windows\claude\claude-bedrock-setup.cmd|%USERPROFILE%\.local\bin\claude-bedrock-setup.cmd
+# Claude Code (Claude apps gateway; ~/.claude-gateway/settings.json is generated per PC by claude-gateway-setup, not tracked)
+windows\claude\claude-gateway-setup.ps1|%USERPROFILE%\.local\bin\claude-gateway-setup.ps1
+windows\claude\claude-gateway-setup.cmd|%USERPROFILE%\.local\bin\claude-gateway-setup.cmd
+windows\claude\claude-acp-gateway.ps1|%USERPROFILE%\.local\bin\claude-acp-gateway.ps1
+windows\claude\claude-acp-gateway.cmd|%USERPROFILE%\.local\bin\claude-acp-gateway.cmd
 
 # draw.io / Zed
 windows\drawio\config.json|%APPDATA%\draw.io\config.json

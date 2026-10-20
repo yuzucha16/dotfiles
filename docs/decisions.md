@@ -27,6 +27,14 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】組織のゲートウェイ（Claude apps gateway）への接続を足した（`claude-gateway`、`claude-pick gateway`、Zed の「Claude Gateway」。AWS SSO は取り消し。2026-10-20。ユーザーの依頼と決定）
+
+- 決めたこと: 貸与された接続先は、AWS の IAM Identity Center ではなく、Claude apps gateway（会社アカウントのブラウザ SSO）だった。先に足した AWS SSO（`bedrock-sso`、`fb99d58`）は `84e4471` で取り消した。ゲートウェイは、`claude-gateway-setup.cmd`（URL を**プロンプトで入力**し、`%USERPROFILE%\.claude-gateway\settings.json` に `forceLoginMethod: "gateway"` と `forceLoginGatewayUrl` を書く）、関数 `claude-gateway`（`CLAUDE_CONFIG_DIR` をそこにして、`claude-oauth` と同じく競合する認証の変数を外して起動）、`claude-pick gateway`、Zed の `Claude Gateway`（起動は `claude-acp-gateway.ps1` / `.cmd`。`CLAUDE_CONFIG_DIR` を組み立てて `claude-agent-acp` を起動）にした。ログインは初回だけ手動（`/login` → Cloud gateway）。
+- 根拠: クライアントに要るのはゲートウェイの URL だけ（発行者 URL は IdP をゲートウェイ管理者が設定する値）。ゲートウェイのサインインは OAuth のログインの代わりになり1つしか使えないため、`CLAUDE_CONFIG_DIR` で `~/.claude` と分けた（`forceLoginGatewayUrl` は `~/.claude/settings.json`（`CLAUDE_CONFIG_DIR` があればそこ）のユーザー設定だけが読む。共通の `settings.json` に置くと `claude` 全体がゲートウェイ専用になる）。URL は組織を特定できる値で、公開リポジトリに置かない（ユーザーの決定。これまでの `claude-bedrock-setup` と同じくプロンプトで入力）。Zed の `env` に絶対パス（ユーザー名）を書けないので、パスは起動スクリプトで組み立てる。
+- 却下案: `--settings` の別ファイルで読ませる（`forceLoginGatewayUrl` が `--settings` で読まれるか、ドキュメントで確認できなかった）。共通の `~/.claude/settings.json` に書く（OAuth に戻れない）。AWS SSO のまま進める（接続先が違う）。`bedrock-gateway` という名前（上流が Bedrock とは限らず、クライアントからは見えない。ユーザーが `gateway` を選んだ）。
+- 確認済み（2026-10-20）: 試験3本が失敗0（`test_claude_gateway_setup.ps1` 16項目、`test_claude_launchers.ps1` 20項目、`test_claude_bedrock_setup.ps1`）。この PC の Claude Code は 2.1.299（要件 v2.1.295 以降）。
+- 未確認: 実際のゲートウェイでの `/login`（Cloud gateway の画面、TLS 指紋の確認、承認）。`CLAUDE_CONFIG_DIR` を分けた設定で `forceLoginGatewayUrl` が効くこと。Zed の ACP アダプタが、ゲートウェイのログイン情報で動くこと。`~/.claude` の共通設定（permissions、hooks）を `~/.claude-gateway` に引き継ぐ要否（今は引き継がない）。管理設定が配られている PC の挙動。
+
 ### 【汎用】`WSLENV` の区切りは `:` にする（`;` では WSL に何も渡らない）（2026-10-18。ユーザーが承認）
 
 - 決めたこと: `10_env.bat` の `WSLENV` の判定と結合の区切りを `;` から `:` に変えた。以前の版が作った `;` 入りの値は `:` に直して `setx` する。`WSLENV` が未定義の PC でも、`CERTS_DIR/p:WORKS_DIR/p` になる。
