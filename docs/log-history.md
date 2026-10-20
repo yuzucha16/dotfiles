@@ -3,6 +3,15 @@
 日付つきの Log（降順）。開始時には読まない。必要なときに検索する。現在状態は `docs/log.md`。
 
 ## Log
+### 2026-10-20（Claude Code と Zed を、組織の OIDC ゲートウェイにつないだ。AWS SSO と Claude apps gateway の案は取り消した）
+
+- ユーザーの依頼は「Zed の ACP エージェントと、`claude-pick` を使う Claude Code に、SSO の接続を足す」。接続先の種類が分からないまま進め、2回作り直した。(1) AWS の IAM Identity Center（`bedrock-sso`、`fb99d58`）。案内の URL が `awsapps.com/start` ではなく、AWS SSO でないと分かり、`84e4471` で取り消した。(2) Anthropic の Claude apps gateway（`/login` の Cloud gateway、`9fc2aaf`）。ゲートウェイの名前解決の結果が公開アドレスで、`gateway hosts must be on your organization's private network` で拒否された。(3) 汎用の LLM ゲートウェイ + Entra ID の OIDC（Claude Desktop の「Configure Third-Party Inference」と同じ構成）だった。
+- 最終の実装（`8a180be`）: `claude-gateway-setup.cmd`（URL・発行者 URL・クライアント ID・スコープ・リダイレクトポート・モデル ID をプロンプトで入力し、`%USERPROFILE%\.claude-gateway\` に書く。値は dotfiles に置かない）、`claude-gateway-token.ps1` / `.cmd`（`apiKeyHelper`。`-Login` でブラウザの認可コード + PKCE のサインイン、トークンは DPAPI で暗号化、期限が近ければリフレッシュトークンで無音更新）、`claude-gateway` と `claude-pick gateway`（`CLAUDE_CONFIG_DIR` を分けて起動）、Zed の「Claude Gateway」（`claude-acp-gateway.ps1` / `.cmd`）。判断は `decisions.md`（【この件】組織の LLM ゲートウェイ）。
+- 確認: ユーザーが実機で、CLI の `claude-gateway` と Zed の「Claude Gateway」の両方が接続できたと報告。試験4本が失敗0（`test_claude_gateway_token.ps1` 29項目＝偽の IdP を使う、`test_claude_gateway_setup.ps1` 25項目、`test_claude_launchers.ps1` 21項目、`test_claude_bedrock_setup.ps1` 26項目）。試験で `$LASTEXITCODE` の不具合（成功経路が `exit` しない）を見つけて直した。
+- `pause`: ユーザーの求め（`.bat` に `pause`）に対し、`claude-gateway-token.cmd` の末尾に入れると `apiKeyHelper` が待ち続けて出力も壊れることを実測した。対話専用の入口だけに入れる形にした（`Open Questions` の提案。未承認）。
+- 続けて、ユーザーの求めで「ナレッジ化して」を実行（`exmem/inbox/2026-10-20-claude-code-oidc-gateway.md`。未追跡のまま）と、理解ガイド `guides/explain/llm-gateway-oidc.md` を workbase に作成（索引 `guides/guides-index.md` も更新）。
+- 未確認: サインインの約1時間後の自動更新（CLI と Zed）。他の PC での展開。
+
 ### 2026-10-18（WSL へ `WORKS_DIR` と `CERTS_DIR` が渡らない原因を直した）
 
 - 2026-10-06 から未特定だった原因は、`WSLENV` の区切りが `;` だったこと。`scripts/windows/10_env.bat` を `:` に直し、この PC の User の `WSLENV` を `CERTS_DIR/p:WORKS_DIR/p` にした。`wsl --shutdown` の後、`printenv WORKS_DIR CERTS_DIR` が rc=0 で両方を返した。判断は `docs/decisions.md`（【汎用】`WSLENV` の区切りは `:`）。他の PC は `10_env.bat` の再実行で直る（未確認）。同日のログインシェルで `GHQ_ROOT` は空だった（未調査）。

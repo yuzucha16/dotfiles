@@ -100,6 +100,18 @@ try {
   $r = Run-Token
   Check 'fresh cache: prints the token, no request to the IdP' (($r.Rc -eq 0) -and ($r.Out -eq $freshJwt) -and -not (Test-Path $reqLog))
 
+  # .cmd の入口: apiKeyHelper として（標準入力が開いたまま）呼ばれても、止まらず、標準出力はトークンだけ（pause を入れると壊れる）
+  $cmdPath = (Resolve-Path (Join-Path $repo 'windows\claude\claude-gateway-token.cmd')).Path
+  $psi = New-Object Diagnostics.ProcessStartInfo 'cmd.exe'
+  $psi.Arguments = "/s /c `"`"$cmdPath`" -ConfigDir `"$tmp`"`""
+  $psi.RedirectStandardOutput = $true; $psi.RedirectStandardInput = $true; $psi.UseShellExecute = $false
+  $proc = [Diagnostics.Process]::Start($psi)
+  $finished = $proc.WaitForExit(20000)
+  if (-not $finished) { $proc.Kill() }
+  $cmdOut = $proc.StandardOutput.ReadToEnd()
+  Check 'cmd entry: returns without waiting for a key (no pause as a helper)' $finished
+  Check 'cmd entry: stdout is the token only'                                 ($cmdOut.Trim() -eq $freshJwt)
+
   Save-TokenCache $cache ([pscustomobject]@{ id_token = (New-Jwt $past); access_token = ''; refresh_token = 'R' })
   $r = Run-Token
   $reqs = if (Test-Path $reqLog) { Get-Content $reqLog -Raw } else { '' }
