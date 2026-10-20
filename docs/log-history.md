@@ -8,6 +8,7 @@
 - ユーザーが `.cmd` の `pause` の範囲を承認した。もとの依頼は「`setup` 系の bat 全般」で、理由は「失敗したときにログを見落とすため」。対話専用の入口だけに入れ、`apiKeyHelper` として呼ばれる経路（`claude-gateway-token.cmd` の `-Login` 以外）と Zed の起動用（`claude-acp-gateway.cmd`）には入れない。これに合わせて `claude-bedrock-setup.cmd`（対話の setup なのに `pause` が無かった）にも、`claude-gateway-setup.cmd` と同じ形で `pause`（終了コードは保つ）を足した。
 - SSO の件は、ユーザーが閉じた。依頼の取り違え（接続先は SSO でなくゲートウェイ）が原因で、AWS SSO の追加は `84e4471` で取り消し済み。SSO に関する Next Actions と Open Questions は消した。`claude-bedrock-setup.ps1` にもともとある `-Sso` と試験は、ゲートウェイの依頼とは別の既存機能なので残した（外す指示は無い）。
 - 共通設定の引き継ぎ（Open Question だったもの）を、ユーザーの「お手軽にできるなら」で実装した: `claude-gateway-setup.ps1` が `~/.claude/settings.json` の `theme`、`permissions`、`hooks`、`enabledPlugins`、`extraKnownMarketplaces` を、ゲートウェイの `settings.json` に写す（作成時点の写し）。`apiKeyHelper`・`env`・`model` は写さない。`skills` と `CLAUDE.md` は写さない。試験3項目を追加し、失敗0。リンクにしなかったのは、settings は合成されず、1ファイルにゲートウェイの値を混ぜる必要があるため（`decisions.md` の同項）。
+- 無音更新の実機確認が完了した（ユーザーの報告）: サインインの1時間後も接続が続いた。「この PC に `~/.claude-gateway` が無い」の項は、PC2 にゲートウェイ接続が無い（使わない）ため、省略とした。
 - 他の PC での展開（`30_link.bat`、`claude-gateway-setup.cmd`、`claude-gateway-token.cmd -Login`）は、ユーザーが完了と報告した。
 
 ### 2026-10-20（Claude Code と Zed を、組織の OIDC ゲートウェイにつないだ。AWS SSO と Claude apps gateway の案は取り消した）
