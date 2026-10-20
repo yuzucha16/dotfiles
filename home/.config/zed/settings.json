@@ -10,7 +10,7 @@
   // ==== AI (claude-acp is the main entry point) ====
   "wsl_connections": [
     {
-      "distro_name": "ai-room-test",
+      "distro_name": "room-util",
       "user": null,
       "projects": [
         {
@@ -80,6 +80,9 @@
     "use_modifier_to_send": true,
     "play_sound_when_agent_done": "when_hidden",
     "show_turn_stats": true,
+    // Collapse tool cards (file edits, terminal output) by default so long sessions stay readable
+    "expand_edit_card": false,
+    "expand_terminal_card": false,
     "tool_permissions": {
       // Defer approval to Claude Code (~/.claude/settings.json); deny/confirm rules below still apply
       "default": "allow",
@@ -110,15 +113,15 @@
   // ==== Fonts ====
   // Zed has no shared font setting: ui / buffer / terminal each repeat the same values
   "ui_font_family": "PlemolJP Console NF",
-  "ui_font_weight": 300,
+  "ui_font_weight": 400,
   "ui_font_fallbacks": ["Meiryo UI"],
-  "ui_font_size": 15,
+  "ui_font_size": 17,
   "buffer_font_family": "PlemolJP Console NF",
-  "buffer_font_weight": 300,
+  "buffer_font_weight": 400,
   "buffer_font_fallbacks": ["Meiryo UI"],
   "buffer_font_size": 15,
-  "agent_ui_font_size": 15,
-  "agent_buffer_font_size": 15,
+  "agent_ui_font_size": 17,
+  "agent_buffer_font_size": 17,
   // Japanese text needs more line spacing
   "buffer_line_height": "comfortable",
 
@@ -134,6 +137,20 @@
     "dark": "Zed (Default)"
   },
   "cursor_blink": false,
+  // Markdown highlight tweaks: keep colors from the theme, change only the weight
+  // (strong text normal weight, headings bold)
+  "theme_overrides": {
+    "Material Gruvbox Dark": {
+      // Project panel Git colors, matched to the Markdown colors: modified = strong (orange), created = heading (green), ignored = code (teal)
+      "modified": "#d8a657",
+      "created": "#a7b85a",
+      "ignored": "#7daea3",
+      "syntax": {
+        "emphasis.strong": { "font_weight": 400 },
+        "title": { "font_weight": 700 }
+      }
+    }
+  },
 
   // ==== Layout ====
   "project_panel": {
