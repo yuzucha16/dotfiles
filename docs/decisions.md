@@ -27,14 +27,6 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
-### 【この件】Bedrock の SSO を、アクセスキーの profile と併用で足した（`claude-bedrock-sso`、`claude-pick bedrock-sso`、Zed の「Claude Bedrock SSO」。2026-10-20。ユーザーの依頼と決定）
-
-- 決めたこと: SSO の profile 名は `db-trial`（ユーザー指定。ほぼプレースホルダー）。`n1-trial`（アクセスキー）は残して併用する。Claude Code は、設定を別ファイル `settings-bedrock-sso.json`（この PC 専用。追跡しない）に分け、関数 `claude-bedrock-sso` と `claude-pick` の新しいモード `bedrock-sso` で起動する。設定の生成は既存の `claude-bedrock-setup.cmd -Sso -OutFile …`（スクリプトは変更なし）。Zed は、`Claude Bedrock SSO` を足し、起動用 `claude-acp-bedrock-sso.ps1` / `.cmd`（`links.map` で `~/.local/bin` へ）が、`aws sts get-caller-identity` で確かめ、失敗したら `aws sso login --profile $AWS_PROFILE` をして `claude-agent-acp` を起動する。login の出力は標準エラーへ出す。
-- 根拠: 2つの組織から別々に貸与された認証（アクセスキーと SSO）を切り替えたい（ユーザー）。経路は `AWS_PROFILE` で同じなので、profile 名とファイルを分けるだけにした。Zed の自動ログインは、当初は手動ログインで始める案だったが、スクリプトを作る都合でユーザーが自動ログインに変更した。起動スクリプトにしたのは、`claude-acp-api` と同じ理由（Zed の `args` に PowerShell のコードを直書きすると変数が空になる）。標準出力を使わないのは、ACP が標準入出力でプロトコルを流すため。
-- 却下案: `claude-bedrock` の設定を SSO で置き換える（併用できない）。`claude-bedrock-setup` に専用のオプションを足す（`-OutFile` と `-Sso` で足りる）。
-- 確認済み（2026-10-20）: 試験3本が失敗0（`test_claude_acp_bedrock_sso.ps1` 7項目、`test_claude_launchers.ps1`、`test_claude_bedrock_setup.ps1`）。偽の `aws.cmd` / `npx.cmd` で、有効・期限切れ・login 失敗・`AWS_PROFILE` 空・終了コードの引き継ぎ・login 出力が標準エラーに出ることを確認。
-- 未確認: 実際の AWS と Zed での通し実行（SSO の login、Zed からのブラウザ起動、リージョン・接頭辞・モデルが SSO の組織で使えるか）。Claude Code の `awsAuthRefresh` が `--settings` の指定でも動くか。Zed の ACP アダプタは `awsAuthRefresh` を使わないので、Zed の期限切れは起動時の確認だけで拾う（実行中の期限切れは未確認）。
-
 ### 【汎用】`WSLENV` の区切りは `:` にする（`;` では WSL に何も渡らない）（2026-10-18。ユーザーが承認）
 
 - 決めたこと: `10_env.bat` の `WSLENV` の判定と結合の区切りを `;` から `:` に変えた。以前の版が作った `;` 入りの値は `:` に直して `setx` する。`WSLENV` が未定義の PC でも、`CERTS_DIR/p:WORKS_DIR/p` になる。

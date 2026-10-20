@@ -51,9 +51,8 @@
 <h2>早見表</h2>
 <table>
   <tr><th>やりたいこと</th><th>コマンド</th></tr>
-  <tr><td>起動する認証を選ぶ</td><td><code>claude-pick</code>（fzf で選ぶ）、<code>claude-pick oauth</code> / <code>api</code> / <code>bedrock</code> / <code>bedrock-sso</code>（下の「<a href="#pick">起動する認証を選ぶ</a>」）</td></tr>
+  <tr><td>起動する認証を選ぶ</td><td><code>claude-pick</code>（fzf で選ぶ）、<code>claude-pick oauth</code> / <code>api</code> / <code>bedrock</code>（下の「<a href="#pick">起動する認証を選ぶ</a>」）</td></tr>
   <tr><td>Bedrock の設定を作る・起動</td><td><code>claude-bedrock-setup.cmd</code>、<code>claude-bedrock</code>（<a href="#bedrock">第1章</a>）</td></tr>
-  <tr><td>Bedrock（SSO）の設定を作る・起動</td><td><code>claude-bedrock-setup.cmd -Sso -OutFile …</code>、<code>claude-bedrock-sso</code>（<a href="#bedrock">第1章</a>「SSO の profile を併用する」）</td></tr>
   <tr><td>API キーで起動</td><td><code>claude-api</code>（<a href="#api">第2章</a>）</td></tr>
   <tr><td>キーを保存・入れ替え</td><td><code>claude-api-key.cmd -Set</code>（第2章）</td></tr>
   <tr><td>OAuth で起動</td><td><code>claude</code>（環境変数が残っていても確実に OAuth にするなら <code>claude-oauth</code>。<a href="#oauth">第3章</a>）</td></tr>
@@ -66,9 +65,8 @@
 <p>認証の優先順位は固定（クラウドプロバイダ、<code>ANTHROPIC_AUTH_TOKEN</code>、<code>ANTHROPIC_API_KEY</code>、<code>apiKeyHelper</code>、OAuth の順）で、設定で OAuth を上げることはできない。そのため、<strong>起動のたびに、どの認証で起動するかを選ぶ</strong>。切り替えは起動単位で、動いているセッションの中では切り替えない（終了して選び直す。同じディレクトリなら <code>claude --resume</code> で続きを選べる）。</p>
 <table>
   <tr><th>コマンド</th><th>認証</th></tr>
-  <tr><td><code>claude-pick</code></td><td>fzf で <code>oauth</code> / <code>api</code> / <code>bedrock</code> / <code>bedrock-sso</code> を選んで起動する。<code>claude-pick api --resume</code> のように、モードを先頭に書けば選択を省ける。モードを省いた引数（<code>claude-pick --resume</code>）は、選んだあとの <code>claude</code> に渡す</td></tr>
-  <tr><td><code>claude-bedrock</code></td><td>Bedrock（アクセスキーなどの profile）</td></tr>
-  <tr><td><code>claude-bedrock-sso</code></td><td>Bedrock（IAM Identity Center = SSO の profile。期限切れは起動中に <code>aws sso login</code>）</td></tr>
+  <tr><td><code>claude-pick</code></td><td>fzf で <code>oauth</code> / <code>api</code> / <code>bedrock</code> を選んで起動する。<code>claude-pick api --resume</code> のように、モードを先頭に書けば選択を省ける。モードを省いた引数（<code>claude-pick --resume</code>）は、選んだあとの <code>claude</code> に渡す</td></tr>
+  <tr><td><code>claude-bedrock</code></td><td>Bedrock</td></tr>
   <tr><td><code>claude-api</code></td><td>API キー</td></tr>
   <tr><td><code>claude-oauth</code></td><td>OAuth（サブスク）。環境に残った変数を、その起動の間だけ外す</td></tr>
   <tr><td><code>claude</code></td><td>環境に認証の変数が無ければ OAuth。残っていると、その認証になる</td></tr>
@@ -84,7 +82,6 @@
 <table>
   <tr><th>agent</th><th>認証</th><th>備考</th></tr>
   <tr><td><code>Claude Bedrock</code></td><td>Bedrock</td><td><code>env</code> に <code>CLAUDE_CODE_USE_BEDROCK</code> とリージョン・モデルを書く（第1章）</td></tr>
-  <tr><td><code>Claude Bedrock SSO</code></td><td>Bedrock（SSO）</td><td>起動は <code>claude-acp-bedrock-sso.cmd</code>。期限切れなら <code>aws sso login</code> してから起動する（第1章）</td></tr>
   <tr><td><code>Claude API</code></td><td>API キー</td><td>起動は <code>claude-acp-api.cmd</code>（第2章）</td></tr>
   <tr><td><code>claude-acp</code></td><td>OAuth</td><td>レジストリ版。主な入口（第3章）</td></tr>
 </table>
@@ -137,49 +134,6 @@
 
 <h3>Zed（Claude Bedrock）</h3>
 <p><code>agent_servers</code> の <code>Claude Bedrock</code> は、<code>npx -y @agentclientprotocol/claude-agent-acp</code> を <code>env</code>（<code>CLAUDE_CODE_USE_BEDROCK</code>、<code>AWS_REGION</code>、<code>AWS_PROFILE</code>、<code>ANTHROPIC_BEDROCK_REGION_PREFIX</code>、<code>ANTHROPIC_DEFAULT_*_MODEL</code>）つきで起動する。秘密は含まない。SSO は事前に <code>aws sso login</code> しておく。</p>
-
-<h3>SSO の profile を併用する</h3>
-<p>アクセスキーの profile と SSO の profile が別の組織から貸与されている場合に、切り替えて使う。profile 名が違うだけで、経路（<code>AWS_PROFILE</code>）は同じ。SSO 側の profile 名は、リポジトリではプレースホルダーの <code>db-trial</code>（実際の名前に読み替える）。</p>
-<table>
-  <tr><th>入口</th><th>アクセスキー（<code>n1-trial</code>）</th><th>SSO（<code>db-trial</code>）</th></tr>
-  <tr><td>Claude Code</td><td><code>claude-bedrock</code>（<code>settings-bedrock.json</code>）</td><td><code>claude-bedrock-sso</code>（<code>settings-bedrock-sso.json</code>）</td></tr>
-  <tr><td><code>claude-pick</code></td><td><code>bedrock</code></td><td><code>bedrock-sso</code></td></tr>
-  <tr><td>Zed</td><td><code>Claude Bedrock</code></td><td><code>Claude Bedrock SSO</code></td></tr>
-</table>
-<ol class="steps">
-  <li>
-    <input type="checkbox" id="s1"> <label for="s1">SSO の profile を作る</label>
-<pre><code>aws configure sso</code></pre>
-    <div>名前は <code>db-trial</code>。<code>~/.aws/config</code> に書かれる。dotfiles は触らない。</div>
-  </li>
-  <li>
-    <input type="checkbox" id="s2"> <label for="s2">ログインできることを確認する</label>
-<pre><code>aws sso login --profile db-trial</code></pre>
-    <div>ブラウザが開く。</div>
-  </li>
-  <li>
-    <input type="checkbox" id="s3"> <label for="s3">設定を生成する</label>
-<pre><code>claude-bedrock-setup.cmd -Sso -AwsProfile db-trial -OutFile "$HOME\.claude\settings-bedrock-sso.json"</code></pre>
-    <div><code>-Sso</code> で <code>awsAuthRefresh</code> が入る。<code>.txt</code> の派生物も同じ場所に出る。</div>
-  </li>
-  <li>
-    <input type="checkbox" id="s4"> <label for="s4">起動して確認する</label>
-<pre><code>claude-bedrock-sso</code></pre>
-    <div><code>/status</code> でプロバイダが Amazon Bedrock であることを確認する。<code>claude-pick bedrock-sso</code> でもよい。</div>
-  </li>
-  <li>
-    <input type="checkbox" id="s5"> <label for="s5">Zed の agent を使えるようにする</label>
-<pre><code>scripts\windows\30_link.bat</code></pre>
-    <div><code>claude-acp-bedrock-sso.cmd</code> をリンクし、エージェントパネルで「Claude Bedrock SSO」を選ぶ。<code>settings.json</code> の <code>env</code>（リージョン・接頭辞・モデル）は、SSO の組織の値に直す。</div>
-  </li>
-</ol>
-<p>自動ログインの仕組み:</p>
-<ul>
-  <li><strong>Claude Code</strong>: <code>awsAuthRefresh</code> に <code>aws sso login --profile …</code> が入る。資格情報が切れていると Claude Code がこれを実行する。</li>
-  <li><strong>Zed</strong>: <code>claude-acp-bedrock-sso.ps1</code> が、起動前に <code>aws sts get-caller-identity --profile $AWS_PROFILE</code> で資格情報を確かめ、失敗したら <code>aws sso login --profile $AWS_PROFILE</code>（ブラウザが開く）を実行してから <code>claude-agent-acp</code> を起動する。login の出力は標準エラーへ出す（標準出力は ACP のプロトコルが使う）。login が失敗したら起動せず止まる。</li>
-  <li>実行中に期限が切れた場合の挙動は未確認（Zed の agent は再起動して入り直す）。</li>
-  <li>試験: <code>pwsh -NoProfile -File tests/windows/test_claude_acp_bedrock_sso.ps1</code>（偽の <code>aws.cmd</code> / <code>npx.cmd</code>）。<strong>実際の AWS と Zed での実行は未検証</strong>。</li>
-</ul>
 
 <h3>うまくいかないとき（Bedrock）</h3>
 <table>

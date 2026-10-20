@@ -16,9 +16,8 @@ Claude Code と Zed の agent を、3つの認証で使い分ける。章は Bed
 
 | やりたいこと | コマンド |
 |---|---|
-| 起動する認証を選ぶ | `claude-pick`（fzf で選ぶ）、`claude-pick oauth` / `api` / `bedrock` / `bedrock-sso`（下の「起動する認証を選ぶ」） |
+| 起動する認証を選ぶ | `claude-pick`（fzf で選ぶ）、`claude-pick oauth` / `api` / `bedrock`（下の「起動する認証を選ぶ」） |
 | Bedrock の設定を作る・起動 | `claude-bedrock-setup.cmd`、`claude-bedrock`（第1章） |
-| Bedrock（SSO）の設定を作る・起動 | `claude-bedrock-setup.cmd -Sso -OutFile …`、`claude-bedrock-sso`（第1章「SSO の profile を併用する」） |
 | API キーで起動 | `claude-api`（第2章） |
 | キーを保存・入れ替え | `claude-api-key.cmd -Set`（第2章） |
 | OAuth で起動 | `claude`（環境変数が残っていても確実に OAuth にするなら `claude-oauth`。第3章） |
@@ -32,9 +31,8 @@ Claude Code と Zed の agent を、3つの認証で使い分ける。章は Bed
 
 | コマンド | 認証 |
 |---|---|
-| `claude-pick` | fzf で `oauth` / `api` / `bedrock` / `bedrock-sso` を選んで起動する。`claude-pick api --resume` のように、モードを先頭に書けば選択を省ける。モードを省いた引数（`claude-pick --resume`）は、選んだあとの `claude` に渡す |
-| `claude-bedrock` | Bedrock（アクセスキーなどの profile） |
-| `claude-bedrock-sso` | Bedrock（IAM Identity Center = SSO の profile。期限切れは起動中に `aws sso login`） |
+| `claude-pick` | fzf で `oauth` / `api` / `bedrock` を選んで起動する。`claude-pick api --resume` のように、モードを先頭に書けば選択を省ける。モードを省いた引数（`claude-pick --resume`）は、選んだあとの `claude` に渡す |
+| `claude-bedrock` | Bedrock |
 | `claude-api` | API キー |
 | `claude-oauth` | OAuth（サブスク）。環境に残った変数を、その起動の間だけ外す |
 | `claude` | 環境に認証の変数が無ければ OAuth。残っていると、その認証になる |
@@ -50,7 +48,6 @@ Zed では `home/.config/zed/settings.json` の `agent_servers` に、認証ご�
 | agent | 認証 | 備考 |
 |---|---|---|
 | `Claude Bedrock` | Bedrock | `env` に `CLAUDE_CODE_USE_BEDROCK` とリージョン・モデルを書く（第1章） |
-| `Claude Bedrock SSO` | Bedrock（SSO） | 起動は `claude-acp-bedrock-sso.cmd`。期限切れなら `aws sso login` してから起動する（第1章） |
 | `Claude API` | API キー | 起動は `claude-acp-api.cmd`（第2章） |
 | `claude-acp` | OAuth | レジストリ版。主な入口（第3章） |
 
@@ -89,31 +86,6 @@ Zed では `home/.config/zed/settings.json` の `agent_servers` に、認証ご�
 ### Zed（Claude Bedrock）
 
 `agent_servers` の `Claude Bedrock` は、`npx -y @agentclientprotocol/claude-agent-acp` を `env`（`CLAUDE_CODE_USE_BEDROCK`、`AWS_REGION`、`AWS_PROFILE`、`ANTHROPIC_BEDROCK_REGION_PREFIX`、`ANTHROPIC_DEFAULT_*_MODEL`）つきで起動する。秘密は含まない。SSO は事前に `aws sso login` しておく。
-
-### SSO の profile を併用する
-
-アクセスキーの profile と SSO の profile が別の組織から貸与されている場合に、切り替えて使う。profile 名が違うだけで、経路（`AWS_PROFILE`）は同じ。SSO 側の profile 名は、リポジトリではプレースホルダーの `db-trial`（実際の名前に読み替える）。
-
-| 入口 | アクセスキー（`n1-trial`） | SSO（`db-trial`） |
-|---|---|---|
-| Claude Code | `claude-bedrock`（`settings-bedrock.json`） | `claude-bedrock-sso`（`settings-bedrock-sso.json`） |
-| `claude-pick` | `bedrock` | `bedrock-sso` |
-| Zed | `Claude Bedrock` | `Claude Bedrock SSO` |
-
-手順（初回）:
-
-1. `aws configure sso` で SSO の profile を作る（名前は `db-trial`）。`~/.aws/config` に書かれる。dotfiles は触らない。
-2. `aws sso login --profile db-trial` でログインできることを確認する（ブラウザが開く）。
-3. 設定を生成する: `claude-bedrock-setup.cmd -Sso -AwsProfile db-trial -OutFile "$HOME\.claude\settings-bedrock-sso.json"`（`-Sso` で `awsAuthRefresh` が入る。`.txt` の派生物も同じ場所に出る）。
-4. `claude-bedrock-sso`（または `claude-pick bedrock-sso`）で起動し、`/status` でプロバイダが Amazon Bedrock であることを確認する。
-5. Zed は、`scripts\windows\30_link.bat` で `claude-acp-bedrock-sso.cmd` をリンクし、エージェントパネルで「Claude Bedrock SSO」を選ぶ。`settings.json` の `env`（リージョン・接頭辞・モデル）は、SSO の組織の値に直す。
-
-自動ログインの仕組み:
-
-- **Claude Code**: `awsAuthRefresh` に `aws sso login --profile …` が入る。資格情報が切れていると Claude Code がこれを実行する。
-- **Zed**: `claude-acp-bedrock-sso.ps1` が、起動前に `aws sts get-caller-identity --profile $AWS_PROFILE` で資格情報を確かめ、失敗したら `aws sso login --profile $AWS_PROFILE`（ブラウザが開く）を実行してから `claude-agent-acp` を起動する。login の出力は標準エラーへ出す（標準出力は ACP のプロトコルが使う）。login が失敗したら起動せず止まる。
-- 実行中に期限が切れた場合の挙動は未確認（Zed の agent は再起動して入り直す）。
-- 試験: `pwsh -NoProfile -File tests/windows/test_claude_acp_bedrock_sso.ps1`（偽の `aws.cmd` / `npx.cmd`）。**実際の AWS と Zed での実行は未検証**。
 
 ### うまくいかないとき（Bedrock）
 

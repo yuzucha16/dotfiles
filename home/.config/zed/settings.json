@@ -50,25 +50,6 @@
         "ANTHROPIC_DEFAULT_HAIKU_MODEL": "global.anthropic.claude-haiku-5-5"
       }
     },
-    // SSO profile (placeholder name). windows/claude/claude-acp-bedrock-sso.ps1 runs `aws sso login` first when the credentials are expired.
-    // Region, prefix and models are per organization: adjust them to the account that owns the SSO profile.
-    "Claude Bedrock SSO": {
-      "type": "custom",
-      "command": "claude-acp-bedrock-sso.cmd",
-      "default_config_options": {
-        "mode": "auto",
-        "model": "sonnet"
-      },
-      "env": {
-        "CLAUDE_CODE_USE_BEDROCK": "1",
-        "AWS_REGION": "ap-northeast-1",
-        "AWS_PROFILE": "db-trial",
-        "ANTHROPIC_BEDROCK_REGION_PREFIX": "apac",
-        "ANTHROPIC_DEFAULT_OPUS_MODEL": "global.anthropic.claude-opus-5-5",
-        "ANTHROPIC_DEFAULT_SONNET_MODEL": "global.anthropic.claude-sonnet-5-5",
-        "ANTHROPIC_DEFAULT_HAIKU_MODEL": "global.anthropic.claude-haiku-5-5"
-      }
-    },
     // The key is decrypted at launch (DPAPI) by windows/claude/claude-acp-api.ps1 (linked into ~/.local/bin), so it never lands in this file.
     // Inline PowerShell in args did not work (variables came out empty under Zed), hence the script.
     "Claude API": {
