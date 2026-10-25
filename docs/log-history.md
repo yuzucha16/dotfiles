@@ -4,6 +4,9 @@
 
 ## Log
 
+### 2026-10-25（期日の節を戻した）
+- 整合の基準（workbase の `docs/alignment-baseline.md`）に合わせて、`docs/log.md` に期日の節を戻した（項目は「なし」。`db6533a`）。
+
 ### 2026-10-25（`UserPromptSubmit` フックを足した）
 
 - workbase の作業の言葉の索引（`triggers:`）を、依頼ごとに AI の文脈へ出すため、`home/.claude/settings.json` に `UserPromptSubmit` を足した（`42c7c6a`）。スクリプトは workbase の `workflow-kit/tools/triggers_hook.py`。ファイルが無い PC で依頼が止まらないよう `Test-Path` で守る。判断は `decisions.md` の同日の項。発火は workbase の作業セッションで確認した。`home/.config/zed/settings.json` の未コミットの変更は元からあり、触っていない。
