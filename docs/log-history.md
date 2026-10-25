@@ -4,6 +4,10 @@
 
 ## Log
 
+### 2026-10-25（`UserPromptSubmit` フックを足した）
+
+- workbase の作業の言葉の索引（`triggers:`）を、依頼ごとに AI の文脈へ出すため、`home/.claude/settings.json` に `UserPromptSubmit` を足した（`42c7c6a`）。スクリプトは workbase の `workflow-kit/tools/triggers_hook.py`。ファイルが無い PC で依頼が止まらないよう `Test-Path` で守る。判断は `decisions.md` の同日の項。発火は workbase の作業セッションで確認した。`home/.config/zed/settings.json` の未コミットの変更は元からあり、触っていない。
+
 ### 2026-10-20 続き3（pwsh の起動を短くする変更を `profile.ps1` に足した）
 
 - Windows Terminal の新しいタブの起動が遅い（pwsh 本体が約 2,200ms で減らせず、プロファイルが約 1,500ms）ため、別の PC で作られた `profile.ps1` の追加の差分（画像で受け取った）を適用した。内容: Scoop の shim の迂回（PATH の先頭に実体のディレクトリ）、starship / zoxide の init 出力のキャッシュ（`%LOCALAPPDATA%\pwsh-init-cache`）、starship の継続プロンプトの固定文字列化。先の starship の切り替え（続き2）の上に、組み合わせて適用した（差分は切り替え前の `profile.ps1` が基準）。
