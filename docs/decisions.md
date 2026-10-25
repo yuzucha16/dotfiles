@@ -27,6 +27,12 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Claude Code の `UserPromptSubmit` フックで、依頼文に当たる知識（`triggers:`）を作業の前に AI の文脈へ出す（2026-10-25。ユーザーの依頼と決定）
+- 決めたこと: `home/.claude/settings.json` の `hooks.UserPromptSubmit` が、`$HOME/works/resources/workflow-kit/tools/triggers_hook.py` を `python -I` で呼ぶ。スクリプトは workbase 側（標準入力の `prompt` を `find_knowledge.py` の照合にかけ、当たったノートだけを出す。常に終了コード 0）。dotfiles は配線だけを持つ（依存は dotfiles → workbase の一方向）。設計の正本は workbase の `topics/md-link-graph/records/design-triggers.md`。
+- 根拠: 起点の `AGENTS.md` の 1 行だけでは、AI が実行を忘れると届かない。押し出し型にして、ユーザーの依頼ごとに出す。ユーザーの発言: 「dotfilesのフックはここでやりましょう」。
+- Gotcha 回避: `workbase` を clone していない PC では、`python` がファイル無しで終了コード 2 になり、依頼が止まりうる。そのため `Test-Path` で存在を確かめてから呼ぶ（無ければ何もしない）。
+- 未確認: 実セッションでの発火（設定を `~/.claude/settings.json` に反映した後の新しいセッション）。コマンドの単体の試験は済み（確認: 2026-10-25、根拠: `pwsh -Command` での実行で出力と終了コード 0）。
+
 ### 【この件】pwsh だけ starship の git 系モジュールを外し、ブランチ名は `.git/HEAD` の直読みで出す（2026-10-20。ユーザーの依頼と決定）
 
 - 決めたこと: pwsh だけ別の starship 設定（`windows/powershell/starship.toml`。`~/.config/starship-pwsh.toml` にリンク）にし、`git_branch` / `git_status` を外す。ブランチ名は `profile.ps1` の `Invoke-Starship-PreCommand` が `.git/HEAD` を読んで環境変数 `PS_GIT_BRANCH` に入れ、`[env_var.PS_GIT_BRANCH]` で表示する（worktree / submodule の `.git` ファイル、detached HEAD に対応）。`directory` の `truncate_to_repo` は false（true だとリポジトリ探索が約 1.2 秒）。bash / zsh は共通の `home/.config/starship.toml` のまま。
