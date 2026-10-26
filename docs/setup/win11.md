@@ -119,7 +119,7 @@ git clone https://github.com/yuzucha16/dotfiles $HOME\works\repos\github.com\yuz
 
 - `scoop install git` のあとに `git` が見つからなければ、新しい PowerShell を開き直してから3行目以降を実行する。
 - すでに winget の git が入っているPCは、一度だけ `winget uninstall --id Git.Git -e` で消す（システムの PATH が先に見つかり、scoop の git より優先されるため）。
-- Vault（`$HOME\works`）は clone しない。共有リポジトリ `workbase` は、dotfiles の `50_repos.bat` が `$HOME\works\resources` に clone する。ワークスペース（PARA、`AGENTS.md`）は、`workbase` の `workflow-kit` の「workflowを導入して」で作る。`.obsidian` は `30_link.bat` が張る。これらはこの手順書の範囲外（dotfiles の `README.md` を参照）。
+- Vault（`$HOME\works`）は clone しない。共有リポジトリ `workbase` は、dotfiles の `50_repos.bat` が `$HOME\works\resources` に clone する。ワークスペース（PARA、`AGENTS.md`）は、`workbase` の `room mkworks`（`workflow-kit/room/README.md`。人が実行する）で作る。`.obsidian` は `30_link.bat` が張る。これらはこの手順書の範囲外（dotfiles の `README.md` を参照）。
 - git のユーザー名・メールアドレスは、リポジトリに入れない。`~/.gitconfig_local` に書く（`home/.gitconfig` が include する）。対話で作るスクリプトが `11_git_identity.bat`（次の章。`30_link.bat` の前に実行する）。手で書くなら:
 
 ```powershell
