@@ -1,5 +1,10 @@
 {
-  "theme": "dark-ansi",
+  "skillOverrides": {
+    "docs": "off",
+    "computer-use": "off",
+    "build-in-browser": "off",
+    "chrome-browser": "off"
+  },
   "permissions": {
     "allow": [
       "PowerShell(git -C * status *)",
@@ -103,19 +108,31 @@
       "Bash(git -C * add*--force*)"
     ]
   },
-  "hooks": { 
-    "Stop": [ { 
-      "hooks": [ { 
-        "type": "command", "shell": "powershell", "command": "python \"$HOME/.claude/hooks/stop-record.py\"" } ]
-    } ],
-    "UserPromptSubmit": [ {
-      "hooks": [ {
-        "type": "command", "shell": "powershell", "command": "$h = \"$HOME/works/resources/workflow-kit/tools/triggers_hook.py\"; if (Test-Path $h) { python -I $h }" } ]
-    } ]
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$HOME/.claude/hooks/stop-record.py\"",
+            "shell": "powershell"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$h = \"$HOME/works/resources/workflow-kit/tools/triggers_hook.py\"; if (Test-Path $h) { python -I $h }",
+            "shell": "powershell"
+          }
+        ]
+      }
+    ]
   },
-  "enabledPlugins": {
-    "obsidian@obsidian-skills": true
-  },
+  "enabledPlugins": {},
   "extraKnownMarketplaces": {
     "obsidian-skills": {
       "source": {
@@ -123,5 +140,6 @@
         "repo": "kepano/obsidian-skills"
       }
     }
-  }
+  },
+  "theme": "dark-ansi"
 }
