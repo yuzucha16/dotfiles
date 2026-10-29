@@ -60,6 +60,22 @@
         "model": "sonnet"
       }
     },
+    // Same gateway, for the isolated WSL room (room start <Project> --gateway --no-launch, then connect Zed to the room).
+    // The room cannot run the Windows .cmd above, so it runs the adapter directly. room.py puts the settings and token in /home/ai/.claude-gateway.
+    // Zed env does not expand $HOME, hence the absolute path. Do not add CLAUDE_CODE_USE_BEDROCK / AWS_PROFILE here (Bedrock would win over the gateway).
+    "Claude Gateway (room)": {
+      "type": "custom",
+      "command": "npx",
+      "args": ["-y", "@agentclientprotocol/claude-agent-acp"],
+      "default_config_options": {
+        "mode": "auto",
+        "model": "sonnet"
+      },
+      "env": {
+        "CLAUDE_CONFIG_DIR": "/home/ai/.claude-gateway",
+        "NODE_EXTRA_CA_CERTS": "/etc/ssl/certs/ca-certificates.crt"
+      }
+    },
     // The key is decrypted at launch (DPAPI) by windows/claude/claude-acp-api.ps1 (linked into ~/.local/bin), so it never lands in this file.
     // Inline PowerShell in args did not work (variables came out empty under Zed), hence the script.
     "Claude API": {

@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-10-29（na2: `--gateway` が動かない件。Zed に部屋用の項目を足した）
+- 依頼: 部屋で `--gateway` を試したが動かない。Claude Code では Bedrock が優先されるか、Zed では `claude-acp-gateway.cmd` が見つからない。
+- 調べたこと: 認証の優先順位は Bedrock（`CLAUDE_CODE_USE_BEDROCK`）が最上位。`aws-key` は `~/.aws/credentials` を置くだけで Bedrock を有効にしないので、それだけでは負けない。`--gateway` は `CLAUDE_CODE_USE_BEDROCK` と `ANTHROPIC_API_KEY` を外すが、`ANTHROPIC_AUTH_TOKEN` は外さない。原因の特定には部屋の `/status` が要る（未確認）。Zed の「Claude Gateway」は Windows の `.cmd` を呼ぶので、interop を切った部屋では見つからない。
+- 変更（ユーザーの承認）: `home/.config/zed/settings.json` に「Claude Gateway (room)」を追加（`npx` で直接起動、`CLAUDE_CONFIG_DIR=/home/ai/.claude-gateway`）。`/home/ai` は未確認。Zed での動作は未確認。
+- 触らなかったもの: `docs/decisions.md` と `home/.claude/settings.json` の未コミットの変更（元からある）。
+
 ### 2026-10-29（部屋からゲートウェイを使う `room start --gateway` を足した）
 - 依頼: WSL の部屋から、`windows/claude/readme.html` 第4章のゲートウェイで Claude を使いたい。Bedrock が部屋で使える仕組み（`room aws-key` で `~/.aws/credentials` に長期キー）と対比して設計した。
 - 決定（ユーザー）: 単独の `room gw-token` は作らず、`room start` が受ける。タスク スケジューラは使わない（ゲートウェイは常用でなくバックアップ）。`apiKeyHelper` は部屋で `cat` にする。`--cmd` に組み込む。実装は workbase の `workflow-kit/room/room.py`。判断の根拠は `decisions.md` の「部屋（専用 WSL）からの利用」。
