@@ -187,7 +187,6 @@ function b { Set-Location - }
 function wk { Set-Location $env:WORKS_DIR }
 function dof { Set-Location "$env:WORKS_DIR\repos\github.com\yuzucha16\dotfiles" }
 function ~ { Set-Location $HOME }
-function room { Set-Location "$env:WORKS_DIR\resources\workflow-kit\room" }
 
 Set-Alias pd Push-Location
 Set-Alias po Pop-Location
