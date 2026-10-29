@@ -58,6 +58,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - 共通設定の引き継ぎ（2026-10-20。ユーザーが「お手軽にできるなら」と依頼）: `~/.claude-gateway/settings.json` は `~/.claude/settings.json` と合成されないので、setup が `theme`、`permissions`、`hooks`、`enabledPlugins`、`extraKnownMarketplaces` だけを写す。認証・接続の項目（`apiKeyHelper`、`env`、`model`）は写さない（OAuth に戻る・接続先が変わるのを防ぐ）。却下案: シンボリックリンク（ゲートウェイの値を同じファイルに混ぜられない）。弱点: 写しは作成時点のもの。
 - 確認済み（2026-10-20、ユーザーの報告）: サインインの1時間後も接続が続いた（無音更新が働いた）。
 - 未確認: 写した設定が、ゲートウェイ側の実機で効くこと。管理設定が配られている PC の挙動。
+- 部屋（専用 WSL）からの利用（2026-10-29。ユーザーの依頼と決定）: `room start <Project> --gateway`（`workflow-kit/room/room.py`）で、`start` の間だけ、部屋の `~/.claude-gateway/` に設定と ID トークンを置く。部屋の `apiKeyHelper` は `cat` するだけ。リフレッシュトークンは Windows の DPAPI に置いたまま、`start` を実行している Windows 側のプロセスが約50分ごとに `claude-gateway-token.cmd` で取り直して部屋へ押す。根拠: 部屋は `interop` と `automount` を切っている（`room.py` の `WSL_CONF`）ので、部屋から Windows の `pwsh` やファイルは使えない。Linux の `pwsh` では DPAPI が使えず、部屋でサインインするとリフレッシュトークンが AI から読める場所に残る。ゲートウェイは常用ではなくバックアップなので、タスク スケジューラは使わず、`start` の間だけ更新する。却下案: `room gw-token` の単独コマンド（`aws-key` は静的な長期キーで、ID トークンは約50分で切れる。寿命が違うので対称にしない。ユーザーの決定）。タスク スケジューラによる定期実行（常用でない）。部屋に Linux の `pwsh` を入れてサインインする（上記）。ユーザーが `apiKeyHelper` を `cat` にしてよいと承認。試験: `workflow-kit/room/tests` 160 件が失敗0（うち `GatewayTest` 5 件）。未確認: 実機の部屋での接続、50分後の置き換え、リフレッシュトークンの失効の頻度。
 ### 【汎用】`WSLENV` の区切りは `:` にする（`;` では WSL に何も渡らない）（2026-10-18。ユーザーが承認）
 
 - 決めたこと: `10_env.bat` の `WSLENV` の判定と結合の区切りを `;` から `:` に変えた。以前の版が作った `;` 入りの値は `:` に直して `setx` する。`WSLENV` が未定義の PC でも、`CERTS_DIR/p:WORKS_DIR/p` になる。

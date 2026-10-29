@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-10-29（部屋からゲートウェイを使う `room start --gateway` を足した）
+- 依頼: WSL の部屋から、`windows/claude/readme.html` 第4章のゲートウェイで Claude を使いたい。Bedrock が部屋で使える仕組み（`room aws-key` で `~/.aws/credentials` に長期キー）と対比して設計した。
+- 決定（ユーザー）: 単独の `room gw-token` は作らず、`room start` が受ける。タスク スケジューラは使わない（ゲートウェイは常用でなくバックアップ）。`apiKeyHelper` は部屋で `cat` にする。`--cmd` に組み込む。実装は workbase の `workflow-kit/room/room.py`。判断の根拠は `decisions.md` の「部屋（専用 WSL）からの利用」。
+- 結果: `room.py` に `--gateway`（設定とトークンの事前確認、`~/.claude-gateway` への書き込み、約50分ごとの置き換え、終了時の削除）。`workflow-kit/room/tests` 160 件が失敗0（`GatewayTest` 5 件を追加）。実機の部屋では未確認（別セッションで行う。`log.md` の Next Actions）。workbase 側のコミットは `workflow-kit/room/` の3ファイル。`home/.claude/settings.json` の未コミットの変更は元からあり、触っていない。
+
 ### 2026-10-25（期日の節を戻した）
 - 整合の基準（workbase の `docs/alignment-baseline.md`）に合わせて、`docs/log.md` に期日の節を戻した（項目は「なし」。`db6533a`）。
 
