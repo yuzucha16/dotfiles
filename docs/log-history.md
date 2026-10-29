@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-10-29（pwsh の開始ディレクトリを room にした）
+- 依頼: pwsh の起動時に `$WORKS_DIR\resources\workflow-kit\room` にいて、すぐ `uv run room.py ...` を打てるようにする。
+- 経緯: 最初は `profile.ps1` の末尾で「ホームで始まったときだけ `Set-Location`」にしたが、Windows Terminal は `profiles.defaults` の `startingDirectory` を `%WORKS_DIR%` にしているので条件に合わなかった。`profile.ps1` の変更は取り消した。
+- 変更（ユーザーが実機で確認）: `windows/terminal/settings.json` の PowerShell プロファイルにだけ `startingDirectory` を `%WORKS_DIR%\resources\workflow-kit\room` で足した。`defaults`（CMD、Ubuntu）は `%WORKS_DIR%` のまま。Windows Terminal 以外（VS Code、Zed）から起動した pwsh の開始位置は変わらない。
+- 触らなかったもの: `docs/decisions.md` の未コミットの変更（元からある）。
+
 ### 2026-10-29（na2: `--gateway` が動かない件。Zed に部屋用の項目を足した）
 - 依頼: 部屋で `--gateway` を試したが動かない。Claude Code では Bedrock が優先されるか、Zed では `claude-acp-gateway.cmd` が見つからない。
 - 調べたこと: 認証の優先順位は Bedrock（`CLAUDE_CODE_USE_BEDROCK`）が最上位。`aws-key` は `~/.aws/credentials` を置くだけで Bedrock を有効にしないので、それだけでは負けない。`--gateway` は `CLAUDE_CODE_USE_BEDROCK` と `ANTHROPIC_API_KEY` を外すが、`ANTHROPIC_AUTH_TOKEN` は外さない。原因の特定には部屋の `/status` が要る（未確認）。Zed の「Claude Gateway」は Windows の `.cmd` を呼ぶので、interop を切った部屋では見つからない。
