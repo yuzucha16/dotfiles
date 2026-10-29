@@ -86,6 +86,7 @@
   <tr><th>agent</th><th>認証</th><th>備考</th></tr>
   <tr><td><code>Claude Bedrock</code></td><td>Bedrock</td><td><code>env</code> に <code>CLAUDE_CODE_USE_BEDROCK</code> とリージョン・モデルを書く（第1章）</td></tr>
   <tr><td><code>Claude Gateway</code></td><td>ゲートウェイ</td><td>起動は <code>claude-acp-gateway.cmd</code>（第4章）</td></tr>
+  <tr><td><code>Claude Gateway (room)</code></td><td>ゲートウェイ（部屋）</td><td>部屋（専用 WSL）に繋いだ Zed 用。<code>npx</code> で直接起動し、<code>CLAUDE_CONFIG_DIR=/home/ai/.claude-gateway</code>（<code>room start &lt;Project&gt; --gateway --no-launch</code> で部屋を保つ）</td></tr>
   <tr><td><code>Claude API</code></td><td>API キー</td><td>起動は <code>claude-acp-api.cmd</code>（第2章）</td></tr>
   <tr><td><code>claude-acp</code></td><td>OAuth</td><td>レジストリ版。主な入口（第3章）</td></tr>
 </table>
@@ -134,6 +135,24 @@
   <li>Bedrock では、WebSearch、fast mode、<code>/logout</code> は使えない。</li>
   <li>管理設定（managed settings）が配られている環境では、それが最優先で、<code>--settings</code> の値より強い。</li>
   <li>試験: <code>pwsh -NoProfile -File tests/windows/test_claude_bedrock_setup.ps1</code>（偽の <code>aws</code> で、一覧の絞り込み、設定の組み立て、非対話の実行を試験）。<strong>実際の AWS での実行は未検証</strong>（このスクリプトを書いた PC に AWS CLI が無かった）。</li>
+</ul>
+
+<h3>IAM アクセスキーを使う・更新する（SSO を使わないとき）</h3>
+<p>IAM ユーザーのアクセスキーは、<code>aws configure --profile &lt;名前&gt;</code> で <code>~/.aws/credentials</code>（Windows は <code>%USERPROFILE%\.aws\credentials</code>）の <code>[&lt;名前&gt;]</code> 節に入る。キーを更新（ローテーション）するときも、同じコマンドで同名のプロファイルを上書きする。</p>
+<table>
+  <tr><th>やりたいこと</th><th>コマンド</th></tr>
+  <tr><td>作る・更新する（対話）</td><td><code>aws configure --profile &lt;名前&gt;</code>。Access Key ID と Secret Access Key を入れ直す。リージョンと出力形式は Enter で現状のまま</td></tr>
+  <tr><td>現状を見る</td><td><code>aws configure list --profile &lt;名前&gt;</code>（キーは末尾4文字だけ表示）</td></tr>
+  <tr><td>誰として認証されるか</td><td><code>aws sts get-caller-identity --profile &lt;名前&gt;</code></td></tr>
+  <tr><td>一時キー（<code>aws_session_token</code>）</td><td><code>aws configure set aws_session_token &lt;値&gt; --profile &lt;名前&gt;</code>。<code>aws configure</code> の対話では聞かれない</td></tr>
+  <tr><td>1項目だけ変える</td><td><code>aws configure set aws_access_key_id &lt;ID&gt; --profile &lt;名前&gt;</code>（秘密キーは、コマンドラインに書くとシェルの履歴に残るので、対話の <code>aws configure</code> で入れる）</td></tr>
+</table>
+<ul>
+  <li>キーは <code>credentials</code>、リージョンなどは同じ場所の <code>config</code> に入る。直接編集しても同じ。</li>
+  <li>ローテーションは、新しいキーを入れて <code>aws sts get-caller-identity</code> で通ることを確かめてから、古いキーを無効にする。</li>
+  <li>キーは、チャットや git 管理のファイル（dotfiles の Zed の設定を含む）に書かない。</li>
+  <li>部屋（専用 WSL）には AWS CLI が無い。部屋の <code>~/.aws/credentials</code> は、<code>uv run room.py aws-key &lt;Area&gt; --profile &lt;名前&gt;</code>（workbase の <code>workflow-kit/room/</code>）で入れる。秘密キーは画面に出さずに受け取り、同名の節だけを置き換える（権限 600）。更新も同じコマンドで行う。</li>
+  <li>使うプロファイル名は、<code>claude-bedrock-setup.cmd</code> の「AWS プロファイル」と、Zed の <code>Claude Bedrock</code> の <code>env</code>（<code>AWS_PROFILE</code>）にそろえる。</li>
 </ul>
 
 <h3>Zed（Claude Bedrock）</h3>

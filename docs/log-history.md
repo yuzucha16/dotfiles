@@ -9,6 +9,11 @@
 - 調べたこと: 認証の優先順位は Bedrock（`CLAUDE_CODE_USE_BEDROCK`）が最上位。`aws-key` は `~/.aws/credentials` を置くだけで Bedrock を有効にしないので、それだけでは負けない。`--gateway` は `CLAUDE_CODE_USE_BEDROCK` と `ANTHROPIC_API_KEY` を外すが、`ANTHROPIC_AUTH_TOKEN` は外さない。原因の特定には部屋の `/status` が要る（未確認）。Zed の「Claude Gateway」は Windows の `.cmd` を呼ぶので、interop を切った部屋では見つからない。
 - 変更（ユーザーの承認）: `home/.config/zed/settings.json` に「Claude Gateway (room)」を追加（`npx` で直接起動、`CLAUDE_CONFIG_DIR=/home/ai/.claude-gateway`）。`/home/ai` は未確認。Zed での動作は未確認。
 - 触らなかったもの: `docs/decisions.md` と `home/.claude/settings.json` の未コミットの変更（元からある）。
+- 追記（同日、ユーザーの依頼）: `windows/claude/README.md` と `README.html` に「IAM アクセスキーを使う・更新する」（第1章。`aws configure --profile`、`list`、`sts get-caller-identity`、一時キー、部屋の `room aws-key`）と、Zed の agent 表に「Claude Gateway (room)」の行を足した。コマンドは AWS CLI の一般的な使い方による。実機では実行していない。
+- Next Actions の整理（ユーザーの申告。確認はユーザーの実機）:
+  - **済（na1）**: pwsh の starship 設定を、この PC で有効にする（`30_link.bat` でリンクを作り、表示と起動の速さ、`ls`、`z`、複数行入力を確認する項目）。ユーザーが完了と申告した。
+  - **済（na2）**: 部屋の `room start --gateway` の実機確認（`/status`、約50分後の接続、終了後のトークン削除、Zed の「Claude Gateway (room)」）。ユーザーが、動作確認が終わり問題なしと申告した。`ANTHROPIC_AUTH_TOKEN` を外す件は、問題が出なかったので起票していない。
+  - **見送り（na3）**: 外部スキルを取り込む前に、配布元と `SKILL.md` を確認する運用にするか決める（案の段階だった）。ユーザーが「時期が来たらまたやる」と言って、取り下げた（omit）。決定ではない。
 
 ### 2026-10-29（部屋からゲートウェイを使う `room start --gateway` を足した）
 - 依頼: WSL の部屋から、`windows/claude/readme.html` 第4章のゲートウェイで Claude を使いたい。Bedrock が部屋で使える仕組み（`room aws-key` で `~/.aws/credentials` に長期キー）と対比して設計した。

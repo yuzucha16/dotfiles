@@ -52,6 +52,7 @@ Zed では `home/.config/zed/settings.json` の `agent_servers` に、認証ご�
 |---|---|---|
 | `Claude Bedrock` | Bedrock | `env` に `CLAUDE_CODE_USE_BEDROCK` とリージョン・モデルを書く（第1章） |
 | `Claude Gateway` | ゲートウェイ | 起動は `claude-acp-gateway.cmd`（第4章） |
+| `Claude Gateway (room)` | ゲートウェイ（部屋） | 部屋（専用 WSL）に繋いだ Zed 用。`npx` で直接起動し、`CLAUDE_CONFIG_DIR=/home/ai/.claude-gateway`（`room start <Project> --gateway --no-launch` で部屋を保つ） |
 | `Claude API` | API キー | 起動は `claude-acp-api.cmd`（第2章） |
 | `claude-acp` | OAuth | レジストリ版。主な入口（第3章） |
 
@@ -86,6 +87,24 @@ Zed では `home/.config/zed/settings.json` の `agent_servers` に、認証ご�
 - Bedrock では、WebSearch、fast mode、`/logout` は使えない。
 - 管理設定（managed settings）が配られている環境では、それが最優先で、`--settings` の値より強い。
 - 試験: `pwsh -NoProfile -File tests/windows/test_claude_bedrock_setup.ps1`（偽の `aws` で、一覧の絞り込み、設定の組み立て、非対話の実行を試験）。**実際の AWS での実行は未検証**（このスクリプトを書いた PC に AWS CLI が無かった）。
+
+### IAM アクセスキーを使う・更新する（SSO を使わないとき）
+
+IAM ユーザーのアクセスキーは、`aws configure --profile <名前>` で `~/.aws/credentials`（Windows は `%USERPROFILE%\.aws\credentials`）の `[<名前>]` 節に入る。キーを更新（ローテーション）するときも、同じコマンドで同名のプロファイルを上書きする。
+
+| やりたいこと | コマンド |
+|---|---|
+| 作る・更新する（対話） | `aws configure --profile <名前>`。Access Key ID と Secret Access Key を入れ直す。リージョンと出力形式は Enter で現状のまま |
+| 現状を見る | `aws configure list --profile <名前>`（キーは末尾4文字だけ表示） |
+| 誰として認証されるか | `aws sts get-caller-identity --profile <名前>` |
+| 一時キー（`aws_session_token`） | `aws configure set aws_session_token <値> --profile <名前>`。`aws configure` の対話では聞かれない |
+| 1項目だけ変える | `aws configure set aws_access_key_id <ID> --profile <名前>`（秘密キーは、コマンドラインに書くとシェルの履歴に残るので、対話の `aws configure` で入れる） |
+
+- キーは `credentials`、リージョンなどは同じ場所の `config` に入る。直接編集しても同じ。
+- ローテーションは、新しいキーを入れて `aws sts get-caller-identity` で通ることを確かめてから、古いキーを無効にする。
+- キーは、チャットや git 管理のファイル（dotfiles の Zed の設定を含む）に書かない。
+- 部屋（専用 WSL）には AWS CLI が無い。部屋の `~/.aws/credentials` は、`uv run room.py aws-key <Area> --profile <名前>`（workbase の `workflow-kit/room/`）で入れる。秘密キーは画面に出さずに受け取り、同名の節だけを置き換える（権限 600）。更新も同じコマンドで行う。
+- 使うプロファイル名は、`claude-bedrock-setup.cmd` の「AWS プロファイル」と、Zed の `Claude Bedrock` の `env`（`AWS_PROFILE`）にそろえる。
 
 ### Zed（Claude Bedrock）
 
