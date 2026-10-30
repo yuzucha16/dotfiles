@@ -35,6 +35,7 @@ git status
 git fetch
 git pull
 git pull origin main
+git pull --rebase
 git branch
 git branch -a
 git branch -r

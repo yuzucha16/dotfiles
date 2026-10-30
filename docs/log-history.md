@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-10-30（履歴を `uv run --script $env:WFKIT_DIR\...` の形に統一し、種に workflow-kit を足した）
+- 依頼: Python の実行を `uv run --script` に、`$env:WFKIT_DIR` を使う形に揃えたので、履歴と履歴の種も同じ形にする。種にないスクリプトとオプションも足す。
+- このPCの履歴: `ConsoleHost_history.txt` を 547 → 396 行（重複は全体で削除し、新しい方を残した。バックアップは同じ場所の `.bak-20261030`）。`uv run room.py ...`、`uv run .\workflow-kit\tools\x.py`、`python workflow-kit/tools/x.py` を `uv run --script $env:WFKIT_DIR\room\room.py ...` / `...\tools\x.py` に、`--prices` のパスも `$env:WFKIT_DIR\tools\...` に直した。壊れた1行は削除。
+- 種: 正本 `exmem/lessons/shell-command-usecases.md` を、ユーザーの承認で編集し（AGENTS.md の例外。今回限り）、そこから `windows/powershell/history.seed.txt` と `manifests/history.seed.sh.txt` を再生成した。`workflow-kit` の節（`room.py` の全サブコマンドと主なオプション、`tools\` の主なスクリプト）を新設。git と wsl の行を少し足した。`uv run <スクリプト名>.py` は `uv run --script <スクリプトのパス>.py` に。`aws configure --profile n1-trial` は `aws configure --profile <プロファイル名>` に直した。zsh/bash の種は `git pull --rebase` の1行のみ（`WFKIT_DIR` は Windows だけ）。
+- 確認: 追加行をパーサーで検査（先頭が `<` の語を含む行だけがパースエラー）。`bash tests/linux/test_scripts.sh` は 55/55。
+
 ### 2026-10-30（Terminal の設定の復旧と、room-myenv のプロファイル・starship）
 - 依頼: Terminal の起動ディレクトリが `~` に戻り、Azure Cloud Shell が出る件の確認。続けて、`room-myenv` に `ai` で入るプロファイルの追加、部屋へのシェル環境の転送の見積もり。
 - 原因: scoop 版 Terminal の `settings.json`（`links.map` のリンク先）が、20:59 に初期設定で作り直され、リンクでない実ファイルになっていた。リポジトリ側は無傷。ユーザーが `30_link.bat` で戻して正常を確認した。引き金は未確認（リンクの置き換えか、読めなくなって作り直しか）。
