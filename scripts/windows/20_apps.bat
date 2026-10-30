@@ -100,6 +100,8 @@ if exist "%NPP_DIR%\" (
   ) else (
     echo [Exists] Notepad++ config.xml
   )
+  REM Plugins (CSVLint, Markdown Viewer++) and the Markdown Viewer++ CSS: skipped when already present
+  call "%PS_EXE%" -NoProfile -ExecutionPolicy Bypass -File "%DOTS_DIR%\windows\notepadpp\install-plugins.ps1" -NppDir "%NPP_DIR%"
 )
 
 echo.

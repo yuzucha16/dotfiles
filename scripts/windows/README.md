@@ -17,6 +17,7 @@
    - PC1: `20_apps.bat`（`apps.txt` のみ）
    - PC2: `20_apps.bat home`（`apps.txt` + `apps.home.txt`）
    - Notepad++ の `config.xml` が無い/空のときだけ、`windows\notepadpp\config.min.xml`（タブ幅 2、新規文書 LF、折り返し、スナップショットバックアップ、ダークテーマ、自動更新オフなど）をコピーする。既にあれば触らない。リンクではないので、以後はアプリが自由に書き換える。最小構成を適用し直したいときは `config.xml` を削除（または空に）して再実行する
+   - Notepad++ のプラグイン CSVLint と Markdown Viewer++ を、バージョン固定・SHA256 検証で GitHub Releases から入れる（`windows\notepadpp\install-plugins.ps1`。入っていれば skip。Notepad++ 起動中は止まる）。Markdown Viewer++ の CSS（`markdown-viewer.css`: 見出し緑 `#a7b85a`・強調 `#d8a657`・コード `#7daea3`。Zed の `settings.json` と同じ色）は、`htmlCssStyle` が空のときだけ書く
    - `scripts\windows\23_claude.bat`（任意）: Claude Code を公式インストーラ（`irm https://claude.ai/install.ps1 | iex`）で入れる。実行前に `y/N` を聞き、空・`n` なら何も入れない（無効な入力は5回で `[ERR]`）。scoop の `claude-code` は使わない（`apps.txt` から削除）
    - `scripts\windows\26_uv.bat`: uv を公式インストーラ（`irm https://astral.sh/uv/install.ps1 | iex`）で入れ、`uv python install 3.13 --default` と `uv python pin --global 3.13` を実行し、`python --version` を表示する。入れるかは聞かない。**最初に** SSL バンドルを設定するか `y/N` で聞く（`y` で、`ca_bundle.crt` があるときだけ `UV_SYSTEM_CERTS=true` と `SSL_CERT_FILE` を `setx`）
    - `scripts\windows\27_volta.bat`: `scoop install volta` → `volta install node@lts`（その時点の LTS を既定に固定）→ `node` / `npm` / `npx` の `--version` を表示する。入れるかは聞かない。**最初に** SSL バンドルを設定するか `y/N` で聞く（`y` で、`ca_bundle.crt` があるときだけ `NODE_EXTRA_CA_CERTS` を `setx`）。Node は Volta 前提で、`NODE_EXTRA_CA_CERTS` を設定するのはここだけ（`profile.ps1` では設定しない）。Windows の Volta は開発者モードが要る
