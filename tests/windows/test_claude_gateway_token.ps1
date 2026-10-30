@@ -121,6 +121,15 @@ try {
   $r = Run-Token
   Check 'after refresh: served from the cache' (($r.Rc -eq 0) -and ($r.Out -eq $newJwt))
 
+  # 残り30分のトークン: 既定（apiKeyHelper）はそのまま返す。-MinValidSec 3300（room の50分ごとの置き換え）は更新する
+  $halfJwt = New-Jwt ([DateTimeOffset]::UtcNow.AddMinutes(30).ToUnixTimeSeconds()) @{ marker = 'half' }
+  Save-TokenCache $cache ([pscustomobject]@{ id_token = $halfJwt; access_token = ''; refresh_token = 'R' })
+  Remove-Item $reqLog -ErrorAction SilentlyContinue
+  $r = Run-Token
+  Check 'min valid (default): 30 min left is served from the cache' (($r.Rc -eq 0) -and ($r.Out -eq $halfJwt) -and -not (Test-Path $reqLog))
+  $r = Run-Token @('-MinValidSec', '3300')
+  Check 'min valid 3300: 30 min left is refreshed' (($r.Rc -eq 0) -and ($r.Out -eq $newJwt) -and ((Get-Content $reqLog -Raw) -match 'grant_type=refresh_token') -and ($r.Err -notmatch 'WARN'))
+
   Save-TokenCache $cache ([pscustomobject]@{ id_token = (New-Jwt $past); access_token = ''; refresh_token = 'R' })
   Set-Content $mode 'fail'
   $r = Run-Token

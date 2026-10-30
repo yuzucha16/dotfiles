@@ -306,6 +306,7 @@ Claude Desktop の「Configure Third-Party Inference」の画面を開いて、�
 - **`pause` は入口によって違う。** `scripts\windows\*.bat`（番号つきのセットアップ）は、ダブルクリックでも結果が見えるよう最後に `pause` する。ここの `.cmd` は、`claude-gateway-setup.cmd` と `claude-bedrock-setup.cmd` だけが `pause` する（対話専用）。`claude-gateway-token.cmd` は **`-Login` のときだけ** `pause` し、`apiKeyHelper` として呼ばれるときは入れない（標準出力にトークンだけを返す必要があり、`pause` を入れると待ち続けて出力も壊れる。試験で確認）。Zed の起動用 `claude-acp-gateway.cmd` も入れない。
 - **URL とクライアント ID は dotfiles に置かない。** 組織を特定できる値なので、プロンプトで入力し、この PC のファイルにだけ書く。
 - **トークンの更新は自動。** ID トークンは約1時間で切れるが、`apiKeyHelper` が呼ばれるたびに期限を見て、切れていれば保管したリフレッシュトークンで無音で更新する（`offline_access` を含む既定のスコープのとき）。更新できなければ `-Login` を促して失敗する。
+- **先の分まで要るときは `-MinValidSec`。** 既定は「残り2分を切ったら更新」なので、まだ切れていないトークンはそのまま返る。`room start --gateway` のように取ったトークンを約50分使い続ける呼び出し元は、`-MinValidSec 3300` などで「残りが55分より短ければ更新」を求める（これが無いと、50分後の置き換えで、あと10分ほどで切れる古いトークンを押してしまう。2026-10-30）。
 - **設定の場所を `~/.claude` と分ける。** `apiKeyHelper` を共通の `settings.json` に入れると、`claude` が常にその認証になり OAuth に戻れない。`claude-gateway` は `CLAUDE_CONFIG_DIR` を `~/.claude-gateway` にして起動するので、OAuth の `claude` と混ざらない。その代わり、`~/.claude` の共通設定（permissions、hooks、`CLAUDE.md` など）はこの起動には効かない。必要になったら `~/.claude-gateway` に足す。
 - **クライアント ID は Desktop と同じ値を使う。** IdP（Entra なら「アプリの登録」）に登録された、公開クライアントのアプリの ID。リダイレクト URI は `http://127.0.0.1/callback`（loopback。Entra はポートを問わない）。ブラウザのサインインはこのスクリプトが同じ形（認可コード + PKCE）で行うので、新しい登録は要らない見込み。登録の中身は IdP の管理者のもので、利用者が触る必要は無い。
 - **トークン種別**: 既定は ID トークン（`id_token`）。ゲートウェイが API スコープ付きのアクセストークンを求める構成なら `access_token` とスコープを指定する。Desktop の設定に合わせる。

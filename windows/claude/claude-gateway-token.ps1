@@ -1,11 +1,13 @@
 # Claude Code の apiKeyHelper 用。組織のゲートウェイへ送る OIDC のトークン（Entra ID など）を、標準出力に返す。
 # 初回のログイン: claude-gateway-token.cmd -Login   （ブラウザで認可コード + PKCE。Claude Desktop のゲートウェイ設定と同じ流れ）
 # 以降: 有効なトークンがあればそれを返し、切れていれば保管したリフレッシュトークンで無音で更新する。更新できなければ -Login を促して exit 1。
+# 先の分まで要るとき: claude-gateway-token.cmd -MinValidSec 3300   （残りがその秒数より短ければ、まだ切れていなくても更新する。room start --gateway の約50分ごとの置き換え用）
 # 設定: %USERPROFILE%\.claude-gateway\gateway.json（issuer / clientId / scopes / tokenType。claude-gateway-setup.cmd が作る）
 # 保管: %USERPROFILE%\.claude-gateway\token.dpapi（DPAPI で暗号化。この Windows ユーザー + この PC でだけ復号できる。リポジトリには置かない）
 # 標準出力にはトークンだけを出す（apiKeyHelper は、それ以外が混ざると失敗する）。メッセージは標準エラーへ。
 param(
     [switch]$Login,                                        # ブラウザでサインインして、トークンを保管する
+    [int]$MinValidSec = 120,                               # 期限までの残りがこの秒数より短ければ更新する（既定は apiKeyHelper 用の 2 分）
     [string]$ConfigDir = (Join-Path $HOME '.claude-gateway')
 )
 
@@ -192,7 +194,7 @@ try {
     $tokens = Read-TokenCache $cacheFile
     if (-not $tokens) { Stop-Token 'not signed in (run: claude-gateway-token.cmd -Login)' }
     $bearer = Select-BearerToken $tokens $tokenType
-    if (Test-TokenFresh $bearer) { Write-Output $bearer; return }
+    if (Test-TokenFresh $bearer $MinValidSec) { Write-Output $bearer; return }
 
     if (-not $tokens.refresh_token) { Stop-Token 'token expired and no refresh token (run: claude-gateway-token.cmd -Login)' }
     $ep = Get-OidcEndpoints $config.issuer
@@ -203,6 +205,7 @@ try {
     $bearer = Select-BearerToken $tokens $tokenType
     if (-not $bearer) { Stop-Token "更新の応答に $tokenType がありません（run: claude-gateway-token.cmd -Login）" }
     Save-TokenCache $cacheFile $tokens
+    if (-not (Test-TokenFresh $bearer $MinValidSec)) { [Console]::Error.WriteLine("[WARN] 更新したトークンの残りが ${MinValidSec} 秒より短い（IdP のトークンの寿命を確認する）") }
     Write-Output $bearer
 } catch {
     Stop-Token "token error: $($_.Exception.Message) (run: claude-gateway-token.cmd -Login)"
