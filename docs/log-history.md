@@ -4,6 +4,10 @@
 
 ## Log
 
+### 2026-10-30（Zed の Gruvbox Dark で Markdown のリストマーカーをオレンジに）
+- 依頼: テーマを Material Gruvbox Dark から Gruvbox Dark に変えたら、Markdown の `1.` `2.` の色が本文と区別できなくなった。オレンジにする。
+- 変更: `home/.config/zed/settings.json` の `theme_overrides` → `Gruvbox Dark` → `syntax` に `punctuation.list_marker` を `#e78a4e` で追加（旧 `themes/material-gruvbox.json` と同じ色）。`-` の箇条書きにも効く。ユーザーが実機で確認し、そのままでよいと判断した。
+
 ### 2026-10-30（履歴を `uv run --script $env:WFKIT_DIR\...` の形に統一し、種に workflow-kit を足した）
 - 依頼: Python の実行を `uv run --script` に、`$env:WFKIT_DIR` を使う形に揃えたので、履歴と履歴の種も同じ形にする。種にないスクリプトとオプションも足す。
 - このPCの履歴: `ConsoleHost_history.txt` を 547 → 396 行（重複は全体で削除し、新しい方を残した。バックアップは同じ場所の `.bak-20261030`）。`uv run room.py ...`、`uv run .\workflow-kit\tools\x.py`、`python workflow-kit/tools/x.py` を `uv run --script $env:WFKIT_DIR\room\room.py ...` / `...\tools\x.py` に、`--prices` のパスも `$env:WFKIT_DIR\tools\...` に直した。壊れた1行は削除。

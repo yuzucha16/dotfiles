@@ -163,7 +163,9 @@
       "ignored": "#7daea3",
       "syntax": {
         "emphasis.strong": { "font_weight": 400 },
-        "title": { "font_weight": 700 }
+        "title": { "font_weight": 700 },
+        // Markdown list markers (1. 2. -) are indistinguishable from body text in Gruvbox Dark
+        "punctuation.list_marker": { "color": "#e78a4e" }
       }
     }
   },
