@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-10-30（Terminal の設定の復旧と、room-myenv のプロファイル・starship）
+- 依頼: Terminal の起動ディレクトリが `~` に戻り、Azure Cloud Shell が出る件の確認。続けて、`room-myenv` に `ai` で入るプロファイルの追加、部屋へのシェル環境の転送の見積もり。
+- 原因: scoop 版 Terminal の `settings.json`（`links.map` のリンク先）が、20:59 に初期設定で作り直され、リンクでない実ファイルになっていた。リポジトリ側は無傷。ユーザーが `30_link.bat` で戻して正常を確認した。引き金は未確認（リンクの置き換えか、読めなくなって作り直しか）。
+- 変更: `windows/terminal/settings.json` に `room-myenv`（`uv run room.py shell myenv`）。部屋に starship v1.27.0、`starship.toml`、履歴の種、`.bashrc` の1行（手作業。判断は `decisions.md`）。案 B を `log.md` の Next Actions に起票。
+- 確認: `uv run room.py shell --help`、JSON の読み込み、部屋での `starship --version`。Terminal のタブからの起動は未確認。
+
 ### 2026-10-30（Notepad++ のプラグイン自動導入と Markdown の配色。コミット 1b27019）
 - 依頼: CSVLint と Markdown Viewer++ を自動で入れる。Markdown の色（見出し緑・コード青・強調黄）を Zed の `settings.json` と同じ色コードにする。続けて、プレビューの背景をダークに、エディタ側も同じ配色に。
 - 変更: `windows/notepadpp/install-plugins.ps1`（固定版・SHA256 検証、`-ResetCss`）、`markdown-viewer.css`、`markdown.udl.xml`（同梱の Markdown 用 UDL のコピー）、`links.map` の1行、`20_apps.bat` の呼び出し、README 2つ。色は `#a7b85a`（見出し）、`#d8a657`（強調）、`#7daea3`（コード）、`#282828`（背景）。

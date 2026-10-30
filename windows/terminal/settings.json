@@ -72,6 +72,13 @@
                 "guid": "{c83ff58d-7bca-52cc-8dfe-0983f365c60f}",
                 "hidden": false,
                 "name": "Ubuntu-24.04"
+            },
+            {
+                "commandline": "uv run room.py shell myenv",
+                "guid": "{7d1c5a3e-4b2f-5e86-9a1d-3f6b8c2e0a47}",
+                "hidden": false,
+                "name": "room-myenv",
+                "startingDirectory": "%WORKS_DIR%\\resources\\workflow-kit\\room"
             }
         ]
     },

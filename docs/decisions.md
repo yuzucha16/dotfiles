@@ -27,6 +27,14 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Windows Terminal に固定の `room-myenv` プロファイルを1つ足す。部屋のシェル環境は、まず starship と履歴の種だけ入れる（2026-10-30。ユーザーの依頼と決定）
+
+- 決めたこと: `windows/terminal/settings.json` に、`uv run room.py shell myenv`（開始位置は `%WORKS_DIR%\resources\workflow-kit\room`）のプロファイルを足した。`room.py shell` は `WSLENV` を外して入るので、`wsl -d` 直接の「failed to translate」が出ない。既定ユーザーは `ai`（実機で `id` を確認）。
+- 前の決定（2026-10-14）との関係: 「部屋のプロファイルは増えるたびに設定が変わるのでタブに出さず `room-sh` で入る」を、固定の1つに限って変えた。作成のたびの自動追加ではないので差分は出ない。他の部屋は引き続き `room-sh`。
+- 部屋への導入（案 A。手作業。`room.py` には入れていない）: starship v1.27.0（musl 版）を Windows 側で取得し、公式の `.sha256` と照合して `~/.local/bin` へ。`starship.toml` を `~/.config/` へ。履歴の種は `~/.bash_history` の先頭に足した（部屋の `HISTFILE` は既定のまま）。`~/.bashrc` には `starship init bash` の1行だけ追記。
+- 却下案: dotfiles の `.bashrc` で上書き（`room.py` と uv の追記が消える）。stow とリポジトリの持ち込み（部屋は `/mnt/c` が空）。案 B（zsh・fzf・zoxide・lsd・bat・fd を入れ、`home/` を送る）は規模が中なので `log.md` の Next Actions に積んだ。
+- 確認の範囲: `starship --version`（1.27.0）、チェックサム一致、`.bashrc` の追記、履歴 80 行、は確認した。**未確認**: Terminal のタブから開いたときの見た目（フォント含む）。
+
 ### 【この件】Notepad++ のプラグイン（CSVLint、Markdown Viewer++）を `20_apps.bat` で自動導入し、Markdown の配色を Zed に合わせる（2026-10-30。ユーザーの依頼と、実機での確認）
 - 変更: `windows/notepadpp/install-plugins.ps1` が GitHub Releases の zip を、バージョン固定（CSVLint 0.4.9、Markdown Viewer++ 0.8.2）と SHA256 検証つきで `plugins\<名前>\` に展開する（あれば skip。Notepad++ 起動中は止まる）。`20_apps.bat` が呼ぶ。配色は2か所: ① プレビュー用 `markdown-viewer.css`（`htmlCssStyle` が空のときだけ書く。`-ResetCss` で上書き）、② エディタ側は同梱の Markdown 用 UDL のコピー `markdown.udl.xml` を追跡し、`links.map` で `markdown._preinstalled_DM.udl.xml` の場所へリンクする。色は Zed の `settings.json` と同じ（見出し `#a7b85a`、強調 `#d8a657`、コード `#7daea3`、背景 `#282828`。強調は太字にしない）。
 - 経緯: 2026-10-04 の「プラグインは全削除（未使用）」を、ユーザーの依頼で覆した（CSV の確認と Markdown のプレビューを使うため）。
