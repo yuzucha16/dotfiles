@@ -4,6 +4,13 @@
 
 ## Log
 
+### 2026-10-30（Notepad++ のプラグイン自動導入と Markdown の配色。コミット 1b27019）
+- 依頼: CSVLint と Markdown Viewer++ を自動で入れる。Markdown の色（見出し緑・コード青・強調黄）を Zed の `settings.json` と同じ色コードにする。続けて、プレビューの背景をダークに、エディタ側も同じ配色に。
+- 変更: `windows/notepadpp/install-plugins.ps1`（固定版・SHA256 検証、`-ResetCss`）、`markdown-viewer.css`、`markdown.udl.xml`（同梱の Markdown 用 UDL のコピー）、`links.map` の1行、`20_apps.bat` の呼び出し、README 2つ。色は `#a7b85a`（見出し）、`#d8a657`（強調）、`#7daea3`（コード）、`#282828`（背景）。
+- 経緯: プレビューが白いままだった原因は、実機の `htmlCssStyle` が `body` を足す前の古い CSS のままで、スクリプトが「空のときだけ書く」作りだったこと（実機の ini で確認）。`-ResetCss` を足し、ユーザーが実機で動作確認した。エディタ側の色は、同梱の UDL（`markdown._preinstalled_DM.udl.xml`）の色を差し替えた。
+- 見送り: CSV を見るだけで列を揃える件。CSVLint には機能が無く（配布元の docs で確認）、Columns++ の Elastic Tabstops はタブ区切りが前提。ユーザーが見送りを決めた。
+- 確認: 作業用フォルダでスクリプトを2回動かして冪等性を確認。このPCの実機はユーザーが動作確認した。`tests/linux/test_scripts.sh` は `scripts/linux/` と `home/.profile` に触れていないので実行していない。push はしていない。
+
 ### 2026-10-30（Zed の設定を見直し、WFKIT_DIR と pwsh の Tab 補完を足した）
 - 依頼: Zed の `settings.json` の改良、Windows Terminal の開始位置と環境変数 `WFKIT_DIR`、`auto_install_extensions` の点検、pwsh の Tab 補完が `$env:WFKIT_DIR` を実パスに書き換える件。
 - Zed（`home/.config/zed/settings.json`）: アイコンテーマを dark/light とも `Material Icon Theme` に、`project_panel.file_icons` を `true` に、`auto_update` を `false` に。dark テーマを `Gruvbox Dark` にし、Markdown 用の `theme_overrides` のキーも `Gruvbox Dark` に（色と太さは同じ）。`auto_install_extensions` に `material-icon-theme` と `log` を追加。

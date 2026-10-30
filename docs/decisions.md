@@ -27,6 +27,13 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Notepad++ のプラグイン（CSVLint、Markdown Viewer++）を `20_apps.bat` で自動導入し、Markdown の配色を Zed に合わせる（2026-10-30。ユーザーの依頼と、実機での確認）
+- 変更: `windows/notepadpp/install-plugins.ps1` が GitHub Releases の zip を、バージョン固定（CSVLint 0.4.9、Markdown Viewer++ 0.8.2）と SHA256 検証つきで `plugins\<名前>\` に展開する（あれば skip。Notepad++ 起動中は止まる）。`20_apps.bat` が呼ぶ。配色は2か所: ① プレビュー用 `markdown-viewer.css`（`htmlCssStyle` が空のときだけ書く。`-ResetCss` で上書き）、② エディタ側は同梱の Markdown 用 UDL のコピー `markdown.udl.xml` を追跡し、`links.map` で `markdown._preinstalled_DM.udl.xml` の場所へリンクする。色は Zed の `settings.json` と同じ（見出し `#a7b85a`、強調 `#d8a657`、コード `#7daea3`、背景 `#282828`。強調は太字にしない）。
+- 経緯: 2026-10-04 の「プラグインは全削除（未使用）」を、ユーザーの依頼で覆した（CSV の確認と Markdown のプレビューを使うため）。
+- 却下案: プラグインを scoop や Plugins Admin で入れる（scoop に該当なし。Plugins Admin は自動化できない）。「最新版」の取得（版が変わると再現できない）。CSV を見るだけで列を揃える（CSVLint にその機能は無い。Columns++ の Elastic Tabstops はタブ区切りが前提で、カンマの CSV にはそのままでは使えない。2026-10-30 に見送り）。
+- 弱点: ① 同梱 UDL は実ファイルなので、`30_link.bat` は上書きせず止まる（手で削除してから実行）。`scoop update` で復活するかは未確認。② Markdown Viewer++ は WinForms の HtmlRenderer で描画する。`body` の背景が画面全体に効くかは、ユーザーが実機で動作確認した（短い文書の下の余白は未確認）。
+- 戻し方: `install-plugins.ps1` の呼び出しを `20_apps.bat` から外し、`links.map` の UDL の行を消す（同梱の UDL は `scoop reset` か再インストールで戻る）。
+
 ### 【この件】Zed のテーマを自作の Material Gruvbox Dark から標準の Gruvbox Dark に戻し、アイコンは Material Icon Theme にする（2026-10-30。ユーザーの決定）
 - 変更: `theme.dark` を `Gruvbox Dark` に、`icon_theme` を dark/light とも `Material Icon Theme` に。`theme_overrides` のキーを `Gruvbox Dark` に変えた（色は据え置き）。`auto_update` は `false`。
 - 経緯: 2026-10-04 に「標準の Gruvbox Dark は文字色が明るい」として自作テーマを選んだ決定を、ユーザーが覆した。文字色の差は `theme_overrides` で補う前提だが、`theme_overrides` に文字色は足していない（見え方は未確認）。
@@ -243,7 +250,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 ### 【この件】追跡しないもの・絞ったもの
 
 - 追跡しない: Obsidian の `workspace.json`、Notepad++ の `config.xml` `stylers.xml`（約195KB）`NppExec.ini` `contextMenu.xml`、`tmp/`、`.claude/`。
-- Notepad++ は Gruvbox dark テーマと `config.min.xml`（`config.xml` の最小構成の雛形。リンクはしない）だけ追跡する。経緯は Decisions の「不要アプリの削除と Notepad++ config の雛形方式」。
+- Notepad++ は Gruvbox dark テーマと `config.min.xml`（`config.xml` の最小構成の雛形。リンクはしない）に加え、2026-10-30 からプラグイン導入（`install-plugins.ps1`）、`markdown-viewer.css`、`markdown.udl.xml` を追跡する。経緯は Decisions の「不要アプリの削除と Notepad++ config の雛形方式」。
 - Office テンプレ・UI 設定は `links.map` から外し、`notes` 側（`resources/office/`）に置く。`notes` の clone 順序への依存を避けるため、初回に手で配置する運用。
 - 行き先: local（dotfiles の追跡範囲）
 
