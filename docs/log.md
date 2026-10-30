@@ -10,8 +10,8 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 ## Next Actions
 
-- なし。
+- 別のPCで `10_env.bat` を実行し、新しいターミナルで `$env:WFKIT_DIR` が設定されること、Tab 補完で `$env:WFKIT_DIR` が実パスに変わらないこと（`profile.ps1` の Tab ハンドラ）を確かめる（2026-10-30 起票。この PC では動作確認済み）。
 
 ## Open Questions
 
-- なし。
+- Zed の dev extension `vba`（`auto_install_extensions` で入らない）の入れ直し手順を README に書くか。未使用の自作テーマ `home/.config/zed/themes/material-gruvbox.json` を消すか（2026-10-30 起票。ユーザーに聞いたが未回答）。

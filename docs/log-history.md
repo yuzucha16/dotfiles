@@ -4,6 +4,16 @@
 
 ## Log
 
+### 2026-10-30（Zed の設定を見直し、WFKIT_DIR と pwsh の Tab 補完を足した）
+- 依頼: Zed の `settings.json` の改良、Windows Terminal の開始位置と環境変数 `WFKIT_DIR`、`auto_install_extensions` の点検、pwsh の Tab 補完が `$env:WFKIT_DIR` を実パスに書き換える件。
+- Zed（`home/.config/zed/settings.json`）: アイコンテーマを dark/light とも `Material Icon Theme` に、`project_panel.file_icons` を `true` に、`auto_update` を `false` に。dark テーマを `Gruvbox Dark` にし、Markdown 用の `theme_overrides` のキーも `Gruvbox Dark` に（色と太さは同じ）。`auto_install_extensions` に `material-icon-theme` と `log` を追加。
+- 拡張の点検: `%LOCALAPPDATA%\Zed\extensions\installed` と突き合わせた。UI で入れた拡張は `settings.json` に書かれないので、手で足す必要がある（`log` はそれで漏れていた）。未宣言で残るのは dev extension の `vba` だけ（レジストリに無いので自動では入らない）。JSON は Zed 本体の組み込み、TOML・HTML・XML は拡張。
+- Windows Terminal（`windows/terminal/settings.json`）: `defaults` の `startingDirectory` を `%WORKS_DIR%\resources` にし、PowerShell プロファイルの `workflow-kit\room` の指定を外した（直前の `c2c6953` を戻した形）。
+- `10_env.bat`: `WFKIT_DIR=%WORKS_DIR%\resources\workflow-kit` を `setx` し、`[ENV]` の一覧に出す。`WSLENV` には足していない。CRLF のまま。
+- pwsh（`windows/powershell/profile.ps1`）: Tab 補完は `$env:VAR\...` を実パスに展開する（PowerShell の仕様。`TabExpansion2` で確認）。Tab のキーハンドラを差し替え、`MenuComplete` の後に、補完前のバッファに書いてあった `$env:WFKIT_DIR` `$env:WORKS_DIR` だけを実パスから戻す（`Restore-EnvVarRefs`）。履歴に変数の形で残る。却下: PSDrive（外部コマンドに `wfkit:\` のまま渡って動かない）。
+- 確認: 置換の関数は4パターンで試験。実機の Tab 操作は、ユーザーが「すべて動作確認とれた」と報告。
+- README（`README.md` の Zed の行、`scripts/windows/README.md` の `10_env.bat` の行）を実態に合わせた。`tests/linux/test_scripts.sh` は、`scripts/linux/` と `home/.profile` に触れていないので実行していない。
+
 ### 2026-10-29（pwsh の開始ディレクトリを room にした）
 - 依頼: pwsh の起動時に `$WORKS_DIR\resources\workflow-kit\room` にいて、すぐ `uv run room.py ...` を打てるようにする。
 - 経緯: 最初は `profile.ps1` の末尾で「ホームで始まったときだけ `Set-Location`」にしたが、Windows Terminal は `profiles.defaults` の `startingDirectory` を `%WORKS_DIR%` にしているので条件に合わなかった。`profile.ps1` の変更は取り消した。

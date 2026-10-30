@@ -52,7 +52,7 @@
                 "weight": "light"
             },
             "opacity": 100,
-            "startingDirectory": "%WORKS_DIR%"
+            "startingDirectory": "%WORKS_DIR%\\resources"
         },
         "list": 
         [
@@ -60,8 +60,7 @@
                 "commandline": "pwsh.exe",
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
-                "name": "PowerShell",
-                "startingDirectory": "%WORKS_DIR%\\resources\\workflow-kit\\room"
+                "name": "PowerShell"
             },
             {
                 "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",

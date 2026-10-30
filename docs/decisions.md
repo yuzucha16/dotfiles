@@ -27,6 +27,17 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Zed のテーマを自作の Material Gruvbox Dark から標準の Gruvbox Dark に戻し、アイコンは Material Icon Theme にする（2026-10-30。ユーザーの決定）
+- 変更: `theme.dark` を `Gruvbox Dark` に、`icon_theme` を dark/light とも `Material Icon Theme` に。`theme_overrides` のキーを `Gruvbox Dark` に変えた（色は据え置き）。`auto_update` は `false`。
+- 経緯: 2026-10-04 に「標準の Gruvbox Dark は文字色が明るい」として自作テーマを選んだ決定を、ユーザーが覆した。文字色の差は `theme_overrides` で補う前提だが、`theme_overrides` に文字色は足していない（見え方は未確認）。
+- 戻し方: `theme.dark` を `Material Gruvbox Dark` に戻し、`theme_overrides` のキーも戻す。`themes/material-gruvbox.json` は残してある。
+- 拡張の宣言: UI で入れた拡張は `settings.json` に書かれない。`auto_install_extensions` は手で足す（`extensions\installed` と突き合わせる）。dev extension は宣言しても入らない。
+
+### 【この件】pwsh の Tab 補完は、補完の後で実パスを `$env:WFKIT_DIR` `$env:WORKS_DIR` に戻す（2026-10-30。ユーザーの依頼と、実機での確認）
+- 根拠: 履歴に変数の形で残したい。補完が実パスに展開するのは PowerShell の仕様で、設定では止められない。
+- 却下案: PSDrive（`wfkit:\tools\...` は外部コマンド `uv` にそのまま渡って動かない）。
+- 戻す対象は、補完前のバッファに `$env:` の形で書いてあった変数だけ。他の変数で使うなら `Restore-EnvVarRefs` の名前リストに足す。
+
 ### 【この件】Claude Code の `UserPromptSubmit` フックで、依頼文に当たる知識（`triggers:`）を作業の前に AI の文脈へ出す（2026-10-25。ユーザーの依頼と決定）
 - 決めたこと: `home/.claude/settings.json` の `hooks.UserPromptSubmit` が、`$HOME/works/resources/workflow-kit/tools/triggers_hook.py` を `python -I` で呼ぶ。スクリプトは workbase 側（標準入力の `prompt` を `find_knowledge.py` の照合にかけ、当たったノートだけを出す。常に終了コード 0）。dotfiles は配線だけを持つ（依存は dotfiles → workbase の一方向）。設計の正本は workbase の `topics/md-link-graph/records/design-triggers.md`。
 - 根拠: 起点の `AGENTS.md` の 1 行だけでは、AI が実行を忘れると届かない。押し出し型にして、ユーザーの依頼ごとに出す。ユーザーの発言: 「dotfilesのフックはここでやりましょう」。

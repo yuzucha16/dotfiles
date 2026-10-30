@@ -12,6 +12,7 @@ set "SSH_DIR=%USERPROFILE%\.ssh"
 set "WORKS_DIR=%USERPROFILE%\works"
 set "GHQ_ROOT=%WORKS_DIR%\repos"
 set "CERTS_DIR=%USERPROFILE%\.certs"
+set "WFKIT_DIR=%WORKS_DIR%\resources\workflow-kit"
 
 REM Persist with setx (User scope)
 setx HOME "%HOME%"
@@ -24,6 +25,7 @@ setx XDG_BIN_HOME "%XDG_BIN_HOME%"
 setx GHQ_ROOT "%GHQ_ROOT%"
 setx CERTS_DIR "%CERTS_DIR%"
 setx WORKS_DIR "%WORKS_DIR%"
+setx WFKIT_DIR "%WFKIT_DIR%"
 
 REM Pass CERTS_DIR and WORKS_DIR to WSL (/p converts the path; the WSL user name can differ from the Windows one).
 REM Append each to WSLENV only once, then setx once (setx is not reflected in this session, so build the value first).
@@ -70,6 +72,7 @@ echo SSH_DIR            =%SSH_DIR%
 echo GHQ_ROOT          =%GHQ_ROOT%
 echo CERTS_DIR          =%CERTS_DIR%
 echo WORKS_DIR          =%WORKS_DIR%
+echo WFKIT_DIR          =%WFKIT_DIR%
 if defined SHOW_WSLENV echo WSLENV             =%SHOW_WSLENV%
 if not defined SHOW_WSLENV echo WSLENV             =[unchanged] ^(already has CERTS_DIR/p and WORKS_DIR/p^)
 REM Reminder, printed last so it is not missed (orange, ANSI 256-color 208; ESC is captured with prompt $E to keep the source ASCII).

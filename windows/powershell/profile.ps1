@@ -77,7 +77,32 @@ Set-PSReadLineOption -EditMode Emacs
 Set-PSReadLineOption -PredictionSource History
 # 候補一覧表示
 Set-PSReadLineOption -PredictionViewStyle ListView
-Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+
+# Tab 補完は $env:VAR\... を実パスに書き換えてしまう。履歴に変数の形で残すため、補完のあとで実パスを $env:VAR に戻す。
+# 戻すのは、補完の前のバッファに $env:VAR と書いてあった変数だけ（長い値を先に置換する）。
+function Restore-EnvVarRefs {
+    param([string]$Before, [string]$After)
+    $names = 'WFKIT_DIR', 'WORKS_DIR' | Where-Object {
+        $Before.IndexOf("`$env:$_", [StringComparison]::OrdinalIgnoreCase) -ge 0 -and [Environment]::GetEnvironmentVariable($_)
+    } | Sort-Object { [Environment]::GetEnvironmentVariable($_).Length } -Descending
+    foreach ($n in $names) {
+        $After = $After.Replace([Environment]::GetEnvironmentVariable($n), "`$env:$n", [StringComparison]::OrdinalIgnoreCase)
+    }
+    $After
+}
+Set-PSReadLineKeyHandler -Key Tab -ScriptBlock {
+    $before = $null; $cursor = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$before, [ref]$cursor)
+    [Microsoft.PowerShell.PSConsoleReadLine]::MenuComplete()
+    $after = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$after, [ref]$cursor)
+    $fixed = Restore-EnvVarRefs $before $after
+    if ($fixed -ne $after) {
+        $tail = $after.Length - $cursor
+        [Microsoft.PowerShell.PSConsoleReadLine]::Replace(0, $after.Length, $fixed)
+        [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($fixed.Length - $tail)
+    }
+}
 
 # 履歴 (bash/zsh と同じ件数・除外)
 Set-PSReadLineOption -MaximumHistoryCount 50000
