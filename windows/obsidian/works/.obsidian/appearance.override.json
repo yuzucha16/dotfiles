@@ -1,0 +1,8 @@
+{
+  "enabledCssSnippets": [
+    "material-gruvbox-bold",
+    "file-explorer-compact",
+    "readable-width",
+    "hide-vault-folders"
+  ]
+}

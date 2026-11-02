@@ -8,9 +8,10 @@ usage: obsidian_sync.py [--dots DIR] [--check] [-n]
 
 正本    : windows/obsidian/resources/.obsidian/
 works 用: windows/obsidian/works/.obsidian/
-  派生分 : app.json（正本に app.override.json を重ねる）、appearance.json、core-plugins.json、
-           types.json、snippets/、themes/   ← git で追跡しない（.gitignore）
-  固有分 : community-plugins.json、plugins/、app.override.json   ← 反映の対象外
+  派生分 : app.json と appearance.json（正本に <名前>.override.json を重ねる）、core-plugins.json、
+           types.json、snippets/（正本の + snippets.works/ の中身）、themes/   ← git で追跡しない（.gitignore）
+  固有分 : community-plugins.json、plugins/、app.override.json、appearance.override.json、
+           snippets.works/   ← 反映の対象外（snippets.works/ は snippets/ に混ぜて生成する）
 
 works 側が前回の反映から変わっていたら、それを表示して上書きする。
 標準ライブラリだけを使う（Python 3.8 以上）。
@@ -22,9 +23,10 @@ import os
 import shutil
 import sys
 
-FILES = ["appearance.json", "core-plugins.json", "types.json"]
+FILES = ["core-plugins.json", "types.json"]
+JSON_WITH_OVERRIDE = ["app.json", "appearance.json"]  # works 側の <名前>.override.json（トップレベルのキーを置き換える）を重ねる
 DIRS = ["snippets", "themes"]
-OVERRIDE = "app.override.json"
+OWN_SNIPPETS = "snippets.works"  # works だけの CSS スニペット（追跡する）。snippets/ に混ぜて生成する
 STATE = ".sync-state.json"
 
 
@@ -47,14 +49,16 @@ def desired(master, works):
         b = read(os.path.join(master, name))
         if b is not None:
             out[name] = b
-    app = read(os.path.join(master, "app.json"))
-    if app is not None:
-        ov = read(os.path.join(works, OVERRIDE))
+    for name in JSON_WITH_OVERRIDE:
+        b = read(os.path.join(master, name))
+        if b is None:
+            continue
+        ov = read(os.path.join(works, name[:-5] + ".override.json"))
         if ov is not None:
-            data = json.loads(app.decode("utf-8"))
+            data = json.loads(b.decode("utf-8"))
             data.update(json.loads(ov.decode("utf-8")))
-            app = json.dumps(data, indent=2, ensure_ascii=False).encode("utf-8")
-        out["app.json"] = app
+            b = json.dumps(data, indent=2, ensure_ascii=False).encode("utf-8")
+        out[name] = b
     for d in DIRS:
         root = os.path.join(master, d)
         for dp, _, fns in os.walk(root):
@@ -62,13 +66,17 @@ def desired(master, works):
                 full = os.path.join(dp, fn)
                 rel = d + "/" + os.path.relpath(full, root).replace(os.sep, "/")
                 out[rel] = read(full)
+    own = os.path.join(works, OWN_SNIPPETS)
+    for fn in sorted(os.listdir(own)) if os.path.isdir(own) else []:
+        if os.path.isfile(os.path.join(own, fn)):
+            out["snippets/" + fn] = read(os.path.join(own, fn))
     return out
 
 
 def existing(works):
     """works 側にいまある派生分の相対パス（固有分は含めない）。"""
     found = set()
-    for name in FILES + ["app.json"]:
+    for name in FILES + JSON_WITH_OVERRIDE:
         if os.path.isfile(os.path.join(works, name)):
             found.add(name)
     for d in DIRS:

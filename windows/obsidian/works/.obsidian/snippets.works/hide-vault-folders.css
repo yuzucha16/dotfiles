@@ -1,0 +1,8 @@
+/* works の Vault: ファイルエクスプローラーから resources（別の Vault）と resources_p と repos を隠す。
+   検索とリンクの除外は app.json の userIgnoreFilters（app.override.json）。ここは表示だけ。
+   隠したフォルダは、OS のエクスプローラーや別の Vault では見える。 */
+.nav-folder:has(> .nav-folder-title[data-path="resources"]),
+.nav-folder:has(> .nav-folder-title[data-path="resources_p"]),
+.nav-folder:has(> .nav-folder-title[data-path="repos"]) {
+  display: none;
+}

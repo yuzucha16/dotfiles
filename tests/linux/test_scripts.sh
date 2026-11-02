@@ -101,9 +101,11 @@ if command -v python3 >/dev/null 2>&1; then
   FD="$T/fd"; M="$FD/windows/obsidian/resources/.obsidian"; W="$FD/windows/obsidian/works/.obsidian"
   mkdir -p "$M/snippets" "$M/themes/t" "$W/plugins/p"
   printf '{\n  "a": 1,\n  "userIgnoreFilters": [\n    "x/"\n  ]\n}' > "$M/app.json"
-  echo '{"theme":"x"}' > "$M/appearance.json"; echo '{}' > "$M/core-plugins.json"; echo '{}' > "$M/types.json"
+  echo '{"theme":"x","enabledCssSnippets":["s"]}' > "$M/appearance.json"; echo '{}' > "$M/core-plugins.json"; echo '{}' > "$M/types.json"
   echo 'a{}' > "$M/snippets/s.css"; echo 'b{}' > "$M/themes/t/theme.css"
   echo '{"userIgnoreFilters":["x/","resources/"]}' > "$W/app.override.json"
+  echo '{"enabledCssSnippets":["s","own"]}' > "$W/appearance.override.json"
+  mkdir -p "$W/snippets.works"; echo 'o{}' > "$W/snippets.works/own.css"
   echo '["p"]' > "$W/community-plugins.json"; echo js > "$W/plugins/p/main.js"
   out=$(python3 -I "$SYNC" --dots "$FD" --check 2>&1); rc=$?
   check "sync --check before sync: rc=1, [DIFF] missing, nothing written" '[[ $rc -eq 1 && "$out" == *"[DIFF] missing: app.json"* && ! -e "$W/app.json" ]]'
@@ -112,6 +114,7 @@ if command -v python3 >/dev/null 2>&1; then
   out=$(python3 -I "$SYNC" --dots "$FD" 2>&1); rc=$?
   check "sync: rc=0, files copied (snippets/themes included)" '[[ $rc -eq 0 && -f "$W/appearance.json" && -f "$W/snippets/s.css" && -f "$W/themes/t/theme.css" ]]'
   check "sync: app.json = master + override (override wins, other keys kept)" 'python3 -c "import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d == {\"a\":1,\"userIgnoreFilters\":[\"x/\",\"resources/\"]} else 1)" "$W/app.json"'
+  check "sync: appearance.json = master + override; snippets.works/ merged into snippets/" 'python3 -c "import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d == {\"theme\":\"x\",\"enabledCssSnippets\":[\"s\",\"own\"]} else 1)" "$W/appearance.json" && [[ -f "$W/snippets/own.css" && -f "$W/snippets/s.css" ]]'
   check "sync: own files (community-plugins, plugins, override) untouched" '[[ "$(cat "$W/community-plugins.json")" == "[\"p\"]" && -f "$W/plugins/p/main.js" && -f "$W/app.override.json" ]]'
   out=$(python3 -I "$SYNC" --dots "$FD" --check 2>&1); rc=$?
   check "sync --check after sync: rc=0" '[[ $rc -eq 0 ]]'
@@ -129,7 +132,7 @@ if command -v python3 >/dev/null 2>&1; then
   check "edited in works: [WARN] shown, then overwritten from the master" '[[ $rc -eq 0 && "$out" == *"[WARN]"*"types.json"* && "$(cat "$W/types.json")" == "{}" ]]'
   rm "$M/snippets/s.css"; echo 'x' > "$W/snippets/extra.css"
   python3 -I "$SYNC" --dots "$FD" >/dev/null 2>&1
-  check "file removed from master / extra file in works is removed" '[[ ! -e "$W/snippets/s.css" && ! -e "$W/snippets/extra.css" ]]'
+  check "file removed from master / extra file in works is removed (own snippet stays)" '[[ ! -e "$W/snippets/s.css" && ! -e "$W/snippets/extra.css" && -f "$W/snippets/own.css" ]]'
   out=$(python3 -I "$SYNC" --dots "$T/nodots" --check 2>&1); rc=$?
   check "no master dir: [ERR], rc=1" '[[ $rc -eq 1 && "$out" == *"[ERR] master not found"* ]]'
   mkdir -p "$T/realcopy" && cp -r "$DOTS/windows" "$T/realcopy/windows"
