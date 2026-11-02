@@ -49,8 +49,13 @@ home\.config\zed\keymap.json|%APPDATA%\zed\keymap.json
 home\.config\zed\settings.json|%APPDATA%\zed\settings.json
 home\.config\zed\themes|%APPDATA%\zed\themes
 
-# Obsidian config (the vault root %WORKS_DIR% is a plain, PC-local directory/repo made by the workflow hook; it is not linked.
-# The shared repo "workbase" is cloned into %WORKS_DIR%\resources by 50_repos.bat, not linked.)
-windows\obsidian\.obsidian|%WORKS_DIR%\.obsidian
+# Obsidian config: two vaults, two config dirs.
+#  - the vault root %WORKS_DIR% (works vault) is a plain, PC-local directory/repo made by the workflow hook; it is not linked.
+#    Its .obsidian is windows\obsidian\works\.obsidian (the shared part is generated from the master by scripts/obsidian_sync.py).
+#  - the shared repo "workbase" is cloned into %WORKS_DIR%\resources by 50_repos.bat (not linked); it is its own vault.
+#    Its .obsidian is windows\obsidian\resources\.obsidian (the master).
+#    "|noparent" = skip when the destination's parent dir does not exist yet (do not create %WORKS_DIR%\resources before the clone).
+windows\obsidian\works\.obsidian|%WORKS_DIR%\.obsidian
+windows\obsidian\resources\.obsidian|%WORKS_DIR%\resources\.obsidian|noparent
 # Claudian settings (file symlink; .claudian\sessions stays local and untracked)
 windows\obsidian\claudian-settings.json|%WORKS_DIR%\.claudian\claudian-settings.json

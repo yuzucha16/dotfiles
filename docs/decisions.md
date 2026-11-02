@@ -27,6 +27,16 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Obsidian の設定を resources 用（正本）と works 用の 2 つに分け、works 用の共通分は一方向に生成する（2026-11-02。ユーザーの決定。workbase の `topics/room-type-consolidation/docs/decisions.md` の 11-01 の項が正本）
+
+- 決めたこと: Vault を `resources/`（workbase）と `works/` の 2 つにしたので、`.obsidian` の実体も 2 つ。`windows/obsidian/resources/.obsidian`（共通設定の正本）と `windows/obsidian/works/.obsidian`（固有分: `community-plugins.json` `plugins/` `app.override.json`）。今までの `windows/obsidian/.obsidian` は works 用へ移した（プラグイン 3 つがあるため。ユーザー、11-02）。
+- 共通分の反映: `scripts/obsidian_sync.py` が、正本から works 側の `app.json`（正本に override を重ねる）・`appearance.json`・`core-plugins.json`・`types.json`・`snippets/`・`themes/` を生成する。git では追跡しない（`.gitignore`）。リンク適用時（`30_link.bat` `30_link.sh`）に先に走り、手動でも走らせられる（何度走らせても同じ結果）。works 側が前回の反映から変わっていたら `[WARN]` を出して上書きする（前回の反映の内容は、works 側の `.sync-state.json`〔追跡しない〕のハッシュで比べる）。`--check` は書き換えずに差分を出す（終了コード 1）。
+- 実装: Python の標準ライブラリだけ。Windows は `uv run --python 3.13`、なければ `py -3`、`python` の順。どれも無ければ `[WARN]` で飛ばす（リンクは張る。works の共通設定が欠ける）。
+- `resources/.obsidian` のリンクは、`links.map` の第 3 項 `noparent` で、`%WORKS_DIR%\resources` がまだ無いとき（`50_repos` の clone の前）は `[SKIP]` する。ここで `resources/` を作ると、clone が「空でないディレクトリ」で失敗するため。
+- 根拠（ユーザーの実機確認、11-02）: 除外フィルタで resources は works の検索・リンクから外れる（エクスプローラーには残る。受け入れる）。入れ子の `.obsidian` は互いに影響しない。`30_link.bat` が止まるのは実ファイルがあるときだけで、ジャンクションなら上書きする。
+- 限界: resources の画面で変えた外観は、次の反映まで works に届かない（`--check` が出す）。
+- 試験: `tests/linux/test_scripts.sh` に `obsidian_sync.py` の項目（生成・override・冪等・正本の変更・works での編集の警告・余分なファイルの削除・正本なし・実物の正本での通し）と、2 本のリンク（clone の前後）を足した。`30_link.bat` の新しい分岐（`noparent`、`:OBSIDIAN_SYNC`）は **Windows の実機で未確認**。
+
 ### 【この件】Windows Terminal に固定の `room-myenv` プロファイルを1つ足す。部屋のシェル環境は、まず starship と履歴の種だけ入れる（2026-10-30。ユーザーの依頼と決定）
 
 - 決めたこと: `windows/terminal/settings.json` に、`uv run room.py shell myenv`（開始位置は `%WORKS_DIR%\resources\workflow-kit\room`）のプロファイルを足した。`room.py shell` は `WSLENV` を外して入るので、`wsl -d` 直接の「failed to translate」が出ない。既定ユーザーは `ai`（実機で `id` を確認）。

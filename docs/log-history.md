@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-11-02（Obsidian の設定を resources 用と works 用の 2 つに分けた）
+- 依頼: workbase 側で Vault の 2 分割が正式化された（`topics/room-type-consolidation`）ので、dotfiles 側を実装する。動作確認は別セッション。
+- 変更: `windows/obsidian/.obsidian` を `resources/.obsidian`（共通設定の正本）と `works/.obsidian`（固有分）に分けた。`scripts/obsidian_sync.py` を新設（正本から works の派生分を生成。`--check` `-n`）。`links.map` に 2 本（resources 側は `|noparent`）。`30_link.bat` は先に sync を走らせ、第 3 項を読む。`30_link.sh`（ネイティブ）も同様。`.gitignore` に派生分を追加。`tests/linux/test_scripts.sh` に sync と 2 本のリンクを追加（75 項目、WSL 相当の Linux で通過）。
+- 根拠と詳細: `docs/decisions.md` の同日の項。
+
 ### 2026-10-30（Zed の Gruvbox Dark で Markdown のリストマーカーをオレンジに）
 - 依頼: テーマを Material Gruvbox Dark から Gruvbox Dark に変えたら、Markdown の `1.` `2.` の色が本文と区別できなくなった。オレンジにする。
 - 変更: `home/.config/zed/settings.json` の `theme_overrides` → `Gruvbox Dark` → `syntax` に `punctuation.list_marker` を `#e78a4e` で追加（旧 `themes/material-gruvbox.json` と同じ色）。`-` の箇条書きにも効く。ユーザーが実機で確認し、そのままでよいと判断した。

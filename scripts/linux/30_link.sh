@@ -29,7 +29,7 @@ Options:
   -h, --help        このヘルプ
 
 展開先に実ファイルがある場合は [ERR] を出して止まる。中身を確認し、手で退避/削除してから再実行する。
-ネイティブ Linux では、windows/obsidian/.obsidian を $WORKS_DIR/.obsidian へ symlink する（WSL は Windows 側が張る）。
+ネイティブ Linux では、windows/obsidian/{works,resources}/.obsidian を $WORKS_DIR/.obsidian と $WORKS_DIR/resources/.obsidian へ symlink する（WSL は Windows 側が張る）。
 USAGE
 }
 
@@ -127,11 +127,26 @@ case "$MODE" in
 esac
 
 # ===== Obsidian config (native Linux only) =====
-# WSL は、Windows 側の 30_link.bat が %WORKS_DIR%\.obsidian へジャンクションを張る（/mnt/c で共有）ので、何もしない。
-# ネイティブ Linux は、windows/obsidian/.obsidian を $WORKS_DIR/.obsidian へ symlink する（WORKS_DIR は lib.sh の works_dir）。
+# WSL は、Windows 側の 30_link.bat が %WORKS_DIR%\.obsidian と %WORKS_DIR%\resources\.obsidian へジャンクションを張る（/mnt/c で共有）ので、何もしない。
+# ネイティブ Linux は、Vault ごとの設定を張る（WORKS_DIR は lib.sh の works_dir）。
+#   windows/obsidian/works/.obsidian     -> $WORKS_DIR/.obsidian             （works の Vault。共通分は resources 用から生成する）
+#   windows/obsidian/resources/.obsidian -> $WORKS_DIR/resources/.obsidian   （resources の Vault。正本。clone の前は張らない）
 obsidian_err=0
 if ! is_wsl; then
-  link_obsidian "$MODE" "$SRC_DIR/windows/obsidian/.obsidian" "$(works_dir)/.obsidian" "$DRY_RUN" || obsidian_err=1
+  if [[ "$MODE" == "link" ]]; then
+    sync_opt=(); (( DRY_RUN == 1 )) && sync_opt=(-n)
+    if command -v python3 >/dev/null 2>&1; then
+      python3 "$SRC_DIR/scripts/obsidian_sync.py" "${sync_opt[@]}" || obsidian_err=1
+    else
+      echo "[WARN] python3 not found: obsidian_sync.py skipped. The works vault config may be incomplete." >&2
+    fi
+  fi
+  link_obsidian "$MODE" "$SRC_DIR/windows/obsidian/works/.obsidian" "$(works_dir)/.obsidian" "$DRY_RUN" || obsidian_err=1
+  if [[ "$MODE" == "unlink" || -d "$(works_dir)/resources" ]]; then
+    link_obsidian "$MODE" "$SRC_DIR/windows/obsidian/resources/.obsidian" "$(works_dir)/resources/.obsidian" "$DRY_RUN" || obsidian_err=1
+  else
+    echo "[SKIP] parent dir does not exist yet (run again after 50_repos): $(works_dir)/resources/.obsidian"
+  fi
 fi
 
 echo

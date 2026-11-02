@@ -11,9 +11,17 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 ### Obsidian (per-PC state)
-windows/obsidian/.obsidian/workspace.json
-windows/obsidian/.obsidian/workspace-mobile.json
-windows/obsidian/.obsidian/plugins/colored-tags/data.json
+windows/obsidian/*/.obsidian/workspace.json
+windows/obsidian/*/.obsidian/workspace-mobile.json
+windows/obsidian/*/.obsidian/plugins/colored-tags/data.json
+### Obsidian: works 用の派生分（resources 用から scripts/obsidian_sync.py が生成する。追跡しない）
+windows/obsidian/works/.obsidian/app.json
+windows/obsidian/works/.obsidian/appearance.json
+windows/obsidian/works/.obsidian/core-plugins.json
+windows/obsidian/works/.obsidian/types.json
+windows/obsidian/works/.obsidian/snippets/
+windows/obsidian/works/.obsidian/themes/
+windows/obsidian/works/.obsidian/.sync-state.json
 
 ### Claude Code（端末ごとの許可設定だけ追跡しない）
 **/.claude/settings.local.json

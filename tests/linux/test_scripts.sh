@@ -95,6 +95,49 @@ check "dangling symlink is replaced" '[[ -f "$D2/app.json" ]]'
 link_obsidian link "$T/nosrc" "$T/nn3/.obsidian" 0 >/dev/null
 check "missing source -> skip, nothing created" '[[ ! -e "$T/nn3" ]]'
 
+echo "== obsidian_sync.py (fake dotfiles tree; needs python3)"
+if command -v python3 >/dev/null 2>&1; then
+  SYNC="$DOTS/scripts/obsidian_sync.py"
+  FD="$T/fd"; M="$FD/windows/obsidian/resources/.obsidian"; W="$FD/windows/obsidian/works/.obsidian"
+  mkdir -p "$M/snippets" "$M/themes/t" "$W/plugins/p"
+  printf '{\n  "a": 1,\n  "userIgnoreFilters": [\n    "x/"\n  ]\n}' > "$M/app.json"
+  echo '{"theme":"x"}' > "$M/appearance.json"; echo '{}' > "$M/core-plugins.json"; echo '{}' > "$M/types.json"
+  echo 'a{}' > "$M/snippets/s.css"; echo 'b{}' > "$M/themes/t/theme.css"
+  echo '{"userIgnoreFilters":["x/","resources/"]}' > "$W/app.override.json"
+  echo '["p"]' > "$W/community-plugins.json"; echo js > "$W/plugins/p/main.js"
+  out=$(python3 -I "$SYNC" --dots "$FD" --check 2>&1); rc=$?
+  check "sync --check before sync: rc=1, [DIFF] missing, nothing written" '[[ $rc -eq 1 && "$out" == *"[DIFF] missing: app.json"* && ! -e "$W/app.json" ]]'
+  out=$(python3 -I "$SYNC" --dots "$FD" -n 2>&1); rc=$?
+  check "sync -n: rc=0, [DRY], nothing written" '[[ $rc -eq 0 && "$out" == *"[DRY] write app.json"* && ! -e "$W/app.json" ]]'
+  out=$(python3 -I "$SYNC" --dots "$FD" 2>&1); rc=$?
+  check "sync: rc=0, files copied (snippets/themes included)" '[[ $rc -eq 0 && -f "$W/appearance.json" && -f "$W/snippets/s.css" && -f "$W/themes/t/theme.css" ]]'
+  check "sync: app.json = master + override (override wins, other keys kept)" 'python3 -c "import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d == {\"a\":1,\"userIgnoreFilters\":[\"x/\",\"resources/\"]} else 1)" "$W/app.json"'
+  check "sync: own files (community-plugins, plugins, override) untouched" '[[ "$(cat "$W/community-plugins.json")" == "[\"p\"]" && -f "$W/plugins/p/main.js" && -f "$W/app.override.json" ]]'
+  out=$(python3 -I "$SYNC" --dots "$FD" --check 2>&1); rc=$?
+  check "sync --check after sync: rc=0" '[[ $rc -eq 0 ]]'
+  out=$(python3 -I "$SYNC" --dots "$FD" 2>&1); rc=$?
+  check "sync again: idempotent ([OK] already in sync)" '[[ $rc -eq 0 && "$out" == *"already in sync"* ]]'
+  echo 'a{color:red}' > "$M/snippets/s.css"
+  out=$(python3 -I "$SYNC" --dots "$FD" --check 2>&1); rc=$?
+  check "master changed: --check reports stale, rc=1" '[[ $rc -eq 1 && "$out" == *"[DIFF] stale: snippets/s.css"* ]]'
+  python3 -I "$SYNC" --dots "$FD" >/dev/null 2>&1
+  check "master change reaches works (no warning for a plain update)" '[[ "$(cat "$W/snippets/s.css")" == "a{color:red}" ]]'
+  echo 'edited' > "$W/types.json"
+  out=$(python3 -I "$SYNC" --dots "$FD" --check 2>&1)
+  check "edited in works: --check says edited-in-works" '[[ "$out" == *"[DIFF] edited-in-works: types.json"* ]]'
+  out=$(python3 -I "$SYNC" --dots "$FD" 2>&1); rc=$?
+  check "edited in works: [WARN] shown, then overwritten from the master" '[[ $rc -eq 0 && "$out" == *"[WARN]"*"types.json"* && "$(cat "$W/types.json")" == "{}" ]]'
+  rm "$M/snippets/s.css"; echo 'x' > "$W/snippets/extra.css"
+  python3 -I "$SYNC" --dots "$FD" >/dev/null 2>&1
+  check "file removed from master / extra file in works is removed" '[[ ! -e "$W/snippets/s.css" && ! -e "$W/snippets/extra.css" ]]'
+  out=$(python3 -I "$SYNC" --dots "$T/nodots" --check 2>&1); rc=$?
+  check "no master dir: [ERR], rc=1" '[[ $rc -eq 1 && "$out" == *"[ERR] master not found"* ]]'
+  mkdir -p "$T/realcopy" && cp -r "$DOTS/windows" "$T/realcopy/windows"
+  check "the real master -> works config: sync then --check passes (on a copy)" 'python3 -I "$SYNC" --dots "$T/realcopy" >/dev/null 2>&1 && python3 -I "$SYNC" --dots "$T/realcopy" --check >/dev/null 2>&1'
+else
+  skip "python3 is not installed"
+fi
+
 echo "== 30_link.sh end to end (fake HOME; needs stow)"
 if command -v stow >/dev/null 2>&1; then
   FH="$T/fh"; mkdir -p "$FH"
@@ -103,9 +146,13 @@ if command -v stow >/dev/null 2>&1; then
   out=$(PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/nworks" bash "$LINK" link -n --dst "$FH" 2>&1); rc=$?
   check "native dry-run: rc=0 + [DRY] .obsidian, nothing created" '[[ $rc -eq 0 && "$out" == *"[DRY] link $T/nworks/.obsidian"* && ! -e "$T/nworks" ]]'
   out=$(PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/nworks" bash "$LINK" link --dst "$FH" 2>&1); rc=$?
-  check "native link: rc=0, .obsidian -> dotfiles, home files stowed" '[[ $rc -eq 0 && "$(readlink "$T/nworks/.obsidian")" == "$DOTS/windows/obsidian/.obsidian" && -L "$FH/.profile" ]]'
+  check "native link: rc=0, works .obsidian -> dotfiles (works), home files stowed" '[[ $rc -eq 0 && "$(readlink "$T/nworks/.obsidian")" == "$DOTS/windows/obsidian/works/.obsidian" && -L "$FH/.profile" ]]'
+  check "native link: resources not cloned yet -> [SKIP], resources/ not created" '[[ "$out" == *"[SKIP] parent dir does not exist yet"* && ! -e "$T/nworks/resources" ]]'
+  mkdir -p "$T/nworks/resources"
+  out=$(PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/nworks" bash "$LINK" link --dst "$FH" 2>&1); rc=$?
+  check "native link: resources cloned -> resources/.obsidian -> dotfiles (resources)" '[[ $rc -eq 0 && "$(readlink "$T/nworks/resources/.obsidian")" == "$DOTS/windows/obsidian/resources/.obsidian" ]]'
   out=$(PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/nworks" bash "$LINK" unlink --dst "$FH" 2>&1); rc=$?
-  check "native unlink: .obsidian link removed, home files unstowed" '[[ $rc -eq 0 && ! -e "$T/nworks/.obsidian" && ! -L "$FH/.profile" ]]'
+  check "native unlink: both .obsidian links removed, home files unstowed" '[[ $rc -eq 0 && ! -e "$T/nworks/.obsidian" && ! -e "$T/nworks/resources/.obsidian" && ! -L "$FH/.profile" ]]'
   mkdir -p "$T/nworks/.obsidian"; echo keep > "$T/nworks/.obsidian/x"
   out=$(PROC_VERSION_FILE="$T/ver_native" WORKS_DIR="$T/nworks" bash "$LINK" link --dst "$FH" 2>&1); rc=$?
   check "native link with a real .obsidian: rc=1 + [ERR], untouched" '[[ $rc -eq 1 && "$out" == *"[ERR] real file/dir exists"* && -f "$T/nworks/.obsidian/x" ]]'

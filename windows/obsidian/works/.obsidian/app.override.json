@@ -1,0 +1,10 @@
+{
+  "userIgnoreFilters": [
+    ".tmp.",
+    "_archive/",
+    ".claude/",
+    "resources/",
+    "archives/",
+    "repos/"
+  ]
+}

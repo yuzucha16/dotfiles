@@ -36,7 +36,10 @@ if not exist "%MAPFILE%" (
 )
 
 rem Lines starting with # and blank lines are ignored
-for /F "usebackq eol=# tokens=1,2 delims=|" %%a in ("%MAPFILE%") do call :PROCESS "%%a" "%%b"
+rem Obsidian: generate the works-side derived config from the master first (scripts\obsidian_sync.py; link mode only)
+if "%MODE%"=="LINK" call :OBSIDIAN_SYNC
+
+for /F "usebackq eol=# tokens=1,2,3 delims=|" %%a in ("%MAPFILE%") do call :PROCESS "%%a" "%%b" "%%c"
 
 echo.
 if %ERRCNT% gtr 0 (
@@ -49,9 +52,26 @@ if %ERRCNT% gtr 0 (endlocal & exit /b 1)
 endlocal
 goto :EOF
 
+:OBSIDIAN_SYNC
+set "SYNC=%DOTS_DIR%\scripts\obsidian_sync.py"
+set "SYNCOPT="
+if "%DRY%"=="1" set "SYNCOPT=-n"
+where uv >nul 2>&1 && ( uv run --python 3.13 "%SYNC%" %SYNCOPT% & goto :SYNC_DONE )
+where py >nul 2>&1 && ( py -3 "%SYNC%" %SYNCOPT% & goto :SYNC_DONE )
+where python >nul 2>&1 && ( python "%SYNC%" %SYNCOPT% & goto :SYNC_DONE )
+echo [WARN] no Python (uv / py / python): obsidian_sync.py skipped. The works vault config may be incomplete.
+goto :EOF
+:SYNC_DONE
+if errorlevel 1 (
+  echo [ERR] obsidian_sync.py failed
+  set /a ERRCNT+=1
+)
+goto :EOF
+
 :PROCESS
 set "REL=%~1"
 set "DST=%~2"
+set "FLAG=%~3"
 if not defined REL goto :EOF
 if not defined DST goto :EOF
 call set "DST=%DST%"
@@ -74,6 +94,10 @@ goto :EOF
 :LINK
 if not exist "%SRC%" (
   echo [SKIP] no source: %SRC%
+  goto :EOF
+)
+if /I "%FLAG%"=="noparent" for %%P in ("%DST%") do if not exist "%%~dpP" (
+  echo [SKIP] parent dir does not exist yet ^(run again after 50_repos^): %DST%
   goto :EOF
 )
 if defined ATTR if "%ISLINK%"=="0" (

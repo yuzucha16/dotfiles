@@ -92,7 +92,7 @@ dotfiles/
 0. 事前準備（手動）: 「開発者モード」をオンにする（必須。オフだと `30_link.bat` が `[ERR]`）。クイックスタートの4行で scoop と git を入れ、ghq の場所に clone する。git は scoop の1種類だけ（winget の git は使わない）。Obsidian を最初に開く前に `30_link.bat` を実行する。
 1. `10_env.bat`: 環境変数（`WORKS_DIR` `GHQ_ROOT` `CERTS_DIR` など）とディレクトリ。**実行後は新しいターミナルを開く**。`11_git_identity.bat`: `~\.gitconfig_local` を作る（`30_link.bat` の前に実行する）。`optional/` に CapsLock を Ctrl にする `.reg`。
 2. `20_apps.bat [home]`: scoop とアプリ。PC1 は引数なし、PC2 は `home`。続けて必要なものを個別に: `23_claude`（Claude Code）、`24_fonts`、`25_awscli`、`26_uv`、`27_volta`（25〜27 は `10_env.bat` の後）、`28_npm_globals`（27 の後）、`29_claude_plugins`（23 の後）。
-3. `30_link.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る。配置先に実体があると `[ERR]` でそのエントリを飛ばす（**自動退避はしない**。手で退避して再実行）。`31_history_seed.bat`: PSReadLine の履歴の種（最初の pwsh の前に）。
+3. `30_link.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る。配置先に実体（実ファイル・実ディレクトリ）があると `[ERR]` でそのエントリを飛ばす（**自動退避はしない**。手で退避して再実行。ジャンクションなら上書きする）。リンクの前に `scripts/obsidian_sync.py` で、Obsidian の works 用の共通設定を resources 用（正本）から生成する（Python は `uv` / `py` / `python` の順に探す。詳細は `windows/README.md`）。`31_history_seed.bat`: PSReadLine の履歴の種（最初の pwsh の前に）。
 4. `40_wsl_enable.bat`（WSL を使う場合。管理者権限）: WSL2 を有効化。再起動後に `wsl --update` と `wsl --install -d Ubuntu-24.04`。
 5. `50_repos.bat`: ghq で参照用リポジトリを取得。共有リポジトリ `workbase` は `%WORKS_DIR%\resources` に `git clone`。
 

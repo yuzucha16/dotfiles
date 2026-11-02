@@ -9,6 +9,7 @@
 - 一時ディレクトリと偽の HOME だけを使い、実環境の `~` は変更しない。ネットワークも使わない（`ghq` は偽物、clone 元はローカルの bare リポジトリ）。
 - WSL とネイティブ Linux の分岐は、環境変数 `PROC_VERSION_FILE`（`/proc/version` の差し替え）で強制する。どちらの環境でも、両方の分岐を試験できる。実環境を見る項目は、WSL でないとき等は skip する。
 - 観点: 構文と改行コード、`WORKS_DIR` の分岐、`clone_workbase`（新規・skip・非空のディレクトリ・空のディレクトリ）、`link_obsidian`（dry-run・再リンク・unlink・実体があれば `[ERR]`・リンク切れ・元が無い）、`30_link.sh` の通し、`50_repos.sh`、`11_git_identity.sh`（新規・skip・空入力・`@` なし・特殊文字・入力が閉じている・git なし）、`24_fonts.sh`（偽の `gh` で、成功・1件失敗しても続行・`gh` なし）、`25_arm_gcc.sh`（偽の `sudo` で、y・空・n・入力が閉じている・無効5回・無効のあと y・導入済み）。`stow` が無いと、`30_link.sh` の通しは skip する。
+- `scripts/obsidian_sync.py`（Obsidian の works 用の共通設定を resources 用から生成する）も同じ試験で見る: 偽の dotfiles の木での生成・override・冪等・正本の変更・works での編集の警告・余分なファイルの削除・正本なし、実物の正本のコピーでの通し、`30_link.sh` の 2 本のリンク（clone の前は `[SKIP]`）。`30_link.bat` の分岐は Windows の実機で確かめる。
 - 新しいスクリプトや関数を足したときは、同じ観点（新規作成、再実行、dry-run、元に戻す、実体があれば止まる）で項目を足す。
 
 ## スクリプトの試験（Windows）
