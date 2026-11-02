@@ -42,7 +42,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 - 決めたこと: `windows/terminal/settings.json` に、`uv run room.py shell myenv`（開始位置は `%WORKS_DIR%\resources\workflow-kit\room`）のプロファイルを足した。`room.py shell` は `WSLENV` を外して入るので、`wsl -d` 直接の「failed to translate」が出ない。既定ユーザーは `ai`（実機で `id` を確認）。
 - 前の決定（2026-10-14）との関係: 「部屋のプロファイルは増えるたびに設定が変わるのでタブに出さず `room-sh` で入る」を、固定の1つに限って変えた。作成のたびの自動追加ではないので差分は出ない。他の部屋は引き続き `room-sh`。
-- 部屋への導入（案 A。手作業。`room.py` には入れていない）: starship v1.27.0（musl 版）を Windows 側で取得し、公式の `.sha256` と照合して `~/.local/bin` へ。`starship.toml` を `~/.config/` へ。履歴の種は `~/.bash_history` の先頭に足した（部屋の `HISTFILE` は既定のまま）。`~/.bashrc` には `starship init bash` の1行だけ追記。
+- 部屋への導入（案 A。2026-11-02 に `windows/room/room-starship-setup.ps1` にした。最初は手作業で、別の PC には届かなかった。`room.py` には入れていない）: starship v1.27.0（musl 版）を Windows 側で取得し、公式の `.sha256` と照合して `~/.local/bin` へ。`starship.toml` を `~/.config/` へ。履歴の種は `~/.bash_history` の先頭に足した（部屋の `HISTFILE` は既定のまま）。`~/.bashrc` には `starship init bash` の1行だけ追記。
 - 却下案: dotfiles の `.bashrc` で上書き（`room.py` と uv の追記が消える）。stow とリポジトリの持ち込み（部屋は `/mnt/c` が空）。案 B（zsh・fzf・zoxide・lsd・bat・fd を入れ、`home/` を送る）は規模が中なので `log.md` の Next Actions に積んだ。
 - 確認の範囲: `starship --version`（1.27.0）、チェックサム一致、`.bashrc` の追記、履歴 80 行、は確認した。**未確認**: Terminal のタブから開いたときの見た目（フォント含む）。
 

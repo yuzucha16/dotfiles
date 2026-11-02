@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-11-02（部屋の starship 導入をスクリプトにした）
+- 依頼: pc1 で部屋の starship が効かない。原因は、10-30 の導入が pc2 での手作業で、pc1 の部屋には入っていなかったこと。スクリプト化を依頼された。
+- 変更: `windows/room/room-starship-setup.ps1`（`-Area`、既定 `myenv`）。`windows/README.md` に1行。
+- 確認（pc2）: 導入済みの部屋で再実行し、starship 1.27.0・`.bashrc` の1行が1つ・履歴の先頭行が1つのまま（冪等）。存在しない Area は止まる。**未確認**: pc1 の部屋での実行。
+- 注意: `uv run room.py` を持たない PC では部屋が無いので、先に `room init` が要る。
+
 ### 2026-11-02（Claudian を resources の Vault にだけ戻した）
 - 依頼（ユーザー）: `a08e8c8`（10-25 に Claudian と excel-to-markdown-table を削除）の Claudian 分だけを、resources の `.obsidian` に戻す。works は Claudian を入れないので削除のまま。
 - 変更: `resources/.obsidian/plugins/realclaudian/`（元のブロブと同一）と `community-plugins.json`（`db2944b`）。`claudian-settings.json` は削除されておらず、works 側の symlink だけ無かったので、`links.map` に resources 用の 1 行を足し、`30_link.bat` に `noparent2`（リンク先の 2 つ上が無いときだけ `[SKIP]`）を足した（`6f8ed69`。ドライラン確認、ユーザーが実機で symlink 成功を確認）。
