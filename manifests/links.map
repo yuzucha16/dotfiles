@@ -59,3 +59,4 @@ windows\obsidian\works\.obsidian|%WORKS_DIR%\.obsidian
 windows\obsidian\resources\.obsidian|%WORKS_DIR%\resources\.obsidian|noparent
 # Claudian settings (file symlink; .claudian\sessions stays local and untracked)
 windows\obsidian\claudian-settings.json|%WORKS_DIR%\.claudian\claudian-settings.json
+windows\obsidian\claudian-settings.json|%WORKS_DIR%\resources\.claudian\claudian-settings.json|noparent2

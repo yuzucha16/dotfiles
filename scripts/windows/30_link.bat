@@ -100,6 +100,11 @@ if /I "%FLAG%"=="noparent" for %%P in ("%DST%") do if not exist "%%~dpP" (
   echo [SKIP] parent dir does not exist yet ^(run again after 50_repos^): %DST%
   goto :EOF
 )
+rem noparent2 = same, but checks the grandparent (for a file whose own parent dir is made by this script, e.g. resources\.claudian)
+if /I "%FLAG%"=="noparent2" for %%P in ("%DST%") do for %%G in ("%%~dpP..") do if not exist "%%~fG\" (
+  echo [SKIP] grandparent dir does not exist yet ^(run again after 50_repos^): %DST%
+  goto :EOF
+)
 if defined ATTR if "%ISLINK%"=="0" (
   echo [ERR] real file/dir exists, move it by hand: %DST%
   set /a ERRCNT+=1
