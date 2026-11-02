@@ -5,6 +5,7 @@
     ".claude/",
     "resources/",
     "archives/",
-    "repos/"
+    "repos/",
+    "resources_p/"
   ]
 }
