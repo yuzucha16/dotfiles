@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-11-02（Claudian と Excel to Markdown Table を resources の Vault に戻した）
+- 依頼（ユーザー）: 10-25 にまとめて消した Obsidian のプラグインを、resources の `.obsidian` だけに戻す。Claudian の設定も共有する（選択肢から選んだ）。
+- 変更: `resources/.obsidian/plugins/` に 2 つを `07c3055` から取り出し、`community-plugins.json` に足した。`links.map` に resources 用の `claudian-settings.json` の行を足し、`30_link.bat` に `noparent2` を足した。
+- 根拠と詳細: `docs/decisions.md` の同日の項。
+
 ### 2026-11-02（works のエクスプローラーから 3 フォルダを隠し、`resources_p/` を除外に足した）
 - 依頼（ユーザー）: works のファイルエクスプローラーから `resources` `resources_p` `repos` を見えなくする。重さは感じないとのことで、`resources_p/` も除外フィルタに足した。
 - 変更: `works/.obsidian/snippets.works/hide-vault-folders.css`（`:has()` で非表示）、`appearance.override.json`（スニペットを有効化）、`obsidian_sync.py` が `appearance.json` の override と `snippets.works/` の混ぜ込みに対応、`app.override.json` に `resources_p/`。試験 76 項目。コミット `f39f625` と続き。ユーザーの実機で消えたことを確認。

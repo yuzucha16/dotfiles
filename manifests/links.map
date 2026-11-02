@@ -55,7 +55,9 @@ home\.config\zed\themes|%APPDATA%\zed\themes
 #  - the shared repo "workbase" is cloned into %WORKS_DIR%\resources by 50_repos.bat (not linked); it is its own vault.
 #    Its .obsidian is windows\obsidian\resources\.obsidian (the master).
 #    "|noparent" = skip when the destination's parent dir does not exist yet (do not create %WORKS_DIR%\resources before the clone).
+#    "|noparent2" = the same, one level higher (the parent's parent; for a file inside a subdir of %WORKS_DIR%\resources).
 windows\obsidian\works\.obsidian|%WORKS_DIR%\.obsidian
 windows\obsidian\resources\.obsidian|%WORKS_DIR%\resources\.obsidian|noparent
-# Claudian settings (file symlink; .claudian\sessions stays local and untracked)
+# Claudian settings (file symlink; .claudian\sessions stays local and untracked). Both vaults share one settings file.
 windows\obsidian\claudian-settings.json|%WORKS_DIR%\.claudian\claudian-settings.json
+windows\obsidian\claudian-settings.json|%WORKS_DIR%\resources\.claudian\claudian-settings.json|noparent2
