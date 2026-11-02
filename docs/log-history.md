@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-11-02（Claudian を resources の Vault にだけ戻した）
+- 依頼（ユーザー）: `a08e8c8`（10-25 に Claudian と excel-to-markdown-table を削除）の Claudian 分だけを、resources の `.obsidian` に戻す。works は Claudian を入れないので削除のまま。
+- 変更: `resources/.obsidian/plugins/realclaudian/`（元のブロブと同一）と `community-plugins.json`（`db2944b`）。`claudian-settings.json` は削除されておらず、works 側の symlink だけ無かったので、`links.map` に resources 用の 1 行を足し、`30_link.bat` に `noparent2`（リンク先の 2 つ上が無いときだけ `[SKIP]`）を足した（`6f8ed69`。ドライラン確認、ユーザーが実機で symlink 成功を確認）。
+- workbase 側: `/.claudian/` を `.gitignore` に追加（works と同じ。sessions を追跡しない。workbase の `7c9af4e`。push は未）。excel-to-markdown-table は戻していない。
+
 ### 2026-11-02（works のエクスプローラーから 3 フォルダを隠し、`resources_p/` を除外に足した）
 - 依頼（ユーザー）: works のファイルエクスプローラーから `resources` `resources_p` `repos` を見えなくする。重さは感じないとのことで、`resources_p/` も除外フィルタに足した。
 - 変更: `works/.obsidian/snippets.works/hide-vault-folders.css`（`:has()` で非表示）、`appearance.override.json`（スニペットを有効化）、`obsidian_sync.py` が `appearance.json` の override と `snippets.works/` の混ぜ込みに対応、`app.override.json` に `resources_p/`。試験 76 項目。コミット `f39f625` と続き。ユーザーの実機で消えたことを確認。
