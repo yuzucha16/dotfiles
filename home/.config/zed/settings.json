@@ -10,12 +10,12 @@
   // ==== AI (claude-acp is the main entry point) ====
   "wsl_connections": [
     {
-      "distro_name": "room-util",
+      "distro_name": "room-myenv",
       "user": null,
       "projects": [
         {
           "paths": [
-            "/mnt/room"
+            "/mnt/room/./"
           ]
         }
       ]
