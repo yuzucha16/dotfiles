@@ -155,6 +155,8 @@
   "cursor_blink": false,
   // Markdown highlight tweaks: keep colors from the theme, change only the weight
   // (strong text normal weight, headings bold)
+  // Two themes are switchable with the theme selector (ctrl+k ctrl+t): Gruvbox Dark (brighter) / Material Gruvbox Dark (low contrast, themes/material-gruvbox.json).
+  // The selector rewrites theme.dark above. Keep the two override blocks below identical.
   "theme_overrides": {
     "Gruvbox Dark": {
       // Project panel Git colors, matched to the Markdown colors: modified = strong (orange), created = heading (green), ignored = code (teal)
@@ -165,6 +167,16 @@
         "emphasis.strong": { "font_weight": 400 },
         "title": { "font_weight": 700 },
         // Markdown list markers (1. 2. -) are indistinguishable from body text in Gruvbox Dark
+        "punctuation.list_marker": { "color": "#e78a4e" }
+      }
+    },
+    "Material Gruvbox Dark": {
+      "modified": "#d8a657",
+      "created": "#a7b85a",
+      "ignored": "#7daea3",
+      "syntax": {
+        "emphasis.strong": { "font_weight": 400 },
+        "title": { "font_weight": 700 },
         "punctuation.list_marker": { "color": "#e78a4e" }
       }
     }

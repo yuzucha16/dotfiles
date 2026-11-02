@@ -19,4 +19,4 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 ## Open Questions
 
 - `scoop update` で、同梱の Markdown 用 UDL（`markdown._preinstalled_DM.udl.xml`）が実ファイルに戻り、`markdown.udl.xml` へのリンクが外れるか。戻ったら手で削除して `30_link.bat` をやり直す（2026-10-30 起票。未確認）。他の PC でも、最初は同梱の UDL を手で削除してから `30_link.bat` を実行する。
-- Zed の dev extension `vba`（`auto_install_extensions` で入らない）の入れ直し手順を README に書くか。未使用の自作テーマ `home/.config/zed/themes/material-gruvbox.json` を消すか（2026-10-30 起票。ユーザーに聞いたが未回答）。
+- Zed の dev extension `vba`（`auto_install_extensions` で入らない）の入れ直し手順を README に書くか。（自作テーマ `material-gruvbox.json` は 2026-11-03 に、消さずに切り替え用として残すと決めた）。

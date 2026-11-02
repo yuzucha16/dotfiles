@@ -4,6 +4,13 @@
 
 ## Log
 
+### 2026-11-03（Zed の ps1 ハイライト修復と、テーマの行き来）
+- 依頼: Zed で `.ps1` のハイライトが効かない。10-30 のテーマ変更（Material Gruvbox Dark → Gruvbox Dark）が原因か、ほかの悪影響も挙げて直したい。
+- 原因: テーマではなかった。`%LOCALAPPDATA%\Zed\extensions\installed` の `powershell`（brackets/indents/outline.scm）と `html`（5 つの .scm）が NUL 埋めで壊れ、Zed.log に `failed to load language PowerShell: Error loading brackets query`（HTML は約 3,000 回）。クラッシュなどで書き込みが途中で切れたと推測（未確認）。他の拡張は無事（.scm/.toml/.json/.wasm を検査）。
+- 修復: 2 拡張の `installed` ディレクトリを削除し、Zed 再起動で `auto_install_extensions` に再取得させた。ユーザーが `.ps1` のハイライト復活を確認（11-03）。
+- 変更: `settings.json` の `theme_overrides` に `Material Gruvbox Dark` を足し、テーマセレクタ（Ctrl+K Ctrl+T）で両テーマを行き来できるようにした。ユーザーが両テーマで override が効くことを確認（11-03）。README の Zed の行、`decisions.md`（10-30 の項への追記）、`log.md` を更新。
+- 影響の洗い出し（未対応のまま報告）: 文字色が明るい（`#ebdbb2`）、Markdown の見出し・強調・コードの色が Notepad++/Obsidian とずれる、UI の面の色と端末パレットが標準になった、`theme_overrides` が標準テーマ名に依存。
+
 ### 2026-11-02（部屋の starship 導入をスクリプトにした）
 - 依頼: pc1 で部屋の starship が効かない。原因は、10-30 の導入が pc2 での手作業で、pc1 の部屋には入っていなかったこと。スクリプト化を依頼された。
 - 変更: `windows/room/room-starship-setup.ps1`（`-Area`、既定 `myenv`）。`windows/README.md` に1行。

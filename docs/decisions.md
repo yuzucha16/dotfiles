@@ -58,6 +58,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - 変更: `theme.dark` を `Gruvbox Dark` に、`icon_theme` を dark/light とも `Material Icon Theme` に。`theme_overrides` のキーを `Gruvbox Dark` に変えた（色は据え置き）。`auto_update` は `false`。
 - 経緯: 2026-10-04 に「標準の Gruvbox Dark は文字色が明るい」として自作テーマを選んだ決定を、ユーザーが覆した。文字色の差は `theme_overrides` で補う前提だが、`theme_overrides` に文字色は足していない（見え方は未確認）。
 - 戻し方: `theme.dark` を `Material Gruvbox Dark` に戻し、`theme_overrides` のキーも戻す。`themes/material-gruvbox.json` は残してある。
+- 【追記 2026-11-03・ユーザーの決定】標準 Gruvbox Dark に移った理由は、Material Gruvbox Dark が低コントラストで、この環境では暗すぎて見えなかったため。状況で行き来できるようにした: `theme_overrides` に `Material Gruvbox Dark` のキーを足し（`Gruvbox Dark` と同じ内容）、切り替えはテーマセレクタ（Ctrl+K Ctrl+T。`theme.dark` を書き換える）。`themes/material-gruvbox.json` は消さない。却下案: 中間の明るさの第 3 テーマ（B。必要になったら足す）、システム設定連動（C。ライト/ダークの意味とずれる）。
 - 拡張の宣言: UI で入れた拡張は `settings.json` に書かれない。`auto_install_extensions` は手で足す（`extensions\installed` と突き合わせる）。dev extension は宣言しても入らない。
 
 ### 【この件】pwsh の Tab 補完は、補完の後で実パスを `$env:WFKIT_DIR` `$env:WORKS_DIR` に戻す（2026-10-30。ユーザーの依頼と、実機での確認）
