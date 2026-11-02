@@ -10,6 +10,8 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 ## Next Actions
 
+- 【起票 11-02】workbase の `.gitignore` に `/.claudian` を足す（resources の Vault で Claudian を使うと `.claudian\sessions\` ができるため。workbase 側の作業）。あわせて Windows の実機で `30_link.bat` を走らせ、`%WORKS_DIR%\resources\.claudian\claudian-settings.json` のリンクができること（clone の前は `[SKIP]`）、resources の Vault で Claudian と Excel to Markdown Table が有効になることを確かめる。
+
 - 【起票 11-02】Obsidian の 2 Vault 化の動作確認（Windows の実機。別セッション）: `30_link.bat` で、(a) `uv` `py` `python` のどれでも `obsidian_sync.py` が走る、(b) `%WORKS_DIR%\.obsidian` と `%WORKS_DIR%\resources\.obsidian` の 2 本のジャンクションができる、(c) `%WORKS_DIR%\resources` が無いときは `[SKIP]` で `resources\` を作らない、(d) 旧 `%WORKS_DIR%\.obsidian`（旧 `windows\obsidian\.obsidian` へのジャンクション）は上書きされる、(e) 両方の Vault が開き、works の検索から `resources/` が外れる。`30_link.bat` の新しい分岐は未確認（11-02 にユーザーが works で `resources` `resources_p` `repos` がエクスプローラーから消えたと報告したので、(a)(b)(e) の大半は動いたと見てよい。(c)(d) と `uv` なしの経路が残り）。
 
 - 別のPCで `10_env.bat` を実行し、新しいターミナルで `$env:WFKIT_DIR` が設定されること、Tab 補完で `$env:WFKIT_DIR` が実パスに変わらないこと（`profile.ps1` の Tab ハンドラ）を確かめる（2026-10-30 起票。この PC では動作確認済み）。

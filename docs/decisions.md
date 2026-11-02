@@ -27,6 +27,15 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Claudian と Excel to Markdown Table を、resources の Vault だけに戻す（2026-11-02。ユーザーの決定）
+
+- 決めたこと: 10-25 のコミット `a08e8c8` で消した 2 つのプラグイン（`realclaudian` 2.3.16、`obsidian-excel-to-markdown-table` 0.4.0）を、`windows/obsidian/resources/.obsidian/plugins/` に戻し、resources の `community-plugins.json` に足した。works には戻さない。中身は削除前の `07c3055` のまま（`git show` で取り出して、同一を確認）。Claudian の設定 `claudian-settings.json` は、resources の Vault でも共有する（`links.map` に `%WORKS_DIR%\resources\.claudian\claudian-settings.json` を足した。ユーザーの選択）。
+- 方法: `git revert a08e8c8` は使わない。11-02 の 2 分割でパスが `windows/obsidian/.obsidian` から変わり、当たらないため。`obsidian_sync.py` は `plugins/` と `community-plugins.json` を works へ反映しないので、works には影響しない（同日の 2 分割の項）。
+- `links.map` の第 3 項に `noparent2` を足した（`30_link.bat`）。`noparent` は配置先の親（ここでは `resources\.claudian`）を見るので、clone の後も常に `[SKIP]` になる。`noparent2` は親の親（`%WORKS_DIR%\resources`）が無いときだけ `[SKIP]` し、あれば `.claudian` を作って張る。ネイティブ Linux の `30_link.sh` は、もともと Claudian の設定を張らないので変えていない。
+- 確認: 機密は無い（削除された分に `data.json` は無い。`main.js` の `sk-ant-` は秘密を検出する正規表現）。Claudian の `main.js` は約 1.9MB で、公開リポジトリに戻る（受け入れ）。
+- 未確認: `30_link.bat` の `noparent2` の分岐（Windows の実機で未実行）。
+- 注意: Claudian は Vault 直下の `.claudian\sessions\` に会話履歴を置く。resources は workbase の clone なので、workbase の `.gitignore` に `/.claudian` が無いと、未追跡として見え、誤ってコミットしうる（11-02 時点で workbase の `.gitignore` は `/.obsidian` だけ）。
+
 ### 【この件】Obsidian の設定を resources 用（正本）と works 用の 2 つに分け、works 用の共通分は一方向に生成する（2026-11-02。ユーザーの決定。workbase の `topics/room-type-consolidation/docs/decisions.md` の 11-01 の項が正本）
 
 - 決めたこと: Vault を `resources/`（workbase）と `works/` の 2 つにしたので、`.obsidian` の実体も 2 つ。`windows/obsidian/resources/.obsidian`（共通設定の正本）と `windows/obsidian/works/.obsidian`（固有分: `community-plugins.json` `plugins/` `app.override.json`）。今までの `windows/obsidian/.obsidian` は works 用へ移した（プラグイン 3 つがあるため。ユーザー、11-02）。
