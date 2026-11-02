@@ -9,6 +9,7 @@
 - 変更: `windows/room/room-starship-setup.ps1`（`-Area`、既定 `myenv`）。`windows/README.md` に1行。
 - 確認（pc2）: 導入済みの部屋で再実行し、starship 1.27.0・`.bashrc` の1行が1つ・履歴の先頭行が1つのまま（冪等）。存在しない Area は止まる。**未確認**: pc1 の部屋での実行。
 - 注意: `uv run room.py` を持たない PC では部屋が無いので、先に `room init` が要る。
+- 位置づけ: 連番バッチ（`scripts\windows\`）からは呼ばない（ユーザーが同意）。この導入は `room init` の仕事で、今後は自動で入る。ps1 は既存の部屋への手動の入口として残す。判断は `decisions.md`。
 
 ### 2026-11-02（Claudian を resources の Vault にだけ戻した）
 - 依頼（ユーザー）: `a08e8c8`（10-25 に Claudian と excel-to-markdown-table を削除）の Claudian 分だけを、resources の `.obsidian` に戻す。works は Claudian を入れないので削除のまま。
