@@ -41,6 +41,7 @@ rnr
 
 # automation
 autohotkey
+powertoys
 
 # media
 rufus
