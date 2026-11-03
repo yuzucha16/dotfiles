@@ -16,6 +16,8 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 - 【起票 10-30】`room-myenv` に dotfiles のシェル環境を入れる案 B（案 A は同日に手で実施。starship と履歴の種のみ。fzf の Ctrl-R は 11-03 に `room-shell-setup.ps1` で導入済み）: zsh・zoxide・lsd・bat・fd・zsh-autosuggestions を root で入れ、`home/` の `.zshrc` `.bashrc` `common.sh` などを標準入力で送る。`room.py` のサブコマンド（workbase 側）か、dotfiles 側の送る `.ps1` かは未定。`~/.bashrc` は `room.py` と uv が追記するので、上書きせず追記で済ませる。stow と dotfiles リポジトリの持ち込みはしない（部屋は `/mnt/c` が空）。
 
+- 【起票 11-03】`windows/powershell/boot-commtools.ps1` と `cleanup-recyclebin.ps1` の実機の確認（ユーザー）: (a) `boot-commtools.ps1` を taskschd.msc に登録して 30 分おきに回す（登録はユーザーが行う。条件はスクリプト先頭のコメント）。使ってみて、最小化（`-WindowStyle Minimized`）が要るか決める（11-03 は外した）。Teams の既存の自動起動と二重にならないかも見る。(b) `cleanup-recyclebin.ps1` の実際の削除（`y` の後の `InvokeVerb('delete')`）は未確認（11-03 は `-ListOnly` だけ。ゴミ箱の最古が 10-15 で対象 0 件だった）。対象が出る 12 月中旬以降に、`-Months` を小さくして試すか、実行して確かめる。
+
 ## Open Questions
 
 - `scoop update` で、同梱の Markdown 用 UDL（`markdown._preinstalled_DM.udl.xml`）が実ファイルに戻り、`markdown.udl.xml` へのリンクが外れるか。戻ったら手で削除して `30_link.bat` をやり直す（2026-10-30 起票。未確認）。他の PC でも、最初は同梱の UDL を手で削除してから `30_link.bat` を実行する。

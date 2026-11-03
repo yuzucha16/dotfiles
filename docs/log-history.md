@@ -4,6 +4,13 @@
 
 ## Log
 
+### 2026-11-03（Outlook/Teams の定期起動と、ゴミ箱の整理スクリプト）
+- 依頼: `boot-commtools.ps1`（Outlook と Teams を未起動なら起動。30 分おきにタスク スケジューラ。常時起動のメモリ消費を避ける）と `cleanup-recyclebin.ps1`（数か月より前のゴミ箱の項目だけを確認して完全削除）を `windows/powershell/` に。タスクの登録はユーザー。
+- 実施: 2 本を pwsh 7 用に作成（`c750bf8`）。`boot-commtools.ps1` は `-WhatIf`、`cleanup-recyclebin.ps1` は `-ListOnly`（`-Months` 既定 2）を足した。削除日時を読めない項目は対象外にして件数を警告。`windows/README.md` の表に 2 行。
+- 変更（ユーザーの指示）: `boot-commtools.ps1` の最小化起動（`-WindowStyle Minimized`）は、使ってみて決めるため外した。
+- 確認: `-WhatIf` で両方が「起動」と出る。`-ListOnly` で 90 件・最古 10-15・日時の解釈が正しいこと（対象 0 件）。
+- 未確認: 実際の起動、実際の削除、taskschd からの実行。
+
 ### 2026-11-03（room に fzf の Ctrl-R を導入）
 - 依頼: 履歴を fzf で検索できる関連を、dotfiles から room へ。複雑にしない。
 - 実施: `room-starship-setup.ps1` を `room-shell-setup.ps1` に改名し、fzf v0.74.5 を追加（SHA-256 固定、`~/.local/bin`、`~/.bashrc` に冪等ブロック、Ctrl-R のみ）。`room-myenv` で実行し、チェックサム・`bind -X`・再実行の冪等を確認。`windows/README.md`・`decisions.md`・`log.md` を更新。
