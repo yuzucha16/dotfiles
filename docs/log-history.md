@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-11-03（room に fzf の Ctrl-R を導入）
+- 依頼: 履歴を fzf で検索できる関連を、dotfiles から room へ。複雑にしない。
+- 実施: `room-starship-setup.ps1` を `room-shell-setup.ps1` に改名し、fzf v0.74.5 を追加（SHA-256 固定、`~/.local/bin`、`~/.bashrc` に冪等ブロック、Ctrl-R のみ）。`room-myenv` で実行し、チェックサム・`bind -X`・再実行の冪等を確認。`windows/README.md`・`decisions.md`・`log.md` を更新。
+- 未確認: Terminal のタブでの Ctrl-R の見た目。
+
 ### 2026-11-03（Zed の ps1 ハイライト修復と、テーマの行き来）
 - 依頼: Zed で `.ps1` のハイライトが効かない。10-30 のテーマ変更（Material Gruvbox Dark → Gruvbox Dark）が原因か、ほかの悪影響も挙げて直したい。
 - 原因: テーマではなかった。`%LOCALAPPDATA%\Zed\extensions\installed` の `powershell`（brackets/indents/outline.scm）と `html`（5 つの .scm）が NUL 埋めで壊れ、Zed.log に `failed to load language PowerShell: Error loading brackets query`（HTML は約 3,000 回）。クラッシュなどで書き込みが途中で切れたと推測（未確認）。他の拡張は無事（.scm/.toml/.json/.wasm を検査）。
