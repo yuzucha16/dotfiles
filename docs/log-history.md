@@ -4,6 +4,13 @@
 
 ## Log
 
+### 2026-11-03（check-drive-usage.ps1: C ドライブの削除候補の調査）
+- 依頼: 趣味 PC の同名スクリプト（1,382 行。写真 33 枚を `tmp/pic` に置いた）を、C ドライブの使用量が多い場所と、逼迫したときの削除候補を出すスクリプトとして `windows/powershell/` に取り込む。
+- 実施: 写真から書き起こし、pwsh 7 用に `#Requires -Version 7` と使い方のコメントを足した。調査と表示だけで、削除しない。`-Top`（回収ランキング）と `-ChildTop`（直下ランキング）。`windows/README.md` の表に 1 行。
+- 変更（ユーザーの指示）: (a) Claude の Store パッケージ名 `Claude_<接尾辞>` の決め打ちをやめ、`Packages\Claude_*` の最初の一致を使う（無ければ 0 GB 扱い）。(b) 回収ランキングは、優先度順でなく容量順（`Priority` の項目は削除。優先度順だと `-Top` で WSL などが落ちていた）。(c) `$ErrorActionPreference = 'SilentlyContinue'`（アクセスできない場所は読み飛ばす）は、そのまま。
+- 確認: 構文エラー 0。この PC で実行し（約 99 秒）、全セクションが出ること、容量順（WSL 9.39 GB、Scoop 9.09 GB…）になることを見た。削除は一切しない。
+- 未確認: 他の PC（Store 版 Claude がある環境）で、`Claude_*` の一致が効くか。
+
 ### 2026-11-03（Outlook/Teams の定期起動と、ゴミ箱の整理スクリプト）
 - 依頼: `boot-commtools.ps1`（Outlook と Teams を未起動なら起動。30 分おきにタスク スケジューラ。常時起動のメモリ消費を避ける）と `cleanup-recyclebin.ps1`（数か月より前のゴミ箱の項目だけを確認して完全削除）を `windows/powershell/` に。タスクの登録はユーザー。
 - 実施: 2 本を pwsh 7 用に作成（`c750bf8`）。`boot-commtools.ps1` は `-WhatIf`、`cleanup-recyclebin.ps1` は `-ListOnly`（`-Months` 既定 2）を足した。削除日時を読めない項目は対象外にして件数を警告。`windows/README.md` の表に 2 行。
