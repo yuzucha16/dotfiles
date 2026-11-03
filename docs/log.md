@@ -20,7 +20,7 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 - 【起票 11-03】`windows/powershell/set-virtual-desktop.ps1` の実機確認の残り（ユーザー。(a)(b) は 11-03 にこの PC で OK）: (c) `-Relayout`（workspace の「Move existing windows」を有効にして）で位置とサイズが戻るか。(d) taskschd への登録（ログオン時や画面ロック解除時に `-MoveOnly` を足すかも決める）。複数ウィンドウを持つアプリ（Edge など）は、`MainWindowHandle` の 1 枚しか移さない。
 
-- 【起票 11-03】他の PC への VirtualDesktop モジュールの入れ方を決める（この PC は 1.5.11 導入済み）: `Install-Module VirtualDesktop -Scope CurrentUser` は scoop・`20_apps.bat` の対象外。`20_apps.bat` に足すか、手で入れる手順に残すかを決める。workspace（`dev` `office`）のレイアウトは PC ごとに Capture する（`workspaces.json` は追跡しない。decisions 参照）ので、新しい PC では Capture と `-List` の確認も要る。
+- 【起票 11-03】他の PC への VirtualDesktop モジュールの入れ方を決める（この PC は 1.5.11 導入済み）: `Install-Module VirtualDesktop -Scope CurrentUser` は scoop・`20_apps.bat` の対象外。`20_apps.bat` に足すか、手で入れる手順に残すかを決める。workspace（`dev` `office`）のレイアウトは PC ごとに Capture する（`workspaces.json` は追跡しない。decisions 参照）ので、新しい PC では Capture と `-List` の確認も要る。既存の PC では、`workspaces.json` に旧インストール版のパス（例: `AppData\Local\Programs\Zed`）が残ると警告が出る（この PC は 11-03 に Zed を直した）ので、`application-path` を点検する。
 
 ## Open Questions
 

@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-11-03（PowerToys Workspaces の Zed の警告を、scoop 版のパスに直した）
+- 症状: ログオン時の Workspaces で、Zed の項目に警告マーク（三角）が出ていた。
+- 原因: `%LOCALAPPDATA%\Microsoft\PowerToys\Workspaces\workspaces.json` の Zed が、10-04 に削除した Inno Setup 版のパス（`AppData\Local\Programs\Zed\Zed.exe`、`app-user-model-id` は `ZedIndustries.Zed`）のままだった（scoop 版への統一は exmem の `scoop-app-management.md`）。
+- 対処: `application-path` と `app-user-model-id` を `%USERPROFILE%\scoop\apps\zed\current\Zed.exe`（junction。更新でパスが変わらない）に書き換えた（編集前は同じ場所に `.bak`）。ユーザーが、警告が消えたことを確認した（実機）。
+- `workspaces.json` は PC ごとのローカル管理で追跡しない（decisions 参照）。リポジトリの変更なし。他の PC でも、旧インストール版のパスが残っていれば同じ修正が要る。
+
 ### 2026-11-03（set-virtual-desktop.ps1: この PC で VirtualDesktop を導入し、動作確認が OK）
 - 実施: `Install-Module VirtualDesktop -Scope CurrentUser` でこの PC に導入（1.5.11、`Get-Module -ListAvailable` で確認。build 26300 でも動いた）。
 - 確認: 実行ログで、`-Name nope` は `$desktopMap` に無く停止、`office` が `workspaces.json` に無いとき `ERROR: workspace 'office' not found`（原因は未 Capture。スクリプトの不具合ではない）、Desktop 2 の自動作成、dev の起動待ち（`windows ready: True`）と `already on Desktop 1` の経路。ユーザーが `office` を Capture した後、動作確認は OK と報告（ユーザー報告。ログは未保存）。
