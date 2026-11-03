@@ -4,6 +4,13 @@
 
 ## Log
 
+### 2026-11-03（set-virtual-desktop.ps1: PowerToys Workspaces を読んで動的にした）
+- 依頼: 趣味 PC の `set-virtual-desktop.ps1`（298 行。写真 6 枚を `tmp/pic2` に置いた）を取り込み、`dev` と `office` の workspace を `.lnk` 固定でなく、新しいスナップショットを手軽に渡せる形にする。位置とサイズも維持したい。PowerToys は scoop から入れる。
+- 実施: `manifests/apps.txt` に `powertoys` を追加（共通。extras バケット、この PC は 0.102.3001.0）。`workspaces.json`（`%LOCALAPPDATA%\Microsoft\PowerToys\Workspaces\`）から名前で GUID とアプリ一覧を引き、`PowerToys.WorkspacesLauncher.exe <GUID>` を直接呼ぶ。プロセス名は `application-path` から導出（`explorer` は除外）。デスクトップ番号は ps1 先頭の `$desktopMap`（ユーザーの選択。別ファイルにしない）。固定 90 秒の待ちは、ウィンドウが揃うまでのポーリング（上限 90 秒）に変えた。
+- 確認: 5.1 と 7 で `-List` が動く（dev の GUID とプロセス 4 つを読む）。`-Name` の不正でエラー終了。
+- 未確認: VirtualDesktop モジュールが無いこの PC では、起動・移動の経路を実行していない。`-Relayout`（`move-existing-windows`）の効き方。
+- 知見: `workspaces.json` には仮想デスクトップの情報が無い（位置・サイズ・モニターだけ）。デスクトップの振り分けは ps1 側の責任。`Workspaces\settings.json` はホットキーだけで、定義ではない。
+
 ### 2026-11-03（check-drive-usage.ps1: C ドライブの削除候補の調査）
 - 依頼: 趣味 PC の同名スクリプト（1,382 行。写真 33 枚を `tmp/pic` に置いた）を、C ドライブの使用量が多い場所と、逼迫したときの削除候補を出すスクリプトとして `windows/powershell/` に取り込む。
 - 実施: 写真から書き起こし、pwsh 7 用に `#Requires -Version 7` と使い方のコメントを足した。調査と表示だけで、削除しない。`-Top`（回収ランキング）と `-ChildTop`（直下ランキング）。`windows/README.md` の表に 1 行。

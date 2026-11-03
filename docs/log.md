@@ -18,6 +18,10 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 - 【起票 11-03】`windows/powershell/boot-commtools.ps1` と `cleanup-recyclebin.ps1` の実機の確認（ユーザー）: (a) `boot-commtools.ps1` を taskschd.msc に登録して 30 分おきに回す（登録はユーザーが行う。条件はスクリプト先頭のコメント）。使ってみて、最小化（`-WindowStyle Minimized`）が要るか決める（11-03 は外した）。Teams の既存の自動起動と二重にならないかも見る。(b) `cleanup-recyclebin.ps1` の実際の削除（`y` の後の `InvokeVerb('delete')`）は未確認（11-03 は `-ListOnly` だけ。ゴミ箱の最古が 10-15 で対象 0 件だった）。対象が出る 12 月中旬以降に、`-Months` を小さくして試すか、実行して確かめる。
 
+- 【起票 11-03】`windows/powershell/set-virtual-desktop.ps1` の趣味 PC での実機確認（ユーザー）: (a) `scoop install powertoys` と VirtualDesktop モジュールがある PC で、`office` を Capture して名前を付け、`-List` で GUID が出ること。(b) 引数なしの実行で、起動・デスクトップ移動・最後に dev へ戻ることを確かめる。(c) `-Relayout`（workspace の「Move existing windows」を有効にして）で位置とサイズが戻るか。(d) taskschd への登録（ログオン時や画面ロック解除時に `-MoveOnly` を足すかも決める）。複数ウィンドウを持つアプリ（Edge など）は、`MainWindowHandle` の 1 枚しか移さない。
+
+- 【起票 11-03】この PC に PowerShell モジュール VirtualDesktop を入れる（ユーザー）: `Install-Module VirtualDesktop -Scope CurrentUser`（PowerShell ギャラリー。scoop・`20_apps.bat` の対象外なので、手で入れる）。入れたら、`set-virtual-desktop.ps1 -WhatIf` で起動と移動の経路を確かめる（この PC では未実行）。他の PC への入れ方（`20_apps.bat` に足すか）は、この確認の後に決める。
+
 ## Open Questions
 
 - `scoop update` で、同梱の Markdown 用 UDL（`markdown._preinstalled_DM.udl.xml`）が実ファイルに戻り、`markdown.udl.xml` へのリンクが外れるか。戻ったら手で削除して `30_link.bat` をやり直す（2026-10-30 起票。未確認）。他の PC でも、最初は同梱の UDL を手で削除してから `30_link.bat` を実行する。
