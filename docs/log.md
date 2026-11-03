@@ -18,9 +18,9 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 - 【起票 11-03】`windows/powershell/boot-commtools.ps1` と `cleanup-recyclebin.ps1` の実機の確認（ユーザー）: (a) `boot-commtools.ps1` を taskschd.msc に登録して 30 分おきに回す（登録はユーザーが行う。条件はスクリプト先頭のコメント）。使ってみて、最小化（`-WindowStyle Minimized`）が要るか決める（11-03 は外した）。Teams の既存の自動起動と二重にならないかも見る。(b) `cleanup-recyclebin.ps1` の実際の削除（`y` の後の `InvokeVerb('delete')`）は未確認（11-03 は `-ListOnly` だけ。ゴミ箱の最古が 10-15 で対象 0 件だった）。対象が出る 12 月中旬以降に、`-Months` を小さくして試すか、実行して確かめる。
 
-- 【起票 11-03】`windows/powershell/set-virtual-desktop.ps1` の趣味 PC での実機確認（ユーザー）: (a) `scoop install powertoys` と VirtualDesktop モジュールがある PC で、`office` を Capture して名前を付け、`-List` で GUID が出ること。(b) 引数なしの実行で、起動・デスクトップ移動・最後に dev へ戻ることを確かめる。(c) `-Relayout`（workspace の「Move existing windows」を有効にして）で位置とサイズが戻るか。(d) taskschd への登録（ログオン時や画面ロック解除時に `-MoveOnly` を足すかも決める）。複数ウィンドウを持つアプリ（Edge など）は、`MainWindowHandle` の 1 枚しか移さない。
+- 【起票 11-03】`windows/powershell/set-virtual-desktop.ps1` の実機確認の残り（ユーザー。(a)(b) は 11-03 にこの PC で OK）: (c) `-Relayout`（workspace の「Move existing windows」を有効にして）で位置とサイズが戻るか。(d) taskschd への登録（ログオン時や画面ロック解除時に `-MoveOnly` を足すかも決める）。複数ウィンドウを持つアプリ（Edge など）は、`MainWindowHandle` の 1 枚しか移さない。
 
-- 【起票 11-03】この PC に PowerShell モジュール VirtualDesktop を入れる（ユーザー）: `Install-Module VirtualDesktop -Scope CurrentUser`（PowerShell ギャラリー。scoop・`20_apps.bat` の対象外なので、手で入れる）。入れたら、`set-virtual-desktop.ps1 -WhatIf` で起動と移動の経路を確かめる（この PC では未実行）。他の PC への入れ方（`20_apps.bat` に足すか）は、この確認の後に決める。
+- 【起票 11-03】他の PC への VirtualDesktop モジュールの入れ方を決める（この PC は 1.5.11 導入済み）: `Install-Module VirtualDesktop -Scope CurrentUser` は scoop・`20_apps.bat` の対象外。`20_apps.bat` に足すか、手で入れる手順に残すかを決める。workspace（`dev` `office`）のレイアウトは PC ごとに Capture する（`workspaces.json` は追跡しない。decisions 参照）ので、新しい PC では Capture と `-List` の確認も要る。
 
 ## Open Questions
 

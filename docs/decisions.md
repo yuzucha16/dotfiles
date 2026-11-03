@@ -27,6 +27,13 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】PowerToys Workspaces のレイアウトは PC ごとにローカルで持ち、dotfiles では追跡しない（2026-11-03。ユーザーの考え。`set-virtual-desktop.ps1`）
+
+- 決めたこと: `workspaces.json`（`%LOCALAPPDATA%\Microsoft\PowerToys\Workspaces\`）は dotfiles に入れない。`dev` `office` のレイアウトは、PC ごとに PowerToys で Capture して名前を付ける。スクリプトは名前（`$desktopMap` のキー）で GUID を引くだけなので、PC ごとにモニター構成が違っても動く。
+- 根拠: レイアウトはモニターの数・解像度・位置に依存する（`workspaces.json` は位置・サイズ・モニターを持つ）。PC 間で共有すると合わない。アプリが自動生成・書き換えるファイルは追跡しない原則（Principles）にも沿う。
+- 副作用: 新しい PC では、Capture して名前を付けるまで `ERROR: workspace '<名>' not found in workspaces.json` が出る（11-03 にこの PC で確認）。他 PC への入れ方は log の Next Actions。
+- 確認: ユーザーが「ローカル管理で PC ごとにレイアウトを持てるのが良い」と述べた（2026-11-03）。戻し方: 共有したくなったら、`workspaces.json` を `home/` か `windows/` に置いて `links.map` で張る。
+
 ### 【この件】Obsidian の設定を resources 用（正本）と works 用の 2 つに分け、works 用の共通分は一方向に生成する（2026-11-02。ユーザーの決定。workbase の `topics/room-type-consolidation/docs/decisions.md` の 11-01 の項が正本）
 
 - 決めたこと: Vault を `resources/`（workbase）と `works/` の 2 つにしたので、`.obsidian` の実体も 2 つ。`windows/obsidian/resources/.obsidian`（共通設定の正本）と `windows/obsidian/works/.obsidian`（固有分: `community-plugins.json` `plugins/` `app.override.json`）。今までの `windows/obsidian/.obsidian` は works 用へ移した（プラグイン 3 つがあるため。ユーザー、11-02）。

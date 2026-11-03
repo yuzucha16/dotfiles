@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-11-03（set-virtual-desktop.ps1: この PC で VirtualDesktop を導入し、動作確認が OK）
+- 実施: `Install-Module VirtualDesktop -Scope CurrentUser` でこの PC に導入（1.5.11、`Get-Module -ListAvailable` で確認。build 26300 でも動いた）。
+- 確認: 実行ログで、`-Name nope` は `$desktopMap` に無く停止、`office` が `workspaces.json` に無いとき `ERROR: workspace 'office' not found`（原因は未 Capture。スクリプトの不具合ではない）、Desktop 2 の自動作成、dev の起動待ち（`windows ready: True`）と `already on Desktop 1` の経路。ユーザーが `office` を Capture した後、動作確認は OK と報告（ユーザー報告。ログは未保存）。
+- 閉じた項目: 「この PC に VirtualDesktop を入れる」（済）、実機確認の (a)(b)（一部済。(c)(d) は log に残す）。
+- 決定: workspace のレイアウトは PC ごとにローカルで持つ（`decisions.md`）。
+
 ### 2026-11-03（set-virtual-desktop.ps1: PowerToys Workspaces を読んで動的にした）
 - 依頼: 趣味 PC の `set-virtual-desktop.ps1`（298 行。写真 6 枚を `tmp/pic2` に置いた）を取り込み、`dev` と `office` の workspace を `.lnk` 固定でなく、新しいスナップショットを手軽に渡せる形にする。位置とサイズも維持したい。PowerToys は scoop から入れる。
 - 実施: `manifests/apps.txt` に `powertoys` を追加（共通。extras バケット、この PC は 0.102.3001.0）。`workspaces.json`（`%LOCALAPPDATA%\Microsoft\PowerToys\Workspaces\`）から名前で GUID とアプリ一覧を引き、`PowerToys.WorkspacesLauncher.exe <GUID>` を直接呼ぶ。プロセス名は `application-path` から導出（`explorer` は除外）。デスクトップ番号は ps1 先頭の `$desktopMap`（ユーザーの選択。別ファイルにしない）。固定 90 秒の待ちは、ウィンドウが揃うまでのポーリング（上限 90 秒）に変えた。
