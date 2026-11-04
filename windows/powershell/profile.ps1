@@ -192,8 +192,10 @@ function room-sh {
 }
 
 # room clean <Project> --path の Tab 補完（Area の _noai/source/ の中を候補に出す）。正本は workbase の workflow-kit/room/room-completion.ps1
-$roomCompletion = Join-Path $env:WFKIT_DIR 'room\room-completion.ps1'
-if ($env:WFKIT_DIR -and (Test-Path -LiteralPath $roomCompletion)) { . $roomCompletion }
+if ($env:WFKIT_DIR) {
+    $roomCompletion = Join-Path $env:WFKIT_DIR 'room\room-completion.ps1'
+    if (Test-Path -LiteralPath $roomCompletion) { . $roomCompletion }
+}
 
 # Alias
 
