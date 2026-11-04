@@ -4,6 +4,8 @@
 
 ## Log
 
+### 2026-11-04（room clean --path の Tab 補完を profile から読み込む）
+- workbase の `workflow-kit/room/room-completion.ps1`（正本）を、`profile.ps1` の `room-sh` の後で読み込む 4 行を足した（`$env:WFKIT_DIR` が無い、またはファイルが無ければ何もしない）。72f06ff と 8693e77（未設定時に `Join-Path` が落ちるのを直した）。push 済み。実機未確認（pwsh が無い環境で作った）。2〜3 日使ってユーザーが採否を決める。
 ### 2026-11-03（PowerToys Workspaces の Zed の警告を、scoop 版のパスに直した）
 - 症状: ログオン時の Workspaces で、Zed の項目に警告マーク（三角）が出ていた。
 - 原因: `%LOCALAPPDATA%\Microsoft\PowerToys\Workspaces\workspaces.json` の Zed が、10-04 に削除した Inno Setup 版のパス（`AppData\Local\Programs\Zed\Zed.exe`、`app-user-model-id` は `ZedIndustries.Zed`）のままだった（scoop 版への統一は exmem の `scoop-app-management.md`）。
