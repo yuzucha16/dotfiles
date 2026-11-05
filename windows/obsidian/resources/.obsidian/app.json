@@ -12,5 +12,6 @@
     "_archive/",
     ".claude/"
   ],
-  "readableLineLength": true
+  "readableLineLength": true,
+  "defaultViewMode": "preview"
 }
