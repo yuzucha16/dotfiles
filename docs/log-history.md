@@ -4,6 +4,10 @@
 
 ## Log
 
+### 2026-11-05（Obsidian の既定の編集モードを閲覧ビューにした）
+- ユーザーの依頼: Obsidian のノートが編集モードで開くのが不便。正本の `windows/obsidian/resources/.obsidian/app.json` に `"defaultViewMode": "preview"` を足し（223daa8）、`obsidian_sync.py` で works 用の派生 `app.json` に反映した（works 側は追跡しない）。
+- 実機で開き直して閲覧モードになるかは未確認（Next Actions に起票）。
+
 ### 2026-11-04（room clean --path の Tab 補完を profile から読み込む）
 - workbase の `workflow-kit/room/room-completion.ps1`（正本）を、`profile.ps1` の `room-sh` の後で読み込む 4 行を足した（`$env:WFKIT_DIR` が無い、またはファイルが無ければ何もしない）。72f06ff と 8693e77（未設定時に `Join-Path` が落ちるのを直した）。push 済み。実機未確認（pwsh が無い環境で作った）。2〜3 日使ってユーザーが採否を決める。
 ### 2026-11-03（PowerToys Workspaces の Zed の警告を、scoop 版のパスに直した）

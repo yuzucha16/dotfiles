@@ -27,6 +27,10 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Obsidian の既定の編集モードは閲覧ビュー（`app.json` の `defaultViewMode: preview`）にする（2026-11-05。ユーザーの決定）
+- 理由: ノートを開くたびに編集モードで、閲覧が中心の使い方（resources の Vault は参照用）に合わなかった。
+- 置き場: 共通設定の正本（`resources/.obsidian/app.json`）。works の `app.json` は派生なので、`app.override.json` には書かない（両 Vault に効かせる）。
+
 ### 【この件】PowerToys Workspaces のレイアウトは PC ごとにローカルで持ち、dotfiles では追跡しない（2026-11-03。ユーザーの考え。`set-virtual-desktop.ps1`）
 
 - 決めたこと: `workspaces.json`（`%LOCALAPPDATA%\Microsoft\PowerToys\Workspaces\`）は dotfiles に入れない。`dev` `office` のレイアウトは、PC ごとに PowerToys で Capture して名前を付ける。スクリプトは名前（`$desktopMap` のキー）で GUID を引くだけなので、PC ごとにモニター構成が違っても動く。

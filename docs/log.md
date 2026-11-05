@@ -10,6 +10,8 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 ## Next Actions
 
+- 【起票 11-05】Obsidian の既定の閲覧ビュー（`defaultViewMode: preview`）の実機確認（ユーザー）: resources と works の両 Vault で、ノートを開き直すと閲覧モードで開くか。works 側は `obsidian_sync.py` で反映済み（他の PC は `30_link.bat` か `obsidian_sync.py` を実行）。
+
 - 【起票 11-04】`profile.ps1` が読み込む `room-completion.ps1`（workbase の `workflow-kit/room/`）の実機確認（ユーザー）: 新しい PowerShell で `uv run room.py clean <Project> --path ` の Tab が、Area の `_noai/source/` の中を出すか。起動が遅くならないかも見る（ユーザーが懸念。2〜3 日使って採否を決める。採らないなら `profile.ps1` の 4 行を消す）。
 
 - 【起票 11-02】Obsidian の 2 Vault 化の動作確認（Windows の実機。別セッション）: `30_link.bat` で、(a) `uv` `py` `python` のどれでも `obsidian_sync.py` が走る、(b) `%WORKS_DIR%\.obsidian` と `%WORKS_DIR%\resources\.obsidian` の 2 本のジャンクションができる、(c) `%WORKS_DIR%\resources` が無いときは `[SKIP]` で `resources\` を作らない、(d) 旧 `%WORKS_DIR%\.obsidian`（旧 `windows\obsidian\.obsidian` へのジャンクション）は上書きされる、(e) 両方の Vault が開き、works の検索から `resources/` が外れる。`30_link.bat` の新しい分岐は未確認（11-02 にユーザーが works で `resources` `resources_p` `repos` がエクスプローラーから消えたと報告したので、(a)(b)(e) の大半は動いたと見てよい。(c)(d) と `uv` なしの経路が残り）。11-02 に `30_link.bat` へ `noparent2`（Claudian の resources 側の symlink 用）を足した。clone 前に `resources` が無いとき `[SKIP]` になるかも、(c) と一緒に確かめる（実機で symlink が張れたことは確認済み）。
