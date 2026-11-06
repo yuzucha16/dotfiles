@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-11-06（scoop の共通 manifest に quarto を追加）
+- 依頼: scoop で quarto を入れられるように manifest へ追加してコミットする。
+- 実施: `scoop search` で `quarto`（1.11.9）が extras バケットにあるのを確認し、共通の `manifests/apps.txt` の「editor / viewer」に追加した（f6ff55a）。`apps.home.txt` でなく共通に置いたので、家だけにしたければ移す。
+- 未確認: この PC への `scoop install quarto` と `20_apps.bat` の通し実行（manifest の追加だけ）。`scripts/` は変えていないので `tests/linux/test_scripts.sh` は実行していない。
+
 ### 2026-11-05（Obsidian の既定の編集モードを閲覧ビューにした）
 - ユーザーの依頼: Obsidian のノートが編集モードで開くのが不便。正本の `windows/obsidian/resources/.obsidian/app.json` に `"defaultViewMode": "preview"` を足し（223daa8）、`obsidian_sync.py` で works 用の派生 `app.json` に反映した（works 側は追跡しない）。
 - 実機確認（同日、ユーザー）: 起動直後に前回のタブが編集モードで開いた。原因は設定ではなく、`workspace.json`（追跡しない）が開いていたタブの `"mode": "source"` を保存して復元するため（`defaultViewMode` は新しく開くノートにだけ効く）。タブを一度閲覧モードにして保存させたら、閲覧モードで開くようになった。解決として Next Actions の起票を閉じた。
