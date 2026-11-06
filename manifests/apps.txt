@@ -18,6 +18,7 @@ obsidian
 draw.io
 irfanview
 winmerge
+quarto
 
 # dev tools
 ghq
