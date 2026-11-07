@@ -191,12 +191,6 @@ function room-sh {
     wsl.exe -d "room-$Area"
 }
 
-# room clean <Project> --path の Tab 補完（Area の _noai/source/ の中を候補に出す）。正本は workbase の workflow-kit/room/room-completion.ps1
-if ($env:WFKIT_DIR) {
-    $roomCompletion = Join-Path $env:WFKIT_DIR 'room\room-completion.ps1'
-    if (Test-Path -LiteralPath $roomCompletion) { . $roomCompletion }
-}
-
 # Alias
 
 # ls を lsd に置き換え（bash/zsh の common.sh と同じ体系）
