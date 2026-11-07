@@ -15,7 +15,12 @@
       "projects": [
         {
           "paths": [
-            "/mnt/room/./"
+            "/mnt/room/mydev"
+          ]
+        },
+        {
+          "paths": [
+            "/mnt/room/myinv"
           ]
         }
       ]
