@@ -223,6 +223,10 @@ check "all ok: rc=0, both fonts requested, destination created" '[[ $rc -eq 0 &&
 : > "$GHL"
 out=$(HOME="$T/hf" PATH="$T/bin2:$PATH" GH_LOG="$GHL" GH_FAIL="a/one" bash "$FT/scripts/linux/24_fonts.sh" 2>&1); rc=$?
 check "first fails: continues with the second, [ERROR], rc=1, no 'Downloaded to'" '[[ $rc -eq 1 && "$(grep -c gh-stub "$GHL")" == 2 && "$out" == *"[ERROR] download failed: a/one"* && "$out" != *"Downloaded to"* ]]'
+printf 'a/one:one_v*.zip\nc/three:three.zip:Sans9.9\n' > "$FT/manifests/fonts.txt"
+: > "$GHL"
+out=$(HOME="$T/hf" PATH="$T/bin2:$PATH" GH_LOG="$GHL" GH_FAIL="none/none" bash "$FT/scripts/linux/24_fonts.sh" 2>&1); rc=$?
+check "optional tag (3rd field): passed to gh as the tag; a line without a tag stays latest" '[[ $rc -eq 0 && "$(grep -c "gh-stub release download Sans9.9 --repo c/three --pattern three.zip" "$GHL")" == 1 && "$(grep -c "gh-stub release download --repo a/one --pattern" "$GHL")" == 1 ]]'
 mkdir -p "$T/bin3"; ln -sf "$(command -v dirname)" "$T/bin3/dirname"   # the script needs dirname (lib.sh), but not gh
 out=$(HOME="$T/hf" PATH="$T/bin3" GH_LOG="$GHL" /bin/bash "$FT/scripts/linux/24_fonts.sh" 2>&1); rc=$?
 check "no gh: [ERR] (rc=1)" '[[ $rc -eq 1 && "$out" == *"gh not found"* ]]'

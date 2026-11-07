@@ -2,11 +2,11 @@
 setlocal EnableExtensions
 
 REM ======================================================
-REM  Fonts (PlemolJP NF) downloader
-REM  Gets the latest GitHub release zips with gh into %USERPROFILE%\download
+REM  Fonts (PlemolJP NF, Noto Sans JP) downloader
+REM  Gets GitHub release zips (latest, or the tag given in the list) with gh into %USERPROFILE%\Downloads
 REM  Install is manual: unzip, select the .ttf files, right click, Install for current user.
 REM  Usage:  24_fonts.bat
-REM  List: manifests\fonts.txt  (owner/repo:asset glob)
+REM  List: manifests\fonts.txt  (owner/repo:asset glob[:release tag])
 REM  gh login is not needed (public release downloads work without it)
 REM  The output is also saved to tmp\24_fonts.log (git-ignored, overwritten on every run),
 REM  and the window waits at the end (pause) so a double-click does not close it.
@@ -44,13 +44,8 @@ if errorlevel 1 (
 if not exist "%DL_DIR%\" mkdir "%DL_DIR%"
 
 set "FAILED=0"
-for /F "usebackq eol=# tokens=1,2 delims=:" %%A in ("%LIST%") do (
-  echo %%A %%B
-  call gh release download --repo %%A --pattern "%%B" --dir "%DL_DIR%" --clobber
-  if errorlevel 1 (
-    echo [ERROR] download failed: %%A %%B
-    set "FAILED=1"
-  )
+for /F "usebackq eol=# tokens=1,2,3 delims=:" %%A in ("%LIST%") do (
+  call :GET "%%A" "%%B" "%%~C"
 )
 
 echo.
@@ -59,4 +54,17 @@ if "%FAILED%"=="1" (
   exit /b 1
 )
 echo Downloaded to %DL_DIR%. Unzip and install the fonts manually.
+exit /b 0
+
+REM %1=owner/repo  %2=asset glob  %3=release tag (optional; empty = latest)
+:GET
+set "TAG=%~3"
+set "TAGARG="
+if defined TAG set "TAGARG=%TAG%"
+echo %~1 %~2 %TAGARG%
+call gh release download %TAGARG% --repo %~1 --pattern "%~2" --dir "%DL_DIR%" --clobber
+if errorlevel 1 (
+  echo [ERROR] download failed: %~1 %~2 %TAGARG%
+  set "FAILED=1"
+)
 exit /b 0

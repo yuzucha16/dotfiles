@@ -1,5 +1,8 @@
-# fonts for scripts/*/24_fonts.{sh,bat}: downloaded from GitHub releases (latest) with gh into ~/download
-# One font per line: <owner/repo>:<asset glob>. Lines starting with # and blank lines are ignored.
-# Install is manual (1:2 monospace with Nerd Fonts glyphs).
+# fonts for scripts/*/24_fonts.{sh,bat}: downloaded from GitHub releases with gh into ~/download
+# One font per line: <owner/repo>:<asset glob>[:<release tag>]. Lines starting with # and blank lines are ignored.
+# Without a tag the latest release is used. Give a tag when latest is not the release that has the asset.
+# Install is manual (1:2 monospace with Nerd Fonts glyphs; Noto Sans JP is a proportional font).
 
 yuru7/PlemolJP:PlemolJP_NF_v*.zip
+# noto-cjk's latest is the Serif release, so the tag is pinned. 16_NotoSansJP.zip = family "Noto Sans JP" (27MB)
+notofonts/noto-cjk:16_NotoSansJP.zip:Sans2.004

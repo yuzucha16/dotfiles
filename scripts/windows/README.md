@@ -25,7 +25,7 @@
    - `scripts\windows\29_claude_plugins.bat`: `manifests\claude-plugins.txt` の各行（`<ソース>|<plugin>@<marketplace>`）について、`claude plugin marketplace add` と `claude plugin install` を実行する（現在は `kepano/obsidian-skills`）。入れるかは聞かない。23 の後に実行する（Claude Code が要る）
    - `25_awscli.bat` `26_uv.bat` `27_volta.bat` の共通の出力: SSL バンドルを設定しないときは、理由つきの `[SKIP]`（`n` と答えた、`CERTS_DIR` 未設定、`ca_bundle.crt` が無い）を出す。最後に `[ENV]` で設定した環境変数の名前と値（設定しなかったものは `[not set]`）を表示し、どの経路でも `pause` で止まってから終わる（終了コードは `pause` の後に返す）
    - 25〜27 は、直前に `10_env.bat` を実行済み（`CERTS_DIR` がある）前提。インストール直後は、レジストリから PATH を読み直して続きを実行する（見つからなければ、新しいターミナルで続ける案内を出して終了コード 0）。CA ファイルが無い場合は設定せず `[SKIP]`。`SSL_CERT_FILE` などは、存在しないファイルを指すと全 HTTPS が失敗するため、無条件には設定しない
-   - `scripts\windows\24_fonts.bat`: PlemolJP NF（`manifests\fonts.txt`）の latest を `gh` で `%USERPROFILE%\download` へ取得する。インストールは手動（展開して .ttf を右クリック → 現在のユーザーにインストール）。`gh auth login` は不要。出力は `tmp\24_fonts.log`（Git 対象外、実行のたびに上書き）にも残り、最後に `pause` で止まる。ダウンロードが1件でも失敗したら終了コード 1
+   - `scripts\windows\24_fonts.bat`: PlemolJP NF と Noto Sans JP（`manifests\fonts.txt`。タグの指定がなければ latest）を `gh` で `%USERPROFILE%\download` へ取得する。インストールは手動（展開して .ttf を右クリック → 現在のユーザーにインストール）。`gh auth login` は不要。出力は `tmp\24_fonts.log`（Git 対象外、実行のたびに上書き）にも残り、最後に `pause` で止まる。ダウンロードが1件でも失敗したら終了コード 1
 3. `scripts\windows\30_link.bat [link|unlink] [-n]`: `manifests\links.map` に従ってリンクを張る（ファイルは symlink、ディレクトリは junction。既存のリンクは張り直す）
    - `unlink`: リンクだけ削除する。`-n`: ドライラン
    - 配置先に実ファイル/実ディレクトリがあると `[ERR]` を出してそのエントリを飛ばし、最後に非ゼロで終了する。**自動退避はしない**。中身を確認して手で退避/削除し、再実行する

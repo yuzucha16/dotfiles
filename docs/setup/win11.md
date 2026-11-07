@@ -136,7 +136,7 @@ git config --file ~/.gitconfig_local user.email "<email>"
 | 10 | `10_env.bat` | `setx` で環境変数（`XDG_*`、`WORKS_DIR=%USERPROFILE%\works`、`GHQ_ROOT=%WORKS_DIR%\repos` など）を設定し、ディレクトリを作る | **実行後は新しいターミナルを開く**（現在のセッションには反映されない） |
 | 11 | `11_git_identity.bat` | `~\.gitconfig_local` が無いときだけ、git の名前・メールを対話で聞いて作る | 既にあれば触らない。**30 の前**に実行する（git が必要。5 で入れた scoop の git でよい） |
 | 20 | `20_apps.bat [home]` | scoop（5 で入れていれば skip）と bucket を導入し、`manifests\apps.txt` のアプリを入れる。家 PC は `home` を付ける（`apps.home.txt` も入る） | 管理者権限は不要。ネット接続が必要。最後に **オレンジ色**で VC++ ランタイムの `[Installed]` / `[WARN]` が出る（`[WARN]` で、実際にアプリが起動しないときだけ `scoop install extras/vcredist2022`。UAC が出る） |
-| 24 | `24_fonts.bat` | PlemolJP NF を `gh` で `~\download` に取得する。インストールは手動（[fonts-setup.md](fonts-setup.md)） | `gh` のログインは不要。出力は `tmp\24_fonts.log` にも残り、最後に `pause` で止まる。1件でも失敗したら終了コード 1 |
+| 24 | `24_fonts.bat` | PlemolJP NF と Noto Sans JP を `gh` で `~\download` に取得する。インストールは手動（[fonts-setup.md](fonts-setup.md)） | `gh` のログインは不要。出力は `tmp\24_fonts.log` にも残り、最後に `pause` で止まる。1件でも失敗したら終了コード 1 |
 | 30 | `30_link.bat [-n]` | `links.map` に従って設定ファイルのリンクを張る | 先に **`-n`（ドライラン）**で確認する。配置先に実ファイルがあると `[ERR]`。**自動退避はしない**ので、手で退避してから再実行 |
 | 31 | `31_history_seed.bat [-n]` | PSReadLine の履歴に、定型コマンドの種（`windows\powershell\history.seed.txt`）を入れる | 履歴が無い/空のときだけ。既存の履歴は上書きしない。**最初の pwsh を開く前に**実行する。出力は `tmp\31_history_seed.log` にも残り、最後に `pause` で止まる |
 

@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-11-07（fonts.txt に Noto Sans JP を追加。一覧に任意のタグを設けた）
+- 依頼: この PC に Noto Sans JP があるか → あった（`C:\Windows\Fonts\NotoSansJP-VF.ttf`、`NotoSerifJP-VF.ttf`。どちらも作成日時 2026-09-14 03:25:19）。入れた主体は不明（OS 標準の日付は 2024-04-01、dotfiles に記載なし）。クリーンな PC では無い前提にして、`24_fonts.*` で取得できるようにした（ユーザーの決定。`decisions.md` の同日の項）。
+- 実施: `manifests/fonts.txt` を `owner/repo:asset glob[:release tag]` にし、`notofonts/noto-cjk:16_NotoSansJP.zip:Sans2.004` を追加。`noto-cjk` の latest は Serif のリリースで Sans の zip が無いため、タグを固定した。`24_fonts.bat`（`:GET` サブルーチン）と `24_fonts.sh` を直し、`tests/linux/test_scripts.sh` にタグ付きの試験を 1 件足した。`fonts-setup.md` の保存先の誤り（`download` → `Downloads`）も直した。
+- 確認: 偽の `gh` で `.bat` のタグあり・なしの呼び出しを確認。`test_scripts.sh` は 71/71（WSL）。未確認: 実際の 27MB のダウンロードとインストール。
+- 閉じた項目（済）: 【起票 11-04】`room-completion.ps1` の実機確認。`room clean` の廃止に伴い、読み込みを `profile.ps1` から外した（61acdc5）ため、確認の対象が無くなった。
+
 ### 2026-11-06（scoop の共通 manifest に quarto を追加）
 - 依頼: scoop で quarto を入れられるように manifest へ追加してコミットする。
 - 実施: `scoop search` で `quarto`（1.11.9）が extras バケットにあるのを確認し、共通の `manifests/apps.txt` の「editor / viewer」に追加した（f6ff55a）。`apps.home.txt` でなく共通に置いたので、家だけにしたければ移す。

@@ -23,9 +23,16 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - Office テンプレは自動では張らず、初回に `windows/office` から手で配置する。`.obsidian` は dotfiles が実体を持ち、`links.map` で `%WORKS_DIR%\.obsidian` へジャンクションを張る（Vault のトップ自体は `links.map` に無い）。
 - スクリプト番号は、十の位が層、一の位が同じ層の固有ツール。10 刻みなのは後から差し込む余地のため。Windows と Linux で同じ番号は同じ役割で、無い側は欠番にする。OS 接頭辞（w / l）と英字の枝番は廃止した（OS はディレクトリで分かれる）。
 - 実行順は、Linux は「ディレクトリ → パッケージ」（ghq を `~/.local/bin` に置くため）。`30_link` は、`WORKS_DIR` が無ければ作って `.obsidian` を張る（`WORKS_DIR` の clone には依存しない）。`workbase` の clone は `50_repos`。
-- `manifests/` の一覧は、スクリプトと手順書（`docs/setup/`。2026-10-16 に `works/resources/guides/howto/` から移した）で重複させない。`lib.sh` の `read_list` は行内の空白を全部消すので、2列の一覧は `:` 区切りにする（`fonts.txt` は `owner/repo:asset glob`）。
+- `manifests/` の一覧は、スクリプトと手順書（`docs/setup/`。2026-10-16 に `works/resources/guides/howto/` から移した）で重複させない。`lib.sh` の `read_list` は行内の空白を全部消すので、2列の一覧は `:` 区切りにする（`fonts.txt` は `owner/repo:asset glob[:release tag]`。2026-11-07 にタグを足した）。
 
 ## Decisions
+
+### 【この件】`fonts.txt` に Noto Sans JP を足し、一覧に任意のタグ（第 3 項目）を設ける（2026-11-07。ユーザーの決定）
+- 決めたこと: 一覧の書式を `owner/repo:asset glob[:release tag]` にした。タグなしは今までどおり latest。`notofonts/noto-cjk:16_NotoSansJP.zip:Sans2.004` を足した。`24_fonts.bat` と `24_fonts.sh` の両方を直した。
+- 理由: この PC の `C:\Windows\Fonts` に `Noto Sans JP`（可変フォント `NotoSansJP-VF.ttf`）が入っていたが、作成日時が 2026-09-14 で、入れた主体が不明（OS 標準の日付は 2024-04-01。dotfiles に記載なし）。クリーンな PC では無い前提で扱うため、取得できるようにした。Excalidraw の図の書き出し（`--font`）が使う。
+- `noto-cjk` の latest は `Serif2.003`（Serif のリリース）で、Sans のアセットが無い。タグなしだと取れないので、タグ指定が要った。`Sans2.004` の `16_NotoSansJP.zip`（27MB）のファミリー名は `Noto Sans JP`。同じリリースの `Noto Sans CJK JP` は別のファミリー名なので使わない。
+- 却下案: タグ固定用の別リスト（ファイルと処理が増える）、手動で入れる運用。
+- 確認済み（2026-11-07）: 偽の `gh` で、`.bat` は 2 項目の行で latest（タグ引数なし）、3 項目の行でタグを渡すことを確認。`tests/linux/test_scripts.sh` は 71/71（タグ付きの 1 項目を追加）。実際の 27MB のダウンロードとインストールは未実施。
 
 ### 【この件】Obsidian の既定の編集モードは閲覧ビュー（`app.json` の `defaultViewMode: preview`）にする（2026-11-05。ユーザーの決定）
 - 理由: ノートを開くたびに編集モードで、閲覧が中心の使い方（resources の Vault は参照用）に合わなかった。
