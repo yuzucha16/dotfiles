@@ -166,10 +166,14 @@
     "Gruvbox Dark": {
       // Project panel Git colors, matched to the Markdown colors: modified = strong (orange), created = heading (green), ignored = code (teal)
       // Obsidian の本文領域（gruvbox-brighter.css の --body-bg）と同じ色にそろえる
-      "editor.background": "#363331",
-      "editor.gutter.background": "#363331",
-      "tab.active_background": "#363331",
-      "toolbar.background": "#363331",
+      "editor.background": "#45413e",
+      "editor.gutter.background": "#45413e",
+      "tab.active_background": "#45413e",
+      "toolbar.background": "#45413e",
+      "panel.background": "#45413e",
+      "tab_bar.background": "#45413e",
+      "title_bar.background": "#45413e",
+      "status_bar.background": "#45413e",
       "modified": "#d8a657",
       "created": "#a7b85a",
       "ignored": "#7daea3",
@@ -182,10 +186,14 @@
     },
     "Material Gruvbox Dark": {
       // Obsidian の本文領域（gruvbox-brighter.css の --body-bg）と同じ色にそろえる
-      "editor.background": "#363331",
-      "editor.gutter.background": "#363331",
-      "tab.active_background": "#363331",
-      "toolbar.background": "#363331",
+      "editor.background": "#45413e",
+      "editor.gutter.background": "#45413e",
+      "tab.active_background": "#45413e",
+      "toolbar.background": "#45413e",
+      "panel.background": "#45413e",
+      "tab_bar.background": "#45413e",
+      "title_bar.background": "#45413e",
+      "status_bar.background": "#45413e",
       "modified": "#d8a657",
       "created": "#a7b85a",
       "ignored": "#7daea3",
@@ -198,6 +206,9 @@
   },
 
   // ==== Layout ====
+  "toolbar": {
+    "breadcrumbs": false
+  },
   "project_panel": {
     "dock": "right",
     "file_icons": true
