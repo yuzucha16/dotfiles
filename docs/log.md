@@ -22,6 +22,8 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 - 【起票 11-03】他の PC への VirtualDesktop モジュールの入れ方を決める（この PC は 1.5.11 導入済み）: `Install-Module VirtualDesktop -Scope CurrentUser` は scoop・`20_apps.bat` の対象外。`20_apps.bat` に足すか、手で入れる手順に残すかを決める。workspace（`dev` `office`）のレイアウトは PC ごとに Capture する（`workspaces.json` は追跡しない。decisions 参照）ので、新しい PC では Capture と `-List` の確認も要る。既存の PC では、`workspaces.json` に旧インストール版のパス（例: `AppData\Local\Programs\Zed`）が残ると警告が出る（この PC は 11-03 に Zed を直した）ので、`application-path` を点検する。
 
+- 【起票 11-08】Obsidian の Scriptorium（ライト）のフォントを目視で確認する（ユーザー）: UI・本文が Noto Sans JP、コードが PlemolJP Console NF になっているか。効いていなければ `snippets/theme-fonts.css` を直す。不要になった `--font-*-override` の指定（Brutalist 向け）を削るかも決める。
+
 ## Open Questions
 
 - `scoop update` で、同梱の Markdown 用 UDL（`markdown._preinstalled_DM.udl.xml`）が実ファイルに戻り、`markdown.udl.xml` へのリンクが外れるか。戻ったら手で削除して `30_link.bat` をやり直す（2026-10-30 起票。未確認）。他の PC でも、最初は同梱の UDL を手で削除してから `30_link.bat` を実行する。

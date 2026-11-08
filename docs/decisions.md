@@ -27,6 +27,13 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】Obsidian の既定テーマは Scriptorium（ライト）にする。Brutalist と Typora-Vue は入れない（2026-11-08。ユーザーの決定）
+- 経緯: ライトテーマの Scriptorium（v0.19.0、ouatis）と Brutalist（v5.0.6、DuckTapeKiller）を入れて比べ、Scriptorium を選んだ。`appearance.json` は `theme: moonstone`（ライト）、`cssTheme: Scriptorium`。フォントは UI・本文が `Noto Sans JP`、コードが `PlemolJP Console NF`。
+- フォントは `snippets/theme-fonts.css` で上書きする（Scriptorium の `--scrip-font-*-stack` と、Obsidian 共通の `--font-*-override`）。Scriptorium の既定は IBM Plex 系で、日本語は `--scrip-font-cjk-stack` で決まる。
+- 却下案: Brutalist（`theme.css` が 4.3MB でフォントを埋め込んでいる。履歴が重くなる）、Typora-Vue（以前は「ライトが要るときのサブ」として残していたが、使わないので削除）。
+- 未確認: 画面でのフォントの効き方（`theme-fonts.css` が Scriptorium で効くか）は、ユーザーの目視が済むまで未確認。
+- Material Gruvbox（ダーク）は残してある（`themes/Material Gruvbox`）。`material-gruvbox-bold` は `.theme-dark` 限定なので、ライトに影響しない。
+
 ### 【この件】`fonts.txt` に Noto Sans JP を足し、一覧に任意のタグ（第 3 項目）を設ける（2026-11-07。ユーザーの決定）
 - 決めたこと: 一覧の書式を `owner/repo:asset glob[:release tag]` にした。タグなしは今までどおり latest。`notofonts/noto-cjk:16_NotoSansJP.zip:Sans2.004` を足した。`24_fonts.bat` と `24_fonts.sh` の両方を直した。
 - 理由: この PC の `C:\Windows\Fonts` に `Noto Sans JP`（可変フォント `NotoSansJP-VF.ttf`）が入っていたが、作成日時が 2026-09-14 で、入れた主体が不明（OS 標準の日付は 2024-04-01。dotfiles に記載なし）。クリーンな PC では無い前提で扱うため、取得できるようにした。Excalidraw の図の書き出し（`--font`）が使う。

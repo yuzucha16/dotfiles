@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-11-08（Obsidian のテーマを Scriptorium（ライト）に。Brutalist と Typora-Vue は入れない）
+- 依頼（探索型。ゴールは比較できる環境まで）: ライトの Scriptorium と Brutalist を入れて切り替えられるようにし、フォントは Noto Sans JP、コードは PlemolJP にする。比較の後、Scriptorium（ライト）を既定にし、Brutalist と Typora-Vue を破棄してコミット。
+- 実施: 正本 `windows/obsidian/resources/.obsidian/` に `themes/Scriptorium/` を追加し、`appearance.json` を `moonstone` + `Scriptorium`、フォントを Noto Sans JP / PlemolJP Console NF にした。`snippets/theme-fonts.css` を新規に足し、`appearance.override.json`（works）の有効スニペットにも足した。Typora-Vue は `git rm`。`obsidian_sync.py` で works 側を反映し、`--check` で一致を確認した。
+- 未確認: Scriptorium でのフォントの効き方（目視）。`theme-fonts.css` の Brutalist 向けの指定は、Brutalist を外したので不要。
+- 最終の注意: 作業の終わりに Obsidian が起動していた。`appearance.json` はディスク上で意図どおりだったが、Obsidian がメモリ上の設定で上書きする可能性があるので、`git status` で確かめる。
+
 ### 2026-11-07（fonts.txt に Noto Sans JP を追加。一覧に任意のタグを設けた）
 - 依頼: この PC に Noto Sans JP があるか → あった（`C:\Windows\Fonts\NotoSansJP-VF.ttf`、`NotoSerifJP-VF.ttf`。どちらも作成日時 2026-09-14 03:25:19）。入れた主体は不明（OS 標準の日付は 2024-04-01、dotfiles に記載なし）。クリーンな PC では無い前提にして、`24_fonts.*` で取得できるようにした（ユーザーの決定。`decisions.md` の同日の項）。
 - 実施: `manifests/fonts.txt` を `owner/repo:asset glob[:release tag]` にし、`notofonts/noto-cjk:16_NotoSansJP.zip:Sans2.004` を追加。`noto-cjk` の latest は Serif のリリースで Sans の zip が無いため、タグを固定した。`24_fonts.bat`（`:GET` サブルーチン）と `24_fonts.sh` を直し、`tests/linux/test_scripts.sh` にタグ付きの試験を 1 件足した。`fonts-setup.md` の保存先の誤り（`download` → `Downloads`）も直した。

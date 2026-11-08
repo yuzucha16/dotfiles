@@ -1,14 +1,15 @@
 {
-  "theme": "obsidian",
+  "theme": "moonstone",
   "accentColor": "#5f5cf5",
-  "cssTheme": "Material Gruvbox",
-  "interfaceFontFamily": "PlemolJP Console NF,Meiryo UI",
-  "textFontFamily": "PlemolJP Console NF,Meiryo UI",
+  "cssTheme": "Scriptorium",
+  "interfaceFontFamily": "Noto Sans JP,Meiryo UI",
+  "textFontFamily": "Noto Sans JP,Meiryo UI",
   "monospaceFontFamily": "PlemolJP Console NF,Meiryo UI",
   "enabledCssSnippets": [
     "material-gruvbox-bold",
     "file-explorer-compact",
-    "readable-width"
+    "readable-width",
+    "theme-fonts"
   ],
   "baseFontSize": 14,
   "baseFontSizeAction": true,

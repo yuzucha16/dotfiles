@@ -1,0 +1,14 @@
+/* テーマ比較用のフォント上書き（Scriptorium / Brutalist 共通）
+   本文・UI: Noto Sans JP、コード: PlemolJP Console NF。
+   - Scriptorium: 独自の変数 --scrip-font-*-stack を差し替える。
+   - Brutalist: --font-*-override を、テーマ本体より強いセレクタで上書きする
+     （Style Settings プラグインを入れなくてもよい）。
+   テーマごとに変えたくなったら、このファイルを分ける。 */
+html body.obsidian-app {
+  --scrip-font-cjk-stack: "Noto Sans JP", sans-serif;
+  --scrip-font-mono-stack: "PlemolJP Console NF", monospace;
+
+  --font-text-override: "Noto Sans JP", sans-serif;
+  --font-interface-override: "Noto Sans JP", sans-serif;
+  --font-monospace-override: "PlemolJP Console NF", monospace;
+}
