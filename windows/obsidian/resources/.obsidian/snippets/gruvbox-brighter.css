@@ -1,0 +1,14 @@
+/* Material Gruvbox の背景を、Zed の Gruvbox Dark に近づける（Style Settings プラグインは不要）。
+   テーマは色を「R,G,B」の3つ組（--dark*-x）で持つので、3つ組の側を上書きする。
+   - サイドバー・タブ列（--dark0-hard）: #1d2021 → #3c3836（Zed のパネルと同じ）
+   - ノートの本文領域（--background-primary）: #282828 → #363331。
+     --dark0 自体は触らない（表やコードなど、他の用途に波及させないため）。
+     明るさは下の --body-bg の数値で調整する（#282828 = 40,40,40 / #3c3836 = 60,56,54）。 */
+body.theme-dark {
+  --dark0-hard-x: 60, 56, 54;
+  --dark0-hard: rgb(var(--dark0-hard-x));
+
+  --body-bg: 54, 51, 49;
+  --background-primary: rgb(var(--body-bg));
+  --background-primary-alt: rgb(var(--body-bg));
+}
