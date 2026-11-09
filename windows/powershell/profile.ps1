@@ -191,6 +191,10 @@ function room-sh {
     wsl.exe -d "room-$Area"
 }
 
+# Project の ai/（out・work など）へ cd する関数 aij。定義は workbase の workflow-kit/tools/ai-jump.ps1（使い方は先頭のコメント）。
+# workbase を clone していない PC では何もしない
+if ($env:WFKIT_DIR -and (Test-Path "$env:WFKIT_DIR\tools\ai-jump.ps1")) { . "$env:WFKIT_DIR\tools\ai-jump.ps1" }
+
 # Alias
 
 # ls を lsd に置き換え（bash/zsh の common.sh と同じ体系）
