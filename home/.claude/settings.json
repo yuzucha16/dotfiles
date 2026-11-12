@@ -120,6 +120,17 @@
         ]
       }
     ],
+    "PostToolBatch": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$h = \"$HOME/works/resources/workflow-kit/tools/context_probe_hook.py\"; if (Test-Path $h) { python -I $h }",
+            "shell": "powershell"
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [
