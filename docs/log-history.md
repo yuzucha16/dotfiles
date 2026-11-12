@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-11-13（Windows Terminal の選択ハイライトを見やすくした）
+- 依頼（確定型）: PSReadLine の ListView と fzf の Ctrl+r の選択行が、端末の背景 `#45413E` に溶けて見づらい。色の候補・選定も含めて改善する。
+- 実施: 選択行の背景を `#23555E`（Gruvbox の faded blue `#076678` を、第1案で「少し強い」とのことで弱めた色）、文字を `#FBF1C7` にした。`profile.ps1` で ListView の選択行（`ListPredictionSelected`）と Tab 補完メニューの選択（`Selection`）を同じ変数 `$selected` で指定し、予測の薄い文字は `#A89984`、一覧の `>` は `#FABD2F` にした。fzf は `FZF_DEFAULT_OPTS` の `--color`（`bg+` を同じ色、`gutter` を背景色）で、`profile.ps1` と `home/.config/shell/common.sh` に入れた（WSL の bash / zsh も同じ見た目）。
+- 確認: `profile.ps1` の構文、`bash -n common.sh`、`Set-PSReadLineOption -Colors` が通ることまで。見た目はユーザーが試用中（候補 B 琥珀・C 紫・D 明るい灰は会話で提示。選ばれなかった）。
+- 未対応: `windows/room/room-shell-setup.ps1` の fzf 設定（room 内の別環境）は、そろえていない。
+
 ### 2026-11-08（Obsidian のテーマを Scriptorium（ライト）に。Brutalist と Typora-Vue は入れない）
 - 依頼（探索型。ゴールは比較できる環境まで）: ライトの Scriptorium と Brutalist を入れて切り替えられるようにし、フォントは Noto Sans JP、コードは PlemolJP にする。比較の後、Scriptorium（ライト）を既定にし、Brutalist と Typora-Vue を破棄してコミット。
 - 実施: 正本 `windows/obsidian/resources/.obsidian/` に `themes/Scriptorium/` を追加し、`appearance.json` を `moonstone` + `Scriptorium`、フォントを Noto Sans JP / PlemolJP Console NF にした。`snippets/theme-fonts.css` を新規に足し、`appearance.override.json`（works）の有効スニペットにも足した。Typora-Vue は `git rm`。`obsidian_sync.py` で works 側を反映し、`--check` で一致を確認した。

@@ -36,7 +36,7 @@ alias dl='dirs -v'
 ##########
 # fzf (Ctrl-r: 履歴検索 / Ctrl-t: ファイル検索)
 ##########
-export FZF_DEFAULT_OPTS='--height=40% --reverse'
+export FZF_DEFAULT_OPTS='--height=40% --reverse --color=bg+:#23555E,fg+:#FBF1C7,gutter:#45413E,hl:#FABD2F,hl+:#FABD2F,pointer:#FB4934,marker:#B8BB26,prompt:#8EC07C,info:#A89984'
 export FZF_CTRL_T_COMMAND='fd --hidden --follow --exclude .git'
 export FZF_CTRL_T_OPTS='--preview "bat --style=plain --color=always --line-range :200 {}"'
 

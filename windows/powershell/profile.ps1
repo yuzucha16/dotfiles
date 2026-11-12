@@ -77,6 +77,17 @@ Set-PSReadLineOption -EditMode Emacs
 Set-PSReadLineOption -PredictionSource History
 # 候補一覧表示
 Set-PSReadLineOption -PredictionViewStyle ListView
+# 選択行の色。端末の背景 #45413E に溶けないよう、背景は青緑 #23555E（#076678 を弱めた色）、文字は #FBF1C7。
+# ListView の選択行と Tab 補完メニューの選択（Selection）を同じ色にする。
+# 予測（薄い文字）は #A89984 に上げて読めるようにする。色を変えるときは、fzf の --color（下）も同じ値にそろえる。
+$esc = [char]27
+$selected = "$esc[48;2;35;85;94m$esc[38;2;251;241;199m"
+Set-PSReadLineOption -Colors @{
+    InlinePrediction       = "$esc[38;2;168;153;132m"
+    ListPrediction         = "$esc[38;2;250;189;47m"
+    ListPredictionSelected = $selected
+    Selection              = $selected
+}
 
 # Tab 補完は $env:VAR\... を実パスに書き換えてしまう。履歴に変数の形で残すため、補完のあとで実パスを $env:VAR に戻す。
 # 戻すのは、補完の前のバッファに $env:VAR と書いてあった変数だけ（長い値を先に置換する）。
@@ -242,7 +253,8 @@ Set-PSReadLineKeyHandler -Chord Alt+k -ScriptBlock { cdg; [Microsoft.PowerShell.
 
 # fzf の履歴検索 (Ctrl+r) とファイル検索 (Ctrl+t)。bash/zsh の common.sh と同じキー・同じ見た目。
 # PSFzf は使わず、fzf を直接呼ぶ。
-$env:FZF_DEFAULT_OPTS = '--height=40% --reverse'
+# 色は Gruvbox。選択行 bg+ は PSReadLine の選択行と同じ #23555E。gutter は端末の背景 #45413E。
+$env:FZF_DEFAULT_OPTS = '--height=40% --reverse --color=bg+:#23555E,fg+:#FBF1C7,gutter:#45413E,hl:#FABD2F,hl+:#FABD2F,pointer:#FB4934,marker:#B8BB26,prompt:#8EC07C,info:#A89984'
 
 # PSReadLine の履歴ファイルを、新しい順・重複なしで返す
 function Get-FzfHistory {
