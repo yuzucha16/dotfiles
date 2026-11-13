@@ -27,6 +27,10 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】dotfiles を非公開（PRIVATE）にする。2026-10-16 の「公開で確定」を置き換える（2026-11-13。ユーザーの決定）
+- 決めたこと: dotfiles を PRIVATE にした（`gh repo view` が `PRIVATE`、`git fetch` 成功。確認: 2026-11-13）。この PC は、HTTPS と `gh` / GCM の認証で push と pull をする。PC1 は pull のみで、gh も鍵も持たない。pull のときだけ、この PC から一時的に公開にして、すぐ戻す。判断の全体は、works の `docs/decisions.md` の同日の項。
+- 未了: README と手順書（`win11.md`、Linux のクイックスタート）の、非公開向けの直し。別のユーザーが公開リポジトリとして clone する前提の記述が残っている。2026-10-06 の項（「リポジトリは private」）と 2026-10-16 の項（「公開で確定し、非公開向けの記述を削除した」）の経緯は、そのまま残す。ここでの非公開への変更で、削除した非公開向けの記述（サインインの注記）を戻す必要がある。
+
 ### 【この件】Obsidian の既定テーマは Scriptorium（ライト）にする。Brutalist と Typora-Vue は入れない（2026-11-08。ユーザーの決定）
 - 経緯: ライトテーマの Scriptorium（v0.19.0、ouatis）と Brutalist（v5.0.6、DuckTapeKiller）を入れて比べ、Scriptorium を選んだ。`appearance.json` は `theme: moonstone`（ライト）、`cssTheme: Scriptorium`。フォントは UI・本文が `Noto Sans JP`、コードが `PlemolJP Console NF`。
 - フォントは `snippets/theme-fonts.css` で上書きする（Scriptorium の `--scrip-font-*-stack` と、Obsidian 共通の `--font-*-override`）。Scriptorium の既定は IBM Plex 系で、日本語は `--scrip-font-cjk-stack` で決まる。
