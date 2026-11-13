@@ -10,6 +10,11 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 ## Next Actions
 
+次の番号: 3
+
+1. 【起票 11-13】【やる:AI】dotfiles の README と手順書（`win11.md`、Linux のクイックスタート）と、workbase の `cheatsheets/env/debian-family.md` の手順 7 を、非公開リポジトリ向けに直す（2026-11-13 に 3 リポジトリを非公開にした。2026-10-16 の「公開で確定」で削除した、サインインの注記を戻す）。完了: 非公開の clone に認証が要る旨（Windows は GCM のサインイン、Linux は `gh auth login` → `gh auth setup-git`）が書かれ、「公開なので認証なしで clone できる」という記述が `grep` で残っていない。
+2. 【起票 11-13】【やる:ユーザー】PC1 で、公開の切り替えを使った pull を 1 回通す（未確認）: この PC から対象を公開 → PC1 で `git pull` → すぐ非公開に戻す → `gh repo view` で `PRIVATE` を確認する（works の `docs/log.md` の Open Questions 1 が決まれば、切り替えはエージェントに任せられる）。
+
 - 【起票 11-02】Obsidian の 2 Vault 化の動作確認（Windows の実機。別セッション）: `30_link.bat` で、(a) `uv` `py` `python` のどれでも `obsidian_sync.py` が走る、(b) `%WORKS_DIR%\.obsidian` と `%WORKS_DIR%\resources\.obsidian` の 2 本のジャンクションができる、(c) `%WORKS_DIR%\resources` が無いときは `[SKIP]` で `resources\` を作らない、(d) 旧 `%WORKS_DIR%\.obsidian`（旧 `windows\obsidian\.obsidian` へのジャンクション）は上書きされる、(e) 両方の Vault が開き、works の検索から `resources/` が外れる。`30_link.bat` の新しい分岐は未確認（11-02 にユーザーが works で `resources` `resources_p` `repos` がエクスプローラーから消えたと報告したので、(a)(b)(e) の大半は動いたと見てよい。(c)(d) と `uv` なしの経路が残り）。11-02 に `30_link.bat` へ `noparent2`（Claudian の resources 側の symlink 用）を足した。clone 前に `resources` が無いとき `[SKIP]` になるかも、(c) と一緒に確かめる（実機で symlink が張れたことは確認済み）。
 
 - 別のPCで `10_env.bat` を実行し、新しいターミナルで `$env:WFKIT_DIR` が設定されること、Tab 補完で `$env:WFKIT_DIR` が実パスに変わらないこと（`profile.ps1` の Tab ハンドラ）を確かめる（2026-10-30 起票。この PC では動作確認済み）。

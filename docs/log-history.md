@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-11-13（dotfiles を非公開にした）
+- 依頼（確定型）: 3 リポジトリを private にして、この PC から push と pull ができる環境にする（works の同日の項に全体）。
+- 実施: dotfiles を PRIVATE にし、`git fetch` と push が通った（`cb387ed`）。`AGENTS.md` の push の項の公開範囲を直し、`decisions.md` に「非公開にする。2026-10-16 の『公開で確定』を置き換える」を足した。
+- 未了: README と手順書の非公開向けの直し、PC1 での pull の確認（`log.md` の Next Actions 1・2）。
+
 ### 2026-11-13（Windows Terminal の選択ハイライトを見やすくした）
 - 依頼（確定型）: PSReadLine の ListView と fzf の Ctrl+r の選択行が、端末の背景 `#45413E` に溶けて見づらい。色の候補・選定も含めて改善する。
 - 実施: 選択行の背景を `#23555E`（Gruvbox の faded blue `#076678` を、第1案で「少し強い」とのことで弱めた色）、文字を `#FBF1C7` にした。`profile.ps1` で ListView の選択行（`ListPredictionSelected`）と Tab 補完メニューの選択（`Selection`）を同じ変数 `$selected` で指定し、予測の薄い文字は `#A89984`、一覧の `>` は `#FABD2F` にした。fzf は `FZF_DEFAULT_OPTS` の `--color`（`bg+` を同じ色、`gutter` を背景色）で、`profile.ps1` と `home/.config/shell/common.sh` に入れた（WSL の bash / zsh も同じ見た目）。
