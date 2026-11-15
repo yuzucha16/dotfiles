@@ -4,6 +4,10 @@
 
 ## Log
 
+### 2026-11-15（NA6: room init に nvim・zellij・bell フックの段を移した）
+- 完了（NA6）: workbase の `workflow-kit/room/room.py` の `INIT_STEPS` に `nvim`（v0.12.6）`zellij`（v0.46.0）`bellhook` を足した（部屋の中で SHA-256 検証、ai の `~/.local`、x64 のみ。bell は Notification・Stop に足し、既存の設定は残す）。試験 2 本を足し、全 193 件 OK。ユーザーが実機で `room init <Area> --only nvim,zellij,bellhook` の成功を確認した。nvim の設定の置き場は、ユーザーの決定で dotfiles から送るまま（部屋の標準にしない）。dotfiles の `windows/room/room-dev-setup.ps1` を `room-nvim-config.ps1`（設定の送り込みだけ）に縮め、`windows/README.md` を直した。手順書の内容の一致は NA 4 の側で保つ
+  - 元の項目: 【起票 11-15】【やる:AI】`windows/room/room-dev-setup.ps1` 相当を `room init` の工程へ移す（workbase の `workflow-kit/room/room.py` の `INIT_STEPS` に、nvim・zellij・nvim の設定・bell フックの工程を足す）。方針: 部屋の初期化は workbase が定義する共通基盤。dotfiles → workbase の一方向の依存を守り、workbase 側に dotfiles の挙動を書かない（nvim の設定の置き場を、部屋の標準にするか、dotfiles から送るままにするかを、着手時に `brief` で決める）。完了: 新しい部屋を `room init` で作ると、`nvim` `zellij` が `~/.local/bin` にあり、bell フックが `~/.claude/settings.json` に入る。`room-dev-setup.ps1` が不要になるか、nvim の設定の送り込みだけに縮み、`windows/README.md` と手順書（NA 4）が合っている。
+
 ### 2026-11-15（NA3: WezTerm + claude + nvim の構成を作り、部屋へ導入。一部完了）
 - 依頼（探索型。`brief` で NA3 を指定）: 1 タブ = 左 claude / 右 nvim を、WezTerm で試せる状態にする。
 - 実施: `windows/wezterm/wezterm.lua`（WSL ドメイン `room-<Area>`、`Ctrl+Shift+T` で左右のタブ、bell でタブに 🔔）、`home/.config/nvim/init.lua`（lazy.nvim・gruvbox・oil.nvim）、`manifests/apps.txt`（wezterm・neovim・zellij）、`manifests/links.map`（wezterm の設定、`%LOCALAPPDATA%\nvim`）、`windows/room/room-dev-setup.ps1`（部屋へ nvim v0.12.6・zellij v0.46.0・nvim の設定・bell フックを SHA-256 固定で入れる。2 回実行して重複しないことを確認）、`windows/README.md`。
