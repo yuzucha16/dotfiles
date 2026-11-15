@@ -87,7 +87,7 @@ pwsh -NoProfile -File windows\room\room-nvim-config.ps1 -Area myenv
 
 | 操作 | キー |
 |---|---|
-| claude + nvim のタブを開く | `Ctrl+Shift+T` |
+| claude + nvim のタブを開く（cwd と room / Windows を選ぶ。候補は `wezterm.lua` の `TARGETS`） | `Ctrl+Shift+T` |
 | 素のシェルのタブを開く | `Ctrl+Shift+N` |
 | ペインを移る（左右） | `Alt+h` / `Alt+l` |
 | タブを移る | `Alt+j`（次）/ `Alt+k`（前） |

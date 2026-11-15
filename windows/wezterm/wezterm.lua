@@ -25,15 +25,54 @@ config.tab_max_width = 32
 config.audible_bell = 'Disabled'
 config.window_close_confirmation = 'NeverPrompt'
 
--- Open a tab laid out as: left = claude, right = nvim.
-local function new_session_tab(window)
-  local tab, left, _ = window:mux_window():spawn_tab {}
+-- Session targets: where (room = WSL domain, win = local Windows) and cwd.
+-- room entries run claude/nvim inside the room; win entries run Windows claude/nvim.
+local WORKS = os.getenv('WORKS_DIR') or (wezterm.home_dir .. '\\works')
+local TARGETS = {
+  { label = 'room: ~ (home)',       where = 'room', cwd = '~' },
+  { label = 'win:  resources',      where = 'win',  cwd = WORKS .. '\\resources' },
+  { label = 'win:  works',          where = 'win',  cwd = WORKS },
+  { label = 'win:  dotfiles',       where = 'win',  cwd = WORKS .. '\\repos\\github.com\\yuzucha16\\dotfiles' },
+}
+
+local function basename(p)
+  return (p:gsub('[/\\]+$', ''):match('([^/\\]+)$')) or p
+end
+
+-- Open a tab laid out as: left = claude (--resume picker), right = nvim.
+local function new_session_tab(window, target)
+  target = target or TARGETS[1]
+  local spec = { cwd = target.cwd }
+  if target.where == 'win' then
+    spec.domain = { DomainName = 'local' }
+    spec.args = { 'pwsh.exe', '-NoLogo' }
+  else
+    spec.domain = { DomainName = ROOM }
+  end
+  local tab, left, _ = window:mux_window():spawn_tab(spec)
   local right = left:split { direction = 'Right', size = 0.5 }
-  left:send_text 'claude\n'
+  left:send_text 'claude --resume\n'
   right:send_text 'nvim\n'
+  tab:set_title(basename(target.cwd == '~' and 'room' or target.cwd))
   left:activate()
   return tab
 end
+
+-- Ctrl+Shift+T: pick a target (cwd + room/Windows), then open the tab.
+local pick_target = wezterm.action_callback(function(window, pane)
+  local choices = {}
+  for i, t in ipairs(TARGETS) do
+    choices[i] = { id = tostring(i), label = t.label }
+  end
+  window:perform_action(act.InputSelector {
+    title = 'New session',
+    choices = choices,
+    fuzzy = true,
+    action = wezterm.action_callback(function(w, _, id)
+      if id then new_session_tab(w, TARGETS[tonumber(id)]) end
+    end),
+  }, pane)
+end)
 
 wezterm.on('gui-startup', function(cmd)
   local _, _, window = wezterm.mux.spawn_window(cmd or {})
@@ -70,7 +109,7 @@ wezterm.on('format-tab-title', function(tab)
 end)
 
 config.keys = {
-  { key = 't', mods = 'CTRL|SHIFT', action = wezterm.action_callback(function(window, _) new_session_tab(window) end) },
+  { key = 't', mods = 'CTRL|SHIFT', action = pick_target },
   { key = 'n', mods = 'CTRL|SHIFT', action = act.SpawnTab 'CurrentPaneDomain' }, -- plain shell tab
   { key = 'h', mods = 'ALT', action = act.ActivatePaneDirection 'Left' },
   { key = 'l', mods = 'ALT', action = act.ActivatePaneDirection 'Right' },

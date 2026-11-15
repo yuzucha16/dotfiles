@@ -4,6 +4,13 @@
 
 ## Log
 
+### 2026-11-15（NA3 の続き: cwd セレクタと、セッション管理の調査）
+- 依頼（`brief NA3`）: `$env:WORKS_DIR\resources` などを cwd にして開きたい。room を使う場合と Windows を使う場合の両方を 1 つで扱う。
+- 実施: `windows/wezterm/wezterm.lua` の `Ctrl+Shift+T` を、候補（room の `~`、Windows の resources・works・dotfiles。`TARGETS` 表）を選ぶ InputSelector にした。選ぶと、その cwd と domain（room は WSL ドメイン、Windows は local の pwsh）で、左 `claude --resume`・右 `nvim` のタブを作る。タブ名は cwd の末尾。ユーザーが実機で選択と cwd（`C:\Users\ee\works\resources`）を確認した。
+- 判明: `claude --resume` に直近の会話が出ない原因は、会話が SDK 経由（Zed の ACP。セッションファイルの entrypoint が `sdk-ts`）で、CLI の一覧に出ないため（推測。公式の仕様は未確認）。ファイルは `~/.claude/projects/<cwd のキー>/` に残っている。room は別ユーザーの `~/.claude` で、履歴は別。
+- 調査（Web。ブログと README が情報源）: 参考記事（Zenn の dely）は「ルートごとにタブ、作業ごとにペイン（worktree + `claude --worktree` + `/rename`）」で、今の「1 タブ = 左 claude・右 nvim」とは階層が違った。cwd ごとの整理・ファイラ連動・認証選択をそろえる既存ツールは見つからず、Claude Code デスクトップ版（2026-04 の再設計）が候補。仕様は未確認。
+- 未実施: 手順書 `docs/setup/wezterm-claude-nvim.md` の操作表の更新だけ行った。`windows/README.md` の記述、SDK 経由の会話の一覧スクリプトは作らない（ユーザーが止めた）。ユーザーは当面使って判断する（NA 3）。
+
 ### 2026-11-15（NA3 の続き: nvim を LazyVim 化）
 - 依頼（`brief NA3`）: 素の nvim が使いづらいので LazyVim にする。テーマは gruvbox-material（ハイライトは Zed と同じ）、iceberg と tender も入れる（すべて dark）。重いときは必要な部分だけにできる形で。
 - 実施: `home/.config/nvim` を LazyVim 構成にした（`init.lua`、`lua/config/{lazy,options,autocmds,features}.lua`、`lua/plugins/{colorscheme,features,oil}.lua`）。ハイライトは Zed の `material-gruvbox.json` の構文色を treesitter に写した（gruvbox-material にだけ適用）。iceberg・tender は `lazy = true` で、選ぶまで読み込まない（切り替えは `features.lua` の `M.theme`、`NVIM_THEME`、`:colorscheme`）。重いときは `NVIM_LITE=1` か `M.plugins` の行を `false`。tokyonight・catppuccin は入れない。手順書 `docs/setup/wezterm-claude-nvim.md` に追記。
