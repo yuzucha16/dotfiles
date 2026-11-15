@@ -94,6 +94,9 @@ pwsh -NoProfile -File windows\room\room-nvim-config.ps1 -Area myenv
 | nvim でファイラー（oil.nvim）を開く | `<Space>e` |
 
 - **bell の仕組み**: claude の入力待ち・停止で、部屋の bell フックが bell を鳴らす。別のタブにいるとき、そのタブの名前がオレンジの 🔔 になる。そのタブへ移ると消える。音は鳴らさない（`audible_bell = 'Disabled'`）
+- **nvim は LazyVim**（2026-11-15。`home/.config/nvim`）。初回起動でプラグインを取得するので、ネットワークが要る（数分）
+- **テーマ**（すべて dark）: 既定は `gruvbox-material`（ハイライトは Zed の Material Gruvbox Dark に合わせた。`lua/plugins/colorscheme.lua`）。`iceberg` と `tender` は入れてあるが、選ぶまで読み込まない。切り替えは、`lua/config/features.lua` の `M.theme`、環境変数 `NVIM_THEME=iceberg`、または nvim 内で `:colorscheme tender`
+- **重いとき**: 環境変数 `NVIM_LITE=1` で、UI 装飾と LSP・補完をまとめて外す（treesitter の色付けは残る）。個別に外すなら `lua/config/features.lua` の `M.plugins` の該当行を `false` にする。部屋へは章 4 の再実行で反映する
 - 別の部屋を使うときは、環境変数 `WEZTERM_ROOM_AREA` に Area 名を入れて WezTerm を起動する（既定 `myenv`）
 
 ## つまずき

@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-11-15（NA3 の続き: nvim を LazyVim 化）
+- 依頼（`brief NA3`）: 素の nvim が使いづらいので LazyVim にする。テーマは gruvbox-material（ハイライトは Zed と同じ）、iceberg と tender も入れる（すべて dark）。重いときは必要な部分だけにできる形で。
+- 実施: `home/.config/nvim` を LazyVim 構成にした（`init.lua`、`lua/config/{lazy,options,autocmds,features}.lua`、`lua/plugins/{colorscheme,features,oil}.lua`）。ハイライトは Zed の `material-gruvbox.json` の構文色を treesitter に写した（gruvbox-material にだけ適用）。iceberg・tender は `lazy = true` で、選ぶまで読み込まない（切り替えは `features.lua` の `M.theme`、`NVIM_THEME`、`:colorscheme`）。重いときは `NVIM_LITE=1` か `M.plugins` の行を `false`。tokyonight・catppuccin は入れない。手順書 `docs/setup/wezterm-claude-nvim.md` に追記。
+- 確認: 隔離ディレクトリの headless 起動で、3 テーマの切り替えと `@string`=`#a9b665`・`Comment`=`#928374` を確認（lite モード）。ユーザーが実機で LazyVim の動作を確認した。使い勝手は確認を継続（NA 3 に残す）。
+- 未実施: Zed の背景上書き `#45413e` は写していない。
+
 ### 2026-11-15（NA4: WezTerm + claude + nvim の手順書を書いた）
 - 完了（NA4）: `docs/setup/wezterm-claude-nvim.md` を新規作成（前提表、流れ、章 1〜5、日常の操作、つまずき）。`docs/setup/README.md` の表とルート `README.md` の手順書の一覧に足した。`windows/README.md` と手順・コマンドが一致することを突き合わせた。通しの実行はしていない（確認は NA 5）。ユーザーの追加依頼: `room init` の最後のログに、dotfiles の `windows\room\*.ps1` を実行すること、`pwsh -NoProfile -File ... -Area <Area>` の実行例（`room-shell-setup.ps1` と `room-nvim-config.ps1` の両方）を出す。workbase の `workflow-kit/room/room.py`（`cmd_init` の最後の `ctx.say`）に足した（workbase 側でコミット）。`py_compile` は通った。実機の `room init` の出力は未確認。
   - 元の項目: 【起票 11-15】【やる:AI】WezTerm + claude + nvim の手順書を書く（`docs/setup/` に 1 本）。完了: 手順書が `docs/setup/` にあり、`README.md` から辿れて、`windows/README.md` と内容が食い違わない。
