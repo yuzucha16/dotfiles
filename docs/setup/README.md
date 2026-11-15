@@ -7,6 +7,7 @@
 | [win11.md](win11.md) | Windows 11 の導入から `scripts/windows/` の実行まで |
 | [debian-family.md](debian-family.md) | Debian 系 Linux（MX / Ubuntu / Mint）の導入から `scripts/linux/` の実行まで |
 | [fonts-setup.md](fonts-setup.md) | `24_fonts.*` の前後の手動作業 |
+| [wezterm-claude-nvim.md](wezterm-claude-nvim.md) | WezTerm + claude + nvim（WSL の部屋）の再現手順と日常の操作 |
 
 構成やスクリプトの使い方は、ルートの `README.md` が正本。手順書は、その前後の手作業と順序・注意点だけを書く。
 
