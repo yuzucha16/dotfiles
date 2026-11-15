@@ -4,6 +4,13 @@
 
 ## Log
 
+### 2026-11-15（タブでの Claude セッション管理の手段を調査。変更なし）
+- 依頼（探索型）: Zed + ACP で Claude を使っているが、エディタ・ペインを使わなくなり、並列セッションをタブで管理したい。手段を調べて比較する。
+- 実施: Web 調査。WezTerm / Windows Terminal / tmux・zellij / herdr / `claude agents` / Zed のスレッドと比べた。4 層（ターミナル・マルチプレクサ・エディタ・Claude 側）に整理した。ターミナルとマルチプレクサはタブ・ペインが重なる。
+- 決めたこと: まず WezTerm（Lua）＋ Neovim で試す。1 タブ = 左 claude / 右 nvim、ファイラは右から出す。以降は PC の環境で行う。
+- 未確認: WSL での bell 通知、herdr の WSL 動作（Windows 版はベータ）、ファイラの選定。
+- 詳細: `docs/log-draft-terminal-sessions.md`（Next Actions 3 の参照先）。
+
 ### 2026-11-13（dotfiles を非公開にした）
 - 依頼（確定型）: 3 リポジトリを private にして、この PC から push と pull ができる環境にする（works の同日の項に全体）。
 - 実施: dotfiles を PRIVATE にし、`git fetch` と push が通った（`cb387ed`）。`AGENTS.md` の push の項の公開範囲を直し、`decisions.md` に「非公開にする。2026-10-16 の『公開で確定』を置き換える」を足した。
