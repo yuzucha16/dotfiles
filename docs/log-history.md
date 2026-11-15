@@ -4,6 +4,13 @@
 
 ## Log
 
+### 2026-11-15（NA3: WezTerm + claude + nvim の構成を作り、部屋へ導入。一部完了）
+- 依頼（探索型。`brief` で NA3 を指定）: 1 タブ = 左 claude / 右 nvim を、WezTerm で試せる状態にする。
+- 実施: `windows/wezterm/wezterm.lua`（WSL ドメイン `room-<Area>`、`Ctrl+Shift+T` で左右のタブ、bell でタブに 🔔）、`home/.config/nvim/init.lua`（lazy.nvim・gruvbox・oil.nvim）、`manifests/apps.txt`（wezterm・neovim・zellij）、`manifests/links.map`（wezterm の設定、`%LOCALAPPDATA%\nvim`）、`windows/room/room-dev-setup.ps1`（部屋へ nvim v0.12.6・zellij v0.46.0・nvim の設定・bell フックを SHA-256 固定で入れる。2 回実行して重複しないことを確認）、`windows/README.md`。
+- 確認（実機）: (a) 新しいタブで左 claude・右 nvim が組まれた、(c) 右で `<Space>e` が oil.nvim を開いた、(b) 別タブにいるとき、手で鳴らした bell でタブがオレンジの 🔔 になった。claude 自身の入力待ちでの bell は未確認。
+- 事故: Developer Mode オフのまま `30_link.bat link` を全件実行し、既存のファイルリンクが消えた。Windows Terminal の色が変わった（初期設定の再生成）。Developer Mode をオンにして張り直し、Terminal の書き換え分は `git checkout` で戻した。経緯と対策は `decisions.md` の同日の項。
+- 見送り: `home/.claude/settings.json` への bell フック（部屋の claude には効かないため）。
+
 ### 2026-11-15（review 消化）
 - 完了（NA1）: README・win11.md・debian-family.md を非公開向けに直した（GCM のサインイン、gh auth login → gh auth setup-git）。docs/setup/README.md の「公開」も直した。workbase 側の debian-family.md は 10-16 に dotfiles へ移っており無効。grep で『公開なので』の記述が残っていないことを確認
   - 元の項目: 【起票 11-13】【やる:AI】dotfiles の README と手順書（`win11.md`、Linux のクイックスタート）と、workbase の `cheatsheets/env/debian-family.md` の手順 7 を、非公開リポジトリ向けに直す（2026-11-13 に 3 リポジトリを非公開にした。2026-10-16 の「公開で確定」で削除した、サインインの注記を戻す）。完了: 非公開の clone に認証が要る旨（Windows は GCM のサインイン、Linux は `gh auth login` → `gh auth setup-git`）が書かれ、「公開なので認証なしで clone できる」という記述が `grep` で残っていない。

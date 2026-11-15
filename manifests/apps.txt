@@ -9,9 +9,12 @@ pwsh
 PSReadLine
 starship
 sudo
+wezterm
+zellij
 
 # editor / viewer
 vim
+neovim
 zed
 notepadplusplus
 obsidian

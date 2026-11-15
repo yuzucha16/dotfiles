@@ -10,8 +10,12 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 ## Next Actions
 
-次の番号: 4
+次の番号: 8
 
-3. 【起票 11-15】【やる:ユーザー（PC 環境）】タブ = Claude セッションの開発環境を試す（Zed のエディタ・ペインを使わなくなり、並列セッションをタブで管理したいため）。WezTerm（Lua）＋ Neovim で、1 タブ = 左 claude / 右 nvim（next action の markdown）、ファイラは右から出す。完了: 実機で、左右のタブが組まれ、claude の入力待ちがタブに出て、右でファイラが開く。詳細・手段の比較・経緯は `docs/log-draft-terminal-sessions.md`。
+3. 【起票 11-15】【判断:ユーザー】WezTerm + claude + nvim の使用感を試して、使い続けるかと、足すものを決める（構成は 11-15 に作成済み。経緯は `docs/log-history.md` の同日の項、調査と手段の比較は `docs/log-draft-terminal-sessions.md`）。決める点: 使い続けるか。決めたら、decisions の「ターミナル起点から Zed へ移行中」（2026-10 ごろの項）を見直しとして記録する。zellij（フローティングペイン・セッション残存）、nvim の拡張（過去の LazyVim / AstroNvim の設定の部分マージ）は、使って足りないと感じたときに起票する。
+4. 【起票 11-15】【やる:AI】WezTerm + claude + nvim の手順書を書く（`docs/setup/` に 1 本）: 新しい PC での再現手順（`20_apps` → `30_link` → `room init` → `room-shell-setup` → `room-dev-setup`）、日常の操作（`Ctrl+Shift+T`、`Alt+h/j/k/l`、`<Space>e`、bell の仕組み）、部屋の設定の反映（nvim の設定を変えたら `room-dev-setup` を再実行）、つまずき（Developer Mode、`WEZTERM_ROOM_AREA`）。完了: 手順書が `docs/setup/` にあり、`README.md` から辿れて、`windows/README.md` と内容が食い違わない。
+5. 【起票 11-15】【やる:ユーザー】WezTerm + claude + nvim の動作確認: (a) `WEZTERM_CONFIG_FILE` を使わず、通常の起動（`links.map` のリンク）で左 claude・右 nvim が組まれる、(b) claude 自身の入力待ち・停止で、別タブにいるときタブに 🔔 が付く（11-15 は手で鳴らした bell だけ確認）、(c) タブ名が `wslhost.exe` のまま（直したいか）、(d) 動作確認で気づいた直しを伝える（直しは AI が行う）。完了: (a)〜(c) の結果がユーザーから報告される。
+6. 【起票 11-15】【やる:AI】`windows/room/room-dev-setup.ps1` 相当を `room init` の工程へ移す（workbase の `workflow-kit/room/room.py` の `INIT_STEPS` に、nvim・zellij・nvim の設定・bell フックの工程を足す）。方針: 部屋の初期化は workbase が定義する共通基盤。dotfiles → workbase の一方向の依存を守り、workbase 側に dotfiles の挙動を書かない（nvim の設定の置き場を、部屋の標準にするか、dotfiles から送るままにするかを、着手時に `brief` で決める）。完了: 新しい部屋を `room init` で作ると、`nvim` `zellij` が `~/.local/bin` にあり、bell フックが `~/.claude/settings.json` に入る。`room-dev-setup.ps1` が不要になるか、nvim の設定の送り込みだけに縮み、`windows/README.md` と手順書（NA 4）が合っている。
+7. 【起票 11-15】【やる:AI】`scripts/windows/30_link.bat` を、Developer Mode がオフのときは何も変えずに止める（先に確認する）。完了: オフの状態で `link` を実行すると、既存のリンクを消さずに `[ERR]` で止まり、`tests/windows/` に再現の試験がある。理由: 11-15 に、既存のファイルリンクが消えて Windows Terminal の設定が初期化された（`decisions.md` の同日の項）。
 
 ## Open Questions

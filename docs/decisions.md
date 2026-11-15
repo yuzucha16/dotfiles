@@ -27,6 +27,13 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】タブ = Claude セッション環境は、WezTerm から WSL の `room-myenv` に入り、左 claude / 右 nvim で試す（2026-11-15。ユーザーの決定。試用中）
+
+- 決めたこと: ① WSL は `room-myenv`（workbase が定義する共通基盤。ユーザー ai、sudo なし、`/mnt/c` なし）を使う。claude も nvim も部屋の中で動かす。② nvim は軽さを優先し、最小の `init.lua`（lazy.nvim・gruvbox・oil.nvim）から始める。足すかどうかは WezTerm の使用感で判断し、過去の LazyVim / AstroNvim の設定は、ベースを使ってから部分的にマージする。③ 今回使ったアプリ（wezterm・neovim・zellij）は `manifests/apps.txt` に足す。他の PC でも、`20_apps` → `30_link` → `room init` → `room-shell-setup` → `room-dev-setup` で再現できるようにする（ポータブルにする方針）。④ claude の入力待ちの通知（bell）は、`home/.claude/settings.json` には入れない。そのファイルは Windows ネイティブの claude 用（PowerShell 実行）で、部屋の claude は別の設定ファイルのため。部屋の `~/.claude/settings.json` へ、`room-dev-setup.ps1` が入れる。zellij は入れたが、設定は未作成（必要になったら足す）。
+- 根拠: ユーザーの指示（2026-11-15）。部屋は隔離された共通基盤で、tarball を標準入力で送る方式は `room-shell-setup.ps1` で実績がある。
+- 却下案: Windows ネイティブの claude と nvim（ユーザーが WSL 側にサーバーを置く方針を示したため）。`home/.claude/settings.json` に bell フックを足す（効く対象が違う）。
+- Gotchas: (1) `30_link.bat` は、Developer Mode がオフだと、既存のファイルリンクを削除してから張り直しに失敗する。2026-11-15、この状態で全件実行して、Windows Terminal の設定リンクが消え、Terminal が初期設定を作り直して色が変わった（Developer Mode をオンにして張り直し、Terminal の書き換え分は戻した）。(2) `wsl.exe` へのパイプは末尾に CR を足すので、`bash -s` に渡すスクリプトの最後の行は、CR が付いても壊れない行（`echo done`）にする。(3) WezTerm（20240203）の `bell` イベントは、`window:mux_window():active_tab()` で別タブか判定する（`window:active_tab()` は GuiWindow に無く、黙って失敗する）。(4) 部屋で `zellij --version` を `bash -s` の中で呼ぶ場合も、(2) の CR で引数が壊れた。
+
 ### 【この件】dotfiles を非公開（PRIVATE）にする。2026-10-16 の「公開で確定」を置き換える（2026-11-13。ユーザーの決定）
 - 決めたこと: dotfiles を PRIVATE にした（`gh repo view` が `PRIVATE`、`git fetch` 成功。確認: 2026-11-13）。この PC は、HTTPS と `gh` / GCM の認証で push と pull をする。PC1 は pull のみで、gh も鍵も持たない。pull のときだけ、この PC から一時的に公開にして、すぐ戻す。判断の全体は、works の `docs/decisions.md` の同日の項。
 - 未了: README と手順書（`win11.md`、Linux のクイックスタート）の、非公開向けの直し。別のユーザーが公開リポジトリとして clone する前提の記述が残っている。2026-10-06 の項（「リポジトリは private」）と 2026-10-16 の項（「公開で確定し、非公開向けの記述を削除した」）の経緯は、そのまま残す。ここでの非公開への変更で、削除した非公開向けの記述（サインインの注記）を戻す必要がある。
