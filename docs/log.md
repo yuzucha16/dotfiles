@@ -12,24 +12,6 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 次の番号: 4
 
-1. 【起票 11-13】【やる:AI】dotfiles の README と手順書（`win11.md`、Linux のクイックスタート）と、workbase の `cheatsheets/env/debian-family.md` の手順 7 を、非公開リポジトリ向けに直す（2026-11-13 に 3 リポジトリを非公開にした。2026-10-16 の「公開で確定」で削除した、サインインの注記を戻す）。完了: 非公開の clone に認証が要る旨（Windows は GCM のサインイン、Linux は `gh auth login` → `gh auth setup-git`）が書かれ、「公開なので認証なしで clone できる」という記述が `grep` で残っていない。
-2. 【起票 11-13】【やる:ユーザー】PC1 で、公開の切り替えを使った pull を 1 回通す（未確認）: この PC から対象を公開 → PC1 で `git pull` → すぐ非公開に戻す → `gh repo view` で `PRIVATE` を確認する（works の `docs/log.md` の Open Questions 1 が決まれば、切り替えはエージェントに任せられる）。
 3. 【起票 11-15】【やる:ユーザー（PC 環境）】タブ = Claude セッションの開発環境を試す（Zed のエディタ・ペインを使わなくなり、並列セッションをタブで管理したいため）。WezTerm（Lua）＋ Neovim で、1 タブ = 左 claude / 右 nvim（next action の markdown）、ファイラは右から出す。完了: 実機で、左右のタブが組まれ、claude の入力待ちがタブに出て、右でファイラが開く。詳細・手段の比較・経緯は `docs/log-draft-terminal-sessions.md`。
 
-- 【起票 11-02】Obsidian の 2 Vault 化の動作確認（Windows の実機。別セッション）: `30_link.bat` で、(a) `uv` `py` `python` のどれでも `obsidian_sync.py` が走る、(b) `%WORKS_DIR%\.obsidian` と `%WORKS_DIR%\resources\.obsidian` の 2 本のジャンクションができる、(c) `%WORKS_DIR%\resources` が無いときは `[SKIP]` で `resources\` を作らない、(d) 旧 `%WORKS_DIR%\.obsidian`（旧 `windows\obsidian\.obsidian` へのジャンクション）は上書きされる、(e) 両方の Vault が開き、works の検索から `resources/` が外れる。`30_link.bat` の新しい分岐は未確認（11-02 にユーザーが works で `resources` `resources_p` `repos` がエクスプローラーから消えたと報告したので、(a)(b)(e) の大半は動いたと見てよい。(c)(d) と `uv` なしの経路が残り）。11-02 に `30_link.bat` へ `noparent2`（Claudian の resources 側の symlink 用）を足した。clone 前に `resources` が無いとき `[SKIP]` になるかも、(c) と一緒に確かめる（実機で symlink が張れたことは確認済み）。
-
-- 別のPCで `10_env.bat` を実行し、新しいターミナルで `$env:WFKIT_DIR` が設定されること、Tab 補完で `$env:WFKIT_DIR` が実パスに変わらないこと（`profile.ps1` の Tab ハンドラ）を確かめる（2026-10-30 起票。この PC では動作確認済み）。
-
-- 【起票 10-30】`room-myenv` に dotfiles のシェル環境を入れる案 B（案 A は同日に手で実施。starship と履歴の種のみ。fzf の Ctrl-R は 11-03 に `room-shell-setup.ps1` で導入済み）: zsh・zoxide・lsd・bat・fd・zsh-autosuggestions を root で入れ、`home/` の `.zshrc` `.bashrc` `common.sh` などを標準入力で送る。`room.py` のサブコマンド（workbase 側）か、dotfiles 側の送る `.ps1` かは未定。`~/.bashrc` は `room.py` と uv が追記するので、上書きせず追記で済ませる。stow と dotfiles リポジトリの持ち込みはしない（部屋は `/mnt/c` が空）。
-
-- 【起票 11-03】`windows/powershell/boot-commtools.ps1` と `cleanup-recyclebin.ps1` の実機の確認（ユーザー）: (a) `boot-commtools.ps1` を taskschd.msc に登録して 30 分おきに回す（登録はユーザーが行う。条件はスクリプト先頭のコメント）。使ってみて、最小化（`-WindowStyle Minimized`）が要るか決める（11-03 は外した）。Teams の既存の自動起動と二重にならないかも見る。(b) `cleanup-recyclebin.ps1` の実際の削除（`y` の後の `InvokeVerb('delete')`）は未確認（11-03 は `-ListOnly` だけ。ゴミ箱の最古が 10-15 で対象 0 件だった）。対象が出る 12 月中旬以降に、`-Months` を小さくして試すか、実行して確かめる。
-
-- 【起票 11-03】`windows/powershell/set-virtual-desktop.ps1` の実機確認の残り（ユーザー。(a)(b) は 11-03 にこの PC で OK）: (c) `-Relayout`（workspace の「Move existing windows」を有効にして）で位置とサイズが戻るか。(d) taskschd への登録（ログオン時や画面ロック解除時に `-MoveOnly` を足すかも決める）。複数ウィンドウを持つアプリ（Edge など）は、`MainWindowHandle` の 1 枚しか移さない。
-
-- 【起票 11-03】他の PC への VirtualDesktop モジュールの入れ方を決める（この PC は 1.5.11 導入済み）: `Install-Module VirtualDesktop -Scope CurrentUser` は scoop・`20_apps.bat` の対象外。`20_apps.bat` に足すか、手で入れる手順に残すかを決める。workspace（`dev` `office`）のレイアウトは PC ごとに Capture する（`workspaces.json` は追跡しない。decisions 参照）ので、新しい PC では Capture と `-List` の確認も要る。既存の PC では、`workspaces.json` に旧インストール版のパス（例: `AppData\Local\Programs\Zed`）が残ると警告が出る（この PC は 11-03 に Zed を直した）ので、`application-path` を点検する。
-
-- 【起票 11-08】Obsidian の Scriptorium（ライト）のフォントを目視で確認する（ユーザー）: UI・本文が Noto Sans JP、コードが PlemolJP Console NF になっているか。効いていなければ `snippets/theme-fonts.css` を直す。不要になった `--font-*-override` の指定（Brutalist 向け）を削るかも決める。
-
 ## Open Questions
-
-- `scoop update` で、同梱の Markdown 用 UDL（`markdown._preinstalled_DM.udl.xml`）が実ファイルに戻り、`markdown.udl.xml` へのリンクが外れるか。戻ったら手で削除して `30_link.bat` をやり直す（2026-10-30 起票。未確認）。他の PC でも、最初は同梱の UDL を手で削除してから `30_link.bat` を実行する。

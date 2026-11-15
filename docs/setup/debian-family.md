@@ -189,10 +189,12 @@ sudo apt install fonts-noto-cjk fonts-ipafont
 
 ## 7. リポジトリ取得
 
-dotfiles を **所定のパスに** clone する。リポジトリは公開なので、SSH 鍵もサインインも不要（HTTPS で取れる）。
+dotfiles を **所定のパスに** clone する。リポジトリは非公開なので、認証が要る（HTTPS は `gh auth login` → `gh auth setup-git`。SSH 鍵でもよい）。
 
 ```shell
-sudo apt install -y git curl
+sudo apt install -y git curl gh
+gh auth login
+gh auth setup-git
 git clone https://github.com/yuzucha16/dotfiles ~/works/repos/github.com/yuzucha16/dotfiles
 ```
 

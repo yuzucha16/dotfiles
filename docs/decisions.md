@@ -541,7 +541,7 @@ git gc --prune=now
 - 【汎用】/mnt/c 配下は 777 に見え、dircolors の ow が lsd にも効いて、Gruvbox で文字が読めなかった。 行き先: 転記済（2026-10-06 → exmem/knowledge/dotfiles-shell-tuning.md）
 - 【汎用】PowerShell ではエイリアスが関数より優先される（ls mv。旧 profile の ls→lsd は効いていなかった）。 行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
 - 【汎用】Windows バッチの if exist は、リンク切れ symlink に対しても真を返す。 行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
-- 【汎用】WSL のメモリは、既定でホストの RAM の50%まで使える（実使用 0.7GB に対し mmemWSL は 1.6GB。WSL 2.7.14）。 行き先: 転記済（2026-10-06 → exmem/knowledge/dotfiles-shell-tuning.md）
+- 【汎用】WSL のメモリは、既定でホストの RAM の50%まで使える（実使用 0.7GB に対し vmmemWSL は 1.6GB。WSL 2.7.14）。 行き先: 転記済（2026-10-06 → exmem/knowledge/dotfiles-shell-tuning.md）
 - 【この件】WSL のユーザー名は `yy`。Ubuntu の `fd-find` は `fdfind`、`bat` は `batcat`。 行き先: local（WSL のユーザー名は PC 固有）
 - 【この件】`windows/terminal/settings.json` と draw.io の設定は小さく意図的なので、変更せず残した。 行き先: local（dotfiles の設定ファイルの扱い）
 

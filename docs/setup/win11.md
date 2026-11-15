@@ -106,7 +106,7 @@ OOBE（初回セットアップ画面）で、Microsoft アカウントとネッ
 
 ## 5. リポジトリ取得
 
-`dotfiles` を、**所定のパスに**clone する（このパス構成が前提）。リポジトリは公開なので、サインインは出ない。
+`dotfiles` を、**所定のパスに**clone する（このパス構成が前提）。リポジトリは非公開なので、clone のときに GitHub のサインイン（Git Credential Manager のブラウザ画面）が出る。
 
 git は **scoop のもの1種類だけ**にする（winget の git は使わない）。dotfiles の `README.md` の冒頭「クイックスタート」と同じ4行を、PowerShell に貼る。
 

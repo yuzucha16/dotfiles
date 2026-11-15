@@ -7,7 +7,7 @@ Windows 11 + WSL (Ubuntu 24.04) / Linux (apt 系: MX / Ubuntu / Mint) の開発�
 
 ## クイックスタート（Windows・新しいPC）
 
-先に、設定 → 開発者向け で「開発者モード」をオンにする（手動。`30_link.bat` の symlink に必須）。そのあと、PowerShell に次の4行を貼る（scoop と git を入れ、ghq の場所に clone する）。リポジトリは公開（サインイン不要）。
+先に、設定 → 開発者向け で「開発者モード」をオンにする（手動。`30_link.bat` の symlink に必須）。そのあと、PowerShell に次の4行を貼る（scoop と git を入れ、ghq の場所に clone する）。リポジトリは非公開なので、`git clone` で GitHub へのサインイン（Git Credential Manager のブラウザ画面）が出る。
 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -20,10 +20,12 @@ git clone https://github.com/yuzucha16/dotfiles $HOME\works\repos\github.com\yuz
 
 ## クイックスタート（ネイティブ Linux・新しいPC）
 
-OS を入れたあと、ターミナルで ghq の場所に clone する（リポジトリは公開。サインイン不要）。
+OS を入れたあと、ターミナルで ghq の場所に clone する（リポジトリは非公開なので、先に `gh auth login` → `gh auth setup-git` で認証する）。
 
 ```bash
-sudo apt install -y git
+sudo apt install -y git gh
+gh auth login
+gh auth setup-git
 git clone https://github.com/yuzucha16/dotfiles ~/works/repos/github.com/yuzucha16/dotfiles
 ```
 
