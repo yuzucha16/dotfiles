@@ -109,6 +109,17 @@
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$h = \"$HOME/works/resources/workflow-kit/tools/session_resume_inject.py\"; if (Test-Path $h) { python -I $h }",
+            "shell": "powershell"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
