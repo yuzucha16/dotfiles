@@ -152,11 +152,13 @@
   <li>ローテーションは、新しいキーを入れて <code>aws sts get-caller-identity</code> で通ることを確かめてから、古いキーを無効にする。</li>
   <li>キーは、チャットや git 管理のファイル（dotfiles の Zed の設定を含む）に書かない。</li>
   <li>部屋（専用 WSL）には AWS CLI が無い。部屋の <code>~/.aws/credentials</code> は、<code>uv run room.py aws-key &lt;Area&gt; --profile &lt;名前&gt;</code>（workbase の <code>workflow-kit/room/</code>）で入れる。秘密キーは画面に出さずに受け取り、同名の節だけを置き換える（権限 600）。更新も同じコマンドで行う。</li>
-  <li>使うプロファイル名は、<code>claude-bedrock-setup.cmd</code> の「AWS プロファイル」と、Zed の <code>Claude Bedrock</code> の <code>env</code>（<code>AWS_PROFILE</code>）にそろえる。</li>
 </ul>
 
 <h3>Zed（Claude Bedrock）</h3>
 <p><code>agent_servers</code> の <code>Claude Bedrock</code> は、<code>npx -y @agentclientprotocol/claude-agent-acp</code> を <code>env</code>（<code>CLAUDE_CODE_USE_BEDROCK</code>、<code>AWS_REGION</code>、<code>AWS_PROFILE</code>、<code>ANTHROPIC_BEDROCK_REGION_PREFIX</code>、<code>ANTHROPIC_DEFAULT_*_MODEL</code>）つきで起動する。秘密は含まない。SSO は事前に <code>aws sso login</code> しておく。</p>
+<ul>
+  <li>この <code>env</code> は <code>settings-bedrock.json</code> の手書きのコピー。変えたら <code>.json</code> と合わせる（<code>AWS_PROFILE</code> は <code>claude-bedrock-setup.cmd</code> の「AWS プロファイル」と同じ名前にする）。</li>
+</ul>
 
 <h3>うまくいかないとき（Bedrock）</h3>
 <table>
