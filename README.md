@@ -46,7 +46,7 @@ dotfiles/
 ├── tests/          スクリプトの試験（一覧と観点は `README.md`。下の「スクリプトの試験」）
 ├── home/           ~ を鏡写しにした共有ツリー（WSL は stow、Windows は links.map でリンク）
 ├── windows/        Windows 専用の設定（links.map からだけ参照される。一覧は `README.md`）
-└── templates/      配置しない雛形（`claude/settings.sandbox.json` は、使い捨ての検証環境のプロジェクトで `.claude/settings.json` に手でコピーする。push / reset / clean / rm を許可する広い権限なので、通常のリポジトリには入れない）
+└── templates/      配置しない雛形
 ```
 
 ### `home/`: `~` の鏡

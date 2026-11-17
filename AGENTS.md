@@ -28,7 +28,7 @@ dotfiles は、Windows 11 + WSL2 / Linux（apt 系）の作業環境を、複数
 
 - メッセージは `[対象] 内容`（例: `[shell] ...`, `[scripts] ...`, `[docs] ...`）。
 - `git add` はパスを指定する（パスなしの `git add -A` と `git add .` は使わない。`tmp/` などを拾うため）。
-- コミットの前に、kit の `commit-push-rules.md` を、push の前に `push-rules.md` も、そのセッションで読んでいなければ読む（身元・トレーラー・機密の検索もそこに従う）。
-- push は、このリポジトリ（`yuzucha16/dotfiles`。非公開）の `main` を、エージェントが行ってよい（2026-10-16 ユーザーの決定。2026-11-13 に非公開へ変更。PC1 の pull のときだけ一時的に公開になる）。条件は kit の `docs-rules.md` の「push」（公開範囲を確認し、公開のときは機密の検索を広げる）。禁止のコマンド（`--force` など）は、kit の `docs-rules.md` の「しないこと」に従う（`settings.json` の deny が機械的に止める。rebase は 2026-10-18 ユーザーの決定で、分岐の修正と衝突の解消に限り許可。コミットを消す・書き換える `-i` などは禁止。kit の `docs-rules.md` の「`rebase` の許可」に従う）。
+- コミットの前に、kit の `commit-push-rules.md` を、そのセッションで読んでいなければ読む（身元・トレーラーもそこに従う）。
+- AI は push しない。人が push する（「push して」と言われたら、kit の `push-rules.md` に従い、点検の結果と人が実行するコマンドを報告して止まる）。禁止のコマンド（`--force` など）は、kit の `commit-push-rules.md` の「しないこと」に従う（`settings.json` の deny が機械的に止める。rebase は、分岐の修正と衝突の解消に限り許可。コミットを消す・書き換える `-i` などは禁止。kit の `commit-special.md` の「`rebase` の許可」に従う）。
 - merge の前に、双方のコミット日時（`git log --format='%h %ad %s' --date=iso`）を比べ、どちらが新しいかをユーザーに伝えて、順序でよいか確認する。
 - リスクや制約が生まれる変更は、事前にユーザーへ確認する。
