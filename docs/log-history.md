@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-11-18（Notepad++ の選択ハイライトの色）
+- 依頼: 選択範囲のハイライトが背景に同化して見えない。Windows Terminal の Tab 補完の選択と同じ青にしたい。
+- 実施: `windows/notepadpp/Gruvbox dark medium.xml` の「Selected text colour」を、背景 `504945` → `23555E`、文字 `FBF1C7` にした。値は `windows/powershell/profile.ps1` の PSReadLine `Selection`（背景 #23555E、文字 #FBF1C7）と同じ。
+- 未確認: Notepad++ の実機での見え方（ユーザーは「いいですね」と返答）。選択範囲の文字色（fgColor）が反映されるかは仮説。
+
 ### 2026-11-15（NA3 の続き: cwd セレクタと、セッション管理の調査）
 - 依頼（`brief NA3`）: `$env:WORKS_DIR\resources` などを cwd にして開きたい。room を使う場合と Windows を使う場合の両方を 1 つで扱う。
 - 実施: `windows/wezterm/wezterm.lua` の `Ctrl+Shift+T` を、候補（room の `~`、Windows の resources・works・dotfiles。`TARGETS` 表）を選ぶ InputSelector にした。選ぶと、その cwd と domain（room は WSL ドメイン、Windows は local の pwsh）で、左 `claude --resume`・右 `nvim` のタブを作る。タブ名は cwd の末尾。ユーザーが実機で選択と cwd（`C:\Users\ee\works\resources`）を確認した。

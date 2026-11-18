@@ -2027,7 +2027,7 @@ Description:
         <WidgetStyle name="Brace highlight style" styleID="34" fgColor="EBDBB2" bgColor="3C3836" fontName="" fontStyle="1" fontSize="10" />
         <WidgetStyle name="Bad brace colour" styleID="35" fgColor="45413E" bgColor="CC241D" fontName="" fontStyle="0" fontSize="" />
         <WidgetStyle name="Current line background colour" styleID="0" bgColor="4E4945" fgColor="4E4945" fontSize="" fontStyle="0" />
-        <WidgetStyle name="Selected text colour" styleID="0" bgColor="504945" fgColor="504945" fontSize="" fontStyle="0" />
+        <WidgetStyle name="Selected text colour" styleID="0" bgColor="23555E" fgColor="FBF1C7" fontSize="" fontStyle="0" />
         <WidgetStyle name="Caret colour" styleID="2069" fgColor="FBF1C7" bgColor="45413E" fontSize="" fontStyle="0" />
         <WidgetStyle name="Edge colour" styleID="0" fgColor="EBDBB2" bgColor="2E2E2E" fontSize="" fontStyle="0" />
         <WidgetStyle name="Line number margin" styleID="33" fgColor="665C54" bgColor="45413E" fontName="" fontStyle="0" fontSize="" />
