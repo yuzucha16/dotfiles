@@ -95,6 +95,7 @@
       "Bash(git -C * add*--force*)"
     ]
   },
+  "model": "sonnet",
   "skillOverrides": {
     "docs": "off",
     "computer-use": "off",
@@ -152,15 +153,7 @@
     "command": "python -I ~/.claude/statusline.py"
   },
   "enabledPlugins": {},
-  "extraKnownMarketplaces": {
-    "obsidian-skills": {
-      "source": {
-        "source": "github",
-        "repo": "kepano/obsidian-skills"
-      }
-    }
-  },
-  "model": "sonnet",
+  "extraKnownMarketplaces": {},
   "viewMode": "focus",
   "theme": "custom:gruvbox-soft-blue"
 }
