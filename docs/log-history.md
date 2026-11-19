@@ -4,6 +4,18 @@
 
 ## Log
 
+### 2026-11-19（NA 10 完了: 原因の切り分け。画面サイズ）
+- 完了の判断は ee が「原因の切り分けまで」と決定（layout b が既定、a/b は切替可。修正はしない）。結果: swap layout の定義は正しい。2 段起動のセッション（`dotfiles`）で 1 回目の Alt+c 後は 50/50 縦積み（dump-layout）、`next-swap-layout` で 3 列 33% になった。背景作成だけの試験セッションは `zellij run` で 3 列。ee の実機で、ウィンドウを大きくすると中央 3 列になった＝原因は画面サイズ（ee 確認。swap の幅の条件に足りないと自動で選ばれない、が仮説。zellij の内部は未確認）。
+- 残りは NA 12（未コミットの 4 ファイルの扱い）に移した。回避案（Alt+c の後に `NextSwapLayout`）は未試験のまま。
+
+### 2026-11-19（NA 10 の調査経過の全文。log.md を縮めるため退避）
+10. 【起票 11-19】【やる:AI】 zellij の claude pane の配置を直す（ee が承認済み。調査と編集は済み、コミットは未）。不具合: layout-b は nvim 右端固定で claude が 中央→左下 と増える仕様だが、Alt+c の 1 回目だけ nvim の右に出る（2 回目以降は nvim の左）。
+   - 実機の事実（11-19、セッションは毎回 delete-session --force で作り直した）: `--resume` の削除、`pane_frames false`、Alt+c の `cwd`、バー節（`default_tab_template`）の削除、Alt+n の削除、のどれでも直らない。`zellij action new-pane` の背景セッション試験は 1 回目から正しく並ぶ（再現せず。キー経路 `Run` か画面サイズの差か）。1 回目の後に Alt+] で `claude3` と出るが画面は変わらない。
+   - 未コミットの変更（dotfiles。他にも別作業の変更があるのでパス指定でコミット）: `config.kdl`（pane_frames は今 false の試験値、`pane_frame_style "titles"`、Alt c に試験用 cwd 固定）、`claude-a/b.kdl`（`--resume` 削除=ee 承認済み。claude-b はバー節を試験で外した）、`wezterm.lua`（win に `--default-cwd`=ee 実機で OK）。**試験用の変更は戻す**: pane_frames は true（titles は ee が見分けられると確認）、Alt c の cwd と claude-b のバー節は元へ。
+   - 11-19 追記（AI）: 試験用の変更は戻した（pane_frames true、Alt c の cwd 削除、claude-b のバー節を復元）。背景セッション（`attach --create-background` ＋ `zellij run`）では、バー節あり・なしの両方で `claude2` が正しく効く（claude・新 pane・nvim の 3 分割）。layout の記述は原因ではない。残る差は実機の `Alt+c` 経路（`Run`）か画面サイズ。次は ee の実機で、戻した設定の新規セッションを確かめる。
+   - 11-19 追記 2（AI）: 実機で、Alt c を `pwsh -c claude` 経由にしても、swap layout の nvim をフルパスにしても直らない（試験は戻した）。dump-layout では、1 回目は 3 pane が横に等分（claude・nvim・新）、2 回目は左だけ縦に 2 つで nvim が中央のまま＝swap layout は当たるが、`command=` での nvim の照合が効かず、作成順に並ぶ。背景セッションでは照合が効く（クライアントの有無か Windows の挙動か不明）。回避案: nvim を最初の pane（左）にして、swap layout を `command` 抜きの順序だけにする。
+   - 次の一手（案）: swap layout `claude2`（`exact_panes=3`）が 3 pane のとき効かない原因を探る。`min_panes`/`max_panes` へ替える、`claude3` のような入れ子の形へ揃える、`zellij --layout` で単体確認、など。直ったら `terminal-units.md` と `wezterm-zellij-nvim.md`（pane_frames・cwd・Alt+n なし・`--resume` なし）を更新。
+
 ### 2026-11-19（NA 9 完了: claude の使い勝手。Enter 改行、statusLine、テーマ）
 - 原因: WezTerm は kitty プロトコルを使わず、Ctrl+Enter は LF（Ctrl+J）で届く。Claude Code の Ctrl+J は既定で改行なので、`ctrl+enter`=送信が効かず「Ctrl+Enter で改行」に見えた。`keybindings.json` に `ctrl+j`=`chat:submit` を足して解決（ee が Windows の pwsh で実機確認。Enter=改行、Ctrl+Enter=送信）。
 - statusLine: `home/.claude/statusline.py`（`モデル | ctx 使用率% | 直近 1 回のトークン数 / ウィンドウサイズ`。ee の指定。トークン数は `used_percentage` と同じ input 系 3 種の合計）。`settings.json` の `statusLine.command` は `python -I ~/.claude/statusline.py`。
