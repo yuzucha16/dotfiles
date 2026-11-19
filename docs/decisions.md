@@ -34,6 +34,11 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - 却下案: scoop の版を動的に読んで部屋に合わせる（SHA-256 の検証が弱くなる。ユーザーが固定の表を選んだ）。WezTerm だけで floating を代用（機能が無い）。nvim の `:terminal` の floating（層が 2 つ持つ同じ用途になる）。pane の最大数の実装（超えたときの動きまで決める必要があるため。ユーザーが不要と判断）。
 - 見直し: 2026-11-15 の「WezTerm から room に入り、左 claude / 右 nvim で試す」の項の構成（Windows 側の WezTerm 設定・nvim の設定）を置き換える。「ターミナル起点から Zed へ移行中」（2026-10 ごろの項）は、ユーザーが zed を離れる方向を示した（制約が多く、token-cap などで素の claude を使いたいため）。
 - 追記（2026-11-19。ユーザーの指示）: NA 5（試作の動作確認）は閉じ、次の段階は NA 8。NA 7（`30_link.bat` を Developer Mode オフで止める）は、「止まりました」として閉じた（未実装のまま omit）。
+- 追記（2026-11-19。ユーザーの決定）: Node は Windows の実際の経路（Volta 2.0.2 → node 24.21.0。`which node` で確認）に room も揃え、room に Volta を入れて `volta install node@24.21.0` にする（今の tarball 方式をやめる）。uv・Python と同じく Windows と対称。scoop の `nodejs`（26.13.1）は使っていないので、ユーザーが `scoop uninstall nodejs` する。代償: Volta の取得物は tarball + SHA-256 ほど強く検証できない見込み（未確認。`terminal-units.md` 12.3 の注）。他の版は scoop の値に揃える（quarto 1.11.9、ripgrep 15.2.0、pandoc 3.14、uv 0.13.9。ripgrep・pandoc は apt から表へ移す（ユーザーの決定）。uv は 0.13.9 に固定（ユーザーの了承）。12.7 の判断 2・3 は済み）。
+- 追記（2026-11-19。ユーザーの決定）: 表に載せるツールは**すべて版を固定**する。Windows の版が変わったら、ユーザーが表の行を変えて room を合わせる（自動では追従しない）。固定できない可能性があるもの: Claude Code（自動更新。版指定と自動更新の停止が使えるかを V7 で確かめる。使えなければ「固定しない」と書き、入った版を記録する）、apt の道具（git・curl など。古い版が消えるので固定できない。入った版を記録するだけ）。
+- 追記（2026-11-19。ユーザーの決定）: pane の配置は**案 B**。案 A のレイアウト（`claude-a.kdl`）は残し、`default_layout` で切り替える。room の WezTerm タブは zellij を直接起動する（`bash -lc 'exec zellij'`。WezTerm の分割と `send_text` はやめた。`win:` の項目は従来のまま）。
+- 追記（2026-11-19。実機の事実。zellij 0.46.0）: `default_tab_template` のバー（`compact-bar`）は、トップ階層に直接書いた `pane` には付かず、`tab { }` で包むと付いた。組み込みの `--layout compact` では出て、自作の `claude-b` では出なかったことで切り分けた。`location="zellij:compact-bar"` への変更だけでは直らなかった。swap layout 後のバーの残り方は未確認。
+- 追記（2026-11-19。ユーザーの依頼で試用）: room の claude の設定として、`~/.claude.json` の `projects["/home/ai"].hasTrustDialogAccepted` を true（起動時の信頼確認の省略）、`~/.claude/keybindings.json` で Enter を改行・`Ctrl+Enter` を送信（`chat:submit`）にする手順を渡した。端末が `Ctrl+Enter` を区別して送るかは未確認。
 - 未確認（仮説）: Windows ネイティブの zellij が BEL を渡すか。claude の `preferredNotifChannel`（`terminal_bell`）でフックなしに 3 環境の bell を統一できるか。案 B の claude の幅（200 桁で 67 桁）で使えるか。
 
 ### 【この件】タブ = Claude セッション環境は、WezTerm から WSL の `room-myenv` に入り、左 claude / 右 nvim で試す（2026-11-15。ユーザーの決定。試用中。2026-11-19 に上の項で作り直しが決まった）

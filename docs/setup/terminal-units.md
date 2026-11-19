@@ -13,7 +13,7 @@ tags:
 
 素の Claude Code を、WezTerm・zellij・Neovim で動かす開発環境の「単位」の設計。どの単位を何に対応させ、誰が管理するかを決める。
 
-- **状態**: 設計だけ(2026-11-18〜19)。pane の配置は 2 案(4 章)を並べ、実機で動かして 1 つに決める。実装は PC で、既存の試作(`windows/wezterm/wezterm.lua`、`home/.config/nvim/`、[[wezterm-claude-nvim]])を消して一から作る。この設計書は既存の試作を前提にしない。
+- **状態**: 設計と、zellij の実機確認の途中(2026-11-18〜19)。pane の配置は**案 B に決めた**(2026-11-19。ユーザーの決定。実機で動かした。案 A のレイアウト `claude-a.kdl` は比較用に残す)。実装は PC で、既存の試作(`windows/wezterm/wezterm.lua`、`home/.config/nvim/`、[[wezterm-claude-nvim]])を消して一から作る。この設計書は既存の試作を前提にしない。
 - **残すもの**: 既存の試作の「bell でタブに印を付ける」仕組み(5 章)だけは、考え方を引き継ぐ。
 - **方針**: 複雑にしない。層は 4 つ(WezTerm、zellij、claude、nvim)で、それぞれの責務を重ねない。
 - **決定(2026-11-19、ee)**: 環境は pwsh7・wsl・room の 3 つ(2 章)。floating の git ツールは lazygit。pane の数の制限は設けない。
@@ -188,7 +188,7 @@ layout {
 | 最初の claude の幅 | 画面の半分 | 3 分の 1(2 つ目から) |
 | 5 つ目以降 | zellij の既定 | 中央の列に積まれる |
 
-**推奨は案 B**(認知を下げる、という目的に合う。nvim が動かず、会話の位置が増えた順に決まる)。弱点は claude の幅なので、実機でその幅で使えるかを見て決める。
+**推奨は案 B**(認知を下げる、という目的に合う。nvim が動かず、会話の位置が増えた順に決まる)。弱点は claude の幅なので、実機でその幅で使えるかを見て決める。**2026-11-19 に案 B で決定**(ユーザーの決定。案 A のレイアウトは `home/.config/zellij/layouts/claude-a.kdl` に残し、`config.kdl` の `default_layout` で切り替える)。レイアウトの注意(実機で確認、zellij 0.46.0): 下のモード表示バー(`default_tab_template` の `compact-bar`)は、トップ階層の `pane` には付かず、`tab { }` で包んだときだけ付く。
 
 ## 5. 責務とキーの分担
 
@@ -334,7 +334,7 @@ room の `init` の段(`room.py` の `INIT_STEPS`)が入れているもの(2026-
 | zellij | v0.46.0 固定、SHA-256 つき | 表へ移す | `zellij` |
 | lazygit | 未導入 | 新しく足す(表の版 + SHA-256) | `lazygit` |
 | Quarto | 1.11.9 固定、SHA-256 つき | 表へ移す | `quarto` |
-| Node.js | v24 系の**最新**(公式の tarball。同じ配布元のチェックサムで検証) | **24.x の版を固定**し、SHA-256 を表へ | `nodejs`(要確認) |
+| Volta + Node.js | v24 系の**最新**(公式の tarball。同じ配布元のチェックサムで検証) | **Volta 2.0.2 を入れ、`volta install node@24.21.0`**(Windows と同じ型。ee の決定 2026-11-19)。表には `volta` と `node` の 2 行(版)。Volta の取得物の検証方法は未確認(下の注) | `volta`(Node は Volta が入れる。scoop の `nodejs` は使わない) |
 | uv | **最新**(配布元の `install.sh`) | **版を固定**(版つきの `install.sh` の URL。検証は配布元のインストーラーに任せる。未確認) | `uv`(要確認) |
 | Python | `.python-version`(3.13.14。uv が使う) | 表に載せ、`.python-version` と一致することを試験する(正本を 2 つにしないため) | uv が管理 |
 | Claude Code | **最新**(`install.sh`。自動更新される) | 版を指定して入れる方法と、自動更新を止める方法が使えるかを確かめ(V7)、使えれば固定。使えなければ、表には「固定しない」と書き、入った版の記録だけ残す | `windows/claude/`(scoop ではない) |
@@ -342,7 +342,7 @@ room の `init` の段(`room.py` の `INIT_STEPS`)が入れているもの(2026-
 | Marp CLI(任意の段) | 4.5.1(npm) | 版を表へ | ― |
 | フォント(Noto Sans JP、BIZ UDPGothic、PlemolJP) | 版または取得元を固定、SHA-256 つき | 表へ移す | PlemolJP は `fonts.txt`(別の仕組み) |
 | Excalidraw の閲覧用 JS | `tools/excalidraw-viewer/package.json` で固定(`@excalidraw/excalidraw` 0.18.1 ほか) | **表には載せない**。表に「`package.json` が正本」と 1 行書いて指す(正本を 2 つにしない) | ― |
-| ripgrep、pandoc | apt(ディストリビューションの版) | **推奨: 表へ移す**(GitHub Releases の静的な実行ファイル + SHA-256)。Windows の scoop と同じ版にできる。LazyVim のピッカーが `rg` を使うため | `ripgrep`、`pandoc` |
+| ripgrep、pandoc | apt(ディストリビューションの版) | **表へ移す**(ee の決定 2026-11-19。GitHub Releases の静的な実行ファイル + SHA-256)。Windows の scoop と同じ版にできる。LazyVim のピッカーが `rg` を使うため | `ripgrep`、`pandoc` |
 | git、curl、ca-certificates、unzip、fonts-noto-cjk、Playwright の依存ライブラリ | apt | **固定しない**。表に「apt(固定しない)」と書き、入った版を記録する(apt は古い版が消えるので、固定できない) | `git` は scoop にもあるが、揃えない |
 
 ### 12.3 表の初期値の決め方(今回 1 回。静的な調査)
@@ -351,6 +351,23 @@ room の `init` の段(`room.py` の `INIT_STEPS`)が入れているもの(2026-
 2. **scoop にあるものは、scoop の版に合わせる**(部屋の側を動かす)。scoop に無いもの(Playwright、Claude Code、フォントなど)は、今の `room.py` の版のまま表へ移す。
 3. **SHA-256 を、各版のリリースのチェックサムのファイルから取る**(nvim は `shasum.txt`、zellij は各アーカイブの `.sha256sum`、lazygit は `checksums.txt` の見込み。実装時に確かめる)。取った出典の URL と日付を、表のコメントに残す。AI が取ったものは、人が 1 回、同じ値かを確かめる。
 4. Linux 版が配られていない版(scoop にだけある版など)は、**近い版**を選び、表に理由を書く。
+
+**受け取った scoop の版(2026-11-19。ee の報告。`scoop status` で latest)**:
+
+| アプリ | scoop の版 | room の今の版 | 扱い |
+|---|---|---|---|
+| neovim | 0.12.6 | 0.12.6 | 一致。SHA-256 はそのまま表へ |
+| zellij | 0.46.0 | 0.46.0 | 一致。同上 |
+| lazygit | 0.66.3 | 未導入 | 新規。v0.66.3 の Linux x64 の SHA-256 を取る(2026-11-19 に `checksums.txt` と zellij の `.sha256sum` の URL を推測で取りに行ったが 404。アセット名を実際のリリースページで確かめてから取る。未取得) |
+| wezterm | 20240203-110809-5046fc22 | ― | room では使わない(Windows 側だけ)。表の「scoop」の列にも載せないが、Windows の版の固定(`scoop hold`)の対象には入れる |
+| quarto | 1.11.9 | 1.11.9 | 一致。SHA-256 はそのまま表へ |
+| ripgrep | 15.2.0 | apt | 表へ移す(ee の決定 2026-11-19) |
+| pandoc | 3.14 | apt | 表へ移す(同上) |
+| uv | 0.13.9 | 最新(`install.sh`) | 0.13.9 に固定(ee の了承 2026-11-19) |
+| volta | 2.0.2(`main`) | 未導入 | room に入れる(ee の決定 2026-11-19) |
+| node(Volta 経由) | 24.21.0(`which node` が scoop の volta を指す) | v24 系最新(tarball) | room も `volta install node@24.21.0`(ee の決定)。scoop の `nodejs`(26.13.1)は使っておらず、ee が `scoop uninstall nodejs` する |
+
+**注(未確認。実装時に確かめる)**: Linux の Volta の導入は、配布元のスクリプト(`get.volta.sh`)になる見込みで、uv と同じく、スクリプトの取得物の SHA-256 は表で検証できない(版の指定ができるかを確かめる)。Volta が取る Node の tarball を、`nodejs.org` の `SHASUMS256.txt` で検証するかも未確認。検証できないときは、今の tarball + SHA-256 の方が検証は強い。この点だけが、対称性と引き換えになる。
 
 ### 12.4 Windows 側
 
@@ -362,18 +379,17 @@ room の `init` の段(`room.py` の `INIT_STEPS`)が入れているもの(2026-
 
 - **版を上げる**: 表の 1 行(版と SHA-256)を変える → Windows の導入スクリプトを再実行 → 部屋は `room init <Area> --only <段>` を再実行(同じ版なら何もしない)→ 点検。
 - **点検(読み取り専用)**: 表の版、部屋に入っている版(`room init` が `~/.local/share/room-tools.txt` に記録する。場所は実装時に決める)、Windows の scoop の版を比べ、違うものだけを出す(`room init` の報告、または単独のコマンド。V7)。
+- **追従の向き(ee の決定 2026-11-19)**: すべて固定。Windows の版が変わったら、ee が表の行を変えて room を合わせる(room が Windows を自動で追わない)。
 - **ずれる原因**: `scoop update *`(固定していないアプリ)、apt の更新、claude の自動更新。
 
 ### 12.6 実装の置き場
 
-- **workbase 側の別作業**(未着手): `tool-versions.txt` の追加、`room.py` が表を読む改修(上の 12.2 の各段)、`lazygit` の段の追加、`rg` と `pandoc` の段の追加、`node` と `uv` の版の固定、点検。`.python-version` との一致の試験。
+- **workbase 側の別作業**(未着手): `tool-versions.txt` の追加、`room.py` が表を読む改修(上の 12.2 の各段)、`lazygit` の段の追加、`rg` と `pandoc` の段の追加、`volta` の段と `node` の版の固定(tarball 方式をやめる)、`uv` の版の固定、点検。`.python-version` との一致の試験。
 - **dotfiles 側**: Windows の導入スクリプト(表の「scoop」の列を読み、`scoop install <アプリ>@<版>` と `scoop hold`)と、`manifests/apps.txt` の整理。
 
 ### 12.7 ee の判断が要ること
 
-1. **scoop の今の版を教えてください**(12.3 の 1。`scoop list` の出力)。それを表の初期値にし、SHA-256 を調べます。
-2. **ripgrep と pandoc を apt から表へ移す**(12.2。推奨)で良いか。移さなければ、この 2 つは「近い版」になる。
-3. **Node.js と uv の版を固定する**(12.2。推奨)で良いか。固定すると、最新の更新が自動では入らなくなる(版を上げるときは、表の 1 行を変える)。
+すべて済み(2026-11-19)。1: scoop の版は 12.3 の表に受け取り済み。2: ripgrep・pandoc は表へ移す(決定)。3: uv・Node は固定(Node は Volta 経由)。残る未確認は 12.3 の注(Volta の検証方法)と lazygit の SHA-256(実装時に取る)。
 
 ## 出典
 

@@ -4,6 +4,15 @@
 
 ## Log
 
+### 2026-11-19（wrap: NA 8 の zellij の実機確認、案 B に決定）
+- 一部完了（NA 8）: ee が room で zellij を実機確認した。`home/.config/zellij/{config.kdl,layouts/claude-a.kdl,claude-b.kdl}` をコミット。起動で左 claude・右 nvim、`Alt+c` で案 B の順に増える、`Alt+f`、`Alt+矢印`、`Ctrl+g` が動いた。lazygit は room に未導入で、`Alt+g` は pane が即閉じる（想定どおり）。
+  - モード表示バー: 初めは出なかった（`--layout compact` では出て、自作では出ない）。`default_tab_template` はトップ階層の `pane` に付かないため、起動時の pane を `tab { }` で包んで直った（`location` は `zellij:compact-bar` にも変更）。
+  - 案 B に決定（ユーザー。案 A のレイアウトは残す）。
+  - `windows/wezterm/wezterm.lua`: room のタブは zellij を直接起動（`bash -lc 'exec zellij'`）に変更。未確認。
+  - room の claude の設定の手順を渡した（信頼確認の省略、Enter 改行 / `Ctrl+Enter` 送信。ee が試用中）。
+  - `Alt+x`（pane を閉じる）は ee が保留。今の閉じ方は claude の `/exit`、または `Ctrl+g` → `Ctrl+p` → `x`。
+  - 同じコミットに、先に書いた `decisions.md`（Node は Volta、版はすべて固定）と `terminal-units.md` の変更を含む。
+
 ### 2026-11-19（digest）
 - 完了（NA5）: ユーザーが close を指示（2026-11-19）。動作確認は済みとし、次の段階として NA 8（単位設計に沿った作り直しと実機確認）に進む。NA 8 が引き継ぐ。
   - 元の項目: 【起票 11-15】【やる:ユーザー】WezTerm + claude + nvim の動作確認: (a) `WEZTERM_CONFIG_FILE` を使わず、通常の起動（`links.map` のリンク）で左 claude・右 nvim が組まれる、(b) claude 自身の入力待ち・停止で、別タブにいるときタブに 🔔 が付く（11-15 は手で鳴らした bell だけ確認）、(c) タブ名が `wslhost.exe` のまま（直したいか）、(d) 動作確認で気づいた直しを伝える（直しは AI が行う）。完了: (a)〜(c) の結果がユーザーから報告される。
