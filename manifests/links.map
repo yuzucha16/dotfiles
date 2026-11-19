@@ -26,6 +26,8 @@ windows\powershell\profile.ps1|%USERPROFILE%\Documents\PowerShell\profile.ps1
 
 # Claude Code (user settings: permission base)
 home\.claude\settings.json|%USERPROFILE%\.claude\settings.json
+# Claude Code (keybindings: Enter = newline, Ctrl+Enter = submit)
+home\.claude\keybindings.json|%USERPROFILE%\.claude\keybindings.json
 # Claude Code (API key auth, launched by `claude-api`; the key itself is not tracked)
 windows\claude\settings-api.json|%USERPROFILE%\.claude\settings-api.json
 windows\claude\claude-api-key.ps1|%USERPROFILE%\.local\bin\claude-api-key.ps1
