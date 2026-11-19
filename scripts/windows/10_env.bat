@@ -52,6 +52,11 @@ if not exist "%XDG_BIN_HOME%"       ( mkdir "%XDG_BIN_HOME%" )
 if not exist "%SSH_DIR%"            ( mkdir "%SSH_DIR%" )
 if not exist "%CERTS_DIR%"          ( mkdir "%CERTS_DIR%" )
 
+REM NODE_EXTRA_CA_CERTS: only when the CA bundle already exists (a missing file makes Node warn on every start).
+REM Not set otherwise. Put the file there and run this script again.
+set "SHOW_NODE_CA="
+if exist "%CERTS_DIR%\ca_bundle.crt" ( setx NODE_EXTRA_CA_CERTS "%CERTS_DIR%\ca_bundle.crt" & set "SHOW_NODE_CA=%CERTS_DIR%\ca_bundle.crt" )
+
 if not exist "%GHQ_ROOT%"           ( mkdir "%GHQ_ROOT%" )
 REM GHQ_ROOT (%WORKS_DIR%\repos) is created here, which also creates WORKS_DIR as its parent. The workflow hook turns
 REM WORKS_DIR into a local repo (repos\ is in its .gitignore). The shared repo (workbase) is cloned into
@@ -73,6 +78,8 @@ echo GHQ_ROOT          =%GHQ_ROOT%
 echo CERTS_DIR          =%CERTS_DIR%
 echo WORKS_DIR          =%WORKS_DIR%
 echo WFKIT_DIR          =%WFKIT_DIR%
+if defined SHOW_NODE_CA echo NODE_EXTRA_CA_CERTS=%SHOW_NODE_CA%
+if not defined SHOW_NODE_CA echo NODE_EXTRA_CA_CERTS=[not set] ^(no ca_bundle.crt yet^)
 if defined SHOW_WSLENV echo WSLENV             =%SHOW_WSLENV%
 if not defined SHOW_WSLENV echo WSLENV             =[unchanged] ^(already has CERTS_DIR/p and WORKS_DIR/p^)
 REM Reminder, printed last so it is not missed (orange, ANSI 256-color 208; ESC is captured with prompt $E to keep the source ASCII).
@@ -82,7 +89,7 @@ echo.
 echo %ESC%[38;5;208m================================================================%ESC%[0m
 echo %ESC%[38;5;208m[ACTION NEEDED if your network uses a proxy CA]%ESC%[0m
 echo %ESC%[38;5;208m  Put the CA bundle here:  %CERTS_DIR%\ca_bundle.crt%ESC%[0m
-echo %ESC%[38;5;208m  (25_awscli / 26_uv read it. Not needed? Ignore this.)%ESC%[0m
+echo %ESC%[38;5;208m  (25_awscli / 26_uv read it. Run 10_env.bat again afterwards to set NODE_EXTRA_CA_CERTS. Not needed? Ignore this.)%ESC%[0m
 echo %ESC%[38;5;208m================================================================%ESC%[0m
 echo.
 

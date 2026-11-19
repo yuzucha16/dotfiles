@@ -205,7 +205,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 ### 【この件】AWS CLI・uv・Volta のインストーラ（`25_awscli.bat` `26_uv.bat` `27_volta.bat`）と、CA バンドルの扱い（2026-10-10。ユーザーの決定と指示）
 
 - **決めたこと**:
-  - CA ファイルは `%CERTS_DIR%\ca_bundle.crt`（旧 `company-ca.crt`）。環境変数は `setx` で永続化する（`AWS_CA_BUNDLE`、`UV_SYSTEM_CERTS` + `SSL_CERT_FILE`、`NODE_EXTRA_CA_CERTS`）。`NODE_EXTRA_CA_CERTS` は Node が Volta 前提なので `27_volta.bat` だけが設定し、`profile.ps1` の設定は削除した（WSL の `common.sh` は残す）。
+  - CA ファイルは `%CERTS_DIR%\ca_bundle.crt`（旧 `company-ca.crt`）。環境変数は `setx` で永続化する（`AWS_CA_BUNDLE`、`UV_SYSTEM_CERTS` + `SSL_CERT_FILE`、`NODE_EXTRA_CA_CERTS`）。`NODE_EXTRA_CA_CERTS` は Node が Volta 前提なので `27_volta.bat` だけが設定し（2026-11-19 に Volta をやめて `27_volta.bat` を削除。`10_env.bat` が、実行時に `ca_bundle.crt` があるときだけ設定する。ee の決定。Node 24.22.3 で確認: 空は警告なし、存在しないファイルは起動のたびに警告）、`profile.ps1` の設定は削除した（WSL の `common.sh` は残す）。
   - uv は `uv python install 3.13 --default` と `uv python pin --global 3.13`、続けて `python --version`。Volta は `volta install node@lts`、続けて `node` / `npm` / `npx` の `--version`。
   - インストール直後は絶対パスを使わず、レジストリから PATH（Volta は `VOLTA_HOME` も）を読み直して呼ぶ。
   - `ca_bundle.crt` が無い（または `CERTS_DIR` 未設定）ときは、`y` と答えても設定せず `[SKIP]`。

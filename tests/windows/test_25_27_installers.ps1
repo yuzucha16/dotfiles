@@ -106,6 +106,7 @@ Check 'profile.ps1 no longer sets NODE_EXTRA_CA_CERTS' ($p -notmatch 'env:NODE_E
 $e = Get-Content (Join-Path $repo 'scripts\windows\10_env.bat') -Raw
 Check '10_env.bat prints the CA bundle reminder before the final pause' ($e -match '(?s)ACTION NEEDED.*ca_bundle\.crt.*pause\s*$')
 Check '10_env.bat has the [ENV] header (User scope, NEW terminal) before the values' ($e -match '(?s)\[ENV\] set by this script.*NEW terminal.*WORKS_DIR\s+=')
+Check '10_env.bat sets NODE_EXTRA_CA_CERTS only when ca_bundle.crt exists' (($e -match 'if exist \"%CERTS_DIR%\\ca_bundle\.crt\" \( setx NODE_EXTRA_CA_CERTS') -and ($e -match 'NODE_EXTRA_CA_CERTS=\[not set\]'))
 Check '10_env.bat shows WSLENV (value if changed, [unchanged] otherwise)' (($e -match 'SHOW_WSLENV=%WSLENV_NEW%') -and ($e -match 'WSLENV\s+=\[unchanged\]'))
 
 "failures=$fail"
