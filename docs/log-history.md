@@ -4,6 +4,14 @@
 
 ## Log
 
+### 2026-11-19（NA 3 を閉じる: WezTerm + zellij + claude + nvim の単位設計）
+- 依頼（workbase の project thread）: zed は制約が多く、token-cap などで素の claude を使いたい。WezTerm の 1 タブ 1 cwd、複数の claude セッション、ファイル編集は nvim。単位（WezTerm の tab・pane、claude の session、nvim の buffer）の割り当てをレイヤ設計から行い、設計書を main に push するところまで。実作業は PC で行う。
+- 実施: `docs/setup/terminal-units.md` を追加（main に push。e8d2577）。tab = (環境, cwd) = zellij session、pane は zellij だけが持つ、nvim はセッションに 1 つ、floating は zellij（lazygit・ターミナル）、環境は pwsh7（scoop）・wsl・room、修飾キーで層を分ける（WezTerm = Ctrl+Shift、zellij = Alt、nvim = Space・Ctrl）、bell は claude → zellij → WezTerm のタブの印。既存の試作は前提にせず、PC で消して一から作る。
+- 確認: zellij 0.46.0 を、疑似端末（200×50）で動かし、`sleep` を claude・nvim の代わりにして swap layout の挙動を実測した。案 A（左右 2 分割）は 3 つ目で 2・3 つ目の位置が入れ替わり、nvim が右下へ動く。案 B（中央 3 分割。nvim は右一列で固定、claude は Z の順）は入れ替わらず、仕様どおりに増える。WezTerm の安定版（20240203）と nightly の変更履歴に floating pane は無い。zellij 0.44 以降は別タブの BEL も外側へ渡す。
+- 未実施: 実機（PC）での確認すべて。設計書 9 章の 7 点（案 A/B の選択、実物の claude・nvim、`Alt` の locked での動作、3 環境の bell、`checktime`、セッションの復帰、pwsh7 の道具）。room への lazygit の段は workbase の `room init` の変更なので別作業（未着手）。→ NA 8
+- 判断: ユーザーが使い続けること、zellij を足すこと、既存を消して作り直すことを決めた。根拠は `decisions.md` の同日の項。
+- 閉じた NA 3 の原文: 3. 【起票 11-15】【判断:ユーザー】WezTerm + claude + nvim の使用感を試して、使い続けるかと、足すものを決める（構成は 11-15 に作成済み。経緯は `docs/log-history.md` の同日の項、調査と手段の比較は `docs/log-draft-terminal-sessions.md`）。決める点: 使い続けるか（11-15 時点でユーザーは「もう少し使って判断」。Zed と WezTerm の相互利用は想定しない。要件の下書き: cwd ごとのセッション整理・ファイラの root 追従・認証方式の選択）。決めたら、decisions の「ターミナル起点から Zed へ移行中」（2026-10 ごろの項）を見直しとして記録する。nvim は 11-15 に LazyVim 化済み（使い勝手を確認中。重いときは `NVIM_LITE=1`）。zellij（フローティングペイン・セッション残存）、nvim の追加の拡張（AstroNvim の設定の部分マージなど）は、使って足りないと感じたときに起票する。
+
 ### 2026-11-18（Notepad++ の選択ハイライトの色）
 - 依頼: 選択範囲のハイライトが背景に同化して見えない。Windows Terminal の Tab 補完の選択と同じ青にしたい。
 - 実施: `windows/notepadpp/Gruvbox dark medium.xml` の「Selected text colour」を、背景 `504945` → `23555E`、文字 `FBF1C7` にした。値は `windows/powershell/profile.ps1` の PSReadLine `Selection`（背景 #23555E、文字 #FBF1C7）と同じ。

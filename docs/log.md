@@ -10,10 +10,10 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 ## Next Actions
 
-次の番号: 8
+次の番号: 9
 
-3. 【起票 11-15】【判断:ユーザー】WezTerm + claude + nvim の使用感を試して、使い続けるかと、足すものを決める（構成は 11-15 に作成済み。経緯は `docs/log-history.md` の同日の項、調査と手段の比較は `docs/log-draft-terminal-sessions.md`）。決める点: 使い続けるか（11-15 時点でユーザーは「もう少し使って判断」。Zed と WezTerm の相互利用は想定しない。要件の下書き: cwd ごとのセッション整理・ファイラの root 追従・認証方式の選択）。決めたら、decisions の「ターミナル起点から Zed へ移行中」（2026-10 ごろの項）を見直しとして記録する。nvim は 11-15 に LazyVim 化済み（使い勝手を確認中。重いときは `NVIM_LITE=1`）。zellij（フローティングペイン・セッション残存）、nvim の追加の拡張（AstroNvim の設定の部分マージなど）は、使って足りないと感じたときに起票する。
 5. 【起票 11-15】【やる:ユーザー】WezTerm + claude + nvim の動作確認: (a) `WEZTERM_CONFIG_FILE` を使わず、通常の起動（`links.map` のリンク）で左 claude・右 nvim が組まれる、(b) claude 自身の入力待ち・停止で、別タブにいるときタブに 🔔 が付く（11-15 は手で鳴らした bell だけ確認）、(c) タブ名が `wslhost.exe` のまま（直したいか）、(d) 動作確認で気づいた直しを伝える（直しは AI が行う）。完了: (a)〜(c) の結果がユーザーから報告される。
 7. 【起票 11-15】【やる:AI】`scripts/windows/30_link.bat` を、Developer Mode がオフのときは何も変えずに止める（先に確認する）。完了: オフの状態で `link` を実行すると、既存のリンクを消さずに `[ERR]` で止まり、`tests/windows/` に再現の試験がある。理由: 11-15 に、既存のファイルリンクが消えて Windows Terminal の設定が初期化された（`decisions.md` の同日の項）。
+8. 【起票 11-19】【やる:ユーザー】単位設計 `docs/setup/terminal-units.md` に沿って、既存の試作（`windows/wezterm/`、`home/.config/nvim/`、`docs/setup/wezterm-claude-nvim.md`）を消し、zellij・WezTerm・LazyVim を作って実機で確かめる。pane の配置は案 A（左右 2 分割）と案 B（中央 3 分割。推奨）を `default_layout` の切り替えで動かして 1 つに決める。完了: 設計書 9 章の 7 点の結果がユーザーから報告され、設計書が結果に合わせて直る。NA 5 はこれに吸収する案（ユーザーの判断待ち）。次の一手: room で zellij の `config.kdl` と案 B のレイアウトを作る。
 
 ## Open Questions

@@ -27,7 +27,15 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
-### 【この件】タブ = Claude セッション環境は、WezTerm から WSL の `room-myenv` に入り、左 claude / 右 nvim で試す（2026-11-15。ユーザーの決定。試用中）
+### 【この件】ターミナルの開発環境は、WezTerm + zellij + claude + nvim の単位設計で、既存の試作を消して作り直す（2026-11-19。ユーザーの決定。実装は PC）
+
+- 決めたこと: ① tab = (環境, cwd) = zellij の session。pane は zellij だけが持ち、WezTerm は分割しない。nvim（LazyVim）はセッションに 1 つ。② floating は zellij の floating pane（lazygit、ターミナル）。層が 1 つ増えるのは許容。③ 環境は Windows Terminal と同じ pwsh7（scoop）・wsl・room の 3 つ。④ pane の配置は案 A（左右 2 分割）と案 B（中央 3 分割。推奨）を実機で動かして 1 つに決める。claude の増え方は固定する（認知を下げるため）。pane の数の制限は設けない。⑤ 既存の試作は消して一から作る（過去の負債に引きずられないため）。正本は `docs/setup/terminal-units.md`。
+- 根拠: ユーザーの決定（2026-11-19）。WezTerm に floating pane が無い（20240203 と nightly の変更履歴で確認）。zellij 0.46.0 の swap layout を疑似端末で実測した。案 A は 3 つ目で 2・3 つ目の会話の位置が入れ替わり、案 B は入れ替わらない。zellij 0.44 以降は別タブの BEL も渡すので、bell の印の仕組みを引き継げる。
+- 却下案: WezTerm だけで floating を代用（機能が無い）。nvim の `:terminal` の floating（層が 2 つ持つ同じ用途になる）。pane の最大数の実装（超えたときの動きまで決める必要があるため。ユーザーが不要と判断）。
+- 見直し: 2026-11-15 の「WezTerm から room に入り、左 claude / 右 nvim で試す」の項の構成（Windows 側の WezTerm 設定・nvim の設定）を置き換える。「ターミナル起点から Zed へ移行中」（2026-10 ごろの項）は、ユーザーが zed を離れる方向を示した（制約が多く、token-cap などで素の claude を使いたいため）。
+- 未確認（仮説）: Windows ネイティブの zellij が BEL を渡すか。claude の `preferredNotifChannel`（`terminal_bell`）でフックなしに 3 環境の bell を統一できるか。案 B の claude の幅（200 桁で 67 桁）で使えるか。
+
+### 【この件】タブ = Claude セッション環境は、WezTerm から WSL の `room-myenv` に入り、左 claude / 右 nvim で試す（2026-11-15。ユーザーの決定。試用中。2026-11-19 に上の項で作り直しが決まった）
 
 - 決めたこと: ① WSL は `room-myenv`（workbase が定義する共通基盤。ユーザー ai、sudo なし、`/mnt/c` なし）を使う。claude も nvim も部屋の中で動かす。② nvim は軽さを優先し、最小の `init.lua`（lazy.nvim・gruvbox・oil.nvim）から始める。足すかどうかは WezTerm の使用感で判断し、過去の LazyVim / AstroNvim の設定は、ベースを使ってから部分的にマージする。③ 今回使ったアプリ（wezterm・neovim・zellij）は `manifests/apps.txt` に足す。他の PC でも、`20_apps` → `30_link` → `room init` → `room-shell-setup` → `room-dev-setup` で再現できるようにする（ポータブルにする方針）。④ claude の入力待ちの通知（bell）は、`home/.claude/settings.json` には入れない。そのファイルは Windows ネイティブの claude 用（PowerShell 実行）で、部屋の claude は別の設定ファイルのため。部屋の `~/.claude/settings.json` へ、`room-dev-setup.ps1` が入れる。zellij は入れたが、設定は未作成（必要になったら足す）。
 - 根拠: ユーザーの指示（2026-11-15）。部屋は隔離された共通基盤で、tarball を標準入力で送る方式は `room-shell-setup.ps1` で実績がある。
