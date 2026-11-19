@@ -16,7 +16,7 @@ tags:
 
 設計は `terminal-units.md`（単位、キー、通知の仕組み）が正。この手順書は、スクリプトの順序と前後の手作業、日常の操作を書く。設定の中身は `windows/wezterm/wezterm.lua`、`home/.config/zellij/`、`home/.config/nvim/`、一覧は `manifests/links.map` と `manifests/apps.txt`。
 
-**確認状況**: pwsh7（win）と room の実機確認は 2026-11-19 に済み（設計書 9 章）。wsl 環境（`wezterm.lua` の候補に未登録）と、room の nvim 設定の反映（章 4）は未確認。
+**確認状況**: pwsh7（win）と room の実機確認は 2026-11-19 に済み（設計書 9 章）。room の nvim 設定の反映（章 4）は未確認。現状の `wezterm.lua` の候補は win と room だけで、通常の WSL ディストリビューションは未対応。
 
 ## 対応バージョン表
 
@@ -61,10 +61,20 @@ tags:
 win では、BEL を ConPTY が止める。そこで、フックが旗ファイルを置き、WezTerm が拾ってタブに印を付ける。
 
 1. `windows\wezterm\bell-mark.ps1` を `%USERPROFILE%\.claude\hooks\` へ置く（コピー。リンクの一覧には未登録）
-2. `%USERPROFILE%\.claude\settings.json` の Notification と Stop のフックから、`pwsh -NoProfile -File <上のパス>` を実行するようにする
+2. `%USERPROFILE%\.claude\settings.json` の `hooks` の `Notification` と `Stop` の、それぞれの `hooks` 配列へ、次の 1 件を足す（`Stop` には既存のフックがあってよい。足すだけで、他は消さない）
 
-- **未決**: フックの設定を kit の手順にするか（`docs/log.md` の NA 8）。決まるまで手動
-- room の bell は、`room init` の段 `bellhook` が入れる（章 4）
+```json
+{
+  "type": "command",
+  "shell": "powershell",
+  "command": "pwsh -NoProfile -File \"$HOME/.claude/hooks/bell-mark.ps1\""
+}
+```
+
+3. claude を起動し直す（フックは起動時に読まれる）
+
+- この手動の手順を正とする（ee の決定 2026-11-19。kit の手順書にするかは、規模の凍結の畳みと合わせて後で決める）
+- room の bell は、`room init` の段 `bellhook` が入れる（章 4）。win の旗ファイル方式とは別の仕組み
 
 完了の目安: 別のタブにいるとき、win の claude の入力待ちで、そのタブの名前がオレンジの 🔔 になる。
 

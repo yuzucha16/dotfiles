@@ -6,7 +6,7 @@ Windows 専用の設定の一覧（`links.map` からだけ参照される）。
 | パス | 内容 |
 |---|---|
 | `terminal/settings.json` | Windows Terminal |
-| `room/room-nvim-config.ps1` | 部屋の `~/.config/nvim` へ `home/.config/nvim` の設定を上書きコピーする。`pwsh -NoProfile -File windows\room\room-nvim-config.ps1 -Area myenv`。何度実行しても同じ結果。nvim 本体・zellij・claude の bell フックは `room init`（workbase。段 `nvim` `zellij` `bellhook`。既存の部屋は `room init <Area> --only nvim,zellij,bellhook`）が入れる。nvim の設定を変えたら、再実行で部屋へ反映する 。**注**: 元の `home/.config/nvim` は 2026-11-19 に試作ごと削除した。作り直すまで実行しない |
+| `room/room-nvim-config.ps1` | 部屋の `~/.config/nvim` へ `home/.config/nvim` の設定を上書きコピーする。`pwsh -NoProfile -File windows\room\room-nvim-config.ps1 -Area myenv`。何度実行しても同じ結果。nvim 本体・zellij・claude の bell フックは `room init`（workbase。段 `nvim` `zellij` `bellhook`。既存の部屋は `room init <Area> --only nvim,zellij,bellhook`）が入れる。nvim の設定を変えたら、再実行で部屋へ反映する 。`home/.config/nvim` は 2026-11-19 に LazyVim で作り直した（実行は未確認） |
 | `startup/startup.bat` | スタートアップ。`subst V: %WORKS_DIR%` |
 | `wsl/.wslconfig` | WSL2 の全体設定（`%USERPROFILE%\.wslconfig` へリンク）。アイドル時にキャッシュのメモリをホストへ返す。`memory` などの上限は PC ごとに RAM が違うので書かない。反映は `wsl --shutdown` 後の再起動 |
 | `powershell/history.seed.txt` | PSReadLine の履歴の種（手で選んだ定型コマンド。個人値は `<…名>` に置換済みで、そのままでは実行されない）。正本は共有リポジトリ `workbase`（`$HOME\works\resources`）の `exmem/lessons/shell-command-usecases.md`。リンクではなく、初回に履歴ファイルが無いときだけコピーする（`scripts\windows\31_history_seed.bat`） |

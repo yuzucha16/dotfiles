@@ -18,8 +18,9 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
    【残り】① 手順書の書き直し。② 9 章の 2（閉じる操作を続けたときの形の崩れ）、WezTerm 起動直後の zellij、claude の信頼確認の省略と `Ctrl+Enter`（ee が試用中）。③ 【11-19 決定】bell は二段階。`bell-mark.ps1` は `windows/wezterm/` へ置いた（済み。実体は `~/.claude/hooks/`）。settings の Notification/Stop を kit の手順にするかは未決（規模の凍結で 1 つ畳む必要あり）。④ lazygit の SHA-256 は設計書 12 章に記入済み（人が 1 回確認）。Volta の検証方法は未。ショートカットの見直しは別の機会（ee）。`Alt+n` の ListView の warning は起動時だけで、何もしない（ee の決定）。
    【引き継ぎ 11-19】コミット 404ca85 まで済み。`lazy-lock.json` `lazyvim.json` は追跡する（ee の決定 11-19。コミット済み）。`scratch.txt` は 5 の確認用で未追跡のまま。workbase `d043b784` は未 push（人が push）。win の zellij の既存セッションは cmd のままなので、`zellij.exe delete-session --force <名>` で作り直す（ee の判断）。
    【11-19】pwsh7・lazygit は合格（9 章の 7）。`apps.txt` に lazygit を足した。
-   【11-19】手順書 `docs/setup/wezterm-zellij-nvim.md` を新しく書いた（旧 `wezterm-claude-nvim.md` の後継。コミット済み）。未確認: 部屋の nvim 設定の反映（`room-nvim-config.ps1` は作り直し後に未実行。`windows/README.md` の「実行しない」の注も古い）、wsl 環境、bell フックの手動手順。
-   次の一手: 残り②〜④（②は ee の実機での試用が要る。③ の settings の扱いは未決で、ee の判断待ち）。
+   【11-19】手順書 `docs/setup/wezterm-zellij-nvim.md` を新しく書いた（旧 `wezterm-claude-nvim.md` の後継。コミット済み）。未確認: 部屋の nvim 設定の反映（`room-nvim-config.ps1` は作り直し後に未実行。ee が実行する）、通常の WSL（提案: 対象外）。
+   【11-19 決定】② は別の機会にまとめてやる。③ の bell フックの settings は、手順書の章 3 の手動手順を正にする（kit の手順書化と畳みは後でまとめて）。`windows/README.md` の古い注は直した。
+   次の一手: ee が `room-nvim-config.ps1` を実行して結果を伝える。④ Volta の検証方法。
 
 ## Open Questions
 
