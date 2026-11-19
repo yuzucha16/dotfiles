@@ -237,6 +237,12 @@ layout {
 3. unlock-first の型で、`Alt` の操作が locked のまま使えるか。
 4. 別の WezTerm タブにいるとき、claude の入力待ちで、そのタブに 🔔 が付くか。room、pwsh7、wsl の 3 つで(zellij を挟んだ BEL。Windows ネイティブの zellij が BEL を渡すかは未確認)。
 5. claude がファイルを書き換えたとき、nvim に反映されるか。LazyVim は FocusGained で `checktime` するが、zellij の中の pane の移動で FocusGained が来るかは未確認。来なければ、一定の間隔で `checktime` する autocmd を足す。
+   - 結果(2026-11-19、room。ee の報告): 反映された。ただし、nvim の pane に移って待っただけでは出ず、nvim のバッファを選択(`BufEnter`)したときに文字列が出た。つまり、放置では反映されず、バッファの操作で反映される。FocusGained と CursorHold のどちらが効いたかは未切り分け。
+   - 追記(同日): バッファを選ばずに 5 秒待っても出なかった。FocusGained も CursorHold も、pane の移動では効かない。そこで `autocmds.lua` に 2 秒間隔のタイマーの `checktime` を足した(再確認が要る)。
+   - 競合(同日、ee の報告): 未保存の編集があるとき、claude は「追加した」と言うが、nvim はバッファ選択時に「上書きか破棄か」を聞く。破棄を選ぶと、claude の追加も消える。nvim の標準の動作。claude の書き込みを残したいなら、nvim 側の未保存の編集を先に保存するか、別の行に書かせる。
+   - 再確認(同日、ee の報告): タイマーを足しても、バッファを選ばずに数秒待つと出ず、選ぶと出た。取り込みはされているが画面が再描画されない疑いがあるので、`redraw` を足した(再確認が要る)。
+   - 未保存の編集がある場合(同日、ee の報告): 「破棄か load か」を聞かれる。load すると、nvim の未保存の編集は消え、ディスク上の内容(claude の追加を含む)になる。未保存の編集の上に追記される動きではない。
+   - 確認済み(同日、ee の報告): `redraw` 追加後、バッファを選ばずに放置しても自動で反映された。原因は再描画の不足だった。9 章の 5 は合格(2 秒間隔のタイマー + `redraw`)。
 6. WezTerm のタブを閉じて開き直すと、zellij のセッションに戻り、claude が動き続けているか。
 7. pwsh7 で、zellij・nvim・lazygit(scoop)が入り、`claude` が zellij の中で動くか。
 8. 性能のボトルネック(11 章。V1〜V6 の測定)。
