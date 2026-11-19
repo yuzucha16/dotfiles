@@ -31,6 +31,10 @@ local TARGETS = {
   { label = 'win:  resources', where = 'win', cwd = WORKS .. '\\resources' },
   { label = 'win:  works', where = 'win', cwd = WORKS },
   { label = 'win:  dotfiles', where = 'win', cwd = WORKS .. '\\repos\\github.com\\yuzucha16\\dotfiles' },
+  -- zellij なしの素のシェル（毎回新しいタブ）。pwsh は scoop の pwsh7（PATH 上の pwsh）。
+  { label = 'pwsh (Windows)', where = 'plain', args = { 'pwsh' } },
+  { label = 'cmd (Windows)', where = 'plain', args = { 'cmd.exe' } },
+  { label = 'room-' .. AREA .. ' (shell)', where = 'plain', domain = ROOM, cwd = '~' },
 }
 
 local function basename(p)
@@ -39,6 +43,14 @@ end
 
 -- 同じ「環境: cwd の名前」のタブがあれば、新しく作らずそこへ移る。
 local function open_target(window, target)
+  if target.where == 'plain' then
+    window:mux_window():spawn_tab {
+      domain = { DomainName = target.domain or 'local' },
+      args = target.args,
+      cwd = target.cwd,
+    }
+    return
+  end
   local name = basename(target.cwd == '~' and 'home' or target.cwd)
   local title = target.where .. ': ' .. name
   for _, tab in ipairs(window:mux_window():tabs()) do
@@ -76,6 +88,13 @@ local pick_target = wezterm.action_callback(function(window, pane)
       if id then open_target(w, TARGETS[tonumber(id)]) end
     end),
   }, pane)
+end)
+
+-- タブバーの「+」: 右クリックの既定（ランチャー）は残し、左・中クリックで候補を選ぶ。
+wezterm.on('new-tab-button-click', function(window, pane, button)
+  if button == 'Right' then return end
+  window:perform_action(pick_target, pane)
+  return false
 end)
 
 -- bell: 別のタブなら印を付け、そのタブへ移ったら消す。

@@ -100,8 +100,9 @@ win では、BEL を ConPTY が止める。そこで、フックが旗ファイ�
 
 | 層 | 操作 | キー |
 |---|---|---|
-| WezTerm | 環境と cwd を選んでタブを開く（同じ組があれば、そこへ移る） | `Ctrl+Shift+T` |
+| WezTerm | 環境と cwd を選んでタブを開く（同じ組があれば、そこへ移る。素の pwsh・cmd・room のシェルも選べる） | `Ctrl+Shift+T` または タブバーの `+`（左クリック） |
 | WezTerm | 素の pwsh7 のタブ | `Ctrl+Shift+N` |
+| WezTerm | タブ送り（既定のキー） | `Ctrl+PageUp` / `Ctrl+PageDown` |
 | zellij | 操作モードの解除・戻り（既定は locked） | `Ctrl+g` |
 | zellij | claude を足す / lazygit（floating）/ floating の表示切替 | `Alt+c` / `Alt+g` / `Alt+f` |
 | zellij | pane を移る / 閉じる | `Alt+←↓↑→` / `Alt+x` |
