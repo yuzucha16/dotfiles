@@ -4,6 +4,10 @@
 
 ## Log
 
+### 2026-11-20（NA 14 完了: Claude Code の見た目を淡い青にした）
+- ee の報告: gruvbox に soft blue のハイライトを足してコミット済み。`home/.claude/themes/gruvbox-soft-blue.json`（`userMessageBackground` `#2a3b52`、diff は `#2c4a5e`/`#2b2e4a` と単語単位 `#3f6c8c`/`#44487a`）、`home/.claude/settings.json` の `"theme": "custom:gruvbox-soft-blue"` と `"viewMode": "focus"`。コミットは `8295e8d`（Claudian 削除と同じコミットに入った）。`~/.claude/themes` は dotfiles の `home/.claude/themes` への junction（確認: `Get-Item`）。
+- 採否: `/focus` 相当は `viewMode: focus` で固定（採用）。実機の見え方の最終確認は ee が実施済みとして閉じた。
+
 ### 2026-11-20（Claudian と obsidian-skills を削除）
 - ee の依頼（Obsidian で AI を使わないので、依存するプラグインとスキルを削除）。dotfiles `8295e8d`: `realclaudian` と `claudian-settings.json`、`links.map` の 3 行、CSS の `.claudian-*`、`29_claude_plugins.bat` `manifests/claude-plugins.txt` `test_28_29_installers.ps1`（0 件になったため）、`extraKnownMarketplaces` の obsidian-skills、README 各種の言及。実機は `claude plugin marketplace remove obsidian-skills` と、`works\.claudian` `works\resources\.claudian`（会話履歴を含む。ee の承認）の削除。works `4dbd8ea`（`AGENTS.md` のスキル段落、README の `.claudian/` 行、`.gitignore`）、resources `6157678b`（`.gitignore`）と `3164da56`（Volta の shim の例から `defuddle`）。
 - 修正レビュー（別エージェント）: 範囲・取りこぼし・参照切れに問題なし。`home/.claude/settings.json` の `"model"` は行の移動で、ファイル全体を含めた。`decisions.md` に廃止の注記を足した（`3cb864a`）。
