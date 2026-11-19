@@ -12,8 +12,8 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 次の番号: 15
 
-13. 【起票 11-19】【判断:ユーザー】 `git -C` の権限まわりの残りを扱うか決める。(a) `git diff *` `git log *` の `--output=<file>`、`git commit *` の hook 実行は `-C` を消しても残る穴。(b) `-C` 前提の共有ノート（`exmem/lessons/shell-command-usecases.md:153`、`claude-code-permissions.md:74-76,107`、`ai-room-setup-manual.md:74,166`）は dotfiles から書けないので「ナレッジ化して」で直す。完了: (a) を塞ぐか許容するか、(b) を直すかが決まる。
-   - 次の一手: 決定後、(a) は deny を足す案を `decisions.md` で検討、(b) は「ナレッジ化して」
+13. 【起票 11-19】【判断:ユーザー】 `git -C` の権限まわりの残りを扱うか決める。(a) `git diff *` `git log *` の `--output=<file>`、`git commit *` の hook 実行は `-C` を消しても残る穴。(b) は 11-20 に完了（resources `37810576`）。完了: (a) を塞ぐか許容するかが決まる。
+   - 次の一手: (a) は deny を足す案を `decisions.md` で検討。
 
 ## Open Questions
 

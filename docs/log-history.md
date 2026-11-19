@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-11-20（NA 13 一部完了: (b) `-C` 前提の共有ノートを直した）
+- ee が、`exmem/` の特定ファイルの書き換えを例外として許可し、修正レビューを依頼。変更は resources `37810576`（7 ファイル: `claude-code-permissions` `shell-command-usecases`（注記 1 行のみ。種の本文は未変更）`workflow-kit` `alignment-baseline` `ai-room-setup-manual` `ai-room-setup` `ai-room-setup-script`）。
+- 修正レビュー（別エージェント 2 件）: 整合は NORMAL（`settings.json` の allow に `git -C` 無し・deny に残る・`-C` なし allow は PS 11 と Bash 11 を確認）。範囲は ANOMALY（`exmem/` の外の 2 ファイルと、名指し外の `workflow-kit.md`）。ee が「A: 5 ファイルを追認」と判断し、同種の 2 箇所（`ai-room-setup.md` `ai-room-setup-script.md`）も揃えた。
+- 残した: room の clone の `git -C ~/src/<repo>`（`room.py` `project-structure.md` ほか。room の設定は未検証）。残り (a) は NA 13 に。
+
 ### 2026-11-20（NA 14 完了: Claude Code の見た目を淡い青にした）
 - ee の報告: gruvbox に soft blue のハイライトを足してコミット済み。`home/.claude/themes/gruvbox-soft-blue.json`（`userMessageBackground` `#2a3b52`、diff は `#2c4a5e`/`#2b2e4a` と単語単位 `#3f6c8c`/`#44487a`）、`home/.claude/settings.json` の `"theme": "custom:gruvbox-soft-blue"` と `"viewMode": "focus"`。コミットは `8295e8d`（Claudian 削除と同じコミットに入った）。`~/.claude/themes` は dotfiles の `home/.claude/themes` への junction（確認: `Get-Item`）。
 - 採否: `/focus` 相当は `viewMode: focus` で固定（採用）。実機の見え方の最終確認は ee が実施済みとして閉じた。
