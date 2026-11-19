@@ -31,6 +31,7 @@ local WORKS = os.getenv('WORKS_DIR') or (wezterm.home_dir .. '\\works')
 local TARGETS = {
   { label = 'room: ~ (home)',       where = 'room', cwd = '~' },
   { label = 'win:  resources',      where = 'win',  cwd = WORKS .. '\\resources' },
+  { label = 'win:  resources (zellij)', where = 'win', cwd = WORKS .. '\\resources', zellij = true },
   { label = 'win:  works',          where = 'win',  cwd = WORKS },
   { label = 'win:  dotfiles',       where = 'win',  cwd = WORKS .. '\\repos\\github.com\\yuzucha16\\dotfiles' },
 }
@@ -45,7 +46,8 @@ local function new_session_tab(window, target)
   local spec = { cwd = target.cwd }
   if target.where == 'win' then
     spec.domain = { DomainName = 'local' }
-    spec.args = { 'pwsh.exe', '-NoLogo' }
+    -- zellij = true: Windows の zellij が layout（正本は home/.config/zellij）で claude と nvim を並べる。
+    spec.args = target.zellij and { 'zellij.exe' } or { 'pwsh.exe', '-NoLogo' }
   else
     -- room: zellij が layout（default_layout）で claude と nvim を並べる。
     -- login shell 経由で起動する（PATH に ~/.local/bin などが入るように）。
@@ -53,7 +55,7 @@ local function new_session_tab(window, target)
     spec.args = { 'bash', '-lc', 'exec zellij' }
   end
   local tab, left, _ = window:mux_window():spawn_tab(spec)
-  if target.where == 'win' then
+  if target.where == 'win' and not target.zellij then
     local right = left:split { direction = 'Right', size = 0.5 }
     left:send_text 'claude --resume\n'
     right:send_text 'nvim\n'
