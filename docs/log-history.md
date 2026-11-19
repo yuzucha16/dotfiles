@@ -4,6 +4,10 @@
 
 ## Log
 
+### 2026-11-19（NA 11 完了: statusline の認証種別が `/status` と一致。ロゴは omit）
+- ee の実機確認: 新規セッションで statusline の種別が `/status` と一致した（ee の報告）。ロゴは消せないので諦める（ee の決定。omit。zellij の `/clear` 注入は遅くなるため）。
+- 閉じた NA 11 の全文: claude の statusline の認証種別（OAuth/API/Bedrock/Gateway。env と `rate_limits` からの推定。コミット済み fbda3be）を、実機で `/status` と見比べる。警告の件と cwd の件（採用しない）は済み。
+
 ### 2026-11-19（NA 11 一部完了: statusline の認証種別と、`git -C` の許可の整理）
 - `statusline.py` に認証種別（env と `rate_limits` からの推定）を追加。`CLAUDE_CODE_HIDE_CWD` は採用しない（ユーザーの決定。`settings.json` の `env` を戻した）。
 - `/status` に出る permission の警告（`git -C * ...` の `*` が `-c` などを通す）を、三層レビュー（整合・実用性・反証）を経て解消。`settings.json` の allow から `git -C * ...` 22 行を消し、`-C` なしの allow を 14 行足した（deny は残す）。ユーザーが承認し、実機で警告の消失を確認（根拠: ユーザーの報告）。経緯・却下案は `decisions.md` の 586 行目の追記。

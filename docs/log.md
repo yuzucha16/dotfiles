@@ -18,8 +18,5 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 12. 【起票 11-19】【判断:ユーザー】 zellij の claude pane の未コミットの変更（`config.kdl`、`claude-a/b.kdl`、`wezterm.lua`。経緯は log-history の 11-19「NA 10」）を、どう扱うか決める。原因は画面サイズ（ee の実機: 大きくすると 3 列中央）なので、`wezterm.lua` の 2 段起動（背景作成→attach）が要るか不要かを確かめ、要らなければ戻す。完了: 4 ファイルをコミットするか戻すかが決まる。
    - 次の一手: ee の判断を聞き、commit-push-rules.md を読んでパス指定でコミット。`terminal-units.md` と `wezterm-zellij-nvim.md` も実態に更新
 
-11. 【起票 11-19】【やる:ユーザー】 claude の statusline の認証種別（OAuth/API/Bedrock/Gateway。env と `rate_limits` からの推定。コミット済み）を、実機で `/status` と見比べる。警告の件と cwd の件（採用しない）は済み。完了: 新規セッションで statusline の種別が `/status` と一致する。ロゴは消せない（zellij の `/clear` 注入は遅くなるので保留）。
-   - 次の一手: 結果を聞いて、一致すれば閉じる（wrap）
-
 ## Open Questions
 
