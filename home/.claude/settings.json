@@ -44,6 +44,7 @@
       "Read(~/shared/**)"
     ],
     "deny": [
+      "Artifact",
       "PowerShell(git push*--force*)",
       "PowerShell(git push* -f)",
       "PowerShell(git push* -f *)",
