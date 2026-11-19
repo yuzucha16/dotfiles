@@ -109,11 +109,26 @@ local pick_target = wezterm.action_callback(function(window, pane)
   }, pane)
 end)
 
--- タブバーの「+」: 右クリックの既定（ランチャー）は残し、左・中クリックで候補を選ぶ。
+-- タブバーの「+」: 左クリックは無条件で Windows の pwsh7（Windows Terminal の既定シェルのボタンと同じ）。
+-- 右・中クリックは候補の選択（Ctrl+Shift+T と同じ）。
+local spawn_pwsh = act.SpawnCommandInNewTab { domain = { DomainName = 'local' }, args = { 'pwsh' } }
 wezterm.on('new-tab-button-click', function(window, pane, button)
-  if button == 'Right' then return end
-  window:perform_action(pick_target, pane)
+  window:perform_action(button == 'Left' and spawn_pwsh or pick_target, pane)
   return false
+end)
+
+-- Ctrl+Shift+D: 今のタブの zellij セッションを消し（delete-session --force）、タブを閉じる。
+-- タブ名（"win: <名>" / "room: <名>"）がセッション名。zellij なしのタブ（pwsh など）は、ただ閉じる。
+local delete_session = wezterm.action_callback(function(window, pane)
+  local title = window:active_tab():get_title()
+  local where, name = title:match('^(%a+): (.+)$')
+  if where == 'win' then
+    wezterm.run_child_process { 'zellij', 'delete-session', '--force', name }
+  elseif where == 'room' then
+    wezterm.run_child_process { 'wsl', '-d', 'room-' .. AREA, '-u', 'ai', '--', 'bash', '-lc',
+      "zellij delete-session --force '" .. name .. "'" }
+  end
+  window:perform_action(act.CloseCurrentTab { confirm = false }, pane)
 end)
 
 -- bell: 別のタブなら印を付け、そのタブへ移ったら消す。
@@ -199,7 +214,8 @@ config.keys = {
   { key = 'c', mods = 'CTRL', action = copy_or_else(act.SendKey { key = 'c', mods = 'CTRL' }) },
   { key = 'v', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
   { key = 't', mods = 'CTRL|SHIFT', action = pick_target },
-  { key = 'n', mods = 'CTRL|SHIFT', action = act.SpawnCommandInNewTab { domain = { DomainName = 'local' }, args = { 'pwsh' } } }, -- 素の pwsh7（Windows）
+  { key = 'n', mods = 'CTRL|SHIFT', action = spawn_pwsh }, -- 素の pwsh7（Windows）
+  { key = 'd', mods = 'CTRL|SHIFT', action = delete_session },
 }
 
 return config
