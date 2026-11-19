@@ -78,12 +78,29 @@ end)
 
 -- bell: 別のタブなら印を付け、そのタブへ移ったら消す。
 wezterm.GLOBAL.bell_tabs = wezterm.GLOBAL.bell_tabs or {}
+-- bell のイベントだけではタブバーが再描画されない（マウスを動かすまで印が出ない）。
+-- 右ステータス（印のあるタブ数）を更新すると再描画されるので、bell のときと一定間隔で更新する。
+config.status_update_interval = 500
+local function refresh_status(window)
+  local m = wezterm.GLOBAL.bell_tabs
+  local active = tostring(window:mux_window():active_tab():tab_id())
+  if m[active] then
+    m[active] = nil
+    wezterm.GLOBAL.bell_tabs = m
+  end
+  local n = 0
+  for _ in pairs(m) do n = n + 1 end
+  window:set_right_status(n > 0 and (' 🔔 ' .. n .. ' ') or '')
+end
+wezterm.on('update-status', refresh_status)
+
 wezterm.on('bell', function(window, pane)
   local tab = pane:tab()
   if tab and tab:tab_id() ~= window:mux_window():active_tab():tab_id() then
     local m = wezterm.GLOBAL.bell_tabs
     m[tostring(tab:tab_id())] = true
     wezterm.GLOBAL.bell_tabs = m
+    refresh_status(window)
   end
 end)
 
