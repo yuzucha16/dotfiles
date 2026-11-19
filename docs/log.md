@@ -12,10 +12,6 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 
 次の番号: 10
 
-9. 【起票 11-19】【やる:AI】 WezTerm+zellij+nvim 上の claude の使い勝手を整える（ee の承認済み。cwd は zellij の問題として対象外）。完了（11-19）: `home/.claude/keybindings.json`（`Chat`: enter→`chat:newline`、ctrl+enter→`chat:submit`）と `manifests/links.map` の行を追加（コミット 33e8492。ee が `30_link.bat` を実行済み）。Ctrl+Enter は pwsh と zellij の両方で届くと ee が実機で確認したので、`wezterm.lua` の変更は不要。`~\.claude\settings.json` は実ファイルだったが、dotfiles 側と差分なしで、リンクに置き換わった（ee の報告）。
-   - 未着手: statusLine（直近 1 呼び出しの `context_window.current_usage` を表示。スクリプトは未作成）、テーマ `custom:gruvbox`（`home/.claude/themes/gruvbox.json` は未作成。リンクも未追加）、入力欄を広くする件（設定は無く、`/tui fullscreen` を試すだけ）。いずれも dotfiles と `~\.claude\` に実体なし。
-   - 次の一手: statusLine とテーマの仕様（表示項目、色）を ee に確認してから、同じ方式（`home/.claude/` + `links.map`）で置く。push は人。
-
 
 ## Open Questions
 

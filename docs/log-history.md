@@ -4,6 +4,14 @@
 
 ## Log
 
+### 2026-11-19（NA 9 完了: claude の使い勝手。Enter 改行、statusLine、テーマ）
+- 原因: WezTerm は kitty プロトコルを使わず、Ctrl+Enter は LF（Ctrl+J）で届く。Claude Code の Ctrl+J は既定で改行なので、`ctrl+enter`=送信が効かず「Ctrl+Enter で改行」に見えた。`keybindings.json` に `ctrl+j`=`chat:submit` を足して解決（ee が Windows の pwsh で実機確認。Enter=改行、Ctrl+Enter=送信）。
+- statusLine: `home/.claude/statusline.py`（`モデル | ctx 使用率% | 直近 1 回のトークン数 / ウィンドウサイズ`。ee の指定。トークン数は `used_percentage` と同じ input 系 3 種の合計）。`settings.json` の `statusLine.command` は `python -I ~/.claude/statusline.py`。
+- テーマ: `home/.claude/themes/` に `gruvbox`（medium）・`gruvbox-hard`・`gruvbox-ansi`（端末のパレットに従う）。`/theme` で `custom:<名前>` に切り替える（ee の希望: 何度か試すので切り替え式）。`links.map` はディレクトリごとのリンク。ee が確認済み。
+- ee の決定: 入力欄を広げる件（`/tui fullscreen`）は、すでに有効と出たので諦める。
+- 閉じた NA 9 の全文: WezTerm+zellij+nvim 上の claude の使い勝手を整える（ee の承認済み。cwd は zellij の問題として対象外）。keybindings（33e8492）、statusLine、テーマ、入力欄の 4 項目。
+- zellij の `config.kdl`・layouts と `wezterm.lua` の未コミットの変更は、別の作業のもので、このコミットに含めない。
+
 ### 2026-11-19（WezTerm: `+` ボタンで環境を選んでタブを開く）
 - ee の依頼: Windows Terminal に合わせてタブ送りと GUI のタブ作成。調査の結果、`Ctrl+PageUp/PageDown` は WezTerm の既定で効く（実機で確認。変更なし）。
 - `wezterm.lua` に `new-tab-button-click`（左・中クリックで `pick_target`）と、`TARGETS` の `plain` 種別（pwsh・cmd・room のシェル。zellij なし、毎回新しいタブ）を足した（095c50c）。手順書 `wezterm-zellij-nvim.md` の「日常の操作」も更新。実機で各シェルが起動（ee）。

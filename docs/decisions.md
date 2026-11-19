@@ -649,3 +649,6 @@ git gc --prune=now
 
 - **NA 8 の閉じ方と、通常の WSL の扱い（2026-11-19、ee の決定）**
   - 通常の WSL（room 以外）は、設計書の対象外。9 章の 2 は omit（workbase NA 59 が close 済み）。win の bell フックの手順の正本は kit の `bell-hook-win.md`（規模の凍結の畳みは後日）。
+- **claude の Enter と送信のキー（2026-11-19、ee が Windows の pwsh で実機確認）**
+  - `home/.claude/keybindings.json`: `Chat` で enter=`chat:newline`、ctrl+enter と ctrl+j=`chat:submit`。WezTerm は kitty プロトコルを使わず、Ctrl+Enter は LF（Ctrl+J）で届く。このため `ctrl+enter` だけでは効かず、Claude Code の既定の Ctrl+J=改行が出て「Ctrl+Enter で改行」に見えた。ctrl+j を送信にして解決。
+  - 入力欄を広げる件（`/tui fullscreen`）は、すでに有効と出たので諦める（ee の決定）。テーマは `/theme` で `custom:gruvbox` `custom:gruvbox-hard` `custom:gruvbox-ansi` を切り替える。
