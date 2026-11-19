@@ -96,13 +96,24 @@ win では、BEL を ConPTY が止める。そこで、フックが旗ファイ�
 
 完了の目安: 上の状態になる。WezTerm のタブを閉じて同じ候補を開き直すと、同じセッションに戻る。
 
+### room の Project × 認証（`room: <project>`）
+
+`Ctrl+Shift+T` の候補の `room: <project>`（`WORKS\projects\<名>` のうち README.md があるもの）を選ぶと、続けて認証（`room-profiles.json`。`Claude Bedrock`・`Claude Gateway (room)`・`Claude OAuth (room)`）を選ぶ 2 段になる。選ぶと、`pwsh -NoExit` のタブ `room: <project> [bedrock|gw]` で `room start <project> [--gateway]` が走る（**zellij は使わない**。マウント → claude → 終了で必ずアンマウント。distro は `room start` が Area から決める）。
+
+- 前提: `room` が pwsh から呼べる。`room-profiles.json` は `links.map` で `~\.config\wezterm\` へリンクされる（秘密は入れない）。
+- Bedrock の env は `claude --settings` の JSON（base64 で渡し、部屋側で戻す）。値に空白は使えない。gateway は `room start --gateway`。OAuth は env なしの `room start`（初回は部屋の claude で `/login`。ログインが部屋に残るかは未確認。部屋の既定が Bedrock 等でないかも実機で確認）。API キーは、部屋へ安全に渡す経路が無いので見送り（別 NA）。
+- このタブでは `Ctrl+Shift+D` はタブを閉じない（強制終了で `room start` の後始末が走らない恐れ）。claude を終了して自然に終わらせる。残骸が残ったら `room umount`。
+- 同じ Project と認証の組があれば、そこへ移る。
+
+実機で確認すること（2026-11-20 時点は未確認）: Bedrock と gateway の両方で claude が起動する。claude の終了でタブの `room start` が終わり、アンマウントされる。強制終了後に `room umount` で残骸を拾える。`--settings` の env で Bedrock が通る。
+
 ## 日常の操作
 
 | 層 | 操作 | キー |
 |---|---|---|
 | WezTerm | 環境と cwd を選んでタブを開く（同じ組があれば、そこへ移る。素の pwsh・cmd・room のシェルも選べる） | `Ctrl+Shift+T` または タブバーの `+`（右・中クリック） |
 | WezTerm | 素の pwsh7 のタブ | `Ctrl+Shift+N` または タブバーの `+`（左クリック） |
-| WezTerm | 今のタブの zellij セッションを `delete-session --force` で消し、タブを閉じる（zellij なしのタブは閉じるだけ） | `Ctrl+Shift+D` |
+| WezTerm | 今のタブの zellij セッションを `delete-session --force` で消し、タブを閉じる（zellij なしのタブは閉じるだけ。`room start` のタブ `room: <p> [tag]` は何もしない） | `Ctrl+Shift+D` |
 | WezTerm | タブ送り（既定のキー） | `Ctrl+PageUp` / `Ctrl+PageDown` |
 | zellij | 操作モードの解除・戻り（既定は locked） | `Ctrl+g` |
 | zellij | claude を足す / lazygit（floating）/ floating の表示切替 | `Alt+c` / `Alt+g` / `Alt+f` |

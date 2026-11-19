@@ -56,6 +56,7 @@ home\.config\zed\themes|%APPDATA%\zed\themes
 
 # WezTerm (docs/setup/terminal-units.md) / Neovim = LazyVim (XDG_CONFIG_HOME=%USERPROFILE%\.config is set by 10_env.bat; WSL reads ~/.config/nvim)
 windows\wezterm\wezterm.lua|%USERPROFILE%\.config\wezterm\wezterm.lua
+windows\wezterm\room-profiles.json|%USERPROFILE%\.config\wezterm\room-profiles.json
 home\.config\nvim|%USERPROFILE%\.config\nvim
 # zellij: Windows reads %APPDATA%\Zellij\config (no XDG); WSL reads ~/.config/zellij via stow. One master: home\.config\zellij.
 home\.config\zellij|%APPDATA%\Zellij\config

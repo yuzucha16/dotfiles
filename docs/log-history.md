@@ -4,6 +4,13 @@
 
 ## Log
 
+### 2026-11-20（NA 15 完了: wezterm の room 選択を Project × 認証の 2 段にした）
+- 元の NA 15: 【起票 11-20】【やる:AI】 `Ctrl+Shift+T` → `room: <project>` → 認証で room を開く。完了: `wezterm.lua`・認証の一覧・`docs/setup/wezterm-zellij-nvim.md` の更新が git log にあり、実機で起動する。
+- 実装: `windows/wezterm/wezterm.lua`、`windows/wezterm/room-profiles.json`（`links.map` で `~\.config\wezterm\` へ）。認証は Bedrock・gateway・OAuth。pwsh のタブで `room start <p> [--gateway]`（zellij なし。ユーザー選択）。Bedrock の env は `room start --cmd 'claude --settings $(echo <base64> | base64 -d)'`。room 行のタブでは `Ctrl+Shift+D` は通知だけ。`room.py` は変えていない。
+- 追加（ユーザーの依頼）: OAuth（env なしの `room start`）。API は部屋へキーを渡す経路が無く見送り → NA 16。
+- 実機の確認はユーザーの指示で NA 17 へ移した（pc2 は Bedrock・gateway なし）。差分レビューは未実施（任意）。
+- 設計メモ: `tmp/na15-design-draft.md`（コミットしない）。
+
 ### 2026-11-20（NA 13 完了: `git -C` 権限の残り (a) を決めた）
 - 元の NA 13: 【起票 11-19】【判断:ユーザー】 `git -C` の権限まわりの残りを扱うか決める。(a) `git diff *` `git log *` の `--output=<file>`、`git commit *` の hook 実行。(b) は先に完了（resources `37810576`）。完了: (a) を塞ぐか許容するかが決まる。
 - ee が「`--output` を deny、commit hook は許容」を選択。`home/.claude/settings.json` に `git diff/log/show*--output*` の deny を PowerShell と Bash に 3 行ずつ（計 6 行）足した（JSON 読み込み確認済み）。根拠は `decisions.md` の NA 13 (a) の項。

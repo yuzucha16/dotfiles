@@ -33,6 +33,11 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - タブ送りは既定の `Ctrl+PageUp/PageDown` で足りる（実機で確認。明示バインドは足さない）。
 - 実機で確認（2026-11-19）: `+` から pwsh（scoop の pwsh7）・cmd・room-myenv のシェルが起動した。
 
+### 【この件】wezterm の room 選択は「Project × 認証」の 2 段で、zellij なしの pwsh タブで `room start` を実行する（2026-11-20。ユーザーの決定。NA 15）
+- 例外: 上の 11-19 の「zellij は要る」を、room 行（`room: <project>`）では外す。理由: `/mnt/room/<p>` は `room start` の間だけ見え（マウント → 起動 → 必ずアンマウント）、WezTerm から先に cd できない。
+- 認証は `windows/wezterm/room-profiles.json`（Bedrock・gateway・OAuth）。API は、部屋に DPAPI が無く Windows の env も渡さない決まりなので、キーの経路が決まるまで見送り（NA 16）。`room.py` は変えない。
+- room 行のタブでは `Ctrl+Shift+D` は閉じない（強制終了で `room start` の後始末が走らない恐れ。未検証 → NA 17）。
+
 ### 【この件】ターミナルの開発環境は、WezTerm + zellij + claude + nvim の単位設計で、既存の試作を消して作り直す（2026-11-19。ユーザーの決定。実装は PC）
 
 - 決めたこと: ① tab = (環境, cwd) = zellij の session。pane は zellij だけが持ち、WezTerm は分割しない。nvim（LazyVim）はセッションに 1 つ。② floating は zellij の floating pane（lazygit、ターミナル）。層が 1 つ増えるのは許容。③ 環境は Windows Terminal と同じ pwsh7（scoop）・wsl・room の 3 つ。④ pane の配置は案 A（左右 2 分割）と案 B（中央 3 分割。推奨）を実機で動かして 1 つに決める。claude の増え方は固定する（認知を下げるため）。pane の数の制限は設けない。⑤ 既存の試作は消して一から作る（過去の負債に引きずられないため）。⑥ Windows と WSL・room のツールの版は、可能な限り揃える（ユーザーの要望。uv・Python を揃えているため）。uv・Python と同じ型で、固定した表を正本にし、部屋の導入は SHA-256 で検証する。表の初期値は、今 scoop に入っている版を静的に調べて決める。対象は room に入れているツールすべて（1 つの表 `workflow-kit/room/tool-versions.txt` で管理する。ユーザーの指示）。通常の wsl は対象外（ユーザーの決定）。入れるのは `room init` でまとめて行う（ユーザーの指示、2026-11-19。設計書 12 章。途中で「scoop の版を動的に追う」案を出したが、ユーザーが固定の表を選んだ）。正本は `docs/setup/terminal-units.md`。

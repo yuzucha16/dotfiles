@@ -128,18 +128,93 @@ local function open_target(window, target)
   tab:set_title(title)
 end
 
--- Ctrl+Shift+T: 候補から選んでタブを開く。
+-- room の Project × 認証（NA 15）。Project は WORKS\projects\<名>（README.md があるもの）。
+-- 認証は room-profiles.json（links.map で同じ場所へ）。zellij は使わず、pwsh のタブで `room start` を実行する
+-- （マウント → claude → 終了で必ずアンマウント。distro は room start が Area から決める）。
+local function load_auths()
+  local f = io.open(wezterm.config_dir .. '\\room-profiles.json', 'r')
+  local ok, data = false, nil
+  if f then
+    ok, data = pcall(wezterm.json_parse, f:read('*a'))
+    f:close()
+  end
+  if ok and type(data) == 'table' and type(data.auth) == 'table' then return data.auth end
+  return {
+    { id = 'gateway', label = 'Claude Gateway (room)', tag = 'gw', gateway = true },
+  }
+end
+local ROOM_AUTHS = load_auths()
+
+local function room_projects()
+  local out = {}
+  local ok, entries = pcall(wezterm.read_dir, WORKS .. '\\projects')
+  if not ok then return out end
+  for _, path in ipairs(entries) do
+    local name = basename(path)
+    local f = name:match('^[%w][%w._-]*$') and io.open(path .. '\\README.md', 'r')
+    if f then
+      f:close()
+      out[#out + 1] = name
+    end
+  end
+  table.sort(out)
+  return out
+end
+
+-- 同名のタブ（'room: <p> [tag]'）があればそこへ移る。無ければ pwsh のタブで room start を実行する。
+local function open_room(window, project, auth)
+  local title = 'room: ' .. project .. ' [' .. auth.tag .. ']'
+  for _, tab in ipairs(window:mux_window():tabs()) do
+    if tab:get_title() == title then
+      tab:activate()
+      return
+    end
+  end
+  local cmd = "room start '" .. project .. "'"
+  if auth.gateway then cmd = cmd .. ' --gateway' end
+  if type(auth.env) == 'table' and next(auth.env) then
+    -- env は claude --settings の JSON で渡す（引用符を入れ子にしない。base64 を部屋側で戻す）。
+    -- claude で始まるので room start の --add-dir も効く。
+    cmd = cmd .. " --cmd 'claude --settings $(echo " .. wezterm.base64_encode(wezterm.json_encode { env = auth.env }) .. " | base64 -d)'"
+  end
+  local tab = window:mux_window():spawn_tab {
+    domain = { DomainName = 'local' },
+    args = { 'pwsh.exe', '-NoLogo', '-NoExit', '-Command', cmd },
+  }
+  tab:set_title(title)
+end
+
+-- Ctrl+Shift+T: 候補から選んでタブを開く。room: <project> は、続けて認証を選ぶ（2 段）。
 local pick_target = wezterm.action_callback(function(window, pane)
   local choices = {}
   for i, t in ipairs(TARGETS) do
-    choices[i] = { id = tostring(i), label = t.label }
+    choices[#choices + 1] = { id = tostring(i), label = t.label }
+  end
+  for _, p in ipairs(room_projects()) do
+    choices[#choices + 1] = { id = 'p:' .. p, label = 'room: ' .. p }
   end
   window:perform_action(act.InputSelector {
     title = 'New session',
     choices = choices,
     fuzzy = true,
-    action = wezterm.action_callback(function(w, _, id)
-      if id then open_target(w, TARGETS[tonumber(id)]) end
+    action = wezterm.action_callback(function(w, p, id)
+      if not id then return end
+      local project = id:match('^p:(.+)$')
+      if not project then
+        open_target(w, TARGETS[tonumber(id)])
+        return
+      end
+      local auths = {}
+      for i, a in ipairs(ROOM_AUTHS) do
+        auths[i] = { id = tostring(i), label = a.label }
+      end
+      w:perform_action(act.InputSelector {
+        title = 'room: ' .. project .. ' — 認証',
+        choices = auths,
+        action = wezterm.action_callback(function(w2, _, id2)
+          if id2 then open_room(w2, project, ROOM_AUTHS[tonumber(id2)]) end
+        end),
+      }, p)
     end),
   }, pane)
 end)
@@ -153,10 +228,17 @@ wezterm.on('new-tab-button-click', function(window, pane, button)
 end)
 
 -- Ctrl+Shift+D: 今のタブの zellij セッションを消し（delete-session --force）、タブを閉じる。
+-- room start のタブ（名前の末尾が ' [tag]'）は何もしない（上の open_room）。
 -- タブ名（"win: <名>" / "room: <名>"）がセッション名。zellij なしのタブ（pwsh など）は、ただ閉じる。
 local delete_session = wezterm.action_callback(function(window, pane)
   local title = window:active_tab():get_title()
   local where, name = title:match('^(%a+): (.+)$')
+  if where == 'room' and name:match(' %[[%w]+%]$') then
+    -- room start のタブ（'room: <p> [tag]'）。タブを強制的に閉じると room start の後始末
+    -- （アンマウント・gateway 停止）が走らない恐れがあるので、閉じない。
+    window:toast_notification('wezterm', 'room start のタブ: claude を終了して自然に終わらせる（残骸は room umount）', nil, 5000)
+    return
+  end
   if where == 'win' then
     wezterm.run_child_process { 'zellij', 'delete-session', '--force', name }
   elseif where == 'room' then

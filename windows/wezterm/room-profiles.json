@@ -1,0 +1,32 @@
+{
+  "_comment": "wezterm の room 選択（Ctrl+Shift+T → room: <project> → 認証）の認証の一覧。秘密は入れない。env は claude --settings の env で渡す（空白を含む値は不可）。gateway:true は room start --gateway。tag はタブ名 'room: <project> [tag]' の印。",
+  "auth": [
+    {
+      "id": "bedrock",
+      "label": "Claude Bedrock",
+      "tag": "bedrock",
+      "gateway": false,
+      "env": {
+        "CLAUDE_CODE_USE_BEDROCK": "1",
+        "AWS_REGION": "ap-northeast-1",
+        "AWS_PROFILE": "n1-trial",
+        "ANTHROPIC_BEDROCK_REGION_PREFIX": "apac",
+        "ANTHROPIC_DEFAULT_OPUS_MODEL": "global.anthropic.claude-opus-5-5",
+        "ANTHROPIC_DEFAULT_SONNET_MODEL": "global.anthropic.claude-sonnet-5-5",
+        "ANTHROPIC_DEFAULT_HAIKU_MODEL": "global.anthropic.claude-haiku-5-5"
+      }
+    },
+    {
+      "id": "gateway",
+      "label": "Claude Gateway (room)",
+      "tag": "gw",
+      "gateway": true
+    },
+    {
+      "id": "oauth",
+      "label": "Claude OAuth (room)",
+      "tag": "oauth",
+      "gateway": false
+    }
+  ]
+}
