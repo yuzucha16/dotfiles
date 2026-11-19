@@ -640,3 +640,6 @@ git gc --prune=now
   - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
 - **PowerShell の単一引用符の文字列には `` `r`n `` が展開されない**。
   - 【汎用】行き先: 転記済（2026-10-06 → exmem/knowledge/windows-cli-pitfalls.md）
+
+- **NA 8 の閉じ方と、通常の WSL の扱い（2026-11-19、ee の決定）**
+  - 通常の WSL（room 以外）は、設計書の対象外。9 章の 2 は omit（workbase NA 59 が close 済み）。win の bell フックの手順の正本は kit の `bell-hook-win.md`（規模の凍結の畳みは後日）。

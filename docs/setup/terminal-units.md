@@ -229,11 +229,13 @@ layout {
 - WezTerm の Lua と nvim の Lua をつなぐ仕組み(ソケット、`--remote`)。両者の約束は「cwd が同じ」ことだけ。必要になったら、cwd から決まる名前のソケットで nvim を起動し、claude から `nvim --server … --remote` で開く形を足す。
 - pane の数の制限、pane を並べる自作のスクリプト(4 章のとおり、どちらの案もレイアウトだけで足りる)。
 - claude の差分を nvim で見る連携(`claudecode.nvim` など)。使ってみて要るなら足す。
+- room 以外の通常の WSL への対応(2026-11-19、ee の決定。対象外)。
 
 ## 9. PC で確かめること(実装のとき)
 
 1. **2 案(4 章)を実機で動かして選ぶ**。`default_layout` を切り替えて、案 A の入れ替わりが気になるか、案 B の claude の幅(200 桁で 67 桁)で使えるかを見る。案 B の幅は、nvim の `size` を 30% ほどに絞って調整する。案 A の入れ替わりが気になるなら、3 つ目の形を「右上に 2 つ目、右下に nvim」に変える案もある(未検証)。
 2. 実物の `claude` と `nvim` で、4 章の形になるか。claude の pane を閉じたとき(`close_on_exit true` にする想定)、前の形に戻るか。案 B で、途中の pane を続けて閉じたときに形が崩れた例の再現(4 章)。
+   - 結果(2026-11-19、ee の決定): omit(確かめない)。
 3. unlock-first の型で、`Alt` の操作が locked のまま使えるか。
 4. 別の WezTerm タブにいるとき、claude の入力待ちで、そのタブに 🔔 が付くか。room、pwsh7、wsl の 3 つで(zellij を挟んだ BEL。Windows ネイティブの zellij が BEL を渡すかは未確認)。
 5. claude がファイルを書き換えたとき、nvim に反映されるか。LazyVim は FocusGained で `checktime` するが、zellij の中の pane の移動で FocusGained が来るかは未確認。来なければ、一定の間隔で `checktime` する autocmd を足す。
