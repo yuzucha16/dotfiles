@@ -27,6 +27,7 @@ quarto
 ghq
 gh
 lazygit
+nodejs24
 fork
 p4v
 

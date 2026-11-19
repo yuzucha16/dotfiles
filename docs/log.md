@@ -21,12 +21,12 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
    【11-19】手順書 `docs/setup/wezterm-zellij-nvim.md` を新しく書いた（旧 `wezterm-claude-nvim.md` の後継。コミット済み）。未確認: 部屋の nvim 設定の反映（`room-nvim-config.ps1` は作り直し後に未実行。ee が実行する）、通常の WSL（提案: 対象外）。
    【11-19 決定】② は別の機会にまとめてやる。③ の bell フックの settings は、手順書の章 3 の手動手順を正にする（kit の手順書化と畳みは後でまとめて）。`windows/README.md` の古い注は直した。
    【11-19 決定】`room-nvim-config.ps1` は ee が実行し、正常終了（未確認だった反映は済み）。Volta は使わない（Node の取得物を検証しないため。必要になったら ee が使う）。room の Node は今の tarball + SHA-256 のまま、Windows は scoop の Node に寄せる。設計書 12.3 に反映済み。Python の取得物は uv が検証する（設計書 12.3 の注）。
-   【11-19 決定】Node は 24 系のまま（26 系は別の機会）。Windows は scoop の `nodejs24`（versions。24.22.3）。room の表の版も 24.22.3 に合わせる（SHA-256 は `SHASUMS256.txt` で取り直す。実装は workbase の NA 59。dotfiles からは `resources/` を編集しない）。`volta` `nodejs` `nodejs-lts` の `scoop uninstall` と `nodejs24` の導入は ee が行う（今の実機は 26.13.1）。`apps.txt` には node の行が無いので、足すかは未決。
+   【11-19 決定】Node は 24 系のまま（26 系は別の機会）。Windows は scoop の `nodejs24`（versions。24.22.3）。room の表の版も 24.22.3 に合わせる（SHA-256 は `SHASUMS256.txt` で取り直す。実装は workbase の NA 59。dotfiles からは `resources/` を編集しない）。`volta` `nodejs` `nodejs-lts` の `scoop uninstall` と `nodejs24` の導入は ee が行う（今の実機は 26.13.1）。`apps.txt` に `nodejs24` を足した（11-19 ee の決定。コミット済み）。
    【引き継ぎ 11-19（最後のコミット 896c1fe。push は人）】
    - 済み: 手順書 `wezterm-zellij-nvim.md`（章 3 の bell フックは手動の手順を正に）、`windows/README.md` の注、`room-nvim-config.ps1` の実行（ee が正常終了を確認）、Volta の検証（不採用）、Python の検証（uv が展開時に SHA-256 を検証。設計書 12.3 の注）、Node の決定（上）。
    - ee の作業: `scoop uninstall volta nodejs nodejs-lts` と `scoop install nodejs24`。workbase `d043b784` の push。② 9 章の 2・WezTerm 起動直後の zellij・claude の信頼確認の省略と `Ctrl+Enter`（別の機会にまとめる）。
    - workbase 側（別セッション。NA 59）: `tool-versions.txt` の node を 24.21.0 → 24.22.3 にし、SHA-256 を `nodejs.org/dist/v24.22.3/SHASUMS256.txt`（linux-x64.tar.xz）で取り直す。windows 列の node（`volta:node`）は scoop の `nodejs24` に直す。`decisions.md` の「Volta の node の版と揃える」（9 行目）は根拠が消えたので見直す。
-   - 未決: `apps.txt` に node の行（`nodejs24`）を足すか。24 系の保守終了の時期（未確認）。bell フックの kit の手順書化と畳み（規模の凍結。まとめて後で）。通常の WSL への対応（提案: 対象外）。
+   - 【11-19 ee の決定】`27_volta.bat` `28_npm_globals.bat` `manifests/npm.txt` を削除（試験・README も直した）。24 系の保守終了の確認は不要。`27_volta.bat` の入力は「SSL バンドルを設定するか y/N」の 1 問で、y なら `NODE_EXTRA_CA_CERTS` を `setx` していた（削除で Windows では未設定になる。代替は未決）。defuddle / knap の導入経路（旧 28）も未決。\n   - 未決:bell フックの kit の手順書化と畳み（規模の凍結。まとめて後で）。通常の WSL への対応（提案: 対象外）。
    - `scratch.txt` は未追跡のまま（コミットしない）。
    次の一手: ee が scoop を入れ替えて報告 → 設計書 9 章の残りが埋まれば NA 8 を完了にする。workbase の NA 59 に node 24.22.3 を引き継ぐ。
 

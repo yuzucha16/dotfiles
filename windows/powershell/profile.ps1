@@ -137,7 +137,7 @@ Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
 Set-PSReadLineKeyHandler -Key Ctrl+p -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Key Ctrl+n -Function HistorySearchForward
 
-# 社内プロキシ用 CA 証明書の環境変数は、27_volta.bat などが setx で永続化する（ここでは設定しない）
+# 社内プロキシ用 CA 証明書の環境変数は、25_awscli.bat などが setx で永続化する（ここでは設定しない）
 
 # Claude Code を API キー認証で起動する（`claude` は OAuth のまま）。設定は ~/.claude/settings-api.json
 function claude-api { claude --settings "$HOME\.claude\settings-api.json" @args }

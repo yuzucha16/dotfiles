@@ -1,6 +1,6 @@
-# scripts/windows/28_npm_globals.bat, 29_claude_plugins.bat の試験（ネットワーク不要）
+# scripts/windows/29_claude_plugins.bat の試験（ネットワーク不要）
 # 使い方: pwsh -NoProfile -File tests/windows/test_28_29_installers.ps1   （終了コード = 失敗数）
-# 偽の volta / claude を PATH の先頭に置く。実環境の claude / volta と ~\.claude は呼ばない。
+# 偽の claude を PATH の先頭に置く。実環境の claude と ~\.claude は呼ばない。
 # 試験の前に、各スクリプトが PATH を書き換えて偽物より先に本物を見つけないことを確認する（29 で実際に起きた）。
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
@@ -36,12 +36,6 @@ function Run-Case($script, $fakes, $failOn = '') {
   }
   [pscustomobject]@{ Out = $out; Rc = $rc; Calls = $calls }
 }
-
-# ---------- 28_npm_globals ----------
-$r = Run-Case '28_npm_globals.bat' @('volta')
-Check 'npm: installs defuddle and knap with volta install'  (($r.Calls -match 'volta install defuddle') -and ($r.Calls -match 'volta install knap') -and ($r.Rc -eq 0))
-$r = Run-Case '28_npm_globals.bat' @('volta') 'defuddle'
-Check 'npm: one failure continues, exit 1'                  (($r.Calls -match 'volta install knap') -and ($r.Rc -eq 1))
 
 # ---------- 29_claude_plugins ----------
 $r = Run-Case '29_claude_plugins.bat' @('claude')

@@ -82,7 +82,7 @@ echo.
 echo %ESC%[38;5;208m================================================================%ESC%[0m
 echo %ESC%[38;5;208m[ACTION NEEDED if your network uses a proxy CA]%ESC%[0m
 echo %ESC%[38;5;208m  Put the CA bundle here:  %CERTS_DIR%\ca_bundle.crt%ESC%[0m
-echo %ESC%[38;5;208m  (25_awscli / 26_uv / 27_volta read it. Not needed? Ignore this.)%ESC%[0m
+echo %ESC%[38;5;208m  (25_awscli / 26_uv read it. Not needed? Ignore this.)%ESC%[0m
 echo %ESC%[38;5;208m================================================================%ESC%[0m
 echo.
 

@@ -1,6 +1,6 @@
-# scripts/windows/25_awscli.bat, 26_uv.bat, 27_volta.bat の試験（ネットワーク不要）
+# scripts/windows/25_awscli.bat, 26_uv.bat の試験（ネットワーク不要）
 # 使い方: pwsh -NoProfile -File tests/windows/test_25_27_installers.ps1   （終了コード = 失敗数）
-# 偽の PS_EXE（インストーラ）、偽の SETX_EXE、偽の uv / volta / scoop / python / node / npm / npx を PATH の先頭に置く。
+# 偽の PS_EXE（インストーラ）、偽の SETX_EXE、偽の uv / scoop / python / node / npm / npx を PATH の先頭に置く。
 # 実環境の環境変数（setx）と PATH の登録は変更しない。入力は標準入力のファイルで渡す。
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
@@ -19,7 +19,7 @@ function Run-Case($script, $lines, $withCa = $true, $noCerts = $false, $instFail
   $log = Join-Path $root 'calls.log'
   if ($withCa) { Set-Content (Join-Path $certs 'ca_bundle.crt') 'dummy' -Encoding ascii }
   # 偽のコマンド（呼ばれた名前と引数を calls.log に残す）
-  foreach ($n in 'setx', 'uv', 'volta', 'scoop', 'python', 'node', 'npm', 'npx') {
+  foreach ($n in 'setx', 'uv', 'scoop', 'python', 'node', 'npm', 'npx') {
     Set-Content (Join-Path $bin "$n.cmd") "@echo off`r`necho $n %* >> `"$log`"`r`necho $n 1.2.3`r`nexit /b 0" -Encoding ascii
   }
   $rc = if ($instFail) { 1 } else { 0 }
@@ -81,20 +81,6 @@ Check 'uv installer fails: [ERR], exit 1, no uv call' (($r.Out -match '\[ERR\] u
 $r = Run-Case '26_uv.bat' @('x', 'x', 'x', 'x', 'x')
 Check 'uv invalid x5: [ERR], exit 1, nothing run'     (($r.Rc -eq 1) -and ($r.Calls -eq ''))
 
-# ---------- 27_volta ----------
-$r = Run-Case '27_volta.bat' @('y')
-Check 'volta y: scoop install volta'                  ($r.Calls -match 'scoop install volta')
-Check 'volta y: setx NODE_EXTRA_CA_CERTS'             ($r.Calls -match 'setx NODE_EXTRA_CA_CERTS ".*ca_bundle\.crt"')
-Check 'volta y: volta install node@lts'               ($r.Calls -match 'volta install node@lts')
-Check 'volta y: node / npm / npx versions printed'    (($r.Calls -match 'node --version') -and ($r.Calls -match 'npm --version') -and ($r.Calls -match 'npx --version') -and ($r.Out -match '\[VERSION\]'))
-Check 'volta y: setx happens before scoop install'    ($r.Calls.IndexOf('setx NODE_EXTRA_CA_CERTS') -lt $r.Calls.IndexOf('scoop install volta'))
-$r = Run-Case '27_volta.bat' @('n')
-Check 'volta n: installs and pins, no setx'           (($r.Calls -match 'volta install node@lts') -and ($r.Calls -notmatch 'setx'))
-$r = Run-Case '27_volta.bat' @('y') $false
-Check 'volta y, no CA file: [SKIP], no setx'          (($r.Out -match '\[SKIP\] .*ca_bundle\.crt not found') -and ($r.Calls -notmatch 'setx') -and ($r.Calls -match 'volta install'))
-$r = Run-Case '27_volta.bat' @('x', 'x', 'x', 'x', 'x')
-Check 'volta invalid x5: [ERR], exit 1, nothing run'  (($r.Rc -eq 1) -and ($r.Calls -notmatch 'scoop install'))
-
 # ---------- pause と [ENV] ログ（全経路で pause して終わる） ----------
 $r = Run-Case '25_awscli.bat' @('y')
 Check 'aws y: [ENV] shows AWS_CA_BUNDLE value, then pause' (($r.Out -match 'AWS_CA_BUNDLE\s+=.*ca_bundle\.crt') -and ($r.Out -match 'Press any key'))
@@ -114,13 +100,6 @@ $r = Run-Case '26_uv.bat' @('n') $true $false $true
 Check 'uv installer fails: pause, exit 1'             (($r.Out -match 'Press any key') -and ($r.Rc -eq 1))
 $r = Run-Case '26_uv.bat' @('x', 'x', 'x', 'x', 'x')
 Check 'uv invalid x5: pause, exit 1'                  (($r.Out -match 'Press any key') -and ($r.Rc -eq 1))
-$r = Run-Case '27_volta.bat' @('y')
-Check 'volta y: [ENV] shows NODE_EXTRA_CA_CERTS, then pause' (($r.Out -match 'NODE_EXTRA_CA_CERTS=.*ca_bundle\.crt') -and ($r.Out -match 'Press any key'))
-$r = Run-Case '27_volta.bat' @('n')
-Check 'volta n: SKIP with reason, [ENV] not set, pause' (($r.Out -match '\[SKIP\] SSL bundle not set \(answered n\)') -and ($r.Out -match 'NODE_EXTRA_CA_CERTS=\[not set\]') -and ($r.Out -match 'Press any key'))
-$r = Run-Case '27_volta.bat' @('x', 'x', 'x', 'x', 'x')
-Check 'volta invalid x5: pause, exit 1'               (($r.Out -match 'Press any key') -and ($r.Rc -eq 1))
-
 # ---------- 共通の点検 ----------
 $p = Get-Content (Join-Path $repo 'windows\powershell\profile.ps1') -Raw
 Check 'profile.ps1 no longer sets NODE_EXTRA_CA_CERTS' ($p -notmatch 'env:NODE_EXTRA_CA_CERTS\s*=')
