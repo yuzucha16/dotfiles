@@ -156,6 +156,7 @@
       }
     }
   },
+  "model": "sonnet",
   "theme": "dark-ansi",
   "statusLine": {
     "type": "command",
