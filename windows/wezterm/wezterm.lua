@@ -64,7 +64,18 @@ local function open_target(window, target)
     spec.domain = { DomainName = 'local' }
     -- zellij は Windows で既定のシェルが cmd になり、SHELL 環境変数は見ない（2026-11-19 実機）。
     -- pwsh7 は options --default-shell で渡す（新しいセッションだけに効く。既存は作り直す）。
-    spec.args = { 'zellij.exe', 'attach', '--create', name, 'options', '--default-shell', 'pwsh' }
+    -- --default-cwd は claude2 の swap layout を崩す（2026-11-19 実機で切り分け）ので使わない。
+    -- spawn_tab の cwd は zellij の pane に届かず ~ になった。pwsh で cd してから zellij を起動する。
+    -- クライアントが作ったセッションは、最初の layout が swap layout に乗らず、Alt+c の 1 回目が
+    -- nvim の右に出る。先に背景でセッションを作ってから attach する（2026-11-19 実機で確認）。
+    local ps = table.concat({
+      "Set-Location -LiteralPath '" .. target.cwd .. "'",
+      "$n = '" .. name .. "'",
+      "if (-not ((zellij list-sessions -n 2>$null) -split \"`n\" | Where-Object { ($_ -split ' ')[0] -eq $n })) {",
+      "  zellij attach --create-background $n options --default-shell pwsh | Out-Null }",
+      "zellij attach $n",
+    }, '\n')
+    spec.args = { 'pwsh.exe', '-NoLogo', '-Command', ps }
   else
     spec.domain = { DomainName = ROOM }
     -- login shell 経由（PATH に ~/.local/bin などを入れる）

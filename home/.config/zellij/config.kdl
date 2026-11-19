@@ -8,7 +8,9 @@ default_mode "locked"
 default_layout "claude-b"
 
 // 隠した floating の BEL は渡らない（6 章）。claude は floating に置かない。
-pane_frames false
+// pane の見分け: 各 pane の上にタイトル行を出す（0.45 以降の既定）。足りなければ "full"（全周の枠。縦横 2 つずつ狭くなる）。
+pane_frames true
+pane_frame_style "titles"
 session_serialization false
 
 keybinds {
