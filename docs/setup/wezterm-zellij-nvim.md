@@ -73,7 +73,7 @@ win では、BEL を ConPTY が止める。そこで、フックが旗ファイ�
 
 3. claude を起動し直す（フックは起動時に読まれる）
 
-- この手動の手順を正とする（ee の決定 2026-11-19。kit の手順書にするかは、規模の凍結の畳みと合わせて後で決める）
+- 手順の正本は kit の `workflow-kit/bell-hook-win.md`（ee の決定 2026-11-19。規模の凍結の畳みは後日）。この章は要約。`bell-mark.ps1` の実体は `windows\wezterm\` にある
 - room の bell は、`room init` の段 `bellhook` が入れる（章 4）。win の旗ファイル方式とは別の仕組み
 
 完了の目安: 別のタブにいるとき、win の claude の入力待ちで、そのタブの名前がオレンジの 🔔 になる。
