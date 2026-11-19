@@ -92,7 +92,7 @@ win では、BEL を ConPTY が止める。そこで、フックが旗ファイ�
 ## 5. 動作確認
 
 1. WezTerm を通常に起動し、`Ctrl+Shift+T` で候補（`wezterm.lua` の `TARGETS`）から選ぶ
-2. 新しいセッションなら、左に claude、右に nvim が並ぶ（案 B。`config.kdl` の `default_layout`）
+2. 新しいセッションなら、左に claude（新規会話。`--resume` なし）、右に nvim が並び、各 pane の上にタイトル行が出る（案 B。`config.kdl` の `default_layout`、`pane_frames` の `titles`）。`Alt+c` で claude を足すと、3 列配置になる
 
 完了の目安: 上の状態になる。WezTerm のタブを閉じて同じ候補を開き直すと、同じセッションに戻る。
 
@@ -120,4 +120,7 @@ win では、BEL を ConPTY が止める。そこで、フックが旗ファイ�
 | 別タブの印が、マウスを動かすまで出ない | `wezterm.lua` が `update-status` で再描画する作りなので、`status_update_interval` を消していないか確かめる |
 | claude が書き換えたファイルが、nvim に出ない | `autocmds.lua` の 2 秒間隔の `checktime` と `redraw` を確かめる。未保存の編集があると、nvim は「破棄か load か」を聞く（nvim の標準の動作） |
 | LazyVim の `Alt+j` / `Alt+k` が効かない | zellij の pane の移動と衝突するため、zellij の移動は矢印だけにしてある（設計書 5 章） |
+| win で claude が 2 列のまま（`Alt+c` で 3 列にならない）、枠が緑 | zellij をクライアントが作るセッション（`zellij attach --create` の 1 段）で起動している。`wezterm.lua` は pwsh で背景作成（`attach --create-background`）→ `attach` の **2 段**にしてある（枠はピンクで 3 列）。1 段へ戻さない。既存のセッションは `zellij.exe delete-session --force <名>` で作り直す |
+| 起動が約 1 秒遅い | 2 段起動の費用（pwsh 約 500ms、`list-sessions` 約 160ms、背景作成約 410ms）。`-NoProfile` で約 100ms 縮むが、不要と判断して入れていない（ee） |
+| 新しい zellij の cwd が `~` になる | `spawn_tab` の cwd は zellij の pane に届かない。`wezterm.lua` が pwsh で `Set-Location` してから zellij を起動する。`--default-cwd` は swap layout を崩すので使わない |
 | `Alt+n` で ListView の warning が出る | 起動時だけで、何もしない（ee の決定 2026-11-19） |

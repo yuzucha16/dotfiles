@@ -93,7 +93,7 @@ claude 1 つ(初期)       claude 2 つ              claude 3 つ
 ```kdl
 layout {
     pane split_direction="vertical" {
-        pane command="claude" { args "--resume"; }   // 左: 最初の claude
+        pane command="claude"                        // 左: 最初の claude(新規セッション。--resume は付けない)
         pane command="nvim"                          // 右: nvim
     }
     swap_tiled_layout name="claude2" {
@@ -142,7 +142,7 @@ nvim は、どの段階でも右一列のまま動かない。
 ```kdl
 layout {
     pane split_direction="vertical" {
-        pane command="claude" { args "--resume"; }   // 左: 最初の claude
+        pane command="claude"                        // 左: 最初の claude(新規セッション。--resume は付けない)
         pane command="nvim"                          // 右: nvim
     }
     swap_tiled_layout name="claude2" {
@@ -190,6 +190,12 @@ layout {
 
 **推奨は案 B**(認知を下げる、という目的に合う。nvim が動かず、会話の位置が増えた順に決まる)。弱点は claude の幅なので、実機でその幅で使えるかを見て決める。**2026-11-19 に案 B で決定**(ユーザーの決定。案 A のレイアウトは `home/.config/zellij/layouts/claude-a.kdl` に残し、`config.kdl` の `default_layout` で切り替える)。レイアウトの注意(実機で確認、zellij 0.46.0): 下のモード表示バー(`default_tab_template` の `compact-bar`)は、トップ階層の `pane` には付かず、`tab { }` で包んだときだけ付く。
 
+実機での追加の事実(2026-11-19、ee が確認。経緯は `decisions.md` の「zellij の起動は 2 段」):
+
+- **swap layout が効くのは、背景で作ったセッションに attach したとき**(Windows の pwsh7 での確認)。クライアントが作るセッション(`zellij attach --create` の 1 段起動)は、枠が緑で 2 列のままになり、3 列配置にならない。背景で作って attach したセッションは、枠がピンクで 3 列になる。起動直後の pane の並びと swap layout の定義は、dump-layout では両者で同一で、差は floating pane の状態だけだった(原因は未確認)。このため起動は 2 段にする(7 章)。
+- **pane のタイトル行を出す**: `config.kdl` の `pane_frames true` と `pane_frame_style "titles"`(pane の上に 1 行。足りなければ `"full"` で全周の枠。縦横が 2 つずつ狭くなる)。上の実測(`false`)の「pane のタイトルで見分ける」は、この設定で実機でも使える。
+- 最初の claude は **新規セッションで始める**(`--resume` を付けない)。会話の再開は、claude の中で行う。
+
 ## 5. 責務とキーの分担
 
 | 層 | 管理するもの | キー(修飾キーで層を分ける) |
@@ -219,8 +225,11 @@ layout {
 ## 7. 起動の流れ
 
 1. `Ctrl+Shift+T` で「環境 + cwd」の候補を選ぶ。同じ組のタブがあれば、そこへ移って終わり。
-2. 無ければ、WezTerm がその環境・cwd でタブを作り、`zellij attach --create <セッション名>` を実行する。セッション名は cwd から決める(例: `dotfiles`、`resources`。同じ名前の別の cwd は、親のディレクトリ名を足して区別する)。
-3. 新しいセッションなら、既定のレイアウトで左 claude(`claude --resume` の一覧から選ぶ)、右 nvim が開く。既存のセッションなら、前の状態に戻る。
+2. 無ければ、WezTerm がその環境・cwd でタブを作り、zellij を **2 段で起動する**。セッション名は cwd から決める(例: `dotfiles`、`resources`。同じ名前の別の cwd は、親のディレクトリ名を足して区別する)。
+   - pwsh7(Windows)の場合: WezTerm は `pwsh.exe -NoLogo -Command <スクリプト>` を起動する。スクリプトは、(1) `Set-Location` で cwd へ移り、(2) `zellij list-sessions` に同名が無ければ `zellij attach --create-background <名> options --default-shell pwsh` で背景にセッションを作り、(3) `zellij attach <名>` で接続する。cwd を pwsh で `cd` するのは、`spawn_tab` の cwd が zellij の pane に届かず `~` になるため。`--default-cwd` は swap layout を崩すので使わない(2026-11-19 実機)。
+   - room の場合: login shell 経由で起動する(`exec zellij attach --create <名>` の 1 段のまま。2 段にしたのは Windows 側だけで、room で同じ現象が出るかは未確認)。
+   - 費用: 起動が約 1 秒遅れる(pwsh 約 500ms、`list-sessions` 約 160ms、背景作成約 410ms。実測)。
+3. 新しいセッションなら、既定のレイアウトで左 claude(新規セッション。`--resume` は付けない)、右 nvim が開く。既存のセッションなら、前の状態に戻る。
 4. タブ名は「環境: cwd の名前」にする(WezTerm の Lua が付ける)。
 
 ## 8. 作らないもの(線引き)
