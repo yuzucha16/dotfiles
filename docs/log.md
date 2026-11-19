@@ -17,7 +17,8 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
    【11-19 実機で確認済み】本番の `wezterm.lua` と LazyVim（5bfe4de）。bell: room と wsl は BEL で 🔔（room は `~/.claude/hooks/bell.sh`。workbase `d043b784` で `room init` の `bellhook` 段も直した。未 push）。**win は BEL を ConPTY が止める**ので、claude のフック `~/.claude/hooks/bell-mark.ps1` が `%TEMP%\wezterm-bell\<WEZTERM_PANE>` を置き、`wezterm.lua` の `update-status` が拾って印を付ける（zellij の中の pwsh7 と、claude の入力待ちで 🔔 を確認。`settings.json` に Notification と Stop を足した。バックアップ `settings.json.bak-bellmark`）。nvim の `checktime`（2 秒タイマー）、`Ctrl+Tab`、タブ名・重複防止、`Alt+f`、`Alt+x`、`Alt+c` も確認済み。zellij の win は `SHELL` を見ず、`attach --create <名> options --default-shell pwsh` で渡す（新しいセッションだけに効く。既存は `delete-session` で作り直し）。
    【残り】① `Ctrl+Shift+N`（素の pwsh7 タブ）は 11-19 に実機で確認済み（pwsh が出た）。② 【11-19 決定】`Alt+n` の pwsh の warning「ListView は WindowWidth 50 未満・WindowHeight 5 未満で一時無効」は、pane の初期サイズが小さい起動時の 1 回だけ。ee の決定で何もしない（`profile.ps1` は変えない）。サイズが決まった後に ListView が出るかは、使うときに見る。③ ⑥ pwsh7・lazygit（10 章の 5〜6）、手順書の書き直し。④ 9 章の 2（閉じる操作を続けたときの形の崩れ）、WezTerm 起動直後の zellij、claude の信頼確認の省略と `Ctrl+Enter`（ee が試用中）。⑤ 【11-19 決定】二段階。先に `bell-mark.ps1` を `windows/wezterm/` へ置く（済み。実体は `~/.claude/hooks/` のまま）。次に settings の Notification/Stop だけ kit の手順にするか決める（未。規模の凍結で 1 つ畳む必要あり）。ショートカットの見直しは別の機会（ee）。
    【引き継ぎ 11-19】コミット 404ca85 まで済み。`lazy-lock.json` `lazyvim.json` は追跡する（ee の決定 11-19。コミット済み）。`scratch.txt` は 5 の確認用で未追跡のまま。workbase `d043b784` は未 push（人が push）。win の zellij の既存セッションは cmd のままなので、`zellij.exe delete-session --force <名>` で作り直す（ee の判断）。
-   次の一手: ⑥ pwsh7・lazygit（10 章の 5〜6）→ 手順書の書き直し。
+   【11-19】⑥ pwsh7 7.6.7・zellij 0.46.0・nvim 0.12.6・lazygit 0.66.3（extras。11-19 13:40 に scoop で入った）は入っている。`apps.txt` に lazygit を足した。残りは pwsh7 の zellij 内で lazygit が起動するか（ee）。12 章の表の lazygit の SHA-256 は未。
+   次の一手: pwsh7 の zellij で lazygit の起動を確認（ee）→ 手順書の書き直し。
 
 ## Open Questions
 

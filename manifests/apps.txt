@@ -26,6 +26,7 @@ quarto
 # dev tools
 ghq
 gh
+lazygit
 fork
 p4v
 
