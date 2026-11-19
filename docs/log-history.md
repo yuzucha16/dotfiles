@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-11-20（NA 13 完了: `git -C` 権限の残り (a) を決めた）
+- 元の NA 13: 【起票 11-19】【判断:ユーザー】 `git -C` の権限まわりの残りを扱うか決める。(a) `git diff *` `git log *` の `--output=<file>`、`git commit *` の hook 実行。(b) は先に完了（resources `37810576`）。完了: (a) を塞ぐか許容するかが決まる。
+- ee が「`--output` を deny、commit hook は許容」を選択。`home/.claude/settings.json` に `git diff/log/show*--output*` の deny を PowerShell と Bash に 3 行ずつ（計 6 行）足した（JSON 読み込み確認済み）。根拠は `decisions.md` の NA 13 (a) の項。
+- 未確認: 実機で `git diff --output=x` が止まるか（ee が確認）。
+
 ### 2026-11-20（NA 13 一部完了: (b) `-C` 前提の共有ノートを直した）
 - ee が、`exmem/` の特定ファイルの書き換えを例外として許可し、修正レビューを依頼。変更は resources `37810576`（7 ファイル: `claude-code-permissions` `shell-command-usecases`（注記 1 行のみ。種の本文は未変更）`workflow-kit` `alignment-baseline` `ai-room-setup-manual` `ai-room-setup` `ai-room-setup-script`）。
 - 修正レビュー（別エージェント 2 件）: 整合は NORMAL（`settings.json` の allow に `git -C` 無し・deny に残る・`-C` なし allow は PS 11 と Bash 11 を確認）。範囲は ANOMALY（`exmem/` の外の 2 ファイルと、名指し外の `workflow-kit.md`）。ee が「A: 5 ファイルを追認」と判断し、同種の 2 箇所（`ai-room-setup.md` `ai-room-setup-script.md`）も揃えた。

@@ -588,6 +588,7 @@ git gc --prune=now
   - **解決（2026-11-19、ユーザーが承認）**: リンクは SymbolicLink で確認済み。`git -C * ...` の allow 22 行（PowerShell 11・Bash 11）を消し、`-C` なしの allow（PowerShell は `show` `remote -v` `branch --show-current` `check-ignore` `rev-parse`、Bash は `status` `log` `diff` `show` `ls-files` `remote -v` `branch --show-current` `check-ignore` `rev-parse`）を足した。運用は「cwd をそのリポジトリにして `-C` なしで実行」。deny の `git -C * ...` は残す（`git -C . push -f` が `-C` なしの deny に当たらないため）。`/status` に警告が出て結果が見えなかったのが発端。
   - 却下案: 案 1（allow を全部消し、毎回の確認を受け入れる。パス指定コミットが標準なので不便）、案 2（`-C` の値を絶対パスで固定。PC ごとに違い、許可ルールは文字列照合で環境変数を展開しない）。三層レビュー（整合・実用性・反証。結果は 3 件とも、方向は妥当、ただし `-C` なしの allow の欠けを足すこと）を経た。
   - 未解決: `git diff *` `git log *` の `--output=<file>`、`git commit *` の hook 実行は、`-C` を消しても残る（別 NA）。`-C` 前提の共有ノート（`shell-command-usecases.md` `claude-code-permissions.md` `ai-room-setup-manual.md`）は dotfiles から直さない（別 NA）。`-C` なしの `git status *` で警告が出ないかは、実機で確かめる（未確認）。
+  - **NA 13 (a) の決定（2026-11-20、ユーザーが選択）**: `git diff/log/show` の `--output=<file>`（承認なしで任意のファイルを上書きできる）は、`*--output*` の deny を PowerShell と Bash に 3 行ずつ（計 6 行）足して塞いだ（`--no-verify` と同じ形式）。`git commit` の hook 実行は許容する。理由: allow は先頭が `git commit` のものだけに当たり、`git -c core.hooksPath=...` は当たらず承認が要る。残るのは `.git/hooks` に既にある hook だけで、仕込むには別の書き込みが要り、それは別の権限で止まる。却下案: 両方許容（上書きの穴が残る）、commit も allow から外す（パス指定コミットが標準で、毎回の承認が不便）。実機での deny の効きは未確認。
   - 【この件】行き先: local（dotfiles の `home/.claude/settings.json` の許可ルール）
 
 - 状況: schannel の設定として `https.sslVerify true` を指定された（`[https] sslVerify = true`）
