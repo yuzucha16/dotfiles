@@ -1,0 +1,13 @@
+{
+  "name": "Gruvbox (terminal palette)",
+  "base": "dark-ansi",
+  "overrides": {
+    "claude": "ansi:yellow",
+    "claudeShimmer": "ansi:yellowBright",
+    "suggestion": "ansi:blue",
+    "permission": "ansi:blue",
+    "planMode": "ansi:cyan",
+    "bashBorder": "ansi:yellow",
+    "promptBorder": "ansi:blackBright"
+  }
+}

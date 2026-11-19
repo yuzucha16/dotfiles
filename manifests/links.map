@@ -28,6 +28,9 @@ windows\powershell\profile.ps1|%USERPROFILE%\Documents\PowerShell\profile.ps1
 home\.claude\settings.json|%USERPROFILE%\.claude\settings.json
 # Claude Code (keybindings: Enter = newline, Ctrl+Enter = submit)
 home\.claude\keybindings.json|%USERPROFILE%\.claude\keybindings.json
+# Claude Code (status line script, and custom themes: pick with /theme -> custom:gruvbox etc.)
+home\.claude\statusline.py|%USERPROFILE%\.claude\statusline.py
+home\.claude\themes|%USERPROFILE%\.claude\themes
 # Claude Code (API key auth, launched by `claude-api`; the key itself is not tracked)
 windows\claude\settings-api.json|%USERPROFILE%\.claude\settings-api.json
 windows\claude\claude-api-key.ps1|%USERPROFILE%\.local\bin\claude-api-key.ps1

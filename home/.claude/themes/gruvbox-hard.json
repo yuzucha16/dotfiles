@@ -1,0 +1,29 @@
+{
+  "name": "Gruvbox Dark Hard",
+  "base": "dark",
+  "overrides": {
+    "claude": "#d65d0e",
+    "claudeShimmer": "#fe8019",
+    "text": "#ebdbb2",
+    "inverseText": "#1d2021",
+    "inactive": "#7c6f64",
+    "subtle": "#3c3836",
+    "suggestion": "#458588",
+    "permission": "#458588",
+    "remember": "#b16286",
+    "success": "#98971a",
+    "error": "#cc241d",
+    "warning": "#d79921",
+    "merged": "#b16286",
+    "promptBorder": "#504945",
+    "planMode": "#689d6a",
+    "autoAccept": "#b16286",
+    "bashBorder": "#d65d0e",
+    "diffAdded": "#2a2b14",
+    "diffRemoved": "#341a19",
+    "diffAddedWord": "#4a4d18",
+    "diffRemovedWord": "#6a2420",
+    "userMessageBackground": "#32302f",
+    "selectionBg": "#3c3836"
+  }
+}

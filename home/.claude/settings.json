@@ -163,5 +163,9 @@
       }
     }
   },
-  "theme": "dark-ansi"
+  "theme": "dark-ansi",
+  "statusLine": {
+    "type": "command",
+    "command": "python -I ~/.claude/statusline.py"
+  }
 }
