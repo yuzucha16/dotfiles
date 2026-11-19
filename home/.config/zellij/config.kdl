@@ -1,0 +1,43 @@
+// zellij の設定（docs/setup/terminal-units.md の 4・5 章）。未検証: room で実機確認する（9 章）。
+// 「unlock-first」: 既定は locked。Ctrl+g で解除してから zellij を操作する（nvim・claude のキーを取らないため）。
+// Alt の操作は locked のままでも効く（9 章の 3 は要確認）。
+
+default_mode "locked"
+
+// 案の切り替えは、この 1 行（claude-a.kdl / claude-b.kdl）。推奨は案 B。
+default_layout "claude-b"
+
+// 隠した floating の BEL は渡らない（6 章）。claude は floating に置かない。
+pane_frames false
+session_serialization false
+
+keybinds {
+    locked {
+        bind "Ctrl g" { SwitchToMode "normal"; }
+    }
+    shared_except "locked" {
+        bind "Ctrl g" { SwitchToMode "locked"; }
+    }
+    shared {
+        // claude を足す。形はレイアウトの swap layout が決める。
+        bind "Alt c" {
+            Run "claude" {
+                close_on_exit true
+            }
+        }
+        // lazygit を floating で開く。閉じると pane も消える。
+        bind "Alt g" {
+            Run "lazygit" {
+                floating true
+                close_on_exit true
+            }
+        }
+        // floating の表示切替。
+        bind "Alt f" { ToggleFloatingPanes; }
+        // pane の移動は矢印のみ（LazyVim の Alt+j/k と衝突させない。5 章）。
+        bind "Alt Left" { MoveFocus "Left"; }
+        bind "Alt Down" { MoveFocus "Down"; }
+        bind "Alt Up" { MoveFocus "Up"; }
+        bind "Alt Right" { MoveFocus "Right"; }
+    }
+}

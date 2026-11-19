@@ -1,0 +1,39 @@
+// 案 B: 中央 3 分割（nvim は右一列に固定。claude は Z の順）。docs/setup/terminal-units.md 4 章。
+// nvim は引数なしの同じコマンドで起動する（zellij はコマンドが同じ pane を同じ枠に入れる）。
+layout {
+    // 下 1 行にモード表示(LOCK / NORMAL)。pane の数え方への影響は未検証（exact_panes が崩れたらこの節を外す）。
+    default_tab_template {
+        children
+        pane size=1 borderless=true { plugin location="zellij:compact-bar"; }
+    }
+    // default_tab_template は tab ノードにだけ効く。トップ階層に直接 pane を書くと、バーが付かない。
+    tab {
+        pane split_direction="vertical" {
+            pane command="claude" { args "--resume"; }   // 左: 最初の claude
+            pane command="nvim"                          // 右: nvim
+        }
+    }
+    swap_tiled_layout name="claude2" {
+        tab exact_panes=3 {                          // claude 2 つ + nvim
+            pane split_direction="vertical" { pane; pane; pane command="nvim"; }
+        }
+    }
+    swap_tiled_layout name="claude3" {
+        tab exact_panes=4 {                          // claude 3 つ + nvim: 左を上下に
+            pane split_direction="vertical" {
+                pane split_direction="horizontal" { pane; pane; }
+                pane
+                pane command="nvim"
+            }
+        }
+    }
+    swap_tiled_layout name="claude4" {
+        tab exact_panes=5 {                          // claude 4 つ + nvim: 中央も上下に
+            pane split_direction="vertical" {
+                pane split_direction="horizontal" { pane; pane; }
+                pane split_direction="horizontal" { pane; pane; }
+                pane command="nvim"
+            }
+        }
+    }
+}

@@ -47,14 +47,19 @@ local function new_session_tab(window, target)
     spec.domain = { DomainName = 'local' }
     spec.args = { 'pwsh.exe', '-NoLogo' }
   else
+    -- room: zellij が layout（default_layout）で claude と nvim を並べる。
+    -- login shell 経由で起動する（PATH に ~/.local/bin などが入るように）。
     spec.domain = { DomainName = ROOM }
+    spec.args = { 'bash', '-lc', 'exec zellij' }
   end
   local tab, left, _ = window:mux_window():spawn_tab(spec)
-  local right = left:split { direction = 'Right', size = 0.5 }
-  left:send_text 'claude --resume\n'
-  right:send_text 'nvim\n'
+  if target.where == 'win' then
+    local right = left:split { direction = 'Right', size = 0.5 }
+    left:send_text 'claude --resume\n'
+    right:send_text 'nvim\n'
+    left:activate()
+  end
   tab:set_title(basename(target.cwd == '~' and 'room' or target.cwd))
-  left:activate()
   return tab
 end
 
