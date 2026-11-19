@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-11-19（NA 11 一部完了: statusline の認証種別と、`git -C` の許可の整理）
+- `statusline.py` に認証種別（env と `rate_limits` からの推定）を追加。`CLAUDE_CODE_HIDE_CWD` は採用しない（ユーザーの決定。`settings.json` の `env` を戻した）。
+- `/status` に出る permission の警告（`git -C * ...` の `*` が `-c` などを通す）を、三層レビュー（整合・実用性・反証）を経て解消。`settings.json` の allow から `git -C * ...` 22 行を消し、`-C` なしの allow を 14 行足した（deny は残す）。ユーザーが承認し、実機で警告の消失を確認（根拠: ユーザーの報告）。経緯・却下案は `decisions.md` の 586 行目の追記。
+- 起票: NA 13（`diff`/`log` の `--output`、`commit` の hook、`-C` 前提の共有ノート）。
+
 ### 2026-11-19（NA 10 完了: 原因の切り分け。画面サイズ）
 - 完了の判断は ee が「原因の切り分けまで」と決定（layout b が既定、a/b は切替可。修正はしない）。結果: swap layout の定義は正しい。2 段起動のセッション（`dotfiles`）で 1 回目の Alt+c 後は 50/50 縦積み（dump-layout）、`next-swap-layout` で 3 列 33% になった。背景作成だけの試験セッションは `zellij run` で 3 列。ee の実機で、ウィンドウを大きくすると中央 3 列になった＝原因は画面サイズ（ee 確認。swap の幅の条件に足りないと自動で選ばれない、が仮説。zellij の内部は未確認）。
 - 残りは NA 12（未コミットの 4 ファイルの扱い）に移した。回避案（Alt+c の後に `NextSwapLayout`）は未試験のまま。

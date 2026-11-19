@@ -584,6 +584,9 @@ git gc --prune=now
   - 【汎用】行き先: 転記待ち（→ exmem/inbox/2026-10-07-zed-thread-db-folder-paths.md）
 
 - **`claude` の起動のたびに、`Permission allow rule ... has a wildcard before the rest of the command` の警告が出る**（2026-10-07。`claude --resume` の出力で確認）。原因: `~\.claude\settings.json`（dotfiles の `home/.claude/settings.json` のリンクのはず。未確認）の許可ルール `Bash(git -C * status *)` などで、`*` が `git -C` の直後にあり、`-c` などのオプションを承認なしで通してしまうため（警告の文面）。解決: 未対応（ルールの意味が変わるので、ユーザーに確認してから直す。Next Actions）。
+  - **解決（2026-11-19、ユーザーが承認）**: リンクは SymbolicLink で確認済み。`git -C * ...` の allow 22 行（PowerShell 11・Bash 11）を消し、`-C` なしの allow（PowerShell は `show` `remote -v` `branch --show-current` `check-ignore` `rev-parse`、Bash は `status` `log` `diff` `show` `ls-files` `remote -v` `branch --show-current` `check-ignore` `rev-parse`）を足した。運用は「cwd をそのリポジトリにして `-C` なしで実行」。deny の `git -C * ...` は残す（`git -C . push -f` が `-C` なしの deny に当たらないため）。`/status` に警告が出て結果が見えなかったのが発端。
+  - 却下案: 案 1（allow を全部消し、毎回の確認を受け入れる。パス指定コミットが標準なので不便）、案 2（`-C` の値を絶対パスで固定。PC ごとに違い、許可ルールは文字列照合で環境変数を展開しない）。三層レビュー（整合・実用性・反証。結果は 3 件とも、方向は妥当、ただし `-C` なしの allow の欠けを足すこと）を経た。
+  - 未解決: `git diff *` `git log *` の `--output=<file>`、`git commit *` の hook 実行は、`-C` を消しても残る（別 NA）。`-C` 前提の共有ノート（`shell-command-usecases.md` `claude-code-permissions.md` `ai-room-setup-manual.md`）は dotfiles から直さない（別 NA）。`-C` なしの `git status *` で警告が出ないかは、実機で確かめる（未確認）。
   - 【この件】行き先: local（dotfiles の `home/.claude/settings.json` の許可ルール）
 
 - 状況: schannel の設定として `https.sslVerify true` を指定された（`[https] sslVerify = true`）
