@@ -27,6 +27,12 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 
 ## Decisions
 
+### 【この件】WezTerm のタブバーの `+` は、左・中クリックで候補一覧（`pick_target`）を開く。一覧に素の pwsh・cmd・room のシェルを足す（2026-11-19。ユーザーの決定）
+- 根拠: Windows Terminal のように GUI で環境を選びたい（ユーザーの依頼）。既存の `TARGETS` と `open_target` を使い回せる。右クリックは WezTerm 標準のランチャーのまま。
+- 却下案: `launch_menu` だけで作る（項目に `domain` が使えず、room は `wsl.exe` の `args` で書くことになり、設定が二重になる）。
+- タブ送りは既定の `Ctrl+PageUp/PageDown` で足りる（実機で確認。明示バインドは足さない）。
+- 実機で確認（2026-11-19）: `+` から pwsh（scoop の pwsh7）・cmd・room-myenv のシェルが起動した。
+
 ### 【この件】ターミナルの開発環境は、WezTerm + zellij + claude + nvim の単位設計で、既存の試作を消して作り直す（2026-11-19。ユーザーの決定。実装は PC）
 
 - 決めたこと: ① tab = (環境, cwd) = zellij の session。pane は zellij だけが持ち、WezTerm は分割しない。nvim（LazyVim）はセッションに 1 つ。② floating は zellij の floating pane（lazygit、ターミナル）。層が 1 つ増えるのは許容。③ 環境は Windows Terminal と同じ pwsh7（scoop）・wsl・room の 3 つ。④ pane の配置は案 A（左右 2 分割）と案 B（中央 3 分割。推奨）を実機で動かして 1 つに決める。claude の増え方は固定する（認知を下げるため）。pane の数の制限は設けない。⑤ 既存の試作は消して一から作る（過去の負債に引きずられないため）。⑥ Windows と WSL・room のツールの版は、可能な限り揃える（ユーザーの要望。uv・Python を揃えているため）。uv・Python と同じ型で、固定した表を正本にし、部屋の導入は SHA-256 で検証する。表の初期値は、今 scoop に入っている版を静的に調べて決める。対象は room に入れているツールすべて（1 つの表 `workflow-kit/room/tool-versions.txt` で管理する。ユーザーの指示）。通常の wsl は対象外（ユーザーの決定）。入れるのは `room init` でまとめて行う（ユーザーの指示、2026-11-19。設計書 12 章。途中で「scoop の版を動的に追う」案を出したが、ユーザーが固定の表を選んだ）。正本は `docs/setup/terminal-units.md`。

@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-11-19（WezTerm: `+` ボタンで環境を選んでタブを開く）
+- ee の依頼: Windows Terminal に合わせてタブ送りと GUI のタブ作成。調査の結果、`Ctrl+PageUp/PageDown` は WezTerm の既定で効く（実機で確認。変更なし）。
+- `wezterm.lua` に `new-tab-button-click`（左・中クリックで `pick_target`）と、`TARGETS` の `plain` 種別（pwsh・cmd・room のシェル。zellij なし、毎回新しいタブ）を足した（095c50c）。手順書 `wezterm-zellij-nvim.md` の「日常の操作」も更新。実機で各シェルが起動（ee）。
+- 別セッションの NA 9（claude の使い勝手）は触っていない。`docs/log.md` の NA 9 は別セッションの変更で、このコミットに含めない。
+
 ### 2026-11-19（NA 8 完了: bell フックを kit の手順書に、9 章の 2 は omit、通常の WSL は対象外）
 - ee の決定: 9 章の 2（閉じる操作を続けたときの形の崩れ）は omit（workbase の NA 59 が close 済みのため）。通常の WSL は対象外。bell フックの settings は kit の手順書にした（workbase 6318c9db `workflow-kit/bell-hook-win.md`。dotfiles 24af0fa で章 3 を要約にした）。kit の畳みは後日（ee）。
 - node 24.22.3 への room の表の更新は workbase の NA 60 に起票した（dotfiles からは `resources/` を編集しない）。設計書 9 章の 2 と 8 章に反映した。
