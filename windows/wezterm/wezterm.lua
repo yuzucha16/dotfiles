@@ -21,14 +21,49 @@ config.default_prog = { 'pwsh' }
 -- 見た目
 config.font = wezterm.font_with_fallback { 'PlemolJP Console NF', 'Cascadia Mono', 'Consolas' }
 config.font_size = 11.0
-config.color_scheme = 'Gruvbox Dark (Gogh)'
-config.use_fancy_tab_bar = false
-config.tab_max_width = 32
+-- Windows Terminal の GruvboxDark（windows/terminal/settings.json の schemes）と同じ色。
+config.color_schemes = {
+  ['GruvboxDark'] = {
+    foreground = '#EBDBB2',
+    background = '#45413E',
+    cursor_bg = '#EBDBB2',
+    cursor_border = '#EBDBB2',
+    cursor_fg = '#45413E',
+    selection_bg = '#665C54',
+    selection_fg = '#EBDBB2',
+    ansi = { '#282828', '#CC241D', '#98971A', '#D79921', '#458588', '#B16286', '#689D6A', '#A89984' },
+    brights = { '#928374', '#FB4934', '#B8BB26', '#FABD2F', '#83A598', '#D3869B', '#8EC07C', '#EBDBB2' },
+  },
+}
+config.color_scheme = 'GruvboxDark'
+-- タブバーの大きさ（文字・高さ）をWindows Terminal のタブバーに近い大きさにする（12pt）。retro タブバーは本文のフォントサイズに従い単独では変えられないため、
+-- fancy タブバー + window_frame.font_size を使う（色は下の window_frame で gruvbox に寄せる）。
+config.use_fancy_tab_bar = true
+config.tab_max_width = 64
+config.window_frame = {
+  font = wezterm.font_with_fallback { 'PlemolJP Console NF', 'Cascadia Mono', 'Consolas' },
+  font_size = 12.0,
+  active_titlebar_bg = '#3A3735',
+  inactive_titlebar_bg = '#3A3735',
+}
+-- OS 標準のタイトルバー（灰色の "pwsh.exe" の帯）をなくし、タブバーに最小化・最大化・閉じるを統合する（Windows Terminal と同じ）。
+config.window_decorations = 'INTEGRATED_BUTTONS|RESIZE'
+config.integrated_title_button_style = 'Windows'
+-- タブの色: 選択中のタブは本文の背景 (#45413E) と同じにして、バーより一段明るく見せる。
+config.colors = config.colors or {}
+config.colors.tab_bar = {
+  background = '#3A3735',
+  active_tab = { bg_color = '#45413E', fg_color = '#EBDBB2' },
+  inactive_tab = { bg_color = '#3A3735', fg_color = '#A89984' },
+  inactive_tab_hover = { bg_color = '#4F4A46', fg_color = '#EBDBB2' },
+  new_tab = { bg_color = '#3A3735', fg_color = '#A89984' },
+  new_tab_hover = { bg_color = '#4F4A46', fg_color = '#EBDBB2' },
+}
 config.enable_scroll_bar = true -- 右端のスクロールバー（ドラッグ・クリックで scrollback を動かせる）
 -- バーは右の padding の領域に出る。Windows Terminal に近づけ、幅は 2 セル（約 19px）の 2/3 ほどの 12px、
 -- つまみは無彩色のグレーにする（gruvbox の gray は茶色寄りで、Windows Terminal と違って見えた）。
 config.window_padding = { left = 0, right = '12px', top = 0, bottom = 0 }
-config.colors = { scrollbar_thumb = '#8f8f8f' }
+config.colors.scrollbar_thumb = '#8f8f8f'
 config.audible_bell = 'Disabled' -- 音は鳴らさない。印だけ
 config.window_close_confirmation = 'NeverPrompt'
 
