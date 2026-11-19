@@ -4,6 +4,11 @@
 
 ## Log
 
+### 2026-11-20（Claudian と obsidian-skills を削除）
+- ee の依頼（Obsidian で AI を使わないので、依存するプラグインとスキルを削除）。dotfiles `8295e8d`: `realclaudian` と `claudian-settings.json`、`links.map` の 3 行、CSS の `.claudian-*`、`29_claude_plugins.bat` `manifests/claude-plugins.txt` `test_28_29_installers.ps1`（0 件になったため）、`extraKnownMarketplaces` の obsidian-skills、README 各種の言及。実機は `claude plugin marketplace remove obsidian-skills` と、`works\.claudian` `works\resources\.claudian`（会話履歴を含む。ee の承認）の削除。works `4dbd8ea`（`AGENTS.md` のスキル段落、README の `.claudian/` 行、`.gitignore`）、resources `6157678b`（`.gitignore`）と `3164da56`（Volta の shim の例から `defuddle`）。
+- 修正レビュー（別エージェント）: 範囲・取りこぼし・参照切れに問題なし。`home/.claude/settings.json` の `"model"` は行の移動で、ファイル全体を含めた。`decisions.md` に廃止の注記を足した（`3cb864a`）。
+- 残した: `decisions.md` と本ファイルの履歴、`resources/exmem/lessons/claude-code-external-plugins.md`、`token-cap` の記録、`.obsidian/workspace.json`（端末ごと）。未確認: pwsh の試験、家・会社の PC の symlink（`git pull` と `30_link.bat` の再実行）。未 push。
+
 ### 2026-11-20（wezterm の既定シェルとスクロールバー。nvim のファイラは omit）
 - ee の依頼で `wezterm.lua` に `default_prog = { 'pwsh' }`（起動直後を pwsh7 に。cmd は使わない）と、スクロールバー（`enable_scroll_bar`、右 padding 12px、つまみ `#8f8f8f`）を足した。ee は色が見えづらく、値の調整は数値で言えない。「これで一旦進める」。実機での見え方は未確認。
 - nvim のファイラ（neo-tree を右・常時・幅 20）は実装後に ee が omit と決め、revert した（コミットなし）。
