@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-11-19（digest）
+- 完了（NA5）: ユーザーが close を指示（2026-11-19）。動作確認は済みとし、次の段階として NA 8（単位設計に沿った作り直しと実機確認）に進む。NA 8 が引き継ぐ。
+  - 元の項目: 【起票 11-15】【やる:ユーザー】WezTerm + claude + nvim の動作確認: (a) `WEZTERM_CONFIG_FILE` を使わず、通常の起動（`links.map` のリンク）で左 claude・右 nvim が組まれる、(b) claude 自身の入力待ち・停止で、別タブにいるときタブに 🔔 が付く（11-15 は手で鳴らした bell だけ確認）、(c) タブ名が `wslhost.exe` のまま（直したいか）、(d) 動作確認で気づいた直しを伝える（直しは AI が行う）。完了: (a)〜(c) の結果がユーザーから報告される。
+- omit（NA7）: ユーザーが close を指示（2026-11-19。「止まりました」）。30_link.bat の Developer Mode の確認は実装していない（git log に該当のコミットなし）。作業は止まったものとして閉じた（decisions.md の 2026-11-19 の項の追記）。リンクの失敗への備えが再び要るときは、新しい項目で起票する。
+  - 元の項目: 【起票 11-15】【やる:AI】`scripts/windows/30_link.bat` を、Developer Mode がオフのときは何も変えずに止める（先に確認する）。完了: オフの状態で `link` を実行すると、既存のリンクを消さずに `[ERR]` で止まり、`tests/windows/` に再現の試験がある。理由: 11-15 に、既存のファイルリンクが消えて Windows Terminal の設定が初期化された（`decisions.md` の同日の項）。
+
 ### 2026-11-19（NA 3 を閉じる: WezTerm + zellij + claude + nvim の単位設計）
 - 依頼（workbase の project thread）: zed は制約が多く、token-cap などで素の claude を使いたい。WezTerm の 1 タブ 1 cwd、複数の claude セッション、ファイル編集は nvim。単位（WezTerm の tab・pane、claude の session、nvim の buffer）の割り当てをレイヤ設計から行い、設計書を main に push するところまで。実作業は PC で行う。
 - 実施: `docs/setup/terminal-units.md` を追加（main に push。e8d2577）。tab = (環境, cwd) = zellij session、pane は zellij だけが持つ、nvim はセッションに 1 つ、floating は zellij（lazygit・ターミナル）、環境は pwsh7（scoop）・wsl・room、修飾キーで層を分ける（WezTerm = Ctrl+Shift、zellij = Alt、nvim = Space・Ctrl）、bell は claude → zellij → WezTerm のタブの印。既存の試作は前提にせず、PC で消して一から作る。

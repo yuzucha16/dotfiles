@@ -33,6 +33,7 @@ exmem（`$HOME\works\resources\exmem`）は読み取り専用の参照先で、�
 - 根拠: ユーザーの決定（2026-11-19）。WezTerm に floating pane が無い（20240203 と nightly の変更履歴で確認）。zellij 0.46.0 の swap layout を疑似端末で実測した。案 A は 3 つ目で 2・3 つ目の会話の位置が入れ替わり、案 B は入れ替わらない。zellij 0.44 以降は別タブの BEL も渡すので、bell の印の仕組みを引き継げる。
 - 却下案: scoop の版を動的に読んで部屋に合わせる（SHA-256 の検証が弱くなる。ユーザーが固定の表を選んだ）。WezTerm だけで floating を代用（機能が無い）。nvim の `:terminal` の floating（層が 2 つ持つ同じ用途になる）。pane の最大数の実装（超えたときの動きまで決める必要があるため。ユーザーが不要と判断）。
 - 見直し: 2026-11-15 の「WezTerm から room に入り、左 claude / 右 nvim で試す」の項の構成（Windows 側の WezTerm 設定・nvim の設定）を置き換える。「ターミナル起点から Zed へ移行中」（2026-10 ごろの項）は、ユーザーが zed を離れる方向を示した（制約が多く、token-cap などで素の claude を使いたいため）。
+- 追記（2026-11-19。ユーザーの指示）: NA 5（試作の動作確認）は閉じ、次の段階は NA 8。NA 7（`30_link.bat` を Developer Mode オフで止める）は、「止まりました」として閉じた（未実装のまま omit）。
 - 未確認（仮説）: Windows ネイティブの zellij が BEL を渡すか。claude の `preferredNotifChannel`（`terminal_bell`）でフックなしに 3 環境の bell を統一できるか。案 B の claude の幅（200 桁で 67 桁）で使えるか。
 
 ### 【この件】タブ = Claude セッション環境は、WezTerm から WSL の `room-myenv` に入り、左 claude / 右 nvim で試す（2026-11-15。ユーザーの決定。試用中。2026-11-19 に上の項で作り直しが決まった）
