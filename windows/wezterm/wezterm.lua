@@ -15,12 +15,20 @@ config.wsl_domains = {
 -- Windows の環境変数（WSLENV の /p パス）を部屋へ渡さない（room.py の wsl_env を参照）。
 config.set_environment_variables = { WSLENV = '' }
 
+-- 起動直後のタブ・Ctrl+Shift+N 以外の新規タブは、Windows の pwsh7（既定の cmd は使わない）。
+config.default_prog = { 'pwsh' }
+
 -- 見た目
 config.font = wezterm.font_with_fallback { 'PlemolJP Console NF', 'Cascadia Mono', 'Consolas' }
 config.font_size = 11.0
 config.color_scheme = 'Gruvbox Dark (Gogh)'
 config.use_fancy_tab_bar = false
 config.tab_max_width = 32
+config.enable_scroll_bar = true -- 右端のスクロールバー（ドラッグ・クリックで scrollback を動かせる）
+-- バーは右の padding の領域に出る。Windows Terminal に近づけ、幅は 2 セル（約 19px）の 2/3 ほどの 12px、
+-- つまみは無彩色のグレーにする（gruvbox の gray は茶色寄りで、Windows Terminal と違って見えた）。
+config.window_padding = { left = 0, right = '12px', top = 0, bottom = 0 }
+config.colors = { scrollbar_thumb = '#8f8f8f' }
 config.audible_bell = 'Disabled' -- 音は鳴らさない。印だけ
 config.window_close_confirmation = 'NeverPrompt'
 
