@@ -21,8 +21,8 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
    【11-19】手順書 `docs/setup/wezterm-zellij-nvim.md` を新しく書いた（旧 `wezterm-claude-nvim.md` の後継。コミット済み）。未確認: 部屋の nvim 設定の反映（`room-nvim-config.ps1` は作り直し後に未実行。ee が実行する）、通常の WSL（提案: 対象外）。
    【11-19 決定】② は別の機会にまとめてやる。③ の bell フックの settings は、手順書の章 3 の手動手順を正にする（kit の手順書化と畳みは後でまとめて）。`windows/README.md` の古い注は直した。
    【11-19 決定】`room-nvim-config.ps1` は ee が実行し、正常終了（未確認だった反映は済み）。Volta は使わない（Node の取得物を検証しないため。必要になったら ee が使う）。room の Node は今の tarball + SHA-256 のまま、Windows は scoop の Node に寄せる。設計書 12.3 に反映済み。Python の取得物は uv が検証する（設計書 12.3 の注）。
-   【提案】Windows の Node は scoop の `nodejs24`（versions。24.22.3）。room の表の版も合わせる（実装は workbase の NA 59）。ee の承認待ち。`volta` `nodejs` `nodejs-lts` の `scoop uninstall` は ee が行う（今の実機は 26.13.1）。
-   次の一手: ee が Node のパッケージ名（提案: `nodejs24`）を決める。②（別の機会）。
+   【11-19 決定】Node は 24 系のまま（26 系は別の機会）。Windows は scoop の `nodejs24`（versions。24.22.3）。room の表の版も 24.22.3 に合わせる（SHA-256 は `SHASUMS256.txt` で取り直す。実装は workbase の NA 59。dotfiles からは `resources/` を編集しない）。`volta` `nodejs` `nodejs-lts` の `scoop uninstall` と `nodejs24` の導入は ee が行う（今の実機は 26.13.1）。`apps.txt` には node の行が無いので、足すかは未決。
+   次の一手: workbase の NA 59 に「node 24.22.3」を引き継ぐ。ee が scoop を入れ替える。②（別の機会）。
 
 ## Open Questions
 
