@@ -245,6 +245,7 @@ layout {
    - 確認済み(同日、ee の報告): `redraw` 追加後、バッファを選ばずに放置しても自動で反映された。原因は再描画の不足だった。9 章の 5 は合格(2 秒間隔のタイマー + `redraw`)。
 6. WezTerm のタブを閉じて開き直すと、zellij のセッションに戻り、claude が動き続けているか。
 7. pwsh7 で、zellij・nvim・lazygit(scoop)が入り、`claude` が zellij の中で動くか。
+   - 結果(2026-11-19、ee の報告): 合格。lazygit 0.66.3 が zellij の中の pwsh7 で起動した(git リポジトリの外では終了する動作を確認)。zellij 0.46.0、nvim 0.12.6、claude も、同日の確認で動いた。
 8. 性能のボトルネック(11 章。V1〜V6 の測定)。
 9. 版の揃え(12 章。V7: 3 環境の版が表と一致するか)。
 
@@ -323,7 +324,7 @@ ee の要望(2026-11-19): Windows と WSL 側のツールの版を、可能な�
 # tool     version  sha256(linux-x64)  scoop
 nvim       0.12.6   474430d5…          neovim
 zellij     0.46.0   a8ee599e…          zellij
-lazygit    <版>     <値>               lazygit
+lazygit    0.66.3   0a23f429…          lazygit
 quarto     1.11.9   9d037baa…          quarto
 ```
 
@@ -364,7 +365,7 @@ room の `init` の段(`room.py` の `INIT_STEPS`)が入れているもの(2026-
 |---|---|---|---|
 | neovim | 0.12.6 | 0.12.6 | 一致。SHA-256 はそのまま表へ |
 | zellij | 0.46.0 | 0.46.0 | 一致。同上 |
-| lazygit | 0.66.3 | 未導入 | 新規。v0.66.3 の Linux x64 の SHA-256 を取る(2026-11-19 に `checksums.txt` と zellij の `.sha256sum` の URL を推測で取りに行ったが 404。アセット名を実際のリリースページで確かめてから取る。未取得) |
+| lazygit | 0.66.3 | 未導入 | 新規。Linux x64 の SHA-256 は `0a23f429a95f0d09db298b3c291536d818de066aa5a85c255806f0490ff6656b`(`lazygit_0.66.3_linux_x86_64.tar.gz`。2026-11-19 に、リリース v0.66.3 の `checksums.txt` と GitHub API の `digest` の 2 か所で同じ値を確認。AI が取った値なので、人が 1 回確かめる) |
 | wezterm | 20240203-110809-5046fc22 | ― | room では使わない(Windows 側だけ)。表の「scoop」の列にも載せないが、Windows の版の固定(`scoop hold`)の対象には入れる |
 | quarto | 1.11.9 | 1.11.9 | 一致。SHA-256 はそのまま表へ |
 | ripgrep | 15.2.0 | apt | 表へ移す(ee の決定 2026-11-19) |

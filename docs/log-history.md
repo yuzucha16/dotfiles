@@ -4,6 +4,10 @@
 
 ## Log
 
+### 2026-11-19（NA 8: pwsh7・lazygit、bell-mark の置き場、log.md を縮めた）
+- `Ctrl+Shift+N`（素の pwsh7 タブ）を ee が実機で確認（pwsh が出た）。`lazy-lock.json` と `lazyvim.json` を追跡（a414f5f）。`bell-mark.ps1` を `windows/wezterm/` へ（6d1be4b。二段階の 1 段目）。lazygit 0.66.3 を `apps.txt` へ（688deb7）。pwsh7 の zellij 内で lazygit が起動（9 章の 7 合格）。設計書 12 章に lazygit の SHA-256 を記入（`checksums.txt` と API の digest で一致）。
+- `log.md` から移した NA 8 の詳細（縮める前の原文の要点）: 本番の `wezterm.lua` と LazyVim は 5bfe4de。bell は room と wsl が BEL で 🔔（room は `~/.claude/hooks/bell.sh`。workbase `d043b784` で `room init` の `bellhook` 段も修正。未 push）。win は ConPTY が BEL を止めるので、claude のフック `~/.claude/hooks/bell-mark.ps1` が `%TEMP%\wezterm-bell\<WEZTERM_PANE>` を置き、`wezterm.lua` の `update-status` が拾って印を付ける（`settings.json` に Notification と Stop を足した。バックアップ `settings.json.bak-bellmark`）。nvim の `checktime`（2 秒タイマー）、`Ctrl+Tab`、タブ名・重複防止、`Alt+f`、`Alt+x`、`Alt+c` を確認。zellij の win は `SHELL` を見ず `attach --create <名> options --default-shell pwsh` で渡す（既存セッションは `delete-session --force` で作り直し。ee が検討中）。`Alt+n` の pwsh の warning「ListView は WindowWidth 50 未満・WindowHeight 5 未満で一時無効」は pane の初期サイズが小さい起動時の 1 回だけで、何もしない（ee の決定）。
+
 ### 2026-11-19（wrap: NA 8 の zellij の実機確認、案 B に決定）
 - 一部完了（NA 8）: ee が room で zellij を実機確認した。`home/.config/zellij/{config.kdl,layouts/claude-a.kdl,claude-b.kdl}` をコミット。起動で左 claude・右 nvim、`Alt+c` で案 B の順に増える、`Alt+f`、`Alt+矢印`、`Ctrl+g` が動いた。lazygit は room に未導入で、`Alt+g` は pane が即閉じる（想定どおり）。
   - モード表示バー: 初めは出なかった（`--layout compact` では出て、自作では出ない）。`default_tab_template` はトップ階層の `pane` に付かないため、起動時の pane を `tab { }` で包んで直った（`location` は `zellij:compact-bar` にも変更）。
