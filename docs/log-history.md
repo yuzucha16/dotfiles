@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-11-19（NA 12 一部完了: zellij の未コミット 4 ファイルをコミット。2 段起動は要る）
+- ee の判断: 2 段起動は残す。`pane_frames true`（titles）と `--resume` 削除もそのままコミット。`-NoProfile` は実施しない。
+- コミット: 2d29849（`wezterm.lua` の 2 段起動と `config.kdl`）、22b3a82（`claude-a/b.kdl` の `--resume` 削除）。
+- 訂正: NA 10 の「原因は画面サイズ」は取り違え。根拠は ee の実機（タブを開き直すとピンク＝3 列、従来の 1 段起動は緑＝2 列）。詳細と起動の費用（約 1 秒）は `decisions.md` の同日の項。
+- 残り: `terminal-units.md` と `wezterm-zellij-nvim.md` を実態に更新する（NA 12 に残した）。
+
 ### 2026-11-19（NA 11 完了: statusline の認証種別が `/status` と一致。ロゴは omit）
 - ee の実機確認: 新規セッションで statusline の種別が `/status` と一致した（ee の報告）。ロゴは消せないので諦める（ee の決定。omit。zellij の `/clear` 注入は遅くなるため）。
 - 閉じた NA 11 の全文: claude の statusline の認証種別（OAuth/API/Bedrock/Gateway。env と `rate_limits` からの推定。コミット済み fbda3be）を、実機で `/status` と見比べる。警告の件と cwd の件（採用しない）は済み。

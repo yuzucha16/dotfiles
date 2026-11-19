@@ -652,6 +652,10 @@ git gc --prune=now
 
 - **NA 8 の閉じ方と、通常の WSL の扱い（2026-11-19、ee の決定）**
   - 通常の WSL（room 以外）は、設計書の対象外。9 章の 2 は omit（workbase NA 59 が close 済み）。win の bell フックの手順の正本は kit の `bell-hook-win.md`（規模の凍結の畳みは後日）。
+- **zellij の起動は 2 段（背景作成→attach）のまま残す（2026-11-19、ee の決定。コミット 2d29849、22b3a82）**
+  - 実機の事実: wezterm のタブを閉じて開き直すと、枠がピンクで 3 列（swap layout が効く）。クライアントが作るセッション（従来の 1 段起動）は枠が緑で、2 列になる。NA 10 の「原因は画面サイズ」は取り違えだった（ウィンドウを大きくした時点と、タブを開き直した時点が重なっていた）。dump-layout では、緑・ピンクとも起動直後の pane 並びと swap layout の定義は同一で、差は floating pane の状態だけ（原因は未確認）。
+  - 費用: 起動が約 1 秒遅れる（pwsh 約 500ms、`list-sessions` 約 160ms、背景作成約 410ms。実測）。`-NoProfile` での短縮（約 100ms）は ee が不要と判断（実施しない）。
+  - あわせて採用: `config.kdl` の `pane_frames true` と `pane_frame_style "titles"`。`claude-a/b.kdl` の最初の claude から `--resume` を外す（新規セッションで始める。必要になったら `git revert 22b3a82`）。
 - **claude の Enter と送信のキー（2026-11-19、ee が Windows の pwsh で実機確認）**
   - `home/.claude/keybindings.json`: `Chat` で enter=`chat:newline`、ctrl+enter と ctrl+j=`chat:submit`。WezTerm は kitty プロトコルを使わず、Ctrl+Enter は LF（Ctrl+J）で届く。このため `ctrl+enter` だけでは効かず、Claude Code の既定の Ctrl+J=改行が出て「Ctrl+Enter で改行」に見えた。ctrl+j を送信にして解決。
   - 入力欄を広げる件（`/tui fullscreen`）は、すでに有効と出たので諦める（ee の決定）。テーマは `/theme` で `custom:gruvbox` `custom:gruvbox-hard` `custom:gruvbox-ansi` を切り替える。
