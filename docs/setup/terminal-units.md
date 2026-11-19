@@ -341,9 +341,9 @@ room の `init` の段(`room.py` の `INIT_STEPS`)が入れているもの(2026-
 | zellij | v0.46.0 固定、SHA-256 つき | 表へ移す | `zellij` |
 | lazygit | 未導入 | 新しく足す(表の版 + SHA-256) | `lazygit` |
 | Quarto | 1.11.9 固定、SHA-256 つき | 表へ移す | `quarto` |
-| Volta + Node.js | v24 系の**最新**(公式の tarball。同じ配布元のチェックサムで検証) | **Volta 2.0.2 を入れ、`volta install node@24.21.0`**(Windows と同じ型。ee の決定 2026-11-19)。表には `volta` と `node` の 2 行(版)。Volta の取得物の検証方法は未確認(下の注) | `volta`(Node は Volta が入れる。scoop の `nodejs` は使わない) |
-| uv | **最新**(配布元の `install.sh`) | **版を固定**(版つきの `install.sh` の URL。検証は配布元のインストーラーに任せる。未確認) | `uv`(要確認) |
-| Python | `.python-version`(3.13.14。uv が使う) | 表に載せ、`.python-version` と一致することを試験する(正本を 2 つにしないため) | uv が管理 |
+| Node.js | v24 系の**最新**(公式の tarball。同じ配布元のチェックサムで検証) | **今のやり方のまま**(tarball + 表の SHA-256 で固定。ee の決定 2026-11-19。Volta は Node の取得物を検証しないので使わない。経緯は下の注) | scoop の Node(下の 12.3 の表。**パッケージ名は提案**)。必要になったら Volta を使う(ee) |
+| uv | **最新**(配布元の `install.sh`) | **版を固定**(tarball を版つきの URL で取り、表の SHA-256 で検証する。`room.py` の `UV_INSTALL` が実装済み) | `uv` |
+| Python | `.python-version`(3.13.14。uv が使う) | 表に載せ、`.python-version` と一致することを試験する(正本を 2 つにしないため)。取得物の検証は uv が行う(下の注) | uv が管理 |
 | Claude Code | **最新**(`install.sh`。自動更新される) | 版を指定して入れる方法と、自動更新を止める方法が使えるかを確かめ(V7)、使えれば固定。使えなければ、表には「固定しない」と書き、入った版の記録だけ残す | `windows/claude/`(scoop ではない) |
 | Chromium(Playwright) | Playwright 1.64.1(npm が取得。SHA-256 なし) | 版を表へ(SHA-256 は npm に任せる) | ― |
 | Marp CLI(任意の段) | 4.5.1(npm) | 版を表へ | ― |
@@ -371,10 +371,11 @@ room の `init` の段(`room.py` の `INIT_STEPS`)が入れているもの(2026-
 | ripgrep | 15.2.0 | apt | 表へ移す(ee の決定 2026-11-19) |
 | pandoc | 3.14 | apt | 表へ移す(同上) |
 | uv | 0.13.9 | 最新(`install.sh`) | 0.13.9 に固定(ee の了承 2026-11-19) |
-| volta | 2.0.2(`main`) | 未導入 | room に入れる(ee の決定 2026-11-19) |
-| node(Volta 経由) | 24.21.0(`which node` が scoop の volta を指す) | v24 系最新(tarball) | room も `volta install node@24.21.0`(ee の決定)。scoop の `nodejs`(26.13.1)は使っておらず、ee が `scoop uninstall nodejs` する |
+| node | scoop の `nodejs24`(versions バケット。**提案**。2026-11-19 の実機で 24.22.3。manifest のハッシュで scoop が検証する)。`nodejs` と `nodejs-lts` は 26.13.1 で、24 系ではない | v24 系最新(tarball + 表の SHA-256) | **Volta は使わない**(ee の決定 2026-11-19)。room は今のまま。Windows は scoop の Node に寄せる(検証のため)。room の表の版は、scoop の版に合わせる(**提案**。実装は workbase の NA 59)。npm・npx は Node に同梱なので、別に入れない |
 
-**注(未確認。実装時に確かめる)**: Linux の Volta の導入は、配布元のスクリプト(`get.volta.sh`)になる見込みで、uv と同じく、スクリプトの取得物の SHA-256 は表で検証できない(版の指定ができるかを確かめる)。Volta が取る Node の tarball を、`nodejs.org` の `SHASUMS256.txt` で検証するかも未確認。検証できないときは、今の tarball + SHA-256 の方が検証は強い。この点だけが、対称性と引き換えになる。
+**Volta をやめた理由(2026-11-19。実機と公式のソースで確認)**: Volta が取る Node の取得物は、Volta が検証しない(`volta-core` の `node/fetch.rs` に、チェックサム検証が無く、`// ISSUE(#134) - verify checksum` の TODO だけがある。#134 は 2018 年からの open)。導入スクリプト(`get.volta.sh`)も、`--version` で版は固定できるが、取得物は検証しない。Node の検証は、tarball + 表の SHA-256(room)と、scoop の manifest のハッシュ(Windows)で保つ。
+
+**Python の取得物の検証(2026-11-19。uv のソース `uv-python` の `downloads.rs`(docs.rs 0.0.55)で確認)**: `uv python install` は、取得した Python(python-build-standalone)を展開しながら SHA-256 を計算し、期待値と違えば `HashMismatch` で失敗する。期待値は、uv に組み込まれた配布の一覧にあり、元は GitHub API の `digest` で、無ければリリースの `SHA256SUMS`(uv の PR #14708)。**期待値が無い(`None`)ときは、検証せずに展開する**(キャッシュのファイル名が `none` で始まる。実際に無い配布があるかは未確認)。表の SHA-256 で固定してはおらず、uv(版 0.13.9 で固定)の組み込みの一覧を信頼する形になる。
 
 ### 12.4 Windows 側
 
@@ -396,7 +397,7 @@ room の `init` の段(`room.py` の `INIT_STEPS`)が入れているもの(2026-
 
 ### 12.7 ee の判断が要ること
 
-すべて済み(2026-11-19)。1: scoop の版は 12.3 の表に受け取り済み。2: ripgrep・pandoc は表へ移す(決定)。3: uv・Node は固定(Node は Volta 経由)。残る未確認は 12.3 の注(Volta の検証方法)と lazygit の SHA-256(実装時に取る)。
+すべて済み(2026-11-19)。1: scoop の版は 12.3 の表に受け取り済み。2: ripgrep・pandoc は表へ移す(決定)。3: uv・Node は固定(Node は Volta をやめ、room は tarball + SHA-256、Windows は scoop。12.3 の注)。残る未確認は、Windows の Node のパッケージ名の決定(提案: `nodejs24`)のみ。
 
 ## 出典
 
