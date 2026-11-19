@@ -13,7 +13,7 @@ tags:
 
 素の Claude Code を、WezTerm・zellij・Neovim で動かす開発環境の「単位」の設計。どの単位を何に対応させ、誰が管理するかを決める。
 
-- **状態**: 設計だけ(2026-11-18〜19)。実装は PC で、既存の試作(`windows/wezterm/wezterm.lua`、`home/.config/nvim/`、[[wezterm-claude-nvim]])を消して一から作る。この設計書は既存の試作を前提にしない。
+- **状態**: 設計だけ(2026-11-18〜19)。pane の配置は 2 案(4 章)を並べ、実機で動かして 1 つに決める。実装は PC で、既存の試作(`windows/wezterm/wezterm.lua`、`home/.config/nvim/`、[[wezterm-claude-nvim]])を消して一から作る。この設計書は既存の試作を前提にしない。
 - **残すもの**: 既存の試作の「bell でタブに印を付ける」仕組み(5 章)だけは、考え方を引き継ぐ。
 - **方針**: 複雑にしない。層は 4 つ(WezTerm、zellij、claude、nvim)で、それぞれの責務を重ねない。
 - **決定(2026-11-19、ee)**: 環境は pwsh7・wsl・room の 3 つ(2 章)。floating の git ツールは lazygit。pane の数の制限は設けない。
@@ -67,9 +67,13 @@ WezTerm から入る先は、Windows Terminal にある 3 つと同じにする�
 4. **floating は zellij に寄せる**。lazygit とターミナルは zellij の floating pane で開く。nvim の floating は nvim 自身の UI(ピッカー、通知)だけにし、nvim の中でターミナルを開かない。同じ用途の floating を 2 つの層に持たないため。
 5. **並列に編集させたいときは、git worktree を作って別のタブにする**。worktree は別の cwd なので、原則 1 がそのまま保てる。同じ cwd の複数セッションは、編集するファイルを分ける(調べもの・レビューのセッションと、編集のセッション 1 つ、が基本の形)。
 
-## 4. pane の配置(既定の振る舞い)
+## 4. pane の配置(2 案。実際に動かして選ぶ)
 
-claude を足すたびに、次の順で形が変わる。
+claude を足すたびに、形が**決まった順**で変わる(認知を下げるため、増え方は固定する)。どちらの案も、zellij の「swap layout」(pane の数で形が自動に切り替わる機能)だけで書け、自作のスクリプトは要らない。claude を足すキー(`Alt+c`)は、`claude` の pane を 1 つ開くだけで、形はレイアウトが決める。**案はレイアウトのファイル 1 つで、`config.kdl` の `default_layout` で切り替える**(2 つのファイルを持ち、使ってみて 1 つに絞る)。
+
+共通の約束: 最初は左 claude・右 nvim。nvim は、レイアウトの枠に `command="nvim"` を書き、**引数なしの同じコマンドで起動する**(zellij は、コマンドが同じ pane を同じ枠に入れる。名前では入らない)。
+
+### 案 A: 左右 2 分割(nvim が右下へ寄る)
 
 ```
 claude 1 つ(初期)       claude 2 つ              claude 3 つ
@@ -80,19 +84,15 @@ claude 1 つ(初期)       claude 2 つ              claude 3 つ
 +---------+---------+   +---------+---------+   +---------+---------+
 ```
 
-1. 左半分が最初の claude 1 つ。右半分が nvim。
-2. claude を足すと、左半分が上下に分かれる(上と下が claude)。
-3. さらに足すと、右半分が上下に分かれる。右上が claude、右下が nvim(nvim は右下へ寄る)。
-
-これは **zellij の「swap layout」(pane の数で形が自動に切り替わる機能)だけで書ける**。自作のスクリプトは要らない。claude を足すキー(`Alt+c`)は、`claude` の pane を 1 つ開くだけで、形はレイアウトが決める。閉じると前の形に戻る(閉じたときの動きは 9 章で確認)。
-
-レイアウトの骨格(zellij 0.46.0 で、`sleep` を claude・nvim の代わりにして動かし、pane の位置を確かめた。実際は `command="claude"` と `command="nvim"` にする):
+1. 左半分が最初の claude、右半分が nvim。
+2. 2 つ目で、左半分が上下に分かれる。
+3. 3 つ目で、右半分が上下に分かれる。右上が claude、右下が nvim(nvim が動く)。
 
 ```kdl
 layout {
     pane split_direction="vertical" {
         pane command="claude" { args "--resume"; }   // 左: 最初の claude
-        pane command="nvim"                          // 右: nvim(引数なしで起動する)
+        pane command="nvim"                          // 右: nvim
     }
     swap_tiled_layout name="claude2" {
         tab exact_panes=3 {                          // claude 2 つ + nvim
@@ -113,12 +113,80 @@ layout {
 }
 ```
 
-確かめたこと(2026-11-19。zellij 0.46.0、仮想の端末 200×50):
+実測(2026-11-19、zellij 0.46.0、仮想の端末 200×50。`sleep` を claude・nvim の代わりにした):
 
-- 2 つ目の claude で、左が上下に分かれ、nvim は右に残る。
-- 3 つ目の claude で、右が上下に分かれ、**nvim は右下に寄る**。ただし、右下の枠に nvim を置くには、レイアウトの右下の枠に `command="nvim"` を書き、**nvim を引数なしの同じコマンドで起動する**必要がある。zellij は、コマンドが同じ pane を同じ枠に入れる(名前では入らない)。
-- **3 つ目を足した瞬間に、2 つ目と 3 つ目の claude の位置が入れ替わる**(2 つ目が右上へ動き、新しい 3 つ目が左下に入る)。形は仕様どおりだが、どの会話がどこに行くかは zellij が決める。フォーカスの位置には左右されない(3 通りで同じ結果)。pane のタイトルで見分ける。気になる場合の直し方は 9 章。
-- 4 つ目以降は定義していない。zellij の既定の並べ方になる(壊れはしない)。
+- 形は仕様どおりになる。nvim は右下へ寄る。
+- **3 つ目を足した瞬間に、2 つ目と 3 つ目の claude の位置が入れ替わる**(2 つ目が右上へ動き、新しい 3 つ目が左下に入る)。フォーカスの位置には左右されない(3 通りで同じ結果)。pane のタイトルで見分ける。
+- 4 つ目以降は定義していない(zellij の既定の並べ方)。
+
+### 案 B: 中央 3 分割(nvim は右一列に固定。claude は Z の順)
+
+```
+claude 1 つ(初期)       claude 2 つ                 claude 3 つ                 claude 4 つ
++---------+---------+   +------+------+-------+   +------+------+-------+   +------+------+-------+
+|         |         |   |      |      |       |   |  c1  |      |       |   |  c1  |  c2  |       |
+|   c1    |  nvim   |   |  c1  |  c2  | nvim  |   +------+  c2  | nvim  |   +------+------+ nvim  |
+|         |         |   |      |      |       |   |  c3  |      |       |   |  c3  |  c4  |       |
++---------+---------+   +------+------+-------+   +------+------+-------+   +------+------+-------+
+```
+
+1. 最初は、左 claude(c1)、右 nvim。
+2. 2 つ目で、中央に 1 列が増える(左から c1、c2、nvim)。
+3. 3 つ目で、左の列が上下に分かれ、c3 が左下に入る。
+4. 4 つ目で、中央の列が上下に分かれ、c4 が中央下に入る。claude は Z の順(c1 左上、c2 中央上、c3 左下、c4 中央下)に埋まる。
+
+nvim は、どの段階でも右一列のまま動かない。
+
+```kdl
+layout {
+    pane split_direction="vertical" {
+        pane command="claude" { args "--resume"; }   // 左: 最初の claude
+        pane command="nvim"                          // 右: nvim
+    }
+    swap_tiled_layout name="claude2" {
+        tab exact_panes=3 {                          // claude 2 つ + nvim
+            pane split_direction="vertical" { pane; pane; pane command="nvim"; }
+        }
+    }
+    swap_tiled_layout name="claude3" {
+        tab exact_panes=4 {                          // claude 3 つ + nvim: 左を上下に
+            pane split_direction="vertical" {
+                pane split_direction="horizontal" { pane; pane; }
+                pane
+                pane command="nvim"
+            }
+        }
+    }
+    swap_tiled_layout name="claude4" {
+        tab exact_panes=5 {                          // claude 4 つ + nvim: 中央も上下に
+            pane split_direction="vertical" {
+                pane split_direction="horizontal" { pane; pane; }
+                pane split_direction="horizontal" { pane; pane; }
+                pane command="nvim"
+            }
+        }
+    }
+}
+```
+
+実測(同じ条件):
+
+- claude を 3 回足して、**どの段階でも位置が入れ替わらず**、Z の順(c1 左上、c2 中央上、c3 左下、c4 中央下)になり、nvim は右一列(x=134、幅 66)のまま動かなかった。
+- 5 つ目以降の claude は、定義が無くても、中央の列に積まれた(中央が 3 段になる。nvim は動かない)。
+- 閉じたとき: 最後に足した pane を閉じると、1 つ前の形に戻る。途中の pane(例: c2)を閉じると、前の形に戻り、残りの会話の位置が詰まる。**閉じる操作を続けたときに、形が崩れた例が 1 回あった**(原因は未解明。9 章)。
+- 幅: 200 桁の画面で、claude の列が 67 桁ずつ、nvim が 66 桁。claude には狭いので、`size` で nvim を 30% ほどに絞る調整が要る(未検証)。
+
+### 2 案の比較
+
+| 観点 | 案 A(左右 2 分割) | 案 B(中央 3 分割) |
+|---|---|---|
+| nvim の位置 | 3 つ目で右下へ動く | **右一列で動かない** |
+| 会話の位置 | 3 つ目で 2・3 つ目が入れ替わる | **入れ替わらない(Z の順)** |
+| 覚える規則 | 3 段階の形 | 「左から、上から」の 1 つ(Z) |
+| 最初の claude の幅 | 画面の半分 | 3 分の 1(2 つ目から) |
+| 5 つ目以降 | zellij の既定 | 中央の列に積まれる |
+
+**推奨は案 B**(認知を下げる、という目的に合う。nvim が動かず、会話の位置が増えた順に決まる)。弱点は claude の幅なので、実機でその幅で使えるかを見て決める。
 
 ## 5. 責務とキーの分担
 
@@ -157,13 +225,13 @@ layout {
 
 - WezTerm の pane 分割、WezTerm の workspace、zellij の複数タブ、nvim の tabpage と `:terminal`。
 - WezTerm の Lua と nvim の Lua をつなぐ仕組み(ソケット、`--remote`)。両者の約束は「cwd が同じ」ことだけ。必要になったら、cwd から決まる名前のソケットで nvim を起動し、claude から `nvim --server … --remote` で開く形を足す。
-- pane の数の制限、pane を並べる自作のスクリプト(4 章のとおり、レイアウトだけで足りる)。
+- pane の数の制限、pane を並べる自作のスクリプト(4 章のとおり、どちらの案もレイアウトだけで足りる)。
 - claude の差分を nvim で見る連携(`claudecode.nvim` など)。使ってみて要るなら足す。
 
 ## 9. PC で確かめること(実装のとき)
 
-1. 4 章の入れ替わり(3 つ目で 2 つ目と 3 つ目の位置が変わる)が気にならないか。気になるなら、(a) このまま pane のタイトルで見分ける、(b) 3 つ目の形を「右上に 2 つ目、右下に nvim」に変えて、2 つ目の足し方を「右半分」にする(入れ替わりが無くなる可能性がある。未検証)、のどちらかにする。
-2. 実物の `claude` と `nvim` で、4 章の形になるか。claude の pane を閉じたとき(`close_on_exit true` にする想定)、前の形に戻るか。
+1. **2 案(4 章)を実機で動かして選ぶ**。`default_layout` を切り替えて、案 A の入れ替わりが気になるか、案 B の claude の幅(200 桁で 67 桁)で使えるかを見る。案 B の幅は、nvim の `size` を 30% ほどに絞って調整する。案 A の入れ替わりが気になるなら、3 つ目の形を「右上に 2 つ目、右下に nvim」に変える案もある(未検証)。
+2. 実物の `claude` と `nvim` で、4 章の形になるか。claude の pane を閉じたとき(`close_on_exit true` にする想定)、前の形に戻るか。案 B で、途中の pane を続けて閉じたときに形が崩れた例の再現(4 章)。
 3. unlock-first の型で、`Alt` の操作が locked のまま使えるか。
 4. 別の WezTerm タブにいるとき、claude の入力待ちで、そのタブに 🔔 が付くか。room、pwsh7、wsl の 3 つで(zellij を挟んだ BEL。Windows ネイティブの zellij が BEL を渡すかは未確認)。
 5. claude がファイルを書き換えたとき、nvim に反映されるか。LazyVim は FocusGained で `checktime` するが、zellij の中の pane の移動で FocusGained が来るかは未確認。来なければ、一定の間隔で `checktime` する autocmd を足す。
@@ -173,7 +241,7 @@ layout {
 ## 10. 実装の順(PC で)
 
 1. 既存の試作(`windows/wezterm/wezterm.lua`、`home/.config/nvim/`、`docs/setup/wezterm-claude-nvim.md`)を消す。
-2. zellij: `config.kdl`(unlock-first、`Alt+c`、`Alt+g`)とレイアウト 1 ファイル(4 章)。まず room で動かす(zellij・nvim・bellhook が入っている)。
+2. zellij: `config.kdl`(unlock-first、`Alt+c`、`Alt+g`)とレイアウト 2 ファイル(4 章の案 A と案 B。`default_layout` で切り替える)。まず room で動かす(zellij・nvim・bellhook が入っている)。
 3. WezTerm: 環境と cwd の候補、タブの重複の防止、zellij の起動、bell の印だけの `wezterm.lua`。
 4. nvim: LazyVim を入れる。この設計から要るのは `checktime` だけ。
 5. lazygit: pwsh7 は scoop、room は `room init` に段を足す(workbase 側)。
