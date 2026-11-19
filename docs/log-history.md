@@ -4,6 +4,12 @@
 
 ## Log
 
+### 2026-11-20（wezterm の既定シェルとスクロールバー。nvim のファイラは omit）
+- ee の依頼で `wezterm.lua` に `default_prog = { 'pwsh' }`（起動直後を pwsh7 に。cmd は使わない）と、スクロールバー（`enable_scroll_bar`、右 padding 12px、つまみ `#8f8f8f`）を足した。ee は色が見えづらく、値の調整は数値で言えない。「これで一旦進める」。実機での見え方は未確認。
+- nvim のファイラ（neo-tree を右・常時・幅 20）は実装後に ee が omit と決め、revert した（コミットなし）。
+- zellij に、常時スクロールモードと、スクロールバー表示の設定はない（案内のみ。変更なし）。スクロールモードは Ctrl+s で入る既定。
+- `lazy-lock.json` の未コミット差分は、先の決定のとおりコミットしない。
+
 ### 2026-11-20（NA 12 完了: zellij の設計書 2 文書を実態と照合）
 - 424d450 の 2 文書を、実物と照らした。`wezterm.lua` 75〜89 行（pwsh の `cd`、背景作成→attach、room は 1 段）、`config.kdl`（`pane_frames true`、`titles`、Alt+n の bind なし）、`layouts/*.kdl`（`--resume` なし）と一致した。
 - 修正レビュー（範囲、整合の 2 件）: 範囲は ANOMALY（`wezterm.lua` の `default_prog`・スクロールバーと lazy-lock を、NA 12 に含める案）、整合は NORMAL。ee の判断で、`wezterm.lua` と `lazy-lock.json` の未コミット差分は NA 12 に含めず、コミットしない（残す）。
