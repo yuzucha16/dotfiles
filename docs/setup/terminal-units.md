@@ -54,12 +54,12 @@ WezTerm から入る先は、Windows Terminal にある 3 つと同じにする�
 
 | 道具 | pwsh7 | wsl | room |
 |---|---|---|---|
-| zellij | scoop `zellij`(`manifests/apps.txt` に既にある。0.44 から Windows ネイティブ) | 12.5 の判断 | `room init` の段 `zellij`(scoop の版に合わせる。12 章) |
-| nvim | scoop `neovim`(`apps.txt` に既にある) | 12.5 の判断 | `room init` の段 `nvim`(scoop の版に合わせる。12 章) |
-| lazygit | scoop `lazygit`(未確認) | 12.5 の判断 | `room init` に段を足す(scoop の版に合わせる。workbase 側の別作業。未着手) |
+| zellij | scoop `zellij`(`manifests/apps.txt` に既にある。0.44 から Windows ネイティブ) | 12.5 の判断 | `room init` の段 `zellij`(表の版で固定。12 章) |
+| nvim | scoop `neovim`(`apps.txt` に既にある) | 12.5 の判断 | `room init` の段 `nvim`(表の版で固定。12 章) |
+| lazygit | scoop `lazygit`(未確認) | 12.5 の判断 | `room init` に段を足す(表の版で固定。workbase 側の別作業。未着手) |
 | claude | 既存の `windows/claude/` | 個別に導入 | `room init` の段 `claude`(版は固定していない。12 章) |
 
-- **版は、scoop の版を基準に、`room init` が合わせる**(12 章)。
+- **版は、固定した表(uv・Python と同じ型)で、Windows と部屋を揃える**。初期値は、今の scoop の版(12 章)。
 
 ## 3. 原則
 
@@ -240,7 +240,7 @@ layout {
 6. WezTerm のタブを閉じて開き直すと、zellij のセッションに戻り、claude が動き続けているか。
 7. pwsh7 で、zellij・nvim・lazygit(scoop)が入り、`claude` が zellij の中で動くか。
 8. 性能のボトルネック(11 章。V1〜V6 の測定)。
-9. 版の揃え(12 章。V7: scoop の版と、部屋の記録が一致するか)。
+9. 版の揃え(12 章。V7: 3 環境の版が表と一致するか)。
 
 ## 10. 実装の順(PC で)
 
@@ -248,7 +248,7 @@ layout {
 2. zellij: `config.kdl`(unlock-first、`Alt+c`、`Alt+g`)とレイアウト 2 ファイル(4 章の案 A と案 B。`default_layout` で切り替える)。まず room で動かす(zellij・nvim・bellhook が入っている)。
 3. WezTerm: 環境と cwd の候補、タブの重複の防止、zellij の起動、bell の印だけの `wezterm.lua`。
 4. nvim: LazyVim を入れる。この設計から要るのは `checktime` だけ。
-5. lazygit: pwsh7 は scoop(`apps.txt` に足す)、room は `room init` に段を足す(workbase 側)。版は scoop に合わせる(12 章)。
+5. lazygit: pwsh7 は scoop(`apps.txt` に足す)、room は `room init` に段を足す(workbase 側)。版は表で固定する(12 章)。
 6. pwsh7 と wsl を足し、9 章を確かめ、結果でこの設計書を直す。
 
 ## 11. 性能のボトルネック(WezTerm を使うと増える点。検証して、必要なら対策する)
@@ -303,43 +303,47 @@ cwd の置き場(Windows 側か WSL 側か)は、設計に入れない(Windows �
 
 ## 12. ツールの版を Windows と WSL・room で揃える
 
-ee の要望(2026-11-19): Windows と WSL 側のツールの版を、可能な限り合わせる。**基準は scoop の版**で、WSL 側には、その版と同じか近い版を入れる。**入れるのは `room init` でまとめて行う**。uv と Python は、すでに `workflow-kit/room/.python-version` で揃えている(こちらは固定した 1 か所が基準。ツールは scoop が基準、という違いがある)。
+ee の要望(2026-11-19): Windows と WSL 側のツールの版を、可能な限り合わせる。**uv・Python と同じ型**で、横並びに揃える。すなわち、**版を固定した表を 1 か所に持ち、部屋の導入は SHA-256 で検証する**。**表の初期値は、今 scoop に入っている版を、静的に調べて決める**(12.2)。
 
 ### 12.1 仕組み
 
-1. Windows 側は、今までどおり scoop が入れる・更新する(`manifests/apps.txt`。`neovim` `zellij` は既にある。`lazygit` を足す)。版の固定(`scoop hold`)は、しない。
-2. `room init`(Windows の PC で実行する)が、scoop で今入っている版を読む。読み方の案: `%USERPROFILE%\scoop\apps\<アプリ>\current\manifest.json` の `version`(未確認。`scoop list` の出力を読む方法もある)。
-3. 部屋の段 `nvim` `zellij` `lazygit` が、**その版を、配布元(GitHub Releases)の同じタグから取って入れる**。nvim・zellij・lazygit は、Windows と Linux が同じタグで配られているので、**同じ版**になる。SHA-256 は、同じリリースが配るチェックサムのファイルで検証する(下の 12.3)。
-4. scoop にその版が無い、または scoop が入っていない PC(PC1 など。実機の都合)では、`room.py` の固定した版(今の `NVIM_VERSION` `ZELLIJ_VERSION`)を、予備として使う。
-5. 入れた版は、`room init` の報告に出し、部屋の中にも記録する(例: `~/.local/share/room-tools.txt`。場所は実装時に決める)。
+1. **正本は固定した表**: workbase の `workflow-kit/room/tool-versions.txt`(案。`.python-version` の隣。1 行 1 ツール。例: `nvim 0.12.6`)。
+2. **部屋**: `room init` の段 `nvim` `zellij` `lazygit` が、表の版を GitHub Releases の同じタグから取り、**`room.py` に固定した SHA-256 で検証する**(今の nvim・zellij と同じ。表の版と SHA-256 が食い違えば、止まる)。
+3. **Windows**: 表の版を、`scoop install <アプリ>@<版>` で入れ、`scoop hold <アプリ>` で固定する(更新で版が動かないように)。同じ版が scoop から入らないときは、GitHub Releases の同じ版の zip を、SHA-256 を確かめて入れる(`fonts.txt` と Notepad++ のプラグインの導入と同じ型。どちらを使ったかは出力に残す)。`apps.txt` の `neovim` `zellij`(最新を入れる行)は、表で固定するので、外すか、導入スクリプトが表を読む形にする(実装時に決める)。
+4. **版を上げる手順**: 表の 1 行を変える → `room.py` に、新しい版の SHA-256 を足す → Windows の導入スクリプトを再実行 → 部屋は `room init <Area> --only nvim,zellij,lazygit` を再実行 → 12.4 の点検。
 
-### 12.2 揃える範囲
+### 12.2 表の初期値の決め方(今回 1 回。静的な調査)
+
+1. **今 scoop に入っている版を調べる**: PC で `scoop list`(または `scoop export`)を実行し、`neovim` `zellij` `lazygit`(と `ripgrep` `fd`)の版を見る。**私(AI)からは PC の scoop が見えないので、ee が実行して、結果を渡す**。
+2. **表に書く**: その版を `tool-versions.txt` に書く。部屋に今固定してある版(nvim v0.12.6、zellij v0.46.0)と違うときは、**scoop の版に合わせる**(部屋の側を動かす)。
+3. **SHA-256 を、各版のリリースのチェックサムのファイルから取る**(nvim は `shasum.txt`、zellij は各アーカイブの `.sha256sum`、lazygit は `checksums.txt` の見込み。実装時に確かめる)。取った出典の URL と日付を、`room.py` の近くのコメントに残す。AI が取ったものは、人が 1 回、ブラウザで同じ値かを確かめる。
+4. Linux 版が配られていない版(scoop にだけある版など)は、**近い版**を選び、表に理由を書く。
+
+### 12.3 揃える範囲
 
 | ツール | 揃え方 | 精度 |
 |---|---|---|
-| nvim・zellij・lazygit | 上の仕組み | **同じ版** |
-| ripgrep・fd | 部屋は apt(ディストリビューション依存)。差で困ったときだけ、同じ仕組みの段を足す | 近い版 |
-| claude | 部屋は `install.sh`、Windows は `windows/claude/`。どちらも自動更新される。固定しない | 近い版(自動更新の差) |
-| uv・Python | 既存(`.python-version`) | 同じ版 |
+| nvim・zellij・lazygit | 上の仕組み | **同じ版**(Windows と Linux が同じタグで配られる見込み。12.2 の 4) |
+| ripgrep・fd | 部屋は apt(ディストリビューション依存)。差で困ったときだけ、同じ型の段を足す | 近い版 |
+| claude | 部屋は `install.sh`、Windows は `windows/claude/`。どちらも自動更新される。固定しない(版の指定と自動更新の停止が使えるかは V7 で確認) | 近い版(自動更新の差) |
+| uv・Python | 既存(`.python-version`)。uv の版の揃えは要確認 | 同じ版 |
 | WezTerm・pwsh7 | Windows だけ | 対象外 |
 
-### 12.3 決める・確かめること
+### 12.4 揃っているかを見る
 
-- **SHA-256 の検証が、今より弱くなる**: 今の room は、版ごとの SHA-256 を `room.py` に持っている(正本が `room.py`)。scoop の版に合わせると、版が動くので、**同じリリースのチェックサムのファイルを取って検証する**形になる。通信の途中の破損と、取り違えは防げるが、GitHub のリリースそのものが差し替えられたときは防げない(固定した SHA-256 なら防げた)。**推奨: この弱さを受け入れる**(同じ配布元を信頼する範囲で、版を追う運用を優先する)。固定した SHA-256 の予備は、予備の版のときに使う。
-- **PC ごとに部屋の版が違いうる**: scoop を更新した日が PC ごとに違うので、同じ日に作った部屋でも、PC1 と PC2 で版が違う。許容する(「可能な限り」)。記録(12.1 の 5)で、違いを後から確かめる。
-- **scoop を更新した後の追従**: `scoop update` の後に、`room init <Area> --only nvim,zellij,lazygit` を再実行すれば、部屋が追いつく。同じ版なら何もしない(何度実行しても同じ結果)。追従を忘れると差が出るので、次の点検を用意する。
-- **揃っているかの点検(読み取り専用)**: scoop の版と、部屋の記録を比べ、違うものだけを出す(`room init` の報告、または単独のコマンド。実装時に決める)。
-- scoop のアプリ名と、GitHub のタグの対応(`neovim` → `v<版>`、`zellij` → `v<版>`、`lazygit` → `v<版>`)は、実装時に確かめる(タグの付け方が違うアプリが無いか)。
+- 3 環境(pwsh7・wsl・room)で、`nvim --version`、`zellij --version`、`lazygit --version`(と claude)を実行し、表の版と比べて、違うものだけを出す**読み取り専用の点検**を 1 つ用意する(実装時。V7)。版を上げた後と、新しい PC を作った後に実行する。
+- **ずれる原因**: `scoop update *`(固定していないアプリ)、WSL の apt の更新、claude の自動更新、PATH の順で別の版が先に見つかる(wsl は `/mnt/c` 経由で Windows 側の `nvim` などが見えうる。room は `/mnt/c` が無いので当たらない)。
 
-### 12.4 実装の置き場
+### 12.5 実装の置き場
 
-- **workbase 側の別作業**(未着手): `room.py` の段 `nvim` `zellij` の改修と、段 `lazygit` の追加。`room init` が scoop の版を読む処理。dotfiles の設計書には「何を揃えるか」だけを書き、挙動は workbase に書く(`workbase-dotfiles-boundary` の決定どおり。workbase は dotfiles の中身を読まない。読むのは、PC に入っている scoop の場所だけ)。
-- **dotfiles 側**: `manifests/apps.txt` に `lazygit` を足すだけ(`neovim` `zellij` は既にある)。
+- **workbase 側の別作業**(未着手): `tool-versions.txt` の追加、`room.py` の段 `nvim` `zellij` が表を読む改修と、段 `lazygit` の追加、版ごとの SHA-256 の追加。
+- **dotfiles 側**: Windows の導入スクリプト(表を読み、`scoop install <アプリ>@<版>` と `scoop hold`)と、`manifests/apps.txt` の整理。dotfiles が workbase の表を読む(dotfiles → workbase の一方向。`workbase-dotfiles-boundary` の決定どおり)。
 
-### 12.5 ee の判断が要ること
+### 12.6 ee の判断が要ること
 
-1. **「wsl」(room でない通常の WSL)にも入れるか**。`room init` は、部屋(専用のディストリビューション)を作る・整える道具なので、通常の wsl は対象外になる。**推奨: 当面は room だけ**(ee の用途は room が中心で、wsl は予備のため)。wsl にも要るなら、同じ段を既存のディストリビューションへ向ける方法を、workbase 側で別に検討する。
-2. **SHA-256 の検証の弱さ(12.3)を受け入れるか**(推奨: 受け入れる)。
+1. **scoop の今の版を教えてください**(12.2 の 1。`scoop list` の出力)。それを表の初期値にし、SHA-256 を調べます。
+2. **「wsl」(room でない通常の WSL)にも入れるか**。`room init` は部屋を作る・整える道具なので、通常の wsl は対象外になります。**推奨: 当面は room だけ**。wsl にも要るなら、同じ段を既存のディストリビューションへ向ける方法を、workbase 側で別に検討する。
+3. **表の置き場を `workflow-kit/room/tool-versions.txt` にする案で良いか**(推奨。`.python-version` と同じ型)。
 
 ## 出典
 
