@@ -1,10 +1,4 @@
 {
-  "skillOverrides": {
-    "docs": "off",
-    "computer-use": "off",
-    "build-in-browser": "off",
-    "chrome-browser": "off"
-  },
   "permissions": {
     "allow": [
       "PowerShell(git show *)",
@@ -101,6 +95,12 @@
       "Bash(git -C * add*--force*)"
     ]
   },
+  "skillOverrides": {
+    "docs": "off",
+    "computer-use": "off",
+    "build-in-browser": "off",
+    "chrome-browser": "off"
+  },
   "hooks": {
     "SessionStart": [
       {
@@ -147,6 +147,10 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "python -I ~/.claude/statusline.py"
+  },
   "enabledPlugins": {},
   "extraKnownMarketplaces": {
     "obsidian-skills": {
@@ -157,9 +161,6 @@
     }
   },
   "model": "sonnet",
-  "theme": "dark-ansi",
-  "statusLine": {
-    "type": "command",
-    "command": "python -I ~/.claude/statusline.py"
-  }
+  "viewMode": "focus",
+  "theme": "custom:gruvbox-soft-blue"
 }
