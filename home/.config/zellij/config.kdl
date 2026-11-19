@@ -34,6 +34,8 @@ keybinds {
         }
         // floating の表示切替。
         bind "Alt f" { ToggleFloatingPanes; }
+        // フォーカス中の pane を閉じる（Ctrl+p → x と同じ）。
+        bind "Alt x" { CloseFocus; }
         // pane の移動は矢印のみ（LazyVim の Alt+j/k と衝突させない。5 章）。
         bind "Alt Left" { MoveFocus "Left"; }
         bind "Alt Down" { MoveFocus "Down"; }

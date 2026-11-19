@@ -50,7 +50,9 @@ local function open_target(window, target)
   local spec = { cwd = target.cwd }
   if target.where == 'win' then
     spec.domain = { DomainName = 'local' }
-    spec.args = { 'zellij.exe', 'attach', '--create', name }
+    -- zellij は Windows で既定のシェルが cmd になり、SHELL 環境変数は見ない（2026-11-19 実機）。
+    -- pwsh7 は options --default-shell で渡す（新しいセッションだけに効く。既存は作り直す）。
+    spec.args = { 'zellij.exe', 'attach', '--create', name, 'options', '--default-shell', 'pwsh' }
   else
     spec.domain = { DomainName = ROOM }
     -- login shell 経由（PATH に ~/.local/bin などを入れる）
@@ -94,13 +96,27 @@ local function refresh_status(window)
 end
 wezterm.on('update-status', refresh_status)
 
-wezterm.on('bell', function(window, pane)
+local function mark_bell(window, pane)
   local tab = pane:tab()
   if tab and tab:tab_id() ~= window:mux_window():active_tab():tab_id() then
     local m = wezterm.GLOBAL.bell_tabs
     m[tostring(tab:tab_id())] = true
     wezterm.GLOBAL.bell_tabs = m
     refresh_status(window)
+  end
+end
+
+wezterm.on('bell', mark_bell)
+
+-- win は BEL（ConPTY が止める）も OSC 1337（zellij が止める）も届かない（2026-11-19 実機）。
+-- win の claude のフック（~/.claude/hooks/bell-mark.ps1）が %TEMP%\wezterm-bell\<pane_id> を置くので、
+-- update-status で拾って印を付け、ファイルを消す。
+local bell_dir = (os.getenv('TEMP') or '') .. '\\wezterm-bell'
+wezterm.on('update-status', function(window)
+  for _, f in ipairs(wezterm.glob(bell_dir .. '/*')) do
+    local pane = wezterm.mux.get_pane(tonumber(f:match('([^/\\]+)$')) or -1)
+    if pane then mark_bell(window, pane) end
+    os.remove(f)
   end
 end)
 
@@ -122,10 +138,30 @@ wezterm.on('format-tab-title', function(tab)
   return ' ' .. (tab.tab_index + 1) .. ': ' .. title .. ' '
 end)
 
--- WezTerm のキーは Ctrl+Shift だけ（Alt は zellij、Space/Ctrl は nvim）。
+-- コピー・ペーストは Windows Terminal に合わせる。
+-- 選択中: コピーして選択を解除。未選択: Ctrl+C はそのまま渡す（^C）、右クリックはペースト。
+-- 選択は WezTerm 自身の選択だけが対象（zellij の mouse_mode が true だと、選択は zellij 側になる）。
+local function copy_or_else(fallback)
+  return wezterm.action_callback(function(window, pane)
+    local sel = window:get_selection_text_for_pane(pane)
+    if sel ~= '' then
+      window:perform_action(act.CopyTo 'Clipboard', pane)
+      window:perform_action(act.ClearSelection, pane)
+    else
+      window:perform_action(fallback, pane)
+    end
+  end)
+end
+config.mouse_bindings = {
+  { event = { Down = { streak = 1, button = 'Right' } }, mods = 'NONE', action = copy_or_else(act.PasteFrom 'Clipboard') },
+}
+
+-- WezTerm のキーは Ctrl+Shift と、コピー・ペースト（Ctrl+C / Ctrl+V）だけ（Alt は zellij、Space は nvim）。
 config.keys = {
+  { key = 'c', mods = 'CTRL', action = copy_or_else(act.SendKey { key = 'c', mods = 'CTRL' }) },
+  { key = 'v', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
   { key = 't', mods = 'CTRL|SHIFT', action = pick_target },
-  { key = 'n', mods = 'CTRL|SHIFT', action = act.SpawnTab 'CurrentPaneDomain' }, -- 素のシェル
+  { key = 'n', mods = 'CTRL|SHIFT', action = act.SpawnCommandInNewTab { domain = { DomainName = 'local' }, args = { 'pwsh' } } }, -- 素の pwsh7（Windows）
 }
 
 return config
