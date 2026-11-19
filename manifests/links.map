@@ -49,9 +49,7 @@ home\.config\zed\keymap.json|%APPDATA%\zed\keymap.json
 home\.config\zed\settings.json|%APPDATA%\zed\settings.json
 home\.config\zed\themes|%APPDATA%\zed\themes
 
-# WezTerm (runs claude / nvim in the WSL room) / Neovim (Windows reads %LOCALAPPDATA%\nvim; WSL reads ~/.config/nvim via stow)
-windows\wezterm\wezterm.lua|%USERPROFILE%\.config\wezterm\wezterm.lua
-home\.config\nvim|%LOCALAPPDATA%\nvim
+# (WezTerm / Neovim: prototypes removed 2026-11-19; to be rebuilt per docs/setup/terminal-units.md. nvim will link to %USERPROFILE%\.config\nvim (XDG_CONFIG_HOME is set by 10_env.bat).)
 # zellij: Windows reads %APPDATA%\Zellij\config (no XDG); WSL reads ~/.config/zellij via stow. One master: home\.config\zellij.
 home\.config\zellij|%APPDATA%\Zellij\config
 

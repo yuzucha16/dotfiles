@@ -6,8 +6,7 @@ Windows 専用の設定の一覧（`links.map` からだけ参照される）。
 | パス | 内容 |
 |---|---|
 | `terminal/settings.json` | Windows Terminal |
-| `wezterm/wezterm.lua` | WezTerm（`%USERPROFILE%\.config\wezterm\` へリンク）。WSL の部屋 `room-<Area>`（ユーザー ai。既定 `myenv`、環境変数 `WEZTERM_ROOM_AREA` で変える）で、1 タブ = 左 claude / 右 nvim（`Ctrl+Shift+T`。`Ctrl+Shift+N` は素のシェル）。bell（claude の入力待ち・停止）でタブがオレンジの 🔔 になる。`Alt+h/l` でペイン、`Alt+j/k` でタブを移る。**新しい PC の手順**: `20_apps.bat`（wezterm・neovim・zellij）→ `30_link.bat` → `room init <Area>`（nvim・zellij・bell フックも入る）→ `room-shell-setup.ps1` → `room-nvim-config.ps1`。nvim の設定は `home/.config/nvim/`（Windows は `%LOCALAPPDATA%\nvim` へジャンクション、部屋へは `room-nvim-config.ps1` が配る） |
-| `room/room-nvim-config.ps1` | 部屋の `~/.config/nvim` へ `home/.config/nvim` の設定を上書きコピーする。`pwsh -NoProfile -File windows\room\room-nvim-config.ps1 -Area myenv`。何度実行しても同じ結果。nvim 本体・zellij・claude の bell フックは `room init`（workbase。段 `nvim` `zellij` `bellhook`。既存の部屋は `room init <Area> --only nvim,zellij,bellhook`）が入れる。nvim の設定を変えたら、再実行で部屋へ反映する |
+| `room/room-nvim-config.ps1` | 部屋の `~/.config/nvim` へ `home/.config/nvim` の設定を上書きコピーする。`pwsh -NoProfile -File windows\room\room-nvim-config.ps1 -Area myenv`。何度実行しても同じ結果。nvim 本体・zellij・claude の bell フックは `room init`（workbase。段 `nvim` `zellij` `bellhook`。既存の部屋は `room init <Area> --only nvim,zellij,bellhook`）が入れる。nvim の設定を変えたら、再実行で部屋へ反映する 。**注**: 元の `home/.config/nvim` は 2026-11-19 に試作ごと削除した。作り直すまで実行しない |
 | `startup/startup.bat` | スタートアップ。`subst V: %WORKS_DIR%` |
 | `wsl/.wslconfig` | WSL2 の全体設定（`%USERPROFILE%\.wslconfig` へリンク）。アイドル時にキャッシュのメモリをホストへ返す。`memory` などの上限は PC ごとに RAM が違うので書かない。反映は `wsl --shutdown` 後の再起動 |
 | `powershell/history.seed.txt` | PSReadLine の履歴の種（手で選んだ定型コマンド。個人値は `<…名>` に置換済みで、そのままでは実行されない）。正本は共有リポジトリ `workbase`（`$HOME\works\resources`）の `exmem/lessons/shell-command-usecases.md`。リンクではなく、初回に履歴ファイルが無いときだけコピーする（`scripts\windows\31_history_seed.bat`） |
