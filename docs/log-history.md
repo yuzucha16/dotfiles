@@ -4,6 +4,10 @@
 
 ## Log
 
+### 2026-11-20（NA 12 完了: zellij の設計書 2 文書を実態と照合）
+- 424d450 の 2 文書を、実物と照らした。`wezterm.lua` 75〜89 行（pwsh の `cd`、背景作成→attach、room は 1 段）、`config.kdl`（`pane_frames true`、`titles`、Alt+n の bind なし）、`layouts/*.kdl`（`--resume` なし）と一致した。
+- 修正レビュー（範囲、整合の 2 件）: 範囲は ANOMALY（`wezterm.lua` の `default_prog`・スクロールバーと lazy-lock を、NA 12 に含める案）、整合は NORMAL。ee の判断で、`wezterm.lua` と `lazy-lock.json` の未コミット差分は NA 12 に含めず、コミットしない（残す）。
+
 ### 2026-11-19（NA 12 一部完了: zellij の未コミット 4 ファイルをコミット。2 段起動は要る）
 - ee の判断: 2 段起動は残す。`pane_frames true`（titles）と `--resume` 削除もそのままコミット。`-NoProfile` は実施しない。
 - コミット: 2d29849（`wezterm.lua` の 2 段起動と `config.kdl`）、22b3a82（`claude-a/b.kdl` の `--resume` 削除）。

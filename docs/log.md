@@ -15,8 +15,5 @@ dotfiles の現在状態と次にやること。作業の終わりに Next Actio
 13. 【起票 11-19】【判断:ユーザー】 `git -C` の権限まわりの残りを扱うか決める。(a) `git diff *` `git log *` の `--output=<file>`、`git commit *` の hook 実行は `-C` を消しても残る穴。(b) `-C` 前提の共有ノート（`exmem/lessons/shell-command-usecases.md:153`、`claude-code-permissions.md:74-76,107`、`ai-room-setup-manual.md:74,166`）は dotfiles から書けないので「ナレッジ化して」で直す。完了: (a) を塞ぐか許容するか、(b) を直すかが決まる。
    - 次の一手: 決定後、(a) は deny を足す案を `decisions.md` で検討、(b) は「ナレッジ化して」
 
-12. 【起票 11-19】【やる:AI】 zellij の設計書 `docs/setup/terminal-units.md` と `wezterm-zellij-nvim.md` を実態に更新する（2 段起動が要る、`pane_frames` titles、`--resume` なし、cwd は pwsh で `cd`、Alt+n なし。経緯は `decisions.md` の 11-19「zellij の起動は 2 段」）。完了: 2 つの文書が実態と合う。
-   - 次の一手: 2 文書の該当箇所を検索して直し、パス指定でコミット
-
 ## Open Questions
 
