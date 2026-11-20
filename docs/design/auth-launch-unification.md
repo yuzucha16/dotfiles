@@ -11,7 +11,7 @@ tags:
 
 # Windows と room の認証つき claude 起動を揃える設計（比較）
 
-2026-11-20 起草、同日に条件の追加を反映（第 2 版）。**まだ何も決めていない。** 現状の構成を維持する選択肢も含めて比べ、実機で確かめる項目（10 章）を並べる。実装は含まない。
+2026-11-20 起草、同日に、条件の追加（第 2 版）と案 E（第 3 版）を反映。**まだ何も決めていない。** 現状の構成を維持する選択肢も含めて比べ、実機で確かめる項目（10 章）を並べる。実装は含まない。
 
 ## 1. ねらいと条件
 
@@ -21,6 +21,7 @@ tags:
   2. **仕組みと考え方を揃える**ことを目指す（例: oauth は、それぞれの `~` に資格があればよい）。
   3. **must は bedrock と oauth が Windows と room で揃っていること。** gateway と api は、最終的に Windows だけでもよい。ただし考え方は揃えられるはずなので、揃える案は出す。
   4. 緩和すると楽になる点があれば提案する（8 章）。
+  5. zellij が使えない（重い）ときの**緊急用の高速起動**として、素のシェルから `claude-pick` だけで起動できる経路がほしい（案 E。wezterm の `--cmd` に環境設定を渡すのが負担なため）。
 - 範囲外: zellij の使いこなし（3 番目の課題）。起動の遅さ（1 番目の課題）は、各案の影響だけ 9 章に書き、手を付けるのは最後。
 - 依存の向き: dotfiles → workbase の一方向を保つ（`room.py` は workbase。dotfiles の挙動を書かない）。
 - 「WSL」は、このリポジトリの wezterm が使う**専用の部屋（room）**のこととして扱う（Q5）。
@@ -116,7 +117,23 @@ ee の見立て（展開が起きない）と、私の読み（「不正な JSON
 
 - 内容: 部屋の `.bashrc` に `claude-bedrock` `claude-oauth` `claude-gateway` `claude-api` `claude-pick` を、Windows と同じ名前・同じ挙動で作る。
 - 良い点: 部屋の中でも同じ名前を打てる。
-- 悪い点: pwsh と bash の**二重実装**で、ずれる。`--cmd 'claude-bedrock'` にすると、`room.py` の `--add-dir` の処理が効かなくなり、workbase の変更が要る。B の設定ファイルの上に載せる見た目だけの糖衣としてなら成り立つが、単独では勧めない。
+- 悪い点: pwsh と bash の**二重実装**で、ずれる。`--cmd 'claude-bedrock'` にすると、`room.py` の `--add-dir` の処理が効かなくなり、workbase の変更が要る。B の設定ファイルの上に載せる見た目だけの糖衣としてなら成り立つが、単独では勧めない。**案 E は、これを「設定ファイルを読むだけ」に薄くした形として扱う。**
+
+### 案 E: 案 B の上に、薄い共通ラッパー `claude-pick` を両環境に置く（zellij なしの緊急起動）
+
+- 背景（ee、2026-11-20）: zellij が特に重い。zellij が使えないとき、素のシェルから、wezterm の `--cmd` に環境設定を渡さずに、`claude-pick` だけで起動したい。緊急時の高速起動のバックアップ。
+- 内容:
+  1. ラッパーは、案 B の設定ファイル（Windows の PC 専用ファイルが正本、部屋へは複製）を**読むだけ**。持つのは、認証の名前（oauth・bedrock・gateway・api）から `claude --settings <ファイル>`（oauth は環境の残りを外して `claude`）への対応と、選択（fzf。無ければ番号入力）だけ。値も資格も持たない。
+  2. Windows は今の `claude-pick`（`profile.ps1`）がそのまま。部屋には、同名・同じ引数（`claude-pick [oauth|api|bedrock|gateway] [claude への引数]`）のものを `~/.local/bin/claude-pick` に置く。置くのは、設定ファイルの配布と同じ dotfiles のスクリプト（`room init` の外。workbase は変えない）。
+  3. 形は 3 通り: **E1** pwsh 版（今のまま）と bash 版の 2 つ（薄いのでずれる余地は小さい）。**E2** 部屋に pwsh7 があれば、`profile.ps1` の関数をそのまま共有し、実装が 1 つになる（部屋に pwsh があるかは未確認。V13・Q8）。**E3** uv で動く 1 本のスクリプトを両側に置く（案 C の形。Windows の今の関数との置き換えの試験が要る）。
+  4. 入口: wezterm の既存の素のシェルの行（`room-<Area> (shell)`、`pwsh (Windows)`）を開き、`claude-pick` と打つ。zellij も `room start` も通らない。
+- 良い点: 起動が最も軽い経路になる（zellij の 2 段起動と、`room start` の前処理を通らない）。`--cmd` に環境設定を載せないので、引用符の問題が入らない。zellij や wezterm の設定が壊れていても使える（バックアップ）。Windows と room で、同じ名前を打てる。
+- 制約（速さと引き換え。`room start` を通らないため）:
+  - Project のマウント（`/mnt/room/<Project>`）が無い。作業は部屋の `~` か `~/src` の下になる。`--add-dir` も付かない。終了時の変更の回収も無い。
+  - **gateway は、ほぼ使えない。** トークンは `room start --gateway` が起動の間だけ約 50 分ごとに押し、終了時に消す（`room.py` の `gateway_start` と `gateway_stop`）。素のシェルでは押す仕組みが動かない。
+  - したがって、緊急起動の対象は **oauth と bedrock**（must と一致）。api は部屋に資格が無い（Windows の素の pwsh なら使える）。
+- 起動の時間: シェルの起動と `claude` の起動だけ（V13 で測って、通常の経路と比べる）。
+- 位置づけ: 案 B の代わりではなく、B の上の任意の層。wezterm からの通常の経路（`room start` + `claude --settings …`）は残す。
 
 ## 6. 比較
 
@@ -133,7 +150,9 @@ ee の見立て（展開が起きない）と、私の読み（「不正な JSON
 | 既存の動く経路を壊すリスク | 低い | 低い（Windows の関数は触らない） | 中〜高 | 低い |
 | 戻しやすさ | 容易 | 容易（ファイルを消すだけ） | 難しい | 容易 |
 
-## 7. 推奨（暫定。V1〜V5・V10・V11 の結果で見直す）
+案 E は、案 B の上に載る任意の層なので、表に列を足さない（5 章の E に評価を書いた）。
+
+## 7. 推奨（暫定。V1〜V5・V10・V11・V13 の結果で見直す）
 
 **案 B を基礎にし、点検表を足す。** 理由は 3 つ。(1) must の「仕組みが揃う」を満たすのは B 以降で、B が最も小さい。(2) workbase を変えず、dotfiles だけで進められる。(3) 4 章の 3 点組が、そのまま 4 認証の横並びの表になり、デバッグの入口（部屋で手で打てる 1 行、点検表）が Windows と同じ形になる。
 
@@ -143,11 +162,13 @@ ee の見立て（展開が起きない）と、私の読み（「不正な JSON
 |---|---|---|
 | 1（must） | oauth と bedrock を 3 点組で揃える。oauth は、部屋で `/login` が完了し、残るかの確認（V5）が中心。bedrock は、部屋に `settings-bedrock.json` を置いて `--settings` で指す。点検表を足す | V2・V3・V5・V10 |
 | 2（考え方） | gateway と api を同じ型にする。gateway は R1 が通れば `--settings` に寄せる。api は、Windows は今のまま、room は設計メモだけ（`apiKeyHelper` が `~` のファイルを返す型）。room の実装は後回しでよい | V4・V11、Q4・Q7 |
+| 2b（緊急起動） | 案 E: 部屋に `claude-pick` を置き、zellij なしの素のシェルから起動できるようにする。対象は oauth と bedrock。段階 1 の設定ファイルを読むだけなので、段階 1 のあとで足せる | V13、Q8 |
 | 3 | 起動の遅さ（課題 1） | V12 |
+| V13 | 案 E の前提と、緊急経路の速さ | (a) 部屋に pwsh と fzf があるか: `wsl -d room-<Area> -u ai -- bash -ic "command -v pwsh fzf"`。(b) 素のシェルの行（`room-<Area> (shell)`）で、`room start` なしに、`claude`（oauth）と `claude --settings $HOME/.claude/settings-bedrock.json`（V3 の置き方）が起動するか。cwd は `~`。(c) (b) の起動時間（タブを開いてから claude の入力待ちまで）を、`room: <project>` の通常経路と、`win:` の zellij と並べる | (a) pwsh があれば E2（実装が 1 つ）。(b) 起動する。(c) 緊急経路が、通常より十分に速いこと（V12 の候補のうち、何を省いた効果かも分かる） |
 
 - 案 A は、V2 で原因が引用符の 1 か所の欠陥と分かり、直せば NA 17 を通せるなら、**当面の応急としては成り立つ**。ただし must の「仕組みが揃う」は満たさないので、案 B への移行を続けて進める。
 - 案 C は、段階 1・2 を実機で通したあとに、「`win:` の zellij 経路にも認証選択を入れる」と決めたとき（Q1）に再評価する。
-- 案 D は、必要になったら案 B の上に足す糖衣として扱う。
+- 案 D は、案 E（薄い共通ラッパー）として、段階 2b で扱う。
 
 案 B でも残る非対称（設計で消せない。**手順書に明記して揃える**）:
 
@@ -211,7 +232,7 @@ ee の見立て（展開が起きない）と、私の読み（「不正な JSON
 | V10 | Bedrock の資格の方式（R2。Q2 の前提） | Windows で `aws sts get-caller-identity --profile <名前>` が通る方式（SSO か IAM キー）と、部屋の `~/.aws/credentials` に同名の節があるか（節の名前だけ） | 会社が長期キーを許すなら R2 は成り立つ。許さないなら、room の bedrock が must を満たせるか、別の道（Q2）を決める |
 | V11 | gateway が `--settings` で通るか（R1） | Windows で `CLAUDE_CONFIG_DIR` を使わずに `claude --settings ~\.claude-gateway\settings.json`。`/status` がゲートウェイか。終了して普通の `claude` が OAuth に戻るか | 通れば R1 を採れる。通らなければ gateway は今の設定ディレクトリ方式のまま（考え方の統一は、4 章の表の注記にとどめる） |
 
-### 10.4 起動の遅さ（最後にやる）
+### 10.4 起動の遅さと、緊急起動の経路（案 E。最後にやる。V13 の (a)(b) は先にやってよい）
 
 | # | 確かめること | 手順 | 期待・判断 |
 |---|---|---|---|
@@ -228,14 +249,16 @@ ee の見立て（展開が起きない）と、私の読み（「不正な JSON
 | Q5 | 「WSL」は room のことでよいか（通常の WSL は対象外） | R4 |
 | Q6 | 60 秒かかったのは、どの行か（`win:` か `room:`）、どの認証か、WSL が止まっていたときか | 9 章の候補のどこから測るか |
 | Q7 | room に api のキーを置くことを、将来許容するか（`aws-key` と同じ性質。AI から読める場所に長期キー）。API 認証（NA 16）をこの設計に含めるか | 4 章の表の api の room の欄。R5 の後回しの期限 |
+| Q8 | 案 E の「WSL の pwsh7」は、**部屋に入れた pwsh7** のことか、Windows の pwsh7 から `wsl` で部屋に入ることか。部屋に pwsh を入れてよいか（`room init` の道具が増える。版を固定する表にも入る） | E1（bash 版 + pwsh 版）か E2（pwsh を共有）か |
 
 ## 12. 決めたあとの流れ（案 B を選んだ場合の素描）
 
 1. V2・V3・V5・V10 で、原因・案 B の成立・oauth の `/login`・Bedrock の資格の方式を確かめる。
 2. 部屋に設定ファイルを置くスクリプトを足す（`windows/room/`。元は Windows の PC 専用ファイル）。`wezterm.lua` の `--cmd` を、ファイルを指す単純な文字列にする。`base64_encode` は不要になるので消す。`room-profiles.json` は、認証の一覧だけにする（R3）。
 3. 点検表のスクリプトを足す（両環境で同じ見た目。値は出さない）。`tests/` に、設定の形と、`room-profiles.json` に秘密や値が入っていないことの検査を足す。
-4. V7・V8 を確認し、`docs/setup/wezterm-zellij-nvim.md` と `windows/claude/README.md` を更新、`docs/decisions.md` に決定を書く。
-5. 段階 2（gateway・api の型）、その後、起動の遅さ（V12）に進む。
+4. 案 E を採るなら、部屋に `claude-pick` を置く（設定ファイルの配布と同じスクリプトで。V13）。
+5. V7・V8 を確認し、`docs/setup/wezterm-zellij-nvim.md` と `windows/claude/README.md` を更新、`docs/decisions.md` に決定を書く。
+6. 段階 2（gateway・api の型）、その後、起動の遅さ（V12）に進む。
 
 ## 出典
 
