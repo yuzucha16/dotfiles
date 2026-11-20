@@ -144,6 +144,7 @@ local function load_auths()
   }
 end
 local ROOM_AUTHS = load_auths()
+local ROOM_PY = (os.getenv('WFKIT_DIR') or (WORKS .. '\\resources\\workflow-kit')) .. '\\room\\room.py'
 
 local function room_projects()
   local out = {}
@@ -190,7 +191,8 @@ local function open_room(window, project, auth)
       return
     end
   end
-  local cmd = "room start '" .. project .. "'"
+  -- Windows に room コマンドは無い（room.py を uv で実行する。2026-11-20 実機）。
+  local cmd = "uv run --script '" .. ROOM_PY .. "' start '" .. project .. "'"
   if auth.gateway then cmd = cmd .. ' --gateway' end
   if type(auth.env) == 'table' and next(auth.env) then
     -- env は claude --settings の JSON で渡す（引用符を入れ子にしない。base64 を部屋側で戻す）。

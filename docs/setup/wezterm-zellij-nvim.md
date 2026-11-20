@@ -98,7 +98,7 @@ win では、BEL を ConPTY が止める。そこで、フックが旗ファイ�
 
 ### room の Project × 認証（`room: <project>`）
 
-`Ctrl+Shift+T` の候補の `room: <project>`（`WORKS\projects\<名>` のうち README.md があるもの）を選ぶと、続けて認証（`room-profiles.json`。`Claude Bedrock`・`Claude Gateway (room)`・`Claude OAuth (room)`）を選ぶ 2 段になる。選ぶと、`pwsh -NoExit` のタブ `room: <project> [bedrock|gw]` で `room start <project> [--gateway]` が走る（**zellij は使わない**。マウント → claude → 終了で必ずアンマウント。distro は `room start` が Area から決める）。
+`Ctrl+Shift+T` の候補の `room: <project>`（`WORKS\projects\<名>` のうち README.md があるもの）を選ぶと、続けて認証（`room-profiles.json`。`Claude Bedrock`・`Claude Gateway (room)`・`Claude OAuth (room)`）を選ぶ 2 段になる。選ぶと、`pwsh -NoExit` のタブ `room: <project> [bedrock|gw]` で `uv run --script $env:WFKIT_DIR\room\room.py start <project> [--gateway]` が走る（Windows に `room` コマンドは無い）（**zellij は使わない**。マウント → claude → 終了で必ずアンマウント。distro は `room start` が Area から決める）。
 
 - 前提: `room` が pwsh から呼べる。`room-profiles.json` は `links.map` で `~\.config\wezterm\` へリンクされる（秘密は入れない）。
 - Bedrock の env は `claude --settings` の JSON（base64 で渡し、部屋側で戻す）。値に空白は使えない。gateway は `room start --gateway`。OAuth は env なしの `room start`（初回は部屋の claude で `/login`。ログインが部屋に残るかは未確認。部屋の既定が Bedrock 等でないかも実機で確認）。API キーは、部屋へ安全に渡す経路が無いので見送り（別 NA）。
