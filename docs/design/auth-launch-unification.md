@@ -61,7 +61,7 @@ Lua の文字列 → pwsh の `-Command` → Windows のコマンドライン �
 | H1 | `$(echo … \| base64 -d)` が展開されない | claude に `$(echo …` がそのまま渡る。多くは「ファイルが無い」系で、「不正な JSON」とは出ない見込み（`--settings` がパスと JSON をどう見分けるかは未確認） |
 | H2 | 展開はされるが、途中のシェルが引用符を落とす | `{env:{CLAUDE_CODE_USE_BEDROCK:1,…}}` のような、引用符のない JSON。報告された症状に合う。ただし、`room.py` の連結（`cd <マウント先> && <cmd>`）を読む限り、`bash -ic` が展開した結果は再解釈されにくく、**弱い**（三層レビューの反証） |
 | H3 | 部屋に `base64` が無い、または `bash -ic` の初期化の出力が混ざる | 復元した文字列が壊れる |
-| H4 | 部屋の環境に認証の変数が残って混線する。または、`AWS_PROFILE` の名前が部屋の `~/.aws/credentials` に無い（`room.py` の `GATEWAY_CMD_PREFIX` が `env -u CLAUDE_CODE_USE_BEDROCK` を付けているのは、部屋に残る経路があった名残の可能性） | JSON のエラーでなく、認証・資格のエラーになる見込み |
+| H4 | 部屋の環境に認証の変数が残って混線する。または、`AWS_PROFILE` の名前が部屋の `~/.aws/credentials` に無い（`room.py` の `GATEWAY_CMD_PREFIX` が `env -u CLAUDE_CODE_USE_BEDROCK` を付けているのは、部屋に残る経路があった名残の可能性）。ただし ee の報告（2026-11-20）では、`aws-key` の資格で Zed の ACP を起動できている（部屋の Bedrock と読める。未確認）ので、資格そのものが無い可能性は薄い | JSON のエラーでなく、認証・資格のエラーになる見込み |
 | H5 | 「不正な JSON」と出た層が、`--settings` の値でない（別の層のエラーを読み違えている） | エラーの全文を控えると分かる（V2 の (a) で全文も控える） |
 
 ee の見立て（展開が起きない）と、私の読み（「不正な JSON」と出たなら展開は起きている）は食い違う。V2 で決着する。**原因が未特定のうちは、案 B に決めず、V2・V3 の結果で案 A か案 B かを決める**（13 章）。JSON を引数に載せる限り、引用符の層が増えるたびに再発しうる、という構造の弱さは、原因によらず残る。
@@ -188,7 +188,7 @@ ee の見立て（展開が起きない）と、私の読み（「不正な JSON
 | # | 緩める点 | 根拠 | 効果 | 代償・リスク | 推奨 |
 |---|---|---|---|---|---|
 | R1 | **Zed の agent を、起動の要件から外す**（残してよいが、制約にしない） | gateway が `--settings` でなく `CLAUDE_CONFIG_DIR` で分かれている理由は、「`--settings` の別ファイルは Zed の起動に使えない」（`decisions.md` の 2026-10-20 の却下案）。その後、ee は Zed を離れる方向を示している（同 2026-11-19） | 4 認証が、すべて `claude --settings <ファイル>` の同じ型になる。共通の `~/.claude` の設定（hooks、permissions、`CLAUDE.md`）が gateway でも効き、「作成時点の写し」と、room の `gateway_hooks_merge`（hooks の写し）が不要になる。api は既にこの型 | Zed の「Claude Gateway」は、今のまま残すなら現状維持（外すのは要件だけ）。**`--settings` で gateway が通るかは未確認**（V11）。部屋の側まで揃えるには、workbase の `room.py`（`GATEWAY_CMD_PREFIX`、`gateway_room_settings`、hooks の写し）の変更が要る | 採る（V11 で通れば） |
-| R2 | **資格の「種類」は揃えず、「置き場」だけ揃える**（bedrock: Windows は SSO でもキーでもよい。room はキー） | 部屋に AWS CLI が無く（`room init` の道具一覧に無い）、`aws sso login` ができない。SSO のキャッシュも IAM キーも `~/.aws` の下にあり、ee の原則（`~` に資格がある）に収まる | bedrock の must を、Windows の SSO 運用を変えずに満たせる | 会社が IAM 長期キーを許さない場合は、room の bedrock が成り立たない（Q2。その場合は R2 の前提が崩れる） | 採る |
+| R2 | **資格の「種類」は揃えず、「置き場」だけ揃える**（bedrock: Windows は SSO でもキーでもよい。room はキー） | 部屋に AWS CLI が無く（`room init` の道具一覧に無い）、`aws sso login` ができない。SSO のキャッシュも IAM キーも `~/.aws` の下にあり、ee の原則（`~` に資格がある）に収まる | bedrock の must を、Windows の SSO 運用を変えずに満たせる | 会社が IAM 長期キーを許さない場合は成り立たないが、**許される**（ee、2026-11-20。Q2。今も `aws-key` で Zed の ACP を起動している）。R2 の前提は保たれた | 採る |
 | R3 | **Bedrock の値の正本を、Windows の PC 専用ファイルにし、`room-profiles.json` から bedrock の値を外す。部屋には複製する** | README の方針（プロファイル名・リージョン・モデル ID は環境ごとに違い、リポジトリに置かない）と、`room-profiles.json` の実態が食い違う（2.2）。gateway も、すでに「Windows の `settings.json` から部屋の分を作って置く」（`room.py` の `gateway_room_settings`）方式 | 正本が 1 つになる。家の PC（Bedrock なし）では項目を出さない判定も、ファイルの有無で済む。リポジトリに値を置かない | 複製の手順が 1 回要る（元を変えたら再実行。点検表で古さを見つける）。`room-profiles.json` は、認証の一覧（id・ラベル・タグ）だけになる。**`decisions.md` の NA 15 の決定（認証は `room-profiles.json`）の変更**になる（承認が要る） | 採る |
 | R4 | **「WSL」を room に限る**（interop のある通常の WSL は対象外のまま） | `wezterm.lua` の候補は win と room だけ。通常の WSL は未対応（`wezterm-zellij-nvim.md` の確認状況） | 考える環境が 2 つで済む（通常の WSL は interop で Windows を呼べて、gateway などが楽になるが、別の設計になる） | ee が通常の WSL も使うなら、別途設計が要る（Q5） | 採る（Q5 の確認後） |
 | R5 | **gateway と api の room 対応を、設計メモにとどめ、実装は後回し** | ee の条件（最終的に Windows だけでも可）。room の gateway は Windows が動いている間しか使えない（2.1）。api は、部屋に長期キーを置くかの判断が要る（Q7） | must（oauth・bedrock）に集中できる | room の api・gateway は当面使えない（gateway は既に使える。api は元から未対応） | 採る |
@@ -215,7 +215,7 @@ ee の見立て（展開が起きない）と、私の読み（「不正な JSON
 | # | 確かめること | 手順 | 期待・判断 |
 |---|---|---|---|
 | V1 | 部屋で `claude` と `base64` に届く | `wsl -d room-<Area> -u ai -- bash -ic "command -v claude base64"` | 両方のパスが出る。出なければ H3 |
-| V2 | 引数が部屋に届くまでに何が起きるか（H1〜H3） | (a) 失敗するタブの「起動: …」の行（`room.py` が表示する、展開前の `cmd`）を控える。(b) pwsh から `wsl -d room-<Area> -u ai -- bash -ic 'printf "%s\n" $(echo <base64> | base64 -d)'` を実行（`<base64>` は (a) の値。pwsh では**単一引用符**で囲む）。(c) 同じ行を `cmd.exe` から実行し、結果を比べる | (b) が引用符つきの JSON なら、展開は正常（H1・H3 は否定）。引用符が落ちたら H2。`$(echo` がそのまま出たら H1 |
+| V2 | 引数が部屋に届くまでに何が起きるか（H1〜H5）。**案 A の原因特定（ee が実施する）** | **層ごとの二分探索**（V2-0〜V2-6）にして、`auth-launch-plan-b.md` の 6.1 に手順を書いた。最初に壊れる層が、原因の層になる。失敗するタブの「起動: …」の行と、エラーの全文を控える | 壊れた最初の層と、その修正の大きさを、同 6.4 の比較表に書く |
 | V3 | 案 B の動作そのもの（コードを変えずに、手で） | 部屋で `~/.claude/settings-bedrock.json` に、env だけの JSON を手で置き、`claude --settings $HOME/.claude/settings-bedrock.json` を打つ。`~/.aws/credentials` に、同名のプロファイルの節があるか（節の名前だけ）も見る | `/status` が Bedrock・リージョン・モデルを示す。通れば案 B は成立。通らなければ、原因は引用符でなく AWS の資格・env の内容 |
 | V4 | gateway のベースライン（NA 17 の(2)） | `room: <project>` → `Claude Gateway (room)` | claude が起動し、`/status` がゲートウェイ。構造が並行な認証が動くことの確認（案 B の前提） |
 | V5 | **oauth の部屋の既定と、`/login` の完了**（must） | `Claude OAuth (room)` で起動し `/status`。部屋の `~/.claude/settings.json` のキーの**名前だけ**を見る（`python3 -c "import json;print(list(json.load(open('/home/ai/.claude/settings.json'))))"`）。ブラウザが開かない部屋で `/login` が URL とコードの貼り付けで完了できるか。終了して起動し直し、ログインが残るか | `apiKeyHelper` や `env` が既定に入っていない。`/login` が完了し、残る |
@@ -233,7 +233,7 @@ ee の見立て（展開が起きない）と、私の読み（「不正な JSON
 | V7 | **must: oauth と bedrock が、Windows と room で揃う** | V6 の表と、room の `/status` を並べる。モデル ID は、Windows の `settings-bedrock.json` と部屋の写しの env を比べる。点検表（実装後）で、両環境の「設定・資格・環境の残り」を並べる | 非対称（7 章の表）以外が一致。ずれていたら、元（R3）を正にして複製し直す |
 | V8 | 後始末（NA 17 の(2)(3)） | claude の終了でタブの `room start` が終わりアンマウントされるか。強制終了後に `room umount` で残骸を拾えるか | 両方できる |
 | V9 | `win:` の zellij の中の claude の認証と、環境の残り（R6） | `win:` のタブで `/status`。`Alt+c` で足した claude も見る。`Get-ChildItem Env:` で `ANTHROPIC_*` `CLAUDE_CODE_USE_*` `AWS_*` の**名前と長さだけ**を見る | 認証が環境の残りで決まっていないか。Q1・R6 の判断材料 |
-| V10 | Bedrock の資格の方式（R2。Q2 の前提） | Windows で `aws sts get-caller-identity --profile <名前>` が通る方式（SSO か IAM キー）と、部屋の `~/.aws/credentials` に同名の節があるか（節の名前だけ） | 会社が長期キーを許すなら R2 は成り立つ。許さないなら、room の bedrock が must を満たせるか、別の道（Q2）を決める |
+| V10 | 部屋の Bedrock の資格（Q2 は回答済み） | 部屋の `~/.aws/credentials` に `AWS_PROFILE` と同名の節があるか（節の名前だけ）。Windows は `aws sts get-caller-identity --profile <名前>` が通る方式（SSO か IAM キー）を控える | 同名の節がある（Zed の ACP が動いているので、ある見込み）。名前がずれていれば、そろえる（H4） |
 | V11 | gateway が `--settings` で通るか（R1） | Windows で `CLAUDE_CONFIG_DIR` を使わずに `claude --settings ~\.claude-gateway\settings.json`。`/status` がゲートウェイか。終了して普通の `claude` が OAuth に戻るか | 通れば R1 を採れる。通らなければ gateway は今の設定ディレクトリ方式のまま（考え方の統一は、4 章の表の注記にとどめる） |
 
 ### 10.4 起動の遅さと、緊急起動の経路（案 E。最後にやる。V13 の (a)(b) は先にやってよい）
@@ -247,7 +247,7 @@ ee の見立て（展開が起きない）と、私の読み（「不正な JSON
 | # | 質問 | 影響 |
 |---|---|---|
 | Q1 | 認証を選ぶ 2 段目は、`room:` の行だけか。`win:` の zellij の経路（今は素の `claude`）にも入れたいか | 入れるなら、案 C（単一の入口）の価値が上がる |
-| Q2 | **会社の方針で、IAM の長期キー（`room aws-key`）は許されるか。** 許されない場合、room の bedrock をどうするか（通常の WSL を使う、部屋に AWS CLI を入れる、room の bedrock は must から外す、など） | R2 の前提。must の成否に直結する |
+| Q2 | ~~会社の方針で、IAM の長期キー（`room aws-key`）は許されるか~~ | **回答済み（ee、2026-11-20）: 許される。** 現時点でも `aws-key` で Zed の ACP を起動している。R2 の前提は保たれ、room の bedrock は must を満たせる |
 | Q3 | R3（Windows の PC 専用ファイルを正本にして、部屋へ複製。`room-profiles.json` から bedrock の値を外す）でよいか | 二重管理の解消と、リポジトリに値を置かない方針の整合 |
 | Q4 | R1（Zed を要件から外す）でよいか | gateway を同じ型にできる。Zed の起動は現状維持のまま |
 | Q5 | 「WSL」は room のことでよいか（通常の WSL は対象外） | R4 |

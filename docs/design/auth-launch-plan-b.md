@@ -80,12 +80,12 @@ gateway（`room start --gateway`）と api（room は未対応）は、今のま
 
 ## 4. 進め方と判断の分岐
 
-原因が未特定なので、**先に V2・V3 で確かめてから、A か B かを決める**。
+原因が未特定なので、**先に案 A の原因特定（V2 の二分探索、6.1）と V3 を行い、原因が分かってから、A か B かを決める**（ee、2026-11-20: B と確定させるのは A の原因が分かってから。きちんと比較する）。比較は 6.4 の表に記入して行う。
 
 | 手順 | 内容 |
 |---|---|
-| 1 | V1・V2・V3 を実行し、結果を 6 章の表に書く |
-| 2 | 結果から、下の分岐で A か B かを決める（ee に報告して確認） |
+| 1 | V1、V2-0〜V2-6（A の原因特定）、V3 を実行し、結果を 6 章の表に書く |
+| 2 | 6.4 の比較表（A の修正の大きさと、B の得るもの）を埋め、下の分岐で A か B かを決める（ee に報告して確認） |
 | 3 | B なら 3.3 の 1（NA 15 の変更）の承認を得てから、3.3 の 2 → 3 → 4 → 5 → 6 の順に実装する |
 | 4 | V5・V6・V7・V8 で受け入れ条件（must）を確認する |
 
@@ -99,7 +99,7 @@ gateway（`room start --gateway`）と api（room は未対応）は、今のま
 
 | # | 質問 | 影響 |
 |---|---|---|
-| Q2 | **会社の方針で、IAM の長期キー（`room aws-key`）は許されるか。** 許されない場合、room の bedrock をどうするか | 許されないと、部屋に AWS CLI が無く SSO ができないので、room の bedrock が must を満たせない |
+| Q2 | ~~会社の方針で、IAM の長期キー（`room aws-key`）は許されるか~~ | **回答済み（ee、2026-11-20）: 許される。** 現時点でも `aws-key` で Zed の ACP を起動している。room の bedrock は must を満たせる |
 | Q3 | 3.3 の 1（`room-profiles.json` から bedrock の値を外し、Windows の PC 専用ファイルを正本にする。NA 15 の決定の変更）でよいか | B の前提。承認が要る |
 | Q1 | 認証を選ぶ 2 段目は `room:` の行だけか。`win:` の zellij の経路（今は素の `claude`）にも入れたいか | B の範囲。入れるなら別の設計（案 C） |
 
@@ -112,8 +112,31 @@ gateway（`room start --gateway`）と api（room は未対応）は、今のま
 | # | 確かめること | 手順 | 期待・判断 | 結果 |
 |---|---|---|---|---|
 | V1 | 部屋で `claude` と `base64` に届く | `wsl -d room-<Area> -u ai -- bash -ic "command -v claude base64"` | 両方のパスが出る。出なければ H3 | |
-| V2 | 引数が部屋に届くまでに何が起きるか | (a) 失敗するタブの「起動: …」の行（`room.py` が表示する、展開前の `cmd`）と、**エラーの全文**を控える。(b) pwsh から `wsl -d room-<Area> -u ai -- bash -ic 'printf "%s\n" $(echo <base64> \| base64 -d)'`（`<base64>` は (a) の値。pwsh では**単一引用符**で囲む）。(c) 同じ行を `cmd.exe` から実行し、結果を比べる | (b) が引用符つきの JSON なら、展開は正常（H1・H3 は否定）。引用符が落ちたら H2。`$(echo` がそのまま出たら H1。エラー全文が `--settings` と無関係なら H5 | |
+| V2 | **案 A の原因特定**（引数が部屋に届くまでに何が起きるか） | 次の 6.1b の二分探索（V2-0〜V2-6）を、上から順に行う | 最初に壊れる層が原因の層 | |
 | V3 | 案 B の動作そのもの（手で） | 部屋に `~/.claude/settings-bedrock.json`（env だけの JSON）を手で置く。例: pwsh で `Get-Content $HOME\.claude\settings-bedrock.json \| wsl -d room-<Area> -u ai -- sh -c 'cat > $HOME/.claude/settings-bedrock.json'`（`awsAuthRefresh` などは先に消す）。キー名の確認: `python3 -c "import json;print(list(json.load(open('/home/ai/.claude/settings-bedrock.json'))))"`。部屋で `claude --settings $HOME/.claude/settings-bedrock.json`。`~/.aws/credentials` に `AWS_PROFILE` の名前の節があるか（節の名前だけ） | `/status` が Bedrock・リージョン・モデルを示す。通れば B は成立。通らなければ、原因は引用符でなく AWS の資格・env の内容（H4） | |
+
+### 6.1b 案 A の原因特定（V2。層ごとの二分探索）
+
+ee が実施する。**上から順に行い、最初に壊れた層が原因の層**。壊れたら、そこで止めて、エラーの全文（と、壊れた出力）を控える。値（プロファイル名、モデル ID、URL）は文書に書かない。
+
+準備（pwsh。実物の `<b64>` は、失敗するタブの「起動: …」の行にあるものを使う。ここで作るものは、形が同じ代用）:
+
+```powershell
+$json = @{ env = (Get-Content $HOME\.claude\settings-bedrock.json -Raw | ConvertFrom-Json).env } | ConvertTo-Json -Compress -Depth 5
+$b64  = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
+```
+
+| # | 層 | 手順 | 正常 | 壊れたら（原因の層） |
+|---|---|---|---|---|
+| V2-0 | 部屋の claude と資格（引数の運び方を使わない） | 部屋の bash で、`CLAUDE_CODE_USE_BEDROCK` `AWS_REGION` `AWS_PROFILE` とモデルの env を直接 `export` して `claude`。`/status` | Bedrock で動く（Zed の ACP が動いているので、動く見込み） | 資格・リージョン・モデルの問題（H4）。A でも B でもなく、先に直す |
+| V2-1 | `--settings` にファイルを渡す（= V3） | 3.3 の 2 の中身を手で置き、部屋で `claude --settings $HOME/.claude/settings-bedrock.json` | 動く | env の内容の問題。ファイルの形（`env` だけか） |
+| V2-2 | `--settings` に JSON 文字列を直接渡す（シェルの層だけ） | 部屋の bash で `claude --settings '{"env":{...}}'`（`$json` の中身を単一引用符で） | 動く | claude が JSON 文字列をどう受けるか（パスと JSON の見分け。H5）。形の問題 |
+| V2-3 | 部屋の中で完結する展開 | 部屋の bash で `printf '%s\n' $(echo <b64> \| base64 -d)`。続けて `claude --settings $(echo <b64> \| base64 -d)` | 引用符つきの JSON が出て、動く | `base64` か `bash -ic` の初期化の出力（H3） |
+| V2-4 | `wsl.exe` を通す（pwsh と cmd） | pwsh: `wsl -d room-<Area> -u ai -- bash -ic 'printf "%s\n" $(echo <b64> \| base64 -d)'`（**単一引用符**）。cmd.exe: 同じ行を、cmd の引用の規則で。両方の出力を比べる | 引用符つきの JSON | 引用符が落ちる（H2）／`$(echo` がそのまま出る（H1）。pwsh と cmd で違えば、呼び出し側の層 |
+| V2-5 | `room.py` を通す（`claude` でない無害なコマンドで） | `uv run --script $env:WFKIT_DIR\room\room.py start <myinv の Project> --cmd 'printf "%s\n" $(echo <b64> \| base64 -d)'` | 引用符つきの JSON が出る | `room.py` の連結（`cd <マウント先> && <cmd>`）と、Python からの `wsl.exe` の呼び出し（V2-4 は正常なのにここで壊れるなら、この層） |
+| V2-6 | wezterm のタブが実行する行そのもの | `wezterm.lua` の `open_room` が作る `pwsh.exe -NoLogo -NoExit -Command "uv run --script … start <p> --cmd 'claude --settings $(echo <b64> \| base64 -d)'"` を、cmd.exe から手で打つ。次に、wezterm のタブで同じ認証を選ぶ | 起動する | 手では動くのにタブで壊れるなら、Lua の文字列と wezterm の起動の層。手でも壊れるなら、V2-5 との差（`claude --settings` の呼び出し）を見る |
+
+記録: 壊れた最初の層、その出力・エラーの全文、直すなら **どこを何行直すか**（案 A の修正案）。
 
 ### 6.2 must の確認
 
@@ -129,7 +152,23 @@ gateway（`room start --gateway`）と api（room は未対応）は、今のま
 | # | 確かめること | 手順 | 期待・判断 | 結果 |
 |---|---|---|---|---|
 | V9 | `win:` の zellij の中の claude の認証と、環境の残り | `win:` のタブで `/status`。`Get-ChildItem Env:` で `ANTHROPIC_*` `CLAUDE_CODE_USE_*` `AWS_*` の**名前と長さだけ**を見る | 認証が環境の残りで決まっていないか。Q1 の判断材料 | |
-| V10 | Bedrock の資格の方式（Q2 の前提） | Windows で `aws sts get-caller-identity --profile <名前>` が通る方式（SSO か IAM キー）と、部屋の `~/.aws/credentials` に同名の節があるか（節の名前だけ） | 会社が長期キーを許すなら room の bedrock は成り立つ。許さないなら別の道（Q2） | |
+| V10 | 部屋の Bedrock の資格（Q2 は回答済み） | 部屋の `~/.aws/credentials` に `AWS_PROFILE` と同名の節があるか（節の名前だけ）。Windows は `aws sts get-caller-identity --profile <名前>` が通る方式（SSO か IAM キー）を控える | 同名の節がある（Zed の ACP が動いているので、ある見込み）。名前がずれていれば、そろえる | |
+
+### 6.4 案 A と案 B の比較表（原因が分かったら記入。ee、2026-11-20: きちんと比較する）
+
+A 列は V2 の結果で記入する。B 列は、設計からの見込み（V3・実装後に確かめる）。
+
+| 観点 | 案 A（原因の層を直す） | 案 B（設定ファイル） |
+|---|---|---|
+| 直す場所と、直す行数 | （記入） | 配布スクリプト 1、`wezterm.lua`、`room-profiles.json`、点検表、試験、文書（約 9〜10 ファイル） |
+| 直したあと、bedrock が起動するか | （記入） | 見込み: 起動する（V3 で手では確認） |
+| 部屋で手で再現できるか（デバッグの入口） | （記入） | 1 行（`claude --settings $HOME/.claude/settings-bedrock.json`） |
+| 同じ種類の不具合の再発（引数の層が増えたとき） | （記入） | 引数に値を載せないので、構造上ほぼ無い |
+| 値の正本が 1 つになるか（R3） | 直らない（別に直す） | 直る（NA 15 の変更。承認が要る） |
+| must（oauth・bedrock の仕組みが揃う）を満たすか | 満たさない（bedrock だけ別機構のまま） | 満たす |
+| 起動時間 | （記入。変わらない見込み） | 未測定（ほぼ無視できる見込み） |
+| 戻しやすさ | （記入） | 変更を 1 コミットにまとめれば容易 |
+| 判断 | （記入） | （記入） |
 
 ## 7. 作業の規則（dotfiles の `AGENTS.md` から。抜粋）
 
