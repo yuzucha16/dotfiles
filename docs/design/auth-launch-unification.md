@@ -215,7 +215,7 @@ ee の見立て（展開が起きない）と、私の読み（「不正な JSON
 | # | 確かめること | 手順 | 期待・判断 |
 |---|---|---|---|
 | V1 | 部屋で `claude` と `base64` に届く | `wsl -d room-<Area> -u ai -- bash -ic "command -v claude base64"` | 両方のパスが出る。出なければ H3 |
-| V2 | 引数が部屋に届くまでに何が起きるか（H1〜H3） | (a) 失敗するタブの「起動: …」の行（`room.py` が表示する、展開前の `cmd`）を控える。(b) pwsh から `wsl -d room-<Area> -u ai -- bash -ic "printf '%s\n' \$(echo <base64> \| base64 -d)"` を実行（`<base64>` は (a) の値）。(c) 同じ行を `cmd.exe` から実行し、結果を比べる | (b) が引用符つきの JSON なら、展開は正常（H1・H3 は否定）。引用符が落ちたら H2。`$(echo` がそのまま出たら H1 |
+| V2 | 引数が部屋に届くまでに何が起きるか（H1〜H3） | (a) 失敗するタブの「起動: …」の行（`room.py` が表示する、展開前の `cmd`）を控える。(b) pwsh から `wsl -d room-<Area> -u ai -- bash -ic 'printf "%s\n" $(echo <base64> | base64 -d)'` を実行（`<base64>` は (a) の値。pwsh では**単一引用符**で囲む）。(c) 同じ行を `cmd.exe` から実行し、結果を比べる | (b) が引用符つきの JSON なら、展開は正常（H1・H3 は否定）。引用符が落ちたら H2。`$(echo` がそのまま出たら H1 |
 | V3 | 案 B の動作そのもの（コードを変えずに、手で） | 部屋で `~/.claude/settings-bedrock.json` に、env だけの JSON を手で置き、`claude --settings $HOME/.claude/settings-bedrock.json` を打つ。`~/.aws/credentials` に、同名のプロファイルの節があるか（節の名前だけ）も見る | `/status` が Bedrock・リージョン・モデルを示す。通れば案 B は成立。通らなければ、原因は引用符でなく AWS の資格・env の内容 |
 | V4 | gateway のベースライン（NA 17 の(2)） | `room: <project>` → `Claude Gateway (room)` | claude が起動し、`/status` がゲートウェイ。構造が並行な認証が動くことの確認（案 B の前提） |
 | V5 | **oauth の部屋の既定と、`/login` の完了**（must） | `Claude OAuth (room)` で起動し `/status`。部屋の `~/.claude/settings.json` のキーの**名前だけ**を見る（`python3 -c "import json;print(list(json.load(open('/home/ai/.claude/settings.json'))))"`）。ブラウザが開かない部屋で `/login` が URL とコードの貼り付けで完了できるか。終了して起動し直し、ログインが残るか | `apiKeyHelper` や `env` が既定に入っていない。`/login` が完了し、残る |
