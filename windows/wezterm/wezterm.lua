@@ -161,6 +161,26 @@ local function room_projects()
   return out
 end
 
+-- wezterm の Lua には base64 の関数が無い（wezterm.base64_encode は nil。呼ぶと callback がエラーで止まり、
+-- 何も起きないように見えた: 2026-11-20 実機の Bedrock）。Lua 5.4 のビット演算で自前で符号化する。
+local B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+local function base64_encode(s)
+  local out = {}
+  for i = 1, #s, 3 do
+    local a, b, c = s:byte(i, i + 2)
+    local n = (a << 16) | ((b or 0) << 8) | (c or 0)
+    local q = {}
+    for k = 1, 4 do
+      local v = (n >> (6 * (4 - k))) & 63
+      q[k] = B64:sub(v + 1, v + 1)
+    end
+    if not b then q[3] = '=' end
+    if not c then q[4] = '=' end
+    out[#out + 1] = table.concat(q)
+  end
+  return table.concat(out)
+end
+
 -- 同名のタブ（'room: <p> [tag]'）があればそこへ移る。無ければ pwsh のタブで room start を実行する。
 local function open_room(window, project, auth)
   local title = 'room: ' .. project .. ' [' .. auth.tag .. ']'
@@ -175,7 +195,7 @@ local function open_room(window, project, auth)
   if type(auth.env) == 'table' and next(auth.env) then
     -- env は claude --settings の JSON で渡す（引用符を入れ子にしない。base64 を部屋側で戻す）。
     -- claude で始まるので room start の --add-dir も効く。
-    cmd = cmd .. " --cmd 'claude --settings $(echo " .. wezterm.base64_encode(wezterm.json_encode { env = auth.env }) .. " | base64 -d)'"
+    cmd = cmd .. " --cmd 'claude --settings $(echo " .. base64_encode(wezterm.json_encode { env = auth.env }) .. " | base64 -d)'"
   end
   local tab = window:mux_window():spawn_tab {
     domain = { DomainName = 'local' },
